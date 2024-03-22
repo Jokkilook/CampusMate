@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(
-                                    color: Colors.black54,
+                                    color: Colors.black45,
                                     width: 2,
                                   )),
                               filled: true,
@@ -53,7 +53,8 @@ class LoginScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10)),
                               label: const Text("아이디"),
                               labelStyle: const TextStyle(fontSize: 14),
-                              contentPadding: const EdgeInsets.all(10)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10)),
                         ),
                       ),
                     ),
@@ -68,7 +69,7 @@ class LoginScreen extends StatelessWidget {
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(
-                                    color: Colors.black54,
+                                    color: Colors.black45,
                                     width: 2,
                                   )),
                               filled: true,
@@ -79,7 +80,8 @@ class LoginScreen extends StatelessWidget {
                                 "비밀번호",
                               ),
                               labelStyle: const TextStyle(fontSize: 14),
-                              contentPadding: const EdgeInsets.all(10)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10)),
                         ),
                       ),
                     ),
