@@ -12,7 +12,6 @@ class ProfilScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
-        leading: const Icon(Icons.arrow_back_ios),
         title: const Text('프로필'),
       ),
       body: SingleChildScrollView(
