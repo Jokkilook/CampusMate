@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class RegistScreenB extends StatefulWidget {
   const RegistScreenB({super.key});
@@ -72,6 +73,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
+                      // 이메일 인증번호 섹션 , 다음 버튼 미포함
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text("   학교 이메일 인증",
@@ -216,31 +218,30 @@ class _RegistScreenBState extends State<RegistScreenB> {
                           ),
                         ),
                       ]),
-                  ElevatedButton(
-                    onPressed: isCompleted
-                        ? () {/* 회원가입 데이터에 이메일 저장 후 다음 거로 */}
-                        : null,
-                    child: Text(
-                      "다음",
-                      style: TextStyle(
-                          color: isCompleted
-                              ? const Color(0xFF0A351E)
-                              : Colors.black45,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2BB56B),
-                      minimumSize: const Size(10000, 60),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                  )
                 ],
               ),
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(40),
+        child: ElevatedButton(
+          onPressed: isCompleted ? () {/* 회원가입 데이터에 이메일 저장 후 다음 거로 */} : null,
+          child: Text(
+            "다음",
+            style: TextStyle(
+                color: isCompleted ? const Color(0xFF0A351E) : Colors.black45,
+                fontSize: 18,
+                fontWeight: FontWeight.bold),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2BB56B),
+            minimumSize: const Size(10000, 60),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
       ),
     );
   }
