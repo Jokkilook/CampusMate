@@ -1,3 +1,4 @@
+import 'package:campusmate/widgets/thread_item.dart';
 import 'package:flutter/material.dart';
 
 class GeneralBoard extends StatelessWidget {
@@ -39,12 +40,10 @@ class GeneralBoard extends StatelessWidget {
                 '광고 영역',
               ),
             ),
-            // ListView.builder(
-            //   itemCount: 100,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     return const ThreadItem();
-            //   },
-            // ),
+            const ThreadItem(),
+            const ThreadItem(),
+            const ThreadItem(),
+            const ThreadItem(),
           ],
         ),
       ),
