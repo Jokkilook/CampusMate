@@ -56,6 +56,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
       body: Column(
         children: [
           Row(
+            // 진행상황바
             children: [
               Expanded(
                 flex: 10,
@@ -81,6 +82,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
+                      // 다음버튼 제외한 UI 섹션
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text("  입학연도",
@@ -225,31 +227,32 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           },
                         ),
                       ]),
-                  ElevatedButton(
-                    onPressed: isCompleted
-                        ? () {/* 다음 버튼을 누르면 선택된 연도,학교,학과를 저장 */}
-                        : null,
-                    child: Text(
-                      "다음",
-                      style: TextStyle(
-                          color: isCompleted
-                              ? const Color(0xFF0A351E)
-                              : Colors.black45,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2BB56B),
-                      minimumSize: const Size(10000, 60),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                  )
                 ],
               ),
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(40),
+        child: ElevatedButton(
+          //다음 버튼
+          onPressed:
+              isCompleted ? () {/* 다음 버튼을 누르면 선택된 연도,학교,학과를 저장 */} : null,
+          child: Text(
+            "다음",
+            style: TextStyle(
+                color: isCompleted ? const Color(0xFF0A351E) : Colors.black45,
+                fontSize: 18,
+                fontWeight: FontWeight.bold),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2BB56B),
+            minimumSize: const Size(10000, 60),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
       ),
     );
   }

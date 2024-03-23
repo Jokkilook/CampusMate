@@ -255,35 +255,37 @@ class _RegistScreenCState extends State<RegistScreenC> {
                         ),
                         const SizedBox(height: 10),
                       ]),
-                  ElevatedButton(
-                    onPressed: inputPassword.isNotEmpty &&
-                            isCorrect &&
-                            inputNick.isNotEmpty
-                        ? () {/* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */}
-                        : null,
-                    child: Text(
-                      "다음",
-                      style: TextStyle(
-                          color: inputPassword.isNotEmpty &&
-                                  isCorrect &&
-                                  inputNick.isNotEmpty
-                              ? const Color(0xFF0A351E)
-                              : Colors.black45,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2BB56B),
-                      minimumSize: const Size(10000, 60),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                  )
                 ],
               ),
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(40),
+        child: ElevatedButton(
+          onPressed:
+              inputPassword.isNotEmpty && isCorrect && inputNick.isNotEmpty
+                  ? () {/* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */}
+                  : null,
+          child: Text(
+            "다음",
+            style: TextStyle(
+                color: inputPassword.isNotEmpty &&
+                        isCorrect &&
+                        inputNick.isNotEmpty
+                    ? const Color(0xFF0A351E)
+                    : Colors.black45,
+                fontSize: 18,
+                fontWeight: FontWeight.bold),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2BB56B),
+            minimumSize: const Size(10000, 60),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
       ),
     );
   }
