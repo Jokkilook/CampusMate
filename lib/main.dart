@@ -1,3 +1,4 @@
+import 'package:campusmate/firebase_test.dart';
 import 'package:campusmate/screens/profile_setting_a.dart';
 import 'package:campusmate/screens/profile_setting_b.dart';
 import 'package:campusmate/screens/profile_setting_c.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseTest().initFirebase();
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: ScreenList(),

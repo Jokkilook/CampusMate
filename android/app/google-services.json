@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "562921217483",
+    "project_id": "classmate-81447",
+    "storage_bucket": "classmate-81447.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562921217483:android:4cc0626a33dff246f1ea4e",
+        "android_client_info": {
+          "package_name": "com.example.campusmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_fFbx3eESpr1zCfFjM22JuzUgEn4sppc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
