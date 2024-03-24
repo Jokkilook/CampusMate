@@ -1,11 +1,13 @@
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/email_otp.dart';
 import 'package:campusmate/screens/regist_screen_c.dart';
+import 'package:email_auth/email_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class RegistScreenB extends StatefulWidget {
-  const RegistScreenB({super.key, required this.newUserData});
+  RegistScreenB({super.key, required this.newUserData});
   final UserData newUserData;
+  var auth = EmailAuthA();
 
   @override
   State<RegistScreenB> createState() => _RegistScreenBState();
@@ -13,14 +15,32 @@ class RegistScreenB extends StatefulWidget {
 
 class _RegistScreenBState extends State<RegistScreenB> {
   late String inputEmail; //이메일 입력받을 변수
+  late var inputCode;
   bool isCompleted = false;
   bool isSended = false;
+  bool isLoading = false;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController codeController = TextEditingController();
+  EmailAuth emailAuth = EmailAuth(sessionName: "Test Session");
 
   @override
   void initState() {
     super.initState();
+    emailAuth.config({"server": "server url", "serverKey": "serverKey"});
     inputEmail = "";
+    inputCode = "";
     setState(() {});
+  }
+
+  void sendOTP() async {
+    await emailAuth.sendOtp(
+        recipientMail: emailController.value.text, otpLength: 6);
+  }
+
+  void verifyOTP() async {
+    emailAuth.validateOtp(
+        recipientMail: emailController.value.text,
+        userOtp: codeController.value.text);
   }
 
   @override
@@ -90,9 +110,9 @@ class _RegistScreenBState extends State<RegistScreenB> {
                             height: 50,
                             child: TextField(
                               onChanged: (value) {
-                                inputEmail = value;
-                                setState(() {});
+                                print(emailController.value.text);
                               },
+                              controller: emailController,
                               decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -123,23 +143,35 @@ class _RegistScreenBState extends State<RegistScreenB> {
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
-                          onPressed: inputEmail.isNotEmpty
+                          onPressed: true
                               ? () {
                                   /* 인증번호 발송 버튼을 누르면 메일로 발송하는 코드 */
-                                  if (isSended) return;
-                                  isSended = !isSended;
-                                  setState(() {});
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+
+                                  // widget.auth.sendEmail(inputEmail);
+                                  // isSended = true;
+
+                                  sendOTP();
+                                  isSended = true;
+
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 }
                               : null,
-                          child: Text(
-                            isSended ? "재발송" : "인증번호 발송 ",
-                            style: TextStyle(
-                                color: inputEmail.isNotEmpty
-                                    ? const Color(0xFF0A351E)
-                                    : Colors.black45,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          child: isLoading
+                              ? const CircularProgressIndicator()
+                              : Text(
+                                  isSended ? "재발송" : "인증번호 발송 ",
+                                  style: TextStyle(
+                                      color: inputEmail.isNotEmpty
+                                          ? const Color(0xFF0A351E)
+                                          : Colors.black45,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF2BB56B),
                             minimumSize: const Size(10000, 60),
@@ -161,6 +193,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
                               SizedBox(
                                 height: 50,
                                 child: TextField(
+                                  controller: codeController,
                                   decoration: InputDecoration(
                                       enabledBorder: OutlineInputBorder(
                                           borderRadius:
@@ -196,9 +229,13 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                 onPressed: isSended
                                     ? () {
                                         /* 인증번호 확인 */
-                                        widget.newUserData.email = inputEmail;
 
-                                        isCompleted = !isCompleted;
+                                        // widget.auth.verifyCode(inputCode);
+                                        // isCompleted = true;
+                                        // widget.newUserData.email = inputEmail;
+
+                                        verifyOTP();
+
                                         setState(() {});
                                       }
                                     : null,
