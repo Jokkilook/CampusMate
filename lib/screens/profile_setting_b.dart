@@ -110,7 +110,7 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                         Wrap(
                           direction: Axis.horizontal,
                           spacing: 10,
-                          runSpacing: -5,
+                          runSpacing: 10,
                           children: [
                             for (var tag in tagList)
                               OutlinedButton(
@@ -135,8 +135,8 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                                 style: OutlinedButton.styleFrom(
                                     side: userTag.contains(tag)
                                         ? BorderSide(
-                                            width: 1,
-                                            color: Colors.green.shade900)
+                                            width: 2,
+                                            color: Colors.green.shade700)
                                         : BorderSide(
                                             width: 0,
                                             color: Colors.white.withOpacity(0)),
@@ -145,7 +145,7 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                                         : Colors.black12,
                                     minimumSize: Size.zero,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 5)),
+                                        horizontal: 20, vertical: 15)),
                               ),
                           ],
                         ),

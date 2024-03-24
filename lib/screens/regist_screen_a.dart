@@ -1,3 +1,5 @@
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/regist_screen_b.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +22,8 @@ class _RegistScreenAState extends State<RegistScreenA> {
   late String selectedDept;
   bool isReady = false;
   bool isCompleted = false;
+
+  UserData newUserData = UserData();
 
   @override
   void initState() {
@@ -167,7 +171,9 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           onChanged: (value) {
                             //학교가 선택되면 학과 선택이 활성화됨.
                             selectedSchool = value!;
-                            isReady = !isReady;
+                            selectedSchool.isEmpty
+                                ? isReady = false
+                                : isReady = true;
                             setState(() {});
                           },
                         ),
@@ -222,7 +228,10 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           onChanged: (value) {
                             //학과가 선택되면 다음 버튼 활성화됨.
                             selectedDept = value!;
-                            isCompleted = !isCompleted;
+
+                            isReady && selectedDept.isNotEmpty
+                                ? isCompleted = true
+                                : isCompleted = false;
                             setState(() {});
                           },
                         ),
@@ -237,8 +246,21 @@ class _RegistScreenAState extends State<RegistScreenA> {
         padding: const EdgeInsets.all(40),
         child: ElevatedButton(
           //다음 버튼
-          onPressed:
-              isCompleted ? () {/* 다음 버튼을 누르면 선택된 연도,학교,학과를 저장 */} : null,
+          onPressed: isCompleted
+              ? () {
+                  /* 다음 버튼을 누르면 선택된 연도,학교,학과를 저장 */
+                  newUserData.enterYear = selectedYear;
+                  newUserData.school = selectedSchool;
+                  newUserData.dept = selectedDept;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegistScreenB(
+                          newUserData: newUserData,
+                        ),
+                      ));
+                }
+              : null,
           child: Text(
             "다음",
             style: TextStyle(

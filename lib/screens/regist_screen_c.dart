@@ -1,7 +1,10 @@
+import 'package:campusmate/models/user_data.dart';
 import 'package:flutter/material.dart';
 
 class RegistScreenC extends StatefulWidget {
-  const RegistScreenC({super.key});
+  const RegistScreenC({super.key, required this.newUserData});
+
+  final UserData newUserData;
 
   @override
   State<RegistScreenC> createState() => _RegistScreenCState();
@@ -112,7 +115,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                   fillColor: Colors.white,
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
-                                  hintText: email,
+                                  hintText: widget.newUserData.email,
                                   labelStyle: const TextStyle(fontSize: 14),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10)),
@@ -254,6 +257,8 @@ class _RegistScreenCState extends State<RegistScreenC> {
                           ),
                         ),
                         const SizedBox(height: 10),
+                        Text(
+                            "${widget.newUserData.enterYear} ${widget.newUserData.school} ${widget.newUserData.dept} ${widget.newUserData.email}")
                       ]),
                 ],
               ),

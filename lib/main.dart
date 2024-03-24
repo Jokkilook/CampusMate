@@ -51,30 +51,10 @@ class ScreenList extends StatelessWidget {
             /// RegistScreenA
             ListTile(
               title:
-                  const Text("RegistScreenA", style: TextStyle(fontSize: 24)),
+                  const Text("Regist Sequence", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const RegistScreenA()),
-              ),
-            ),
-
-            /// RegistScreenB
-            ListTile(
-              title:
-                  const Text("RegistScreenB", style: TextStyle(fontSize: 24)),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const RegistScreenB()),
-              ),
-            ),
-
-            /// RegistScreenC
-            ListTile(
-              title:
-                  const Text("RegistScreenC", style: TextStyle(fontSize: 24)),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const RegistScreenC()),
               ),
             ),
 

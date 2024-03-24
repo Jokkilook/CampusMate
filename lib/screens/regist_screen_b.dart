@@ -1,8 +1,11 @@
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/regist_screen_c.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class RegistScreenB extends StatefulWidget {
-  const RegistScreenB({super.key});
+  const RegistScreenB({super.key, required this.newUserData});
+  final UserData newUserData;
 
   @override
   State<RegistScreenB> createState() => _RegistScreenBState();
@@ -192,8 +195,10 @@ class _RegistScreenBState extends State<RegistScreenB> {
                               ElevatedButton(
                                 onPressed: isSended
                                     ? () {
-                                        /* 인증번호 확인 */ isCompleted =
-                                            !isCompleted;
+                                        /* 인증번호 확인 */
+                                        widget.newUserData.email = inputEmail;
+
+                                        isCompleted = !isCompleted;
                                         setState(() {});
                                       }
                                     : null,
@@ -226,7 +231,17 @@ class _RegistScreenBState extends State<RegistScreenB> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(40),
         child: ElevatedButton(
-          onPressed: isCompleted ? () {/* 회원가입 데이터에 이메일 저장 후 다음 거로 */} : null,
+          onPressed: isCompleted
+              ? () {
+                  /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            RegistScreenC(newUserData: widget.newUserData),
+                      ));
+                }
+              : null,
           child: Text(
             "다음",
             style: TextStyle(
