@@ -130,7 +130,7 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

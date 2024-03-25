@@ -79,7 +79,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
           Expanded(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+              padding: const EdgeInsets.fromLTRB(40, 40, 40, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

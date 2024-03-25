@@ -145,7 +145,7 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                                         : Colors.black12,
                                     minimumSize: Size.zero,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 15)),
+                                        horizontal: 20, vertical: 10)),
                               ),
                           ],
                         ),

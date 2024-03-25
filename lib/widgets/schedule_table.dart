@@ -42,27 +42,24 @@ class _ScheduleTableState extends State<ScheduleTable> {
           borderRadius: BorderRadius.circular(10)),
       child: Row(
         children: [
-          Expanded(
-            flex: 10,
-            child: Column(
-              children: [
-                for (var time in timeData)
-                  Container(
-                      width: 1000,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                            width: 0.5, color: const Color(0xFFD2D2D2)),
-                      ),
-                      child: Center(
-                          child: Text(
-                        time,
-                        style: const TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w500),
-                      )))
-              ],
-            ),
+          Column(
+            children: [
+              for (var time in timeData)
+                Container(
+                    width: 90,
+                    height: 35,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          width: 0.5, color: const Color(0xFFD2D2D2)),
+                    ),
+                    child: Center(
+                        child: Text(
+                      time,
+                      style: const TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.w500),
+                    )))
+            ],
           ),
           for (var day in widget.scheduleData)
             Expanded(
