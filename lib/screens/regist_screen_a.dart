@@ -145,6 +145,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           dropdownDecoratorProps: DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                   hintText: "학교를 선택하세요",
+                                  hintStyle: const TextStyle(fontSize: 13),
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: const BorderSide(
@@ -195,6 +196,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           dropdownDecoratorProps: DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                   hintText: "학과를 선택하세요",
+                                  hintStyle: const TextStyle(fontSize: 13),
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: const BorderSide(
