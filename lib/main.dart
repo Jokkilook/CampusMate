@@ -8,7 +8,7 @@ import 'screens/login_screen.dart';
 import 'screens/regist_screen_a.dart';
 import 'screens/regist_screen_b.dart';
 import 'screens/regist_screen_c.dart';
-import 'screens/general_board.dart';
+import 'screens/community_screen.dart';
 import 'screens/profil_screen.dart';
 
 void main() {
@@ -97,12 +97,13 @@ class ScreenList extends StatelessWidget {
               ),
             ),
 
-            /// GeneralBoard
+            /// CommunityScreen
             ListTile(
-              title: const Text("GeneralBoard", style: TextStyle(fontSize: 24)),
+              title:
+                  const Text("CommunityScreen", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const GeneralBoard()),
+                MaterialPageRoute(builder: (_) => const CommunityScreen()),
               ),
             ),
           ],
