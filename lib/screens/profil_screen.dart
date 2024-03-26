@@ -1,3 +1,4 @@
+import 'package:campusmate/widgets/ad_area.dart';
 import 'package:flutter/material.dart';
 
 class ProfilScreen extends StatelessWidget {
@@ -19,19 +20,7 @@ class ProfilScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Column(
             children: [
-              // 광고 영역
-              Container(
-                width: double.infinity,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  '광고 영역',
-                ),
-              ),
+              const AdArea(),
               const SizedBox(height: 12),
               // 프로필 카드
               Container(
