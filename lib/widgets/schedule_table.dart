@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 //시간표 출력하는 위젯. 매개변수로 유저의 시간표 데이터를 넣어줘야한다.
 class ScheduleTable extends StatefulWidget {
   final List<Map<String, bool>> scheduleData;
+  bool readOnly;
 
-  const ScheduleTable({super.key, required this.scheduleData});
+  ScheduleTable({super.key, required this.scheduleData, this.readOnly = false});
 
   @override
   State<ScheduleTable> createState() => _ScheduleTableState();
@@ -82,12 +83,14 @@ class _ScheduleTableState extends State<ScheduleTable> {
                       ))),
                   for (var detail in day.entries)
                     GestureDetector(
-                      onTap: () {
-                        day[detail.key] = !detail.value;
+                      onTap: widget.readOnly
+                          ? null
+                          : () {
+                              day[detail.key] = !detail.value;
 
-                        print("${detail.key} ${detail.value}");
-                        setState(() {});
-                      },
+                              print("${detail.key} ${detail.value}");
+                              setState(() {});
+                            },
                       child: Container(
                         width: 1000,
                         height: 35,

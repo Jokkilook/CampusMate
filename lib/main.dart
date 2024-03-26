@@ -93,7 +93,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("ProfilScreen", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ProfilScreen()),
+                MaterialPageRoute(builder: (_) => ProfilScreen()),
               ),
             ),
 

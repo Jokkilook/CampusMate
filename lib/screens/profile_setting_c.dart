@@ -12,6 +12,7 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
   bool isCompleted = false;
 
   late List<Map<String, bool>> totalSchedule;
+
   Map<String, bool> monSchedule = {
     "MON08": true,
     "MON09": true,
