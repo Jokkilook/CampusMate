@@ -18,6 +18,8 @@ dependencies:
   crypto: ^3.0.3
   firebase_auth: ^4.17.9
   firebase: ^9.0.3
+  http: ^0.13.6
+  excel: ^4.0.3
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +27,7 @@ dev_dependencies:
   flutter_lints: ^1.0.0
 
 flutter:
+  assets:
+   - assets/ # assets 폴더의 모든 이미지를 불러옴
   uses-material-design: true
-  # assets:     # 새로 추가한 부분
-  #  - assets/ # assets 폴더의 모든 이미지를 불러옴
+  

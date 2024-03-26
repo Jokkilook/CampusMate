@@ -1,7 +1,10 @@
+import 'package:campusmate/models/schoolModel.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/school_api.dart';
 import 'package:campusmate/screens/regist_screen_b.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class RegistScreenA extends StatefulWidget {
   const RegistScreenA({super.key});
@@ -14,8 +17,9 @@ class _RegistScreenAState extends State<RegistScreenA> {
   final yearList = [
     for (int i = DateTime.now().year; i > DateTime.now().year - 10; i--) i
   ];
-  final schoolList = ["대림대학교", "안양대학교", "한세대학교"];
-  final deptList = ["컴퓨터공학과", "물리학과", "생명공학과"];
+
+  late List<String> schoolList;
+  late List<String> deptList;
 
   late int selectedYear;
   late String selectedSchool;
@@ -25,11 +29,17 @@ class _RegistScreenAState extends State<RegistScreenA> {
 
   UserData newUserData = UserData();
 
+  final schools = SchoolAPI();
+
   @override
   void initState() {
     super.initState();
     selectedYear = DateTime.now().year;
     selectedSchool = "";
+    schoolList = schools.schoolList;
+    deptList = schools.deptList;
+    schools.getNameFromExcel();
+
     setState(() {});
   }
 
@@ -172,9 +182,11 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           onChanged: (value) {
                             //학교가 선택되면 학과 선택이 활성화됨.
                             selectedSchool = value!;
+                            schools.getDeptFromExcel(selectedSchool);
                             selectedSchool.isEmpty
                                 ? isReady = false
                                 : isReady = true;
+
                             setState(() {});
                           },
                         ),

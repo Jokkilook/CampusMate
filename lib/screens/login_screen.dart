@@ -1,7 +1,11 @@
+import 'package:campusmate/screens/regist_screen_a.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  LoginScreen({super.key});
+
+  TextEditingController idController = TextEditingController();
+  TextEditingController pwContorlloer = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +44,7 @@ class LoginScreen extends StatelessWidget {
                       child: SizedBox(
                         height: 50,
                         child: TextField(
+                          controller: idController,
                           decoration: InputDecoration(
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -51,8 +56,11 @@ class LoginScreen extends StatelessWidget {
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
-                              label: const Text("아이디"),
-                              labelStyle: const TextStyle(fontSize: 14),
+                              label: const Text("아이디",
+                                  style: TextStyle(
+                                      fontSize: 13, color: Colors.black54)),
+                              labelStyle: const TextStyle(
+                                  fontSize: 13, color: Colors.black54),
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10)),
                         ),
@@ -64,6 +72,7 @@ class LoginScreen extends StatelessWidget {
                       child: SizedBox(
                         height: 50,
                         child: TextField(
+                          controller: pwContorlloer,
                           obscureText: true,
                           decoration: InputDecoration(
                               focusedBorder: OutlineInputBorder(
@@ -79,7 +88,7 @@ class LoginScreen extends StatelessWidget {
                               label: const Text(
                                 "비밀번호",
                               ),
-                              labelStyle: const TextStyle(fontSize: 14),
+                              labelStyle: const TextStyle(fontSize: 13),
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10)),
                         ),
@@ -92,7 +101,13 @@ class LoginScreen extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const RegistScreenA(),
+                                  ));
+                            },
                             child: const Text(
                               "회원가입",
                               style: TextStyle(
@@ -100,7 +115,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF2BB56B),
-                              minimumSize: const Size(100, 60),
+                              minimumSize: const Size(100, 50),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
@@ -118,7 +133,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF2BB56B),
-                              minimumSize: const Size(100, 60),
+                              minimumSize: const Size(100, 50),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
