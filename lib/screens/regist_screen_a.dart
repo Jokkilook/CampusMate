@@ -36,9 +36,12 @@ class _RegistScreenAState extends State<RegistScreenA> {
     super.initState();
     selectedYear = DateTime.now().year;
     selectedSchool = "";
-    schoolList = schools.schoolList;
-    deptList = schools.deptList;
-    schools.getNameFromExcel();
+    //schoolList = schools.schoolList;
+    //deptList = schools.deptList;
+    //schools.getNameFromExcel();
+
+    schoolList = ["테스트대학교"];
+    deptList = ["테스트학과"];
 
     setState(() {});
   }
@@ -182,7 +185,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           onChanged: (value) {
                             //학교가 선택되면 학과 선택이 활성화됨.
                             selectedSchool = value!;
-                            schools.getDeptFromExcel(selectedSchool);
+                            //schools.getDeptFromExcel(selectedSchool);
                             selectedSchool.isEmpty
                                 ? isReady = false
                                 : isReady = true;

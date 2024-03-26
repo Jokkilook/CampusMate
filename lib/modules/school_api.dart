@@ -93,6 +93,7 @@ class SchoolAPI {
       schoolList.toSet().toList();
       schoolList.removeWhere((element) => element.contains("학원"));
       schoolList.removeAt(0);
+      schoolList.sort();
     }
   }
 
@@ -111,6 +112,7 @@ class SchoolAPI {
     deptList.toSet().toList();
     //deptList.removeWhere((element) => element.contains("학원"));
     deptList.removeAt(0);
+    schoolList.sort();
   }
   //2:학교이름 10:학과이름 13:상태
 }

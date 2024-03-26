@@ -1,6 +1,8 @@
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ProfilScreen extends StatelessWidget {
   ProfilScreen({
@@ -113,6 +115,12 @@ class ProfilScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 width: double.infinity,
                 decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        offset: const Offset(0, 0),
+                        blurRadius: 2)
+                  ],
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -140,7 +148,7 @@ class ProfilScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Column(
@@ -166,7 +174,7 @@ class ProfilScreen extends StatelessWidget {
                           horizontal: 15, vertical: 10),
                       height: 105,
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -190,10 +198,11 @@ class ProfilScreen extends StatelessWidget {
                             ),
                           ),
                           VerticalDivider(
+                            width: 30,
                             color: Colors.grey[400],
                             thickness: 1.0,
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -201,22 +210,30 @@ class ProfilScreen extends StatelessWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      '매너학점',
+                                    const Text(
+                                      '매너학점 ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Icon(
-                                      Icons.help_outline,
-                                      size: 16,
+                                    GestureDetector(
+                                      onTap: () {
+                                        //매너학점이 뭔지 알려주는 안내 카드 출력
+                                        print("test");
+                                      },
+                                      child: const Icon(Icons.help_outline,
+                                          size: 16, color: Colors.black45),
                                     ),
                                   ],
                                 ),
-                                Text(
-                                  'B+',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
+                                const Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      'B+',
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -232,7 +249,7 @@ class ProfilScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Expanded(
@@ -262,25 +279,27 @@ class ProfilScreen extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              '시간표',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              child: Text(
+                                '시간표',
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            ScheduleTable(
-                                scheduleData: totalSchedule, readOnly: true),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                              child: ScheduleTable(
+                                  scheduleData: totalSchedule, readOnly: true),
+                            ),
                           ],
                         ),
                       ),

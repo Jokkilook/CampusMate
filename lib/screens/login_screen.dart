@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:campusmate/screens/regist_screen_a.dart';
+import 'package:crypto/crypto.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -6,6 +10,7 @@ class LoginScreen extends StatelessWidget {
 
   TextEditingController idController = TextEditingController();
   TextEditingController pwContorlloer = TextEditingController();
+  final firebaseAuth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +130,9 @@ class LoginScreen extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              login();
+                            },
                             child: const Text(
                               "로그인",
                               style: TextStyle(
@@ -149,5 +156,14 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void login() async {
+    try {
+      await firebaseAuth.signInWithEmailAndPassword(
+          email: idController.value.text,
+          password:
+              sha256.convert(utf8.encode(pwContorlloer.value.text)).toString());
+    } catch (e) {}
   }
 }

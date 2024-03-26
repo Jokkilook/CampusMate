@@ -58,7 +58,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
     if (email.contains(".ac.kr")) {
       return true;
     }
-    return false;
+    return true;
   }
 
   @override
