@@ -4,7 +4,6 @@ import 'package:campusmate/modules/school_api.dart';
 import 'package:campusmate/screens/regist_screen_b.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class RegistScreenA extends StatefulWidget {
   const RegistScreenA({super.key});

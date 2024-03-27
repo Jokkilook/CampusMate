@@ -1,8 +1,9 @@
+import 'package:campusmate/models/schedule_data.dart';
 import 'package:flutter/material.dart';
 
 //시간표 출력하는 위젯. 매개변수로 유저의 시간표 데이터를 넣어줘야한다.
 class ScheduleTable extends StatefulWidget {
-  final List<Map<String, bool>> scheduleData;
+  final ScheduleData scheduleData;
   bool readOnly;
 
   ScheduleTable({super.key, required this.scheduleData, this.readOnly = false});
@@ -29,7 +30,13 @@ class _ScheduleTableState extends State<ScheduleTable> {
     "19:00 ~ 20:00",
   ];
 
-  late List<Map<String, bool>> totalSchedule = [];
+  late List<Map<String, bool>> totalSchedule = [
+    widget.scheduleData.mon,
+    widget.scheduleData.tue,
+    widget.scheduleData.wed,
+    widget.scheduleData.thu,
+    widget.scheduleData.fri,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +69,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
                     )))
             ],
           ),
-          for (var day in widget.scheduleData)
+          for (var day in totalSchedule)
             Expanded(
               flex: 8,
               child: Column(

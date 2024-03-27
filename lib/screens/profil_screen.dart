@@ -1,13 +1,12 @@
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProfilScreen extends StatelessWidget {
-  ProfilScreen({
-    super.key,
-  });
+  ProfilScreen({super.key, required this.userData});
+
+  final UserData userData;
 
   late List<Map<String, bool>> totalSchedule;
 
@@ -25,7 +24,6 @@ class ProfilScreen extends StatelessWidget {
     "MON18": true,
     "MON19": true,
   };
-
   Map<String, bool> tueSchedule = {
     "TUE08": true,
     "TUE09": true,
@@ -40,7 +38,6 @@ class ProfilScreen extends StatelessWidget {
     "TUE18": true,
     "TUE19": true,
   };
-
   Map<String, bool> wedSchedule = {
     "WED08": true,
     "WED09": true,
@@ -55,7 +52,6 @@ class ProfilScreen extends StatelessWidget {
     "WED18": true,
     "WED19": true,
   };
-
   Map<String, bool> thuSchedule = {
     "THU08": true,
     "THU09": true,
@@ -70,7 +66,6 @@ class ProfilScreen extends StatelessWidget {
     "THU18": true,
     "THU19": true,
   };
-
   Map<String, bool> friSchedule = {
     "FRI08": true,
     "FRI09": true,
@@ -89,11 +84,11 @@ class ProfilScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     totalSchedule = [
-      monSchedule,
-      tueSchedule,
-      wedSchedule,
-      thuSchedule,
-      friSchedule
+      userData.schedule!.mon,
+      userData.schedule!.tue,
+      userData.schedule!.wed,
+      userData.schedule!.thu,
+      userData.schedule!.fri,
     ];
 
     return Scaffold(
@@ -298,7 +293,8 @@ class ProfilScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                               child: ScheduleTable(
-                                  scheduleData: totalSchedule, readOnly: true),
+                                  scheduleData: userData.schedule!,
+                                  readOnly: true),
                             ),
                           ],
                         ),

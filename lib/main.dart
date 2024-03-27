@@ -1,3 +1,5 @@
+import 'package:campusmate/firebase_test.dart';
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/profile_setting_a.dart';
 import 'package:campusmate/screens/profile_setting_b.dart';
 import 'package:campusmate/screens/profile_setting_c.dart';
@@ -30,6 +32,8 @@ class ScreenList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseTest().initFirebase();
+
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -79,7 +83,8 @@ class ScreenList extends StatelessWidget {
                   const Text("ProfileSettingC", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ProfileSettingC()),
+                MaterialPageRoute(
+                    builder: (_) => ProfileSettingC(userData: UserData())),
               ),
             ),
 
@@ -88,7 +93,10 @@ class ScreenList extends StatelessWidget {
               title: const Text("ProfilScreen", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => ProfilScreen()),
+                MaterialPageRoute(
+                    builder: (_) => ProfilScreen(
+                          userData: UserData(),
+                        )),
               ),
             ),
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:campusmate/models/user_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,25 +26,27 @@ class _RegistScreenCState extends State<RegistScreenC> {
   bool isCorrect = false;
   bool checkStart = false;
 
-  final firebaseAuth = FirebaseAuth.instance;
+  final auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
     //유저 데이터에 저장된 이메일 가져오기
+    print(auth.currentUser!.getIdToken());
 
     setState(() {});
   }
 
   void regist() async {
-    await firebaseAuth.createUserWithEmailAndPassword(
+    await auth.createUserWithEmailAndPassword(
         email: widget.newUserData.email.toString(),
         password: widget.newUserData.password.toString());
   }
 
   void login() async {
     try {
-      await firebaseAuth.signInWithEmailAndPassword(
+      await auth.signInWithEmailAndPassword(
           email: widget.newUserData.email.toString(),
           password: widget.newUserData.password.toString());
     } catch (e) {}
@@ -314,6 +317,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                   widget.newUserData.password = crypto;
                   regist();
                   login();
+                  widget.newUserData.uid = auth.currentUser!.uid;
                 }
               : null,
           child: Text(

@@ -1,8 +1,10 @@
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingC extends StatefulWidget {
-  const ProfileSettingC({super.key});
+  const ProfileSettingC({super.key, required this.userData});
+  final UserData userData;
 
   @override
   State<ProfileSettingC> createState() => _ProfileSettingCState();
@@ -97,11 +99,11 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
   @override
   Widget build(BuildContext context) {
     totalSchedule = [
-      monSchedule,
-      tueSchedule,
-      wedSchedule,
-      thuSchedule,
-      friSchedule
+      widget.userData.schedule!.mon,
+      widget.userData.schedule!.tue,
+      widget.userData.schedule!.wed,
+      widget.userData.schedule!.thu,
+      widget.userData.schedule!.fri,
     ];
 
     return Scaffold(
@@ -161,7 +163,7 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
                       ),
                       const SizedBox(height: 5),
                       ScheduleTable(
-                        scheduleData: totalSchedule,
+                        scheduleData: widget.userData.schedule!,
                       )
                     ]),
               ],
