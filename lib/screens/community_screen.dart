@@ -47,7 +47,7 @@ class CommunityScreen extends StatelessWidget {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TabBarView(
             children: [
               // 일반 게시판
@@ -59,6 +59,7 @@ class CommunityScreen extends StatelessWidget {
                     if (index == 0 || (index + 1) % 10 == 0) {
                       return const Column(
                         children: [
+                          SizedBox(height: 12),
                           AdArea(),
                           GeneralBoardItem(),
                         ],
@@ -78,6 +79,7 @@ class CommunityScreen extends StatelessWidget {
                     if (index == 0 || (index + 1) % 10 == 0) {
                       return const Column(
                         children: [
+                          SizedBox(height: 12),
                           AdArea(),
                           AnonymousBoardItem(),
                         ],
