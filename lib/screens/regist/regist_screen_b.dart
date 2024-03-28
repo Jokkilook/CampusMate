@@ -1,6 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
-import 'package:campusmate/screens/regist_screen_c.dart';
+import 'package:campusmate/screens/regist/regist_screen_c.dart';
+import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
@@ -310,35 +311,21 @@ class _RegistScreenBState extends State<RegistScreenB> {
           ),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(40),
-        child: ElevatedButton(
-          onPressed: isCompleted
-              ? () {
-                  /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
-                  widget.newUserData.email = widget.emailController.value.text;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            RegistScreenC(newUserData: widget.newUserData),
-                      ));
-                }
-              : null,
-          child: Text(
-            "다음",
-            style: TextStyle(
-                color: isCompleted ? const Color(0xFF0A351E) : Colors.black45,
-                fontSize: 18,
-                fontWeight: FontWeight.bold),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2BB56B),
-            minimumSize: const Size(10000, 60),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
+      bottomNavigationBar: BottomButton(
+        text: "다음",
+        isCompleted: isCompleted,
+        onPressed: isCompleted
+            ? () {
+                /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
+                widget.newUserData.email = widget.emailController.value.text;
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          RegistScreenC(newUserData: widget.newUserData),
+                    ));
+              }
+            : null,
       ),
     );
   }

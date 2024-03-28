@@ -1,5 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
 
@@ -98,30 +99,14 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
           ),
         ]),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(40),
-        child: ElevatedButton(
-          onPressed: true
-              ? () {
-                  /* 태그 리스트 데이터베이스에 삽입 */
-                  widget.userData.schedule.schedule = totalSchedule;
-                  db.addUser(widget.userData);
-                }
-              : null,
-          child: const Text(
-            "완료",
-            style: TextStyle(
-                color: true ? Color(0xFF0A351E) : Colors.black45,
-                fontSize: 18,
-                fontWeight: FontWeight.bold),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2BB56B),
-            minimumSize: const Size(10000, 60),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
+      bottomNavigationBar: BottomButton(
+        text: "다음",
+        isCompleted: true,
+        onPressed: () {
+          /* 태그 리스트 데이터베이스에 삽입 */
+          widget.userData.schedule.schedule = totalSchedule;
+          db.addUser(widget.userData);
+        },
       ),
     );
   }

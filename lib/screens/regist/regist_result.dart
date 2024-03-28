@@ -1,5 +1,5 @@
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/screens/profile_setting_a.dart';
+import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:flutter/material.dart';
 
 class RegistResult extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/screens/regist_screen_a.dart';
+import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

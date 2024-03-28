@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/screens/regist_result.dart';
+import 'package:campusmate/screens/regist/regist_result.dart';
+import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -307,46 +308,30 @@ class _RegistScreenCState extends State<RegistScreenC> {
           ),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(40),
-        child: ElevatedButton(
-          onPressed: pwController.value.text.isNotEmpty &&
-                  nickController.value.text.isNotEmpty &&
-                  isCorrect
-              ? () {
-                  /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
-                  widget.newUserData.name = nickController.value.text;
-                  widget.newUserData.password = crypto;
-                  regist();
-                  login();
-                  widget.newUserData.uid = auth.currentUser!.uid;
-                  db.addUser(widget.newUserData);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            RegistResult(userData: widget.newUserData),
-                      ));
-                }
-              : null,
-          child: Text(
-            "다음",
-            style: TextStyle(
-                color: pwController.value.text.isNotEmpty &&
-                        nickController.value.text.isNotEmpty &&
-                        isCorrect
-                    ? const Color(0xFF0A351E)
-                    : Colors.black45,
-                fontSize: 18,
-                fontWeight: FontWeight.bold),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2BB56B),
-            minimumSize: const Size(10000, 60),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
+      bottomNavigationBar: BottomButton(
+        text: "다음",
+        isCompleted: pwController.value.text.isNotEmpty &&
+            nickController.value.text.isNotEmpty &&
+            isCorrect,
+        onPressed: pwController.value.text.isNotEmpty &&
+                nickController.value.text.isNotEmpty &&
+                isCorrect
+            ? () {
+                /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
+                widget.newUserData.name = nickController.value.text;
+                widget.newUserData.password = crypto;
+                regist();
+                login();
+                widget.newUserData.uid = auth.currentUser!.uid;
+                db.addUser(widget.newUserData);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          RegistResult(userData: widget.newUserData),
+                    ));
+              }
+            : null,
       ),
     );
   }

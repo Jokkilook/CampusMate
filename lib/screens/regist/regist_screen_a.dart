@@ -1,7 +1,8 @@
 import 'package:campusmate/models/schoolModel.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/school_api.dart';
-import 'package:campusmate/screens/regist_screen_b.dart';
+import 'package:campusmate/screens/regist/regist_screen_b.dart';
+import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
@@ -258,39 +259,24 @@ class _RegistScreenAState extends State<RegistScreenA> {
           ),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(40),
-        child: ElevatedButton(
-          //다음 버튼
-          onPressed: isCompleted
-              ? () {
-                  /* 다음 버튼을 누르면 선택된 연도,학교,학과를 저장 */
-                  newUserData.enterYear = selectedYear;
-                  newUserData.school = selectedSchool;
-                  newUserData.dept = selectedDept;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RegistScreenB(
-                          newUserData: newUserData,
-                        ),
-                      ));
-                }
-              : null,
-          child: Text(
-            "다음",
-            style: TextStyle(
-                color: isCompleted ? const Color(0xFF0A351E) : Colors.black45,
-                fontSize: 18,
-                fontWeight: FontWeight.bold),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2BB56B),
-            minimumSize: const Size(10000, 60),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
+      bottomNavigationBar: BottomButton(
+        text: "다음",
+        isCompleted: isCompleted,
+        onPressed: isCompleted
+            ? () {
+                /* 다음 버튼을 누르면 선택된 연도,학교,학과를 저장 */
+                newUserData.enterYear = selectedYear;
+                newUserData.school = selectedSchool;
+                newUserData.dept = selectedDept;
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegistScreenB(
+                        newUserData: newUserData,
+                      ),
+                    ));
+              }
+            : null,
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/screens/profile_setting_b.dart';
+import 'package:campusmate/screens/profile/profile_setting_b.dart';
+import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingA extends StatefulWidget {
@@ -503,49 +504,33 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(40),
-        child: ElevatedButton(
-          onPressed: age > 0 && introController.value.text.isNotEmpty
-              ? () {
-                  /* 나이 성별 소개 MBTI 데이터베이스에 삽입 */
-                  widget.userData.age = int.parse(ageController.value.text);
-                  widget.userData.gender = gender;
-                  widget.userData.introduce = introController.value.text;
-                  var mbti = [];
-                  EI ? mbti.add("E") : mbti.add("I");
-                  NS ? mbti.add("N") : mbti.add("S");
-                  TF ? mbti.add("T") : mbti.add("F");
-                  PJ ? mbti.add("P") : mbti.add("J");
-                  widget.userData.mbti =
-                      "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
-                  print("${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}");
+      bottomNavigationBar: BottomButton(
+        text: "다음",
+        isCompleted: age > 0 && introController.value.text.isNotEmpty,
+        onPressed: age > 0 && introController.value.text.isNotEmpty
+            ? () {
+                /* 나이 성별 소개 MBTI 데이터베이스에 삽입 */
+                widget.userData.age = int.parse(ageController.value.text);
+                widget.userData.gender = gender;
+                widget.userData.introduce = introController.value.text;
+                var mbti = [];
+                EI ? mbti.add("E") : mbti.add("I");
+                NS ? mbti.add("N") : mbti.add("S");
+                TF ? mbti.add("T") : mbti.add("F");
+                PJ ? mbti.add("P") : mbti.add("J");
+                widget.userData.mbti =
+                    "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
+                print("${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}");
 
-                  db.addUser(widget.userData);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileSettingB(userData: widget.userData),
-                      ));
-                }
-              : null,
-          child: Text(
-            "다음",
-            style: TextStyle(
-                color: age > 0 && introduce.isNotEmpty
-                    ? const Color(0xFF0A351E)
-                    : Colors.black45,
-                fontSize: 18,
-                fontWeight: FontWeight.bold),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2BB56B),
-            minimumSize: const Size(10000, 60),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
+                db.addUser(widget.userData);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ProfileSettingB(userData: widget.userData),
+                    ));
+              }
+            : null,
       ),
     );
   }
