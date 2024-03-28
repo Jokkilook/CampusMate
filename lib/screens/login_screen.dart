@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/regist_screen_a.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,24 +14,11 @@ class LoginScreen extends StatelessWidget {
   TextEditingController idController = TextEditingController();
   TextEditingController pwContorlloer = TextEditingController();
   final firebaseAuth = FirebaseAuth.instance;
-  final db = FirebaseFirestore.instance;
-  final userData = UserData();
-
-  void set() {
-    userData.name = "jo";
-    userData.age = 24;
-    userData.dept = "테스트학과";
-    userData.email = "ppkw2001@gmail.com";
-    userData.password = sha256.convert(utf8.encode("qkrrhksdn")).toString();
-    userData.enterYear = 2020;
-    userData.gender = true;
-    userData.schedule = ScheduleData();
-  }
+  final db = DataBase();
+  late UserData userData;
 
   @override
   Widget build(BuildContext context) {
-    set();
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -42,37 +29,23 @@ class LoginScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 60),
                 child: Column(
                   children: [
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "학교에서 친구찾기",
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF838383)),
                         ),
-                        const Text(
+                        Text(
                           "캠퍼스 메이트",
                           style: TextStyle(
                               fontSize: 50,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF838383)),
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              firebaseAuth.signInWithEmailAndPassword(
-                                  email: userData.email!,
-                                  password: userData.password!);
-                              print(firebaseAuth.currentUser!.uid);
-                              db
-                                  .collection("test")
-                                  .doc("tests")
-                                  .set(userData.data!)
-                                  .onError((error, stackTrace) =>
-                                      print(error.toString()));
-                            },
-                            child: const Text("Auth Test"))
                       ],
                     ),
                     const SizedBox(height: 100),

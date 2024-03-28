@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/regist_result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,7 +29,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
   bool checkStart = false;
 
   final auth = FirebaseAuth.instance;
-  final db = FirebaseFirestore.instance;
+  final db = DataBase();
 
   @override
   void initState() {
@@ -318,6 +320,13 @@ class _RegistScreenCState extends State<RegistScreenC> {
                   regist();
                   login();
                   widget.newUserData.uid = auth.currentUser!.uid;
+                  db.addUser(widget.newUserData);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            RegistResult(userData: widget.newUserData),
+                      ));
                 }
               : null,
           child: Text(

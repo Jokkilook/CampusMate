@@ -1,8 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/profile_setting_c.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingB extends StatefulWidget {
-  const ProfileSettingB({super.key});
+  const ProfileSettingB({super.key, required this.userData});
+  final UserData userData;
 
   @override
   State<ProfileSettingB> createState() => _ProfileSettingBState();
@@ -12,6 +15,8 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
   late int age;
   late String introduce;
   late List<String> userTag = [];
+
+  final db = DataBase();
 
   //테스트 태그 리스트
   var tagList = [
@@ -160,7 +165,19 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(40),
         child: ElevatedButton(
-          onPressed: userTag.isNotEmpty ? () {/* 태그 리스트 데이터베이스에 삽입 */} : null,
+          onPressed: userTag.isNotEmpty
+              ? () {
+                  /* 태그 리스트 데이터베이스에 삽입 */
+                  widget.userData.tags = userTag;
+                  db.addUser(widget.userData);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileSettingC(userData: widget.userData),
+                      ));
+                }
+              : null,
           child: Text(
             "다음",
             style: TextStyle(

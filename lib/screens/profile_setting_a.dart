@@ -1,9 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/profile_setting_b.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProfileSettingA extends StatefulWidget {
-  const ProfileSettingA({super.key});
+  ProfileSettingA({super.key, required this.userData});
+  UserData userData;
 
   @override
   State<ProfileSettingA> createState() => _ProfileSettingAState();
@@ -13,7 +15,9 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
   late int age;
   late String introduce;
 
-  final ageController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController introController = TextEditingController();
+  final db = DataBase();
 
   bool isCompleted = false;
 
@@ -200,12 +204,9 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                           child: SizedBox(
                             height: 150,
                             child: TextField(
+                              controller: introController,
                               maxLines: 20,
                               keyboardType: TextInputType.multiline,
-                              onChanged: (value) {
-                                introduce = value;
-                                setState(() {});
-                              },
                               decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -505,8 +506,29 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(40),
         child: ElevatedButton(
-          onPressed: age > 0 && introduce.isNotEmpty
-              ? () {/* 나이 성별 소개 MBTI 데이터베이스에 삽입 */}
+          onPressed: age > 0 && introController.value.text.isNotEmpty
+              ? () {
+                  /* 나이 성별 소개 MBTI 데이터베이스에 삽입 */
+                  widget.userData.age = int.parse(ageController.value.text);
+                  widget.userData.gender = gender;
+                  widget.userData.introduce = introController.value.text;
+                  var mbti = [];
+                  EI ? mbti.add("E") : mbti.add("I");
+                  NS ? mbti.add("N") : mbti.add("S");
+                  TF ? mbti.add("T") : mbti.add("F");
+                  PJ ? mbti.add("P") : mbti.add("J");
+                  widget.userData.mbti =
+                      "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
+                  print("${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}");
+
+                  db.addUser(widget.userData);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileSettingB(userData: widget.userData),
+                      ));
+                }
               : null,
           child: Text(
             "다음",

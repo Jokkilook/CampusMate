@@ -3,6 +3,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/profile_setting_a.dart';
 import 'package:campusmate/screens/profile_setting_b.dart';
 import 'package:campusmate/screens/profile_setting_c.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/regist_screen_a.dart';
@@ -63,7 +64,8 @@ class ScreenList extends StatelessWidget {
                   const Text("ProfileSettingA", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ProfileSettingA()),
+                MaterialPageRoute(
+                    builder: (_) => ProfileSettingA(userData: UserData())),
               ),
             ),
 
@@ -73,7 +75,8 @@ class ScreenList extends StatelessWidget {
                   const Text("ProfileSettingB", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ProfileSettingB()),
+                MaterialPageRoute(
+                    builder: (_) => ProfileSettingB(userData: UserData())),
               ),
             ),
 

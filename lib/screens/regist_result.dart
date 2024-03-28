@@ -1,7 +1,10 @@
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/profile_setting_a.dart';
 import 'package:flutter/material.dart';
 
 class RegistResult extends StatelessWidget {
-  const RegistResult({super.key});
+  RegistResult({super.key, required this.userData});
+  UserData userData;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,14 @@ class RegistResult extends StatelessWidget {
             ),
             const SizedBox(height: 50),
             ElevatedButton(
-              onPressed: () {/* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */},
+              onPressed: () {
+                /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileSettingA(userData: userData),
+                    ));
+              },
               child: const Text(
                 "프로필 설정하기",
                 style: TextStyle(
