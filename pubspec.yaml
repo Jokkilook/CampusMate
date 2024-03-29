@@ -1,6 +1,6 @@
 name: campusmate
 description: A new Flutter project.
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -29,6 +29,5 @@ dev_dependencies:
 
 flutter:
   assets:
-   - assets/ # assets 폴더의 모든 이미지를 불러옴
+    - assets/ # assets 폴더의 모든 이미지를 불러옴
   uses-material-design: true
-  
