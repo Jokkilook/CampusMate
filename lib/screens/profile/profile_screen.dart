@@ -12,7 +12,7 @@ class ProfilScreen extends StatelessWidget {
   late List<Map<String, bool>> totalSchedule;
 
   final db = DataBase();
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final uid = "be5g1pnzgLQGF8ICgXQyxHeIbH82";
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +30,12 @@ class ProfilScreen extends StatelessWidget {
             return const Center(
               child: CircularProgressIndicator(),
             );
-            if (snapshot.hasError) {
-              throw Error();
-            }
+          }
+          if (snapshot.hasError) {
+            throw Error();
           } else {
-            return wholeProfile(UserData.fromJson(
-                snapshot.data!.data() as Map<String, dynamic>));
+            var data = snapshot.data!.data() as Map<String, dynamic>;
+            return wholeProfile(UserData.fromJson(data));
           }
         },
       ),
@@ -187,7 +187,7 @@ class ProfilScreen extends StatelessWidget {
                     width: double.infinity,
                     margin: const EdgeInsets.only(top: 8),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
+                        horizontal: 15, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(10),

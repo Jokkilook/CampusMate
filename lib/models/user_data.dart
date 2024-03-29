@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:crypto/crypto.dart';
@@ -14,6 +15,7 @@ class UserData {
   int? age;
   bool? gender;
   String? introduce;
+  Double? score;
   String? mbti;
   List<dynamic>? tags;
   ScheduleData schedule = ScheduleData();
@@ -31,6 +33,7 @@ class UserData {
       this.age,
       this.gender,
       this.introduce,
+      this.score,
       this.mbti,
       this.tags}) {
     data = {
@@ -44,6 +47,7 @@ class UserData {
       "age": age,
       "gender": gender,
       "introduce": introduce,
+      "score": score,
       "mbti": mbti,
       "tags": tags,
       "schedule": schedule.schedule
@@ -63,9 +67,18 @@ class UserData {
     introduce = json["introduce"];
     mbti = json["mbti"];
     tags = json["tags"];
-    // final List<Map<String, bool>> list = json["schedule"];
-    // schedule = ScheduleData();
-    // schedule.schedule = list;
+    //DB에서 가져온 데이터는 List<dynamic>이 되어버려서 다시 List<Map<String, bool>> 타입으로 변환해주어야한다.
+    schedule.schedule = (json["schedule"] as List)
+        .map((e) => Map<String, bool>.from(e))
+        .toList();
+
+    //왠진 몰라도 요일속 시간 순서가 뒤죽박죽이 되어서 다시 정렬해줘야함..정렬하는 코드
+    var num = 0;
+    for (var map in schedule.schedule) {
+      schedule.schedule[num] = Map.fromEntries(
+          map.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
+      num++;
+    }
 
     data = {
       "uid": uid,

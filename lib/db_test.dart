@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class DBTest extends StatelessWidget {
   DBTest({super.key});
   final db = DataBase();
-  final uid = "NmD3grykMqXaoc0famvykP0Trqc2";
+  final uid = "be5g1pnzgLQGF8ICgXQyxHeIbH82";
   Map<String, dynamic>? data;
 
   @override
@@ -23,13 +23,13 @@ class DBTest extends StatelessWidget {
             const Text("Start"),
             ElevatedButton(
               onPressed: () {
-                // final b = db.db.collection("users").doc(uid);
-                // b.get().then((value) => print(value.data()!["name"]));
-                // b.get().then((value) {
-                //   print(value.data()!);
-                // });
-                print(FirebaseAuth.instance.currentUser!.email.toString());
-                print(FirebaseAuth.instance.currentUser!.uid.toString());
+                final b = db.db.collection("users").doc(uid);
+                b.get().then((value) => print(value.data()!["name"]));
+                b.get().then((value) {
+                  print(value.data()!["schedule"]);
+                });
+                // print(FirebaseAuth.instance.currentUser!.email.toString());
+                // print(FirebaseAuth.instance.currentUser!.uid.toString());
               },
               child: const Text("외않되"),
             )

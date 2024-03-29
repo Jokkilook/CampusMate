@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/regist/regist_screen_a.dart';
 import 'screens/community_screen.dart';
-import 'screens/profile/profil_screen.dart';
+import 'screens/profile/profile_screen.dart';
 
 void main() {
   runApp(const MyApp());

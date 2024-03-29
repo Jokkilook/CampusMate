@@ -41,6 +41,20 @@ class _RegistScreenCState extends State<RegistScreenC> {
     setState(() {});
   }
 
+  void regist() async {
+    await auth.createUserWithEmailAndPassword(
+        email: widget.newUserData.email.toString(),
+        password: widget.newUserData.password.toString());
+  }
+
+  void login() async {
+    try {
+      await auth.signInWithEmailAndPassword(
+          email: widget.newUserData.email.toString(),
+          password: widget.newUserData.password.toString());
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -274,6 +288,18 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             ),
                           ),
                           const SizedBox(height: 10),
+                          Text(
+                              "${widget.newUserData.enterYear} ${widget.newUserData.school} ${widget.newUserData.dept} ${widget.newUserData.email}"),
+                          ElevatedButton(
+                              onPressed: () {
+                                var bytes =
+                                    utf8.encode(pwConfirmController.value.text);
+                                var digest = sha256.convert(bytes);
+                                crypto = digest.toString();
+
+                                setState(() {});
+                              },
+                              child: const Text("crypto button")),
                         ]),
                   ],
                 ),
@@ -292,16 +318,10 @@ class _RegistScreenCState extends State<RegistScreenC> {
                 isCorrect
             ? () {
                 /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
-                //비밀번호 암호화
-                var bytes = utf8.encode(pwConfirmController.value.text);
-                var digest = sha256.convert(bytes);
-                crypto = digest.toString();
-
                 widget.newUserData.name = nickController.value.text;
                 widget.newUserData.password = crypto;
                 regist();
                 login();
-                const Duration(seconds: 2);
                 widget.newUserData.uid = auth.currentUser!.uid;
                 db.addUser(widget.newUserData);
                 Navigator.push(
@@ -314,19 +334,5 @@ class _RegistScreenCState extends State<RegistScreenC> {
             : null,
       ),
     );
-  }
-
-  void regist() async {
-    await auth.createUserWithEmailAndPassword(
-        email: widget.newUserData.email.toString(),
-        password: widget.newUserData.password.toString());
-  }
-
-  void login() async {
-    try {
-      await auth.signInWithEmailAndPassword(
-          email: widget.newUserData.email.toString(),
-          password: widget.newUserData.password.toString());
-    } catch (e) {}
   }
 }

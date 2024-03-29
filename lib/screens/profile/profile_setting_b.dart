@@ -155,6 +155,7 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                               ),
                           ],
                         ),
+                        //Text("디버그용 출력 리스트 / $userTag / ${userTag.length}")
                       ]),
                 ],
               ),

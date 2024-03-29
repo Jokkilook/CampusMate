@@ -79,4 +79,8 @@ class ScheduleData {
   ScheduleData() {
     schedule = [mon, tue, wed, thu, fri];
   }
+
+  void reset() {
+    schedule = [mon, tue, wed, thu, fri];
+  }
 }

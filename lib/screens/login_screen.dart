@@ -4,7 +4,7 @@ import 'package:campusmate/db_test.dart';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/screens/profile/profil_screen.dart';
+import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -31,11 +31,11 @@ class _ScheduleTableState extends State<ScheduleTable> {
   ];
 
   late List<Map<String, bool>> totalSchedule = [
-    widget.scheduleData.mon,
-    widget.scheduleData.tue,
-    widget.scheduleData.wed,
-    widget.scheduleData.thu,
-    widget.scheduleData.fri,
+    widget.scheduleData.schedule[0],
+    widget.scheduleData.schedule[1],
+    widget.scheduleData.schedule[2],
+    widget.scheduleData.schedule[3],
+    widget.scheduleData.schedule[4],
   ];
 
   @override
