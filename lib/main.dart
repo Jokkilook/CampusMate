@@ -1,3 +1,4 @@
+import 'package:campusmate/db_test.dart';
 import 'package:campusmate/firebase_test.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
@@ -110,6 +111,15 @@ class ScreenList extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const CommunityScreen()),
+              ),
+            ),
+
+            /// DB TEST
+            ListTile(
+              title: const Text("DB TEST", style: TextStyle(fontSize: 24)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => DBTest()),
               ),
             ),
           ],

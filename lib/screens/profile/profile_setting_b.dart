@@ -1,7 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
-import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingB extends StatefulWidget {
@@ -155,7 +155,6 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                               ),
                           ],
                         ),
-                        //Text("디버그용 출력 리스트 / $userTag / ${userTag.length}")
                       ]),
                 ],
               ),

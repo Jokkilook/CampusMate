@@ -84,11 +84,11 @@ class ProfilScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     totalSchedule = [
-      userData.schedule!.mon,
-      userData.schedule!.tue,
-      userData.schedule!.wed,
-      userData.schedule!.thu,
-      userData.schedule!.fri,
+      userData.schedule.mon,
+      userData.schedule.tue,
+      userData.schedule.wed,
+      userData.schedule.thu,
+      userData.schedule.fri,
     ];
 
     return Scaffold(
@@ -293,7 +293,7 @@ class ProfilScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                               child: ScheduleTable(
-                                  scheduleData: userData.schedule!,
+                                  scheduleData: userData.schedule,
                                   readOnly: true),
                             ),
                           ],

@@ -3,33 +3,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class DataBase {
-  late final FirebaseFirestore db;
-
-  DataBase() {
-    db = FirebaseFirestore.instance;
-  }
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
   UserData getUser(String uid) {
     UserData userData = UserData();
+    late final Map<String, dynamic> data;
+    final ref = db.collection("users").doc(uid);
 
-    db.collection("users").doc(uid).get().then((value) {
-      final data = value.data() as Map<String, dynamic>;
+    ref.get().then((value) => data = value.data()!);
 
-      userData.data = data;
-      userData.uid = data["uid"];
-      userData.name = data["name"];
-      userData.school = data["school"];
-      userData.dept = data["dept"];
-      userData.email = data["email"];
-      userData.password = data["password"];
-      userData.enterYear = data["enterYear"];
-      userData.age = data["age"];
-      userData.gender = data["gender"];
-      userData.introduce = data["introduce"];
-      userData.mbti = data["mbti"];
-      userData.tags = data["tags"];
-      userData.schedule = data["schedule"];
-    }, onError: (e) => debugPrint("Error getting document: $e"));
+    // userData.data = data;
+    // userData.uid = data["uid"];
+    // userData.name = data["name"];
+    // userData.school = data["school"];
+    // userData.dept = data["dept"];
+    // userData.email = data["email"];
+    // userData.password = data["password"];
+    // userData.enterYear = data["enterYear"];
+    // userData.age = data["age"];
+    // userData.gender = data["gender"];
+    // userData.introduce = data["introduce"];
+    // userData.mbti = data["mbti"];
+    // userData.tags = data["tags"];
+    // userData.schedule = data["schedule"];
+
+    print(data["name"]);
+
     return userData;
   }
 

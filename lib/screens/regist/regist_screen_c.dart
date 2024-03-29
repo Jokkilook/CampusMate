@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
-import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -288,18 +288,6 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Text(
-                              "${widget.newUserData.enterYear} ${widget.newUserData.school} ${widget.newUserData.dept} ${widget.newUserData.email}"),
-                          ElevatedButton(
-                              onPressed: () {
-                                var bytes =
-                                    utf8.encode(pwConfirmController.value.text);
-                                var digest = sha256.convert(bytes);
-                                crypto = digest.toString();
-
-                                setState(() {});
-                              },
-                              child: const Text("crypto button")),
                         ]),
                   ],
                 ),
@@ -318,6 +306,11 @@ class _RegistScreenCState extends State<RegistScreenC> {
                 isCorrect
             ? () {
                 /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
+                //비밀번호 암호화
+                var bytes = utf8.encode(pwConfirmController.value.text);
+                var digest = sha256.convert(bytes);
+                crypto = digest.toString();
+
                 widget.newUserData.name = nickController.value.text;
                 widget.newUserData.password = crypto;
                 regist();

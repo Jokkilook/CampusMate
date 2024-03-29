@@ -1,6 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
 

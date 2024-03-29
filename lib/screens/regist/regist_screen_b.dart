@@ -1,7 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
 import 'package:campusmate/screens/regist/regist_screen_c.dart';
-import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';

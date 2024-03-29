@@ -2,7 +2,7 @@ import 'package:campusmate/models/schoolModel.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/school_api.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
-import 'package:campusmate/screens/regist/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
