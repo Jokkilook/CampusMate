@@ -63,9 +63,9 @@ class UserData {
     introduce = json["introduce"];
     mbti = json["mbti"];
     tags = json["tags"];
-    final List<Map<String, bool>> list = json["schedule"];
-    schedule = ScheduleData();
-    schedule.schedule = list;
+    // final List<Map<String, bool>> list = json["schedule"];
+    // schedule = ScheduleData();
+    // schedule.schedule = list;
 
     data = {
       "uid": uid,

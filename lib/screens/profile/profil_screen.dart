@@ -12,7 +12,7 @@ class ProfilScreen extends StatelessWidget {
   late List<Map<String, bool>> totalSchedule;
 
   final db = DataBase();
-  final uid = "NmD3grykMqXaoc0famvykP0Trqc2";
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +187,7 @@ class ProfilScreen extends StatelessWidget {
                     width: double.infinity,
                     margin: const EdgeInsets.only(top: 8),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
+                        horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(10),
@@ -210,7 +210,21 @@ class ProfilScreen extends StatelessWidget {
                             ),
                           ),
                           const Divider(),
-                          Text('${userData.tags}'),
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              for (var tag in userData.tags!)
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.black12,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 5),
+                                  child: Text(tag.toString()),
+                                )
+                            ],
+                          )
                         ],
                       ),
                     ),

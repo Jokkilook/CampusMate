@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:campusmate/db_test.dart';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
@@ -145,7 +146,7 @@ class LoginScreen extends StatelessWidget {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ProfilScreen(),
+                                        builder: (context) => DBTest(),
                                       ));
                                 }
                               });

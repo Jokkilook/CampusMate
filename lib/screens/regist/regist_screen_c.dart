@@ -41,20 +41,6 @@ class _RegistScreenCState extends State<RegistScreenC> {
     setState(() {});
   }
 
-  void regist() async {
-    await auth.createUserWithEmailAndPassword(
-        email: widget.newUserData.email.toString(),
-        password: widget.newUserData.password.toString());
-  }
-
-  void login() async {
-    try {
-      await auth.signInWithEmailAndPassword(
-          email: widget.newUserData.email.toString(),
-          password: widget.newUserData.password.toString());
-    } catch (e) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -315,6 +301,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                 widget.newUserData.password = crypto;
                 regist();
                 login();
+                const Duration(seconds: 2);
                 widget.newUserData.uid = auth.currentUser!.uid;
                 db.addUser(widget.newUserData);
                 Navigator.push(
@@ -327,5 +314,19 @@ class _RegistScreenCState extends State<RegistScreenC> {
             : null,
       ),
     );
+  }
+
+  void regist() async {
+    await auth.createUserWithEmailAndPassword(
+        email: widget.newUserData.email.toString(),
+        password: widget.newUserData.password.toString());
+  }
+
+  void login() async {
+    try {
+      await auth.signInWithEmailAndPassword(
+          email: widget.newUserData.email.toString(),
+          password: widget.newUserData.password.toString());
+    } catch (e) {}
   }
 }
