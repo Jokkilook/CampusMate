@@ -15,7 +15,7 @@ class UserData {
   bool? gender;
   String? introduce;
   String? mbti;
-  List<String>? tags;
+  List<dynamic>? tags;
   ScheduleData schedule = ScheduleData();
 
   Map<String, dynamic>? data;
@@ -50,7 +50,23 @@ class UserData {
     };
   }
 
-  void setData() {
+  UserData.fromJson(Map<String, dynamic> json) {
+    uid = json["uid"];
+    name = json["name"];
+    school = json["school"];
+    dept = json["dept"];
+    email = json["email"];
+    password = json["password"];
+    enterYear = json["enterYear"];
+    age = json["age"];
+    gender = json["gender"];
+    introduce = json["introduce"];
+    mbti = json["mbti"];
+    tags = json["tags"];
+    final List<Map<String, bool>> list = json["schedule"];
+    schedule = ScheduleData();
+    schedule.schedule = list;
+
     data = {
       "uid": uid,
       "name": name,
@@ -68,16 +84,21 @@ class UserData {
     };
   }
 
-  void set() {
-    uid = "test4";
-    name = "jo";
-    age = 24;
-    dept = "테스트학과";
-    email = "ppkw2001@gmail.com";
-    password = sha256.convert(utf8.encode("qkrrhksdn")).toString();
-    enterYear = 2020;
-    gender = true;
-    schedule = ScheduleData();
-    print("done");
+  void setData() {
+    data = {
+      "uid": uid,
+      "name": name,
+      "school": school,
+      "dept": dept,
+      "email": email,
+      "password": password,
+      "enterYear": enterYear,
+      "age": age,
+      "gender": gender,
+      "introduce": introduce,
+      "mbti": mbti,
+      "tags": tags,
+      "schedule": schedule.schedule
+    };
   }
 }

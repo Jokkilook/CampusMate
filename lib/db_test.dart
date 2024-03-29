@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 class DBTest extends StatelessWidget {
   DBTest({super.key});
   final db = DataBase();
-  late UserData userData;
   final uid = "NmD3grykMqXaoc0famvykP0Trqc2";
+  Map<String, dynamic>? data;
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +22,13 @@ class DBTest extends StatelessWidget {
             const Text("Start"),
             ElevatedButton(
               onPressed: () {
-                // late Map<String, dynamic>? a;
-                // final b = db.db.collection("users").doc(uid);
-                // b.get().then((value) => print(value.data()!["name"]));
-                // b.get().then((value) {
-                //   print(value.data()!);
-                // });
-                userData = db.getUser(uid);
-                print(userData.age);
+                final b = db.db.collection("users").doc(uid);
+                b.get().then((value) => print(value.data()!["name"]));
+                b.get().then((value) {
+                  print(value.data()!);
+                });
               },
-              child: const Text("GET USERDATA"),
+              child: const Text("외않되"),
             )
           ],
         ),

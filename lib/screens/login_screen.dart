@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/profile/profil_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -136,7 +137,18 @@ class LoginScreen extends StatelessWidget {
                           flex: 1,
                           child: ElevatedButton(
                             onPressed: () {
-                              login();
+                              login().then((value) {
+                                if (value) {
+                                  db
+                                      .getUser(firebaseAuth.currentUser!.uid)
+                                      .then((value) => userData = value);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfilScreen(),
+                                      ));
+                                }
+                              });
                             },
                             child: const Text(
                               "로그인",
@@ -163,12 +175,15 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  void login() async {
+  Future<bool> login() async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: idController.value.text,
           password:
               sha256.convert(utf8.encode(pwContorlloer.value.text)).toString());
-    } catch (e) {}
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
