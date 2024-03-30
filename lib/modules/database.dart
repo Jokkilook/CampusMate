@@ -23,9 +23,9 @@ class DataBase {
         .onError((error, stackTrace) => debugPrint(error.toString()));
   }
 
-  void deleteUser(UserData userData) {
+  void deleteUser(String uid) {
     //유저 삭제 코드
-    db.collection("users").doc(userData.uid).delete();
+    db.collection("users").doc(uid).delete();
   }
 
   void updateUser(UserData userData) {}

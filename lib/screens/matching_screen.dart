@@ -20,16 +20,13 @@ class _MatchingScreenState extends State<MatchingScreen> {
         title: const Text("캠퍼스메이트"),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      body: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
         child: Column(
           children: [
-            const AdArea(),
-            const SizedBox(height: 20),
-            Expanded(
-                child: MatchCard(
-              uid: "asd",
-            )),
+            AdArea(),
+            SizedBox(height: 20),
+            Expanded(child: MatchCard()),
           ],
         ),
       ),

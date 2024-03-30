@@ -91,6 +91,7 @@ class UserData {
       "age": age,
       "gender": gender,
       "introduce": introduce,
+      "score": score,
       "mbti": mbti,
       "tags": tags,
       "schedule": schedule.schedule
