@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 //시간표 출력하는 위젯. 매개변수로 유저의 시간표 데이터를 넣어줘야한다.
 class ScheduleTable extends StatefulWidget {
   final ScheduleData scheduleData;
-  bool readOnly;
+  final bool readOnly;
 
-  ScheduleTable({super.key, required this.scheduleData, this.readOnly = false});
+  const ScheduleTable(
+      {super.key, required this.scheduleData, this.readOnly = false});
 
   @override
   State<ScheduleTable> createState() => _ScheduleTableState();

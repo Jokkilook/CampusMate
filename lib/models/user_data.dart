@@ -15,7 +15,7 @@ class UserData {
   int? age;
   bool? gender;
   String? introduce;
-  Double? score;
+  double? score;
   String? mbti;
   List<dynamic>? tags;
   ScheduleData schedule = ScheduleData();
@@ -110,6 +110,7 @@ class UserData {
       "age": age,
       "gender": gender,
       "introduce": introduce,
+      "score": score,
       "mbti": mbti,
       "tags": tags,
       "schedule": schedule.schedule

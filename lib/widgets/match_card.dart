@@ -1,4 +1,3 @@
-import 'package:campusmate/models/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -55,6 +54,27 @@ class MatchCard extends StatelessWidget {
       itemCount: data.length,
       itemBuilder: (context, index) {
         final doc = data[index];
+        late final String score;
+        if (doc.get("score") >= 95) {
+          score = "A+";
+        } else if (doc.get("score") >= 90) {
+          score = "A";
+        } else if (doc.get("score") >= 85) {
+          score = "B+";
+        } else if (doc.get("score") >= 80) {
+          score = "B";
+        } else if (doc.get("score") >= 75) {
+          score = "C+";
+        } else if (doc.get("score") >= 70) {
+          score = "C";
+        } else if (doc.get("score") >= 65) {
+          score = "D+";
+        } else if (doc.get("score") >= 60) {
+          score = "D";
+        } else {
+          score = "F";
+        }
+
         return Column(
           children: [
             const CircleAvatar(
@@ -153,11 +173,11 @@ class MatchCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const Expanded(
+                        Expanded(
                           child: Center(
                             child: Text(
-                              'B+',
-                              style: TextStyle(
+                              score,
+                              style: const TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
                               ),

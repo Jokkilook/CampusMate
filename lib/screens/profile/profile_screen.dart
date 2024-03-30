@@ -48,6 +48,28 @@ class ProfilScreen extends StatelessWidget {
   }
 
   SingleChildScrollView wholeProfile(UserData userData) {
+    late final String score;
+
+    if (userData.score! >= 95) {
+      score = "A+";
+    } else if (userData.score! >= 90) {
+      score = "A";
+    } else if (userData.score! >= 85) {
+      score = "B+";
+    } else if (userData.score! >= 80) {
+      score = "B";
+    } else if (userData.score! >= 75) {
+      score = "C+";
+    } else if (userData.score! >= 70) {
+      score = "C";
+    } else if (userData.score! >= 65) {
+      score = "D+";
+    } else if (userData.score! >= 60) {
+      score = "D";
+    } else {
+      score = "F";
+    }
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -170,11 +192,11 @@ class ProfilScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              const Expanded(
+                              Expanded(
                                 child: Center(
                                   child: Text(
-                                    'B+',
-                                    style: TextStyle(
+                                    score,
+                                    style: const TextStyle(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
                                     ),

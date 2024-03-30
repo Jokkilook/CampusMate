@@ -1,15 +1,10 @@
-import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/modules/user_generator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DBTest extends StatelessWidget {
   DBTest({super.key});
   final db = DataBase();
-  final uid = "be5g1pnzgLQGF8ICgXQyxHeIbH82";
-  Map<String, dynamic>? data;
 
   @override
   Widget build(BuildContext context) {

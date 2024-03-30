@@ -1,11 +1,7 @@
 import 'dart:convert';
-
-import 'package:campusmate/db_test.dart';
-import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/main_screen.dart';
-import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,11 +10,11 @@ import 'package:flutter/material.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  TextEditingController idController = TextEditingController();
-  TextEditingController pwContorlloer = TextEditingController();
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController pwContorlloer = TextEditingController();
   final firebaseAuth = FirebaseAuth.instance;
   final db = DataBase();
-  late UserData userData;
+  late final UserData userData;
 
   @override
   Widget build(BuildContext context) {
