@@ -1,6 +1,7 @@
 import 'package:campusmate/db_test.dart';
 import 'package:campusmate/firebase_test.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
@@ -40,6 +41,15 @@ class ScreenList extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
+            /// MainScreen
+            ListTile(
+              title: const Text("MainScreen", style: TextStyle(fontSize: 24)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MainScreen()),
+              ),
+            ),
+
             /// LoginScreen
             ListTile(
               title: const Text("LoginScreen", style: TextStyle(fontSize: 24)),

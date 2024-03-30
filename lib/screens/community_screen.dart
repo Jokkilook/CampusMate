@@ -108,21 +108,8 @@ class CommunityScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: (value) {
-            print(value);
-          },
-          elevation: 1,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: "finding"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.chat_bubble), label: "chatting"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.view_list_outlined), label: "community"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle), label: "myInfo"),
-            BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: "more")
-          ],
+        bottomNavigationBar: const SizedBox(
+          height: 70,
         ),
       ),
     );

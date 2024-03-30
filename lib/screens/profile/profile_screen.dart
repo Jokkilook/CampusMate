@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/widgets/ad_area.dart';
@@ -38,6 +40,9 @@ class ProfilScreen extends StatelessWidget {
             return wholeProfile(UserData.fromJson(data));
           }
         },
+      ),
+      bottomNavigationBar: const SizedBox(
+        height: 70,
       ),
     );
   }
