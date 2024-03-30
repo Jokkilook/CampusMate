@@ -1,4 +1,5 @@
 import 'package:campusmate/widgets/ad_area.dart';
+import 'package:campusmate/widgets/chat_list_item.dart';
 import 'package:flutter/material.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -12,7 +13,6 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
@@ -20,13 +20,30 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 12),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 12,
-            ),
-            AdArea()
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 12,
+              ),
+              AdArea(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+              ChatListItem(),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const SizedBox(

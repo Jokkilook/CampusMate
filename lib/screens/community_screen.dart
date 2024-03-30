@@ -52,7 +52,10 @@ class CommunityScreen extends StatelessWidget {
             children: [
               // 일반 게시판
               Expanded(
-                child: ListView.builder(
+                child: ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return const Divider(height: 0);
+                  },
                   itemCount: 100,
                   itemBuilder: (BuildContext context, int index) {
                     // 10번째 아이템마다 광고 영역 추가
@@ -72,7 +75,10 @@ class CommunityScreen extends StatelessWidget {
               ),
               // 익명 게시판
               Expanded(
-                child: ListView.builder(
+                child: ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return const Divider(height: 0);
+                  },
                   itemCount: 100,
                   itemBuilder: (BuildContext context, int index) {
                     // 10번째 아이템마다 광고 영역 추가

@@ -8,11 +8,11 @@ class AnonymousBoardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(10),
       width: double.infinity,
       height: 120,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,9 +103,6 @@ class AnonymousBoardItem extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          const Divider(
-            height: 0,
           ),
         ],
       ),
