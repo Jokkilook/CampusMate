@@ -1,5 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/profile/profile_setting_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
@@ -106,6 +107,12 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
           /* 태그 리스트 데이터베이스에 삽입 */
           widget.userData.schedule.schedule = totalSchedule;
           db.addUser(widget.userData);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfileResult(),
+              ),
+              (route) => false);
         },
       ),
     );

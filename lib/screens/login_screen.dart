@@ -4,6 +4,7 @@ import 'package:campusmate/db_test.dart';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:crypto/crypto.dart';
@@ -140,13 +141,15 @@ class LoginScreen extends StatelessWidget {
                             onPressed: () {
                               login().then((value) {
                                 if (value) {
+                                  print(firebaseAuth.currentUser!.uid);
                                   db
                                       .getUser(firebaseAuth.currentUser!.uid)
                                       .then((value) => userData = value);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => DBTest(),
+                                        builder: (context) =>
+                                            const MainScreen(),
                                       ));
                                 }
                               });

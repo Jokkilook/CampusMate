@@ -3,13 +3,13 @@ import 'dart:math';
 
 class OTP {
   var timer;
-  var _code;
+  var code;
 
   String createOTP(int digit) {
     final input = pow(10, digit) - 1;
-    _code = Random().nextInt(input.toInt());
+    code = Random().nextInt(input.toInt());
 
-    var _stringCode = _code.toString();
+    var _stringCode = code.toString();
     if (_stringCode.length != 6) {
       var count = 6 - _stringCode.length;
       for (int i = 0; i < count; i++) {
@@ -22,12 +22,12 @@ class OTP {
 
   void timerActivate() {
     timer = Timer(const Duration(minutes: 3), () {
-      _code = "";
+      code = "";
     });
   }
 
   bool verifyOTP(String otp) {
-    if (_code.toString() == otp) {
+    if (code.toString() == otp) {
       return true;
     } else {
       return false;
@@ -35,7 +35,7 @@ class OTP {
   }
 
   bool isValid() {
-    if (_code == "") {
+    if (code == "") {
       return false;
     } else {
       return true;

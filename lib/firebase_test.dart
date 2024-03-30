@@ -9,6 +9,5 @@ class FirebaseTest {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    FirebaseAuth.instance.signOut();
   }
 }

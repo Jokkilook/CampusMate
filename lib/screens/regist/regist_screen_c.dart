@@ -22,7 +22,6 @@ class _RegistScreenCState extends State<RegistScreenC> {
   TextEditingController pwController = TextEditingController();
   TextEditingController pwConfirmController = TextEditingController();
   TextEditingController nickController = TextEditingController();
-  var crypto;
 
   bool isCompleted = false;
   bool isSended = false;
@@ -36,23 +35,8 @@ class _RegistScreenCState extends State<RegistScreenC> {
   void initState() {
     super.initState();
     //유저 데이터에 저장된 이메일 가져오기
-    print(auth.currentUser!.getIdToken());
 
     setState(() {});
-  }
-
-  void regist() async {
-    await auth.createUserWithEmailAndPassword(
-        email: widget.newUserData.email.toString(),
-        password: widget.newUserData.password.toString());
-  }
-
-  void login() async {
-    try {
-      await auth.signInWithEmailAndPassword(
-          email: widget.newUserData.email.toString(),
-          password: widget.newUserData.password.toString());
-    } catch (e) {}
   }
 
   @override
@@ -288,18 +272,6 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Text(
-                              "${widget.newUserData.enterYear} ${widget.newUserData.school} ${widget.newUserData.dept} ${widget.newUserData.email}"),
-                          ElevatedButton(
-                              onPressed: () {
-                                var bytes =
-                                    utf8.encode(pwConfirmController.value.text);
-                                var digest = sha256.convert(bytes);
-                                crypto = digest.toString();
-
-                                setState(() {});
-                              },
-                              child: const Text("crypto button")),
                         ]),
                   ],
                 ),
@@ -319,11 +291,13 @@ class _RegistScreenCState extends State<RegistScreenC> {
             ? () {
                 /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
                 widget.newUserData.name = nickController.value.text;
-                widget.newUserData.password = crypto;
-                regist();
-                login();
-                widget.newUserData.uid = auth.currentUser!.uid;
-                db.addUser(widget.newUserData);
+                // 비밀번호 암호화 후 삽입
+                widget.newUserData.password = sha256
+                    .convert(utf8.encode(pwConfirmController.value.text))
+                    .toString();
+
+                registAndLogin();
+
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -334,5 +308,28 @@ class _RegistScreenCState extends State<RegistScreenC> {
             : null,
       ),
     );
+  }
+
+  void registAndLogin() async {
+    await auth.createUserWithEmailAndPassword(
+        email: widget.newUserData.email.toString(),
+        password: widget.newUserData.password.toString());
+    try {
+      await auth.signInWithEmailAndPassword(
+          email: widget.newUserData.email.toString(),
+          password: widget.newUserData.password.toString());
+      widget.newUserData.uid = auth.currentUser!.uid;
+      db.addUser(widget.newUserData);
+    } catch (e) {
+      throw Error();
+    }
+  }
+
+  void login() async {
+    try {
+      await auth.signInWithEmailAndPassword(
+          email: widget.newUserData.email.toString(),
+          password: widget.newUserData.password.toString());
+    } catch (e) {}
   }
 }

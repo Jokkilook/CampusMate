@@ -26,7 +26,10 @@ class _MatchingScreenState extends State<MatchingScreen> {
           children: [
             const AdArea(),
             const SizedBox(height: 20),
-            Expanded(child: MatchCard()),
+            Expanded(
+                child: MatchCard(
+              uid: "asd",
+            )),
           ],
         ),
       ),

@@ -251,6 +251,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                                 horizontal: 20, vertical: 10)),
                                   ),
                                 ),
+                                Text("${widget.otp.code}"),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -275,8 +276,6 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                               .codeController.value.text)) {
                                             isCompleted = true;
                                             isCorrect = true;
-                                            print(
-                                                "isCom: $isCompleted  isCor: $isCorrect");
                                           } else {
                                             isCorrect = false;
                                           }
@@ -286,7 +285,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                   child: Text(
                                     "확인",
                                     style: TextStyle(
-                                        color: isSended
+                                        color: isCompleted
                                             ? const Color(0xFF0A351E)
                                             : Colors.black45,
                                         fontSize: 18,
@@ -313,8 +312,8 @@ class _RegistScreenBState extends State<RegistScreenB> {
       ),
       bottomNavigationBar: BottomButton(
         text: "다음",
-        isCompleted: isCompleted,
-        onPressed: isCompleted
+        isCompleted: true,
+        onPressed: true
             ? () {
                 /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
                 widget.newUserData.email = widget.emailController.value.text;

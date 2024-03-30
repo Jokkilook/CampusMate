@@ -14,7 +14,7 @@ class ProfilScreen extends StatelessWidget {
   late List<Map<String, bool>> totalSchedule;
 
   final db = DataBase();
-  final uid = "be5g1pnzgLQGF8ICgXQyxHeIbH82";
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {

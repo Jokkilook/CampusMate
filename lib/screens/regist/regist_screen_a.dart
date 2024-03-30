@@ -4,6 +4,7 @@ import 'package:campusmate/modules/school_api.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegistScreenA extends StatefulWidget {
@@ -42,6 +43,8 @@ class _RegistScreenAState extends State<RegistScreenA> {
 
     schoolList = ["테스트대학교"];
     deptList = ["테스트학과"];
+
+    FirebaseAuth.instance.signOut();
 
     setState(() {});
   }
