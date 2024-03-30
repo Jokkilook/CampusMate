@@ -2,6 +2,7 @@ import 'package:campusmate/db_test.dart';
 import 'package:campusmate/firebase_test.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'screens/login_screen.dart';
 
 void main() {
@@ -27,6 +28,7 @@ class ScreenList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MobileAds.instance.initialize();
     FirebaseTest().initFirebase();
 
     return Scaffold(

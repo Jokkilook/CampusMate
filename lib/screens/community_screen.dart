@@ -100,18 +100,19 @@ class CommunityScreen extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: "addpost",
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AddPostScreen()),
             );
           },
-          child: const Icon(Icons.add, size: 40),
+          child: const Icon(Icons.add, size: 30),
           backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
+          foregroundColor: const Color(0xFF0A351E),
           elevation: 5,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(100),
           ),
         ),
         bottomNavigationBar: const SizedBox(

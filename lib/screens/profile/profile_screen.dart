@@ -4,7 +4,9 @@ import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ProfilScreen extends StatelessWidget {
   ProfilScreen({super.key});
@@ -98,7 +100,7 @@ class ProfilScreen extends StatelessWidget {
                   Text(
                     "${userData.name}",
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -133,26 +135,31 @@ class ProfilScreen extends StatelessWidget {
                   // 정보, 매너학점
                   Container(
                     margin: const EdgeInsets.only(top: 8),
+                    width: double.infinity,
+                    height: 120,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 10),
-                    height: 105,
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Column(
+                            mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                '정보',
-                                style: TextStyle(
+                              Text(
+                                '${userData.name}님의 정보',
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
+                              ),
+                              const SizedBox(
+                                height: 5,
                               ),
                               Text('나이  ${userData.age}'),
                               Text('성별  ${userData.gender! ? "남" : "여"}'),
@@ -160,18 +167,11 @@ class ProfilScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        VerticalDivider(
-                          width: 30,
-                          color: Colors.grey[400],
-                          thickness: 1.0,
-                        ),
+                        const VerticalDivider(width: 25),
                         Expanded(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   const Text(
                                     '매너학점 ',
@@ -205,6 +205,7 @@ class ProfilScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   //성향, 태그
                   Container(
                     width: double.infinity,
@@ -225,6 +226,9 @@ class ProfilScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          const SizedBox(
+                            height: 5,
+                          ),
                           Text('MBTI  ${userData.mbti}'),
                           const Text(
                             '태그',
@@ -243,7 +247,7 @@ class ProfilScreen extends StatelessWidget {
                                       color: Colors.black12,
                                       borderRadius: BorderRadius.circular(15)),
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 5),
+                                      horizontal: 15, vertical: 2),
                                   child: Text(tag.toString()),
                                 )
                             ],
@@ -252,6 +256,7 @@ class ProfilScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+
                   //시간표
                   Container(
                     width: double.infinity,

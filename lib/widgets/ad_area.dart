@@ -1,23 +1,68 @@
+import 'package:campusmate/modules/ad_helper.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 
-class AdArea extends StatelessWidget {
+class AdArea extends StatefulWidget {
   const AdArea({
     super.key,
   });
 
   @override
+  State<AdArea> createState() => _AdAreaState();
+}
+
+class _AdAreaState extends State<AdArea> {
+  BannerAd? _bannerAd;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.fullBanner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _bannerAd?.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 80,
-      decoration: BoxDecoration(
-        color: Colors.grey[400],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      alignment: Alignment.center,
-      child: const Text(
-        '광고 영역',
-      ),
-    );
+    return _bannerAd != null
+        ? Container(
+            clipBehavior: Clip.hardEdge,
+            width: double.infinity,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey[400],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            alignment: Alignment.center,
+            child: AdWidget(ad: _bannerAd!))
+        : Container(
+            width: double.infinity,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey[400],
+              borderRadius: BorderRadius.circular(10),
+            ),
+          );
   }
 }

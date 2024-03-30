@@ -87,8 +87,8 @@ class UserGenerator {
     userData.mbti = mbtis[Random().nextInt(mbtis.length)];
     userData.school = schools[Random().nextInt(schools.length)];
     userData.name = RandomNames(Zone.us).name();
-    userData.introduce =
-        lorem(paragraphs: Random().nextInt(2), words: Random().nextInt(50));
+    userData.introduce = lorem(
+        paragraphs: Random().nextInt(2) + 1, words: Random().nextInt(50) + 5);
     userData.schedule = ScheduleData();
     for (var day in userData.schedule.schedule) {
       day.map((key, value) {
@@ -101,6 +101,6 @@ class UserGenerator {
       userData.tags!.add(tags[Random().nextInt(tags.length)]);
     }
     userData.tags = userData.tags!.toSet().toList();
-    userData.score = Random().nextDouble() * 100;
+    userData.score = 50 + Random().nextDouble() * 50;
   }
 }
