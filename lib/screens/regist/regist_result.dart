@@ -3,8 +3,8 @@ import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:flutter/material.dart';
 
 class RegistResult extends StatelessWidget {
-  RegistResult({super.key, required this.userData});
-  UserData userData;
+  const RegistResult({super.key, required this.userData});
+  final UserData userData;
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

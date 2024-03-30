@@ -1,4 +1,3 @@
-import 'package:campusmate/models/schoolModel.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/school_api.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';

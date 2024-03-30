@@ -1,6 +1,4 @@
-import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/main_screen.dart';
-import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:flutter/material.dart';
 
 class ProfileResult extends StatelessWidget {

@@ -5,8 +5,8 @@ import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingA extends StatefulWidget {
-  ProfileSettingA({super.key, required this.userData});
-  UserData userData;
+  const ProfileSettingA({super.key, required this.userData});
+  final UserData userData;
 
   @override
   State<ProfileSettingA> createState() => _ProfileSettingAState();

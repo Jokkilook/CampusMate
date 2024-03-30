@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:campusmate/models/schoolModel.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
@@ -28,7 +27,7 @@ class SchoolAPI {
         }
 
         for (var school in schoolInstance) {
-          //schoolList.add(school.name);
+          schoolList.add(school.name);
         }
         print(response.statusCode);
       } else {

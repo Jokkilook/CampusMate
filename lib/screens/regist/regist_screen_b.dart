@@ -11,11 +11,11 @@ class RegistScreenB extends StatefulWidget {
   RegistScreenB({super.key, required this.newUserData});
   final UserData newUserData;
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController codeController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController codeController = TextEditingController();
 
   //이메일 보낼 SMTP 서버 설정 현재 지메일 사용, 지메일 계정에서 발급받은 앱 비밀번호
-  var email = gmail("tjddbs8295@gmail.com", "neptioqcjjvsudfw");
+  final email = gmail("tjddbs8295@gmail.com", "neptioqcjjvsudfw");
 
   Future<bool> sending(String otp) async {
     var message = Message()
@@ -25,9 +25,10 @@ class RegistScreenB extends StatefulWidget {
       ..text = "캠퍼스 메이트 인증코드 : [ $otp ]\n3분 이내에 입력해주세요.";
 
     try {
-      final sendReport = send(message, email);
+      send(message, email);
       return true;
     } on MailerException catch (e) {
+      print(e.message);
       return false;
     }
   }
@@ -312,8 +313,8 @@ class _RegistScreenBState extends State<RegistScreenB> {
       ),
       bottomNavigationBar: BottomButton(
         text: "다음",
-        isCompleted: true,
-        onPressed: true
+        isCompleted: isCompleted,
+        onPressed: isCompleted
             ? () {
                 /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
                 widget.newUserData.email = widget.emailController.value.text;

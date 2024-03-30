@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/widgets/ad_area.dart';
@@ -10,8 +8,6 @@ import 'package:flutter/material.dart';
 
 class ProfilScreen extends StatelessWidget {
   ProfilScreen({super.key});
-
-  late List<Map<String, bool>> totalSchedule;
 
   final db = DataBase();
   final uid = FirebaseAuth.instance.currentUser!.uid;

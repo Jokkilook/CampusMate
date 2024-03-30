@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:campusmate/models/schedule_data.dart';
-import 'package:crypto/crypto.dart';
 
 class UserData {
   String? uid;
@@ -67,6 +63,7 @@ class UserData {
     introduce = json["introduce"];
     mbti = json["mbti"];
     tags = json["tags"];
+    score = json["score"];
     //DB에서 가져온 데이터는 List<dynamic>이 되어버려서 다시 List<Map<String, bool>> 타입으로 변환해주어야한다.
     schedule.schedule = (json["schedule"] as List)
         .map((e) => Map<String, bool>.from(e))

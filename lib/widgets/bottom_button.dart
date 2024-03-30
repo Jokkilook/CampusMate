@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class BottomButton extends StatelessWidget {
-  BottomButton(
+  const BottomButton(
       {super.key, required this.text, this.isCompleted = true, this.onPressed});
-  bool isCompleted;
+  final bool isCompleted;
   final Function()? onPressed;
-  String text;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
