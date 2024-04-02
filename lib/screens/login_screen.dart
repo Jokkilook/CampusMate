@@ -137,16 +137,17 @@ class LoginScreen extends StatelessWidget {
                             onPressed: () {
                               login().then((value) {
                                 if (value) {
-                                  print(firebaseAuth.currentUser!.uid);
+                                  //print(firebaseAuth.currentUser!.uid);
                                   db
                                       .getUser(firebaseAuth.currentUser!.uid)
                                       .then((value) => userData = value);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const MainScreen(),
-                                      ));
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const MainScreen(),
+                                    ),
+                                    (route) => false,
+                                  );
                                 }
                               });
                             },

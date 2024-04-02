@@ -1,7 +1,6 @@
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/match_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class MatchingScreen extends StatefulWidget {
   const MatchingScreen({super.key});
@@ -21,11 +20,10 @@ class _MatchingScreenState extends State<MatchingScreen> {
         centerTitle: true,
       ),
       body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
             AdArea(),
-            SizedBox(height: 20),
             Expanded(child: MatchCard()),
           ],
         ),

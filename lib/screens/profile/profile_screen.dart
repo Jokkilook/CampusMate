@@ -4,9 +4,7 @@ import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProfilScreen extends StatelessWidget {
   ProfilScreen({super.key});
@@ -35,7 +33,7 @@ class ProfilScreen extends StatelessWidget {
             throw Error();
           } else {
             var data = snapshot.data!.data() as Map<String, dynamic>;
-            return wholeProfile(UserData.fromJson(data));
+            return wholeProfile(UserData.fromJson(data), context);
           }
         },
       ),
@@ -45,7 +43,7 @@ class ProfilScreen extends StatelessWidget {
     );
   }
 
-  SingleChildScrollView wholeProfile(UserData userData) {
+  SingleChildScrollView wholeProfile(UserData userData, BuildContext context) {
     late final String score;
 
     if (userData.score! >= 95) {
@@ -77,7 +75,7 @@ class ProfilScreen extends StatelessWidget {
             const SizedBox(height: 12),
             // 프로필 카드
             Container(
-              padding: const EdgeInsets.all(16),
+              clipBehavior: Clip.hardEdge,
               width: double.infinity,
               decoration: BoxDecoration(
                 boxShadow: [
@@ -91,202 +89,244 @@ class ProfilScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 60,
+                  Container(
+                    color: Colors.amber,
+                    height: 200,
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 20,
                   ),
                   Text(
                     "${userData.name}",
                     style: const TextStyle(
-                      fontSize: 25,
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
-                  // 자기소개
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '자기소개',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          '${userData.introduce}',
-                        ),
-                      ],
-                    ),
-                  ),
-                  // 정보, 매너학점
-                  Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    width: double.infinity,
-                    height: 120,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
+                        // 자기소개
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '${userData.name}님의 정보',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              const Text(
+                                '자기소개',
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(
-                                height: 5,
+                                height: 10,
                               ),
-                              Text('나이  ${userData.age}'),
-                              Text('성별  ${userData.gender! ? "남" : "여"}'),
-                              Text('학과  ${userData.dept}'),
+                              Text(
+                                '${userData.introduce}',
+                              ),
                             ],
                           ),
                         ),
-                        const VerticalDivider(width: 25),
-                        Expanded(
-                          child: Column(
+                        // 정보, 매너학점
+                        Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                children: [
-                                  const Text(
-                                    '매너학점 ',
+                              Expanded(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${userData.name}님의 정보',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text('나이  ${userData.age}'),
+                                    Text('성별  ${userData.gender! ? "남" : "여"}'),
+                                    Text('학과  ${userData.dept}'),
+                                  ],
+                                ),
+                              ),
+                              const Wrap(
+                                  children: [VerticalDivider(width: 25)]),
+                              Flexible(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Flexible(
+                                          child: Text(
+                                            '매너학점 ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            //매너학점이 뭔지 알려주는 안내 카드 출력
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  const Dialog(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 40,
+                                                      vertical: 40),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        "매너학점이란?",
+                                                        textAlign:
+                                                            TextAlign.justify,
+                                                        style: TextStyle(
+                                                            fontSize: 25,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      SizedBox(height: 20),
+                                                      Text(
+                                                        "매너학점은 이용자의 평판을 점수화 시킨 것으로 다른 이용자에게 받은 평가를 기준으로 산정됩니다.\n\n A+부터 F까지 9개의 등급이 있습니다.",
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                            print("test");
+                                          },
+                                          child: const Icon(Icons.help_outline,
+                                              size: 16, color: Colors.black45),
+                                        ),
+                                      ],
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        score,
+                                        style: const TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        //성향, 태그
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(top: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  '성향',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text('${userData.mbti}'),
+                                Divider(
+                                  color: Colors.grey[300],
+                                ),
+                                Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    for (var tag in userData.tags!)
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        child: Text(tag.toString()),
+                                      )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        //시간표
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(top: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10),
+                                  child: Text(
+                                    '시간표',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      //매너학점이 뭔지 알려주는 안내 카드 출력
-                                      print("test");
-                                    },
-                                    child: const Icon(Icons.help_outline,
-                                        size: 16, color: Colors.black45),
-                                  ),
-                                ],
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Text(
-                                    score,
-                                    style: const TextStyle(
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                  child: ScheduleTable(
+                                      scheduleData: userData.schedule,
+                                      readOnly: true),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),
-
-                  //성향, 태그
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(top: 8),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '성향',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text('MBTI  ${userData.mbti}'),
-                          const Text(
-                            '태그',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Divider(),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: [
-                              for (var tag in userData.tags!)
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.black12,
-                                      borderRadius: BorderRadius.circular(15)),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 2),
-                                  child: Text(tag.toString()),
-                                )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  //시간표
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(top: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: Text(
-                              '시간표',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                            child: ScheduleTable(
-                                scheduleData: userData.schedule,
-                                readOnly: true),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),

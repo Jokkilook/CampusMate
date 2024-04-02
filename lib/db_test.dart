@@ -1,10 +1,28 @@
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/modules/user_generator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class DBTest extends StatelessWidget {
   DBTest({super.key});
   final db = DataBase();
+  final List<Container> cards = [
+    Container(
+      alignment: Alignment.center,
+      child: const Text('1'),
+      color: Colors.blue,
+    ),
+    Container(
+      alignment: Alignment.center,
+      child: const Text('2'),
+      color: Colors.red,
+    ),
+    Container(
+      alignment: Alignment.center,
+      child: const Text('3'),
+      color: Colors.purple,
+    )
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +46,16 @@ class DBTest extends StatelessWidget {
                 UserGenerator().deleteDummy(10);
               },
               child: const Text("더미유저삭제"),
-            )
+            ),
+            Flexible(
+              child: CardSwiper(
+                isLoop: false,
+                cardsCount: cards.length,
+                cardBuilder:
+                    (context, index, percentThresholdX, percentThresholdY) =>
+                        cards[index],
+              ),
+            ),
           ],
         ),
       ),
