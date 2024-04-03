@@ -12,7 +12,7 @@ class ProfilScreen extends StatelessWidget {
   ProfilScreen({super.key});
 
   final db = DataBase();
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final uid = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   Widget build(BuildContext context) {
