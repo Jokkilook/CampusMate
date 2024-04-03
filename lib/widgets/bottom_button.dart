@@ -10,7 +10,7 @@ class BottomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.all(20),
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(
@@ -22,7 +22,7 @@ class BottomButton extends StatelessWidget {
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF2BB56B),
-          minimumSize: const Size(10000, 60),
+          minimumSize: const Size(10000, 50),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),

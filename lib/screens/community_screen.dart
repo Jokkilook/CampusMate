@@ -1,9 +1,9 @@
-import 'package:campusmate/widgets/anonymous_board_item.dart';
-import 'package:campusmate/widgets/general_board_item.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/ad_area.dart';
 import 'add_post_screen.dart';
+import '../widgets/general_board_item.dart';
+import '../widgets/anonymous_board_item.dart'; // AnonymousBoardItem을 import 해야 합니다.
 
 Color primaryColor = const Color(0xFF2BB56B);
 
@@ -52,47 +52,85 @@ class CommunityScreen extends StatelessWidget {
             children: [
               // 일반 게시판
               Expanded(
-                child: ListView.separated(
-                  separatorBuilder: (context, index) {
-                    return const Divider(height: 0);
-                  },
-                  itemCount: 100,
-                  itemBuilder: (BuildContext context, int index) {
-                    // 10번째 아이템마다 광고 영역 추가
-                    if (index == 0 || (index + 1) % 10 == 0) {
-                      return const Column(
-                        children: [
-                          SizedBox(height: 12),
-                          AdArea(),
-                          GeneralBoardItem(),
-                        ],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('posts')
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
-                    } else {
-                      return const GeneralBoardItem();
                     }
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: Text('데이터가 없습니다.'),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var data = snapshot.data!.docs[index].data()
+                            as Map<String, dynamic>;
+                        return Column(
+                          children: [
+                            if (index == 0 || (index + 1) % 10 == 0) ...[
+                              const SizedBox(height: 12),
+                              const AdArea(),
+                            ],
+                            // 데이터를 GeneralBoardItem에 넣어서 표시
+                            GeneralBoardItem(
+                              title: data['title'] ?? '',
+                              content: data['content'] ?? '',
+                              author: data['author'] ?? '',
+                              timestamp: data['timestamp']?.toString() ?? '',
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
               ),
+
               // 익명 게시판
               Expanded(
-                child: ListView.separated(
-                  separatorBuilder: (context, index) {
-                    return const Divider(height: 0);
-                  },
-                  itemCount: 100,
-                  itemBuilder: (BuildContext context, int index) {
-                    // 10번째 아이템마다 광고 영역 추가
-                    if (index == 0 || (index + 1) % 10 == 0) {
-                      return const Column(
-                        children: [
-                          SizedBox(height: 12),
-                          AdArea(),
-                          AnonymousBoardItem(),
-                        ],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('posts')
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
-                    } else {
-                      return const AnonymousBoardItem();
                     }
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: Text('데이터가 없습니다.'),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var data = snapshot.data!.docs[index].data()
+                            as Map<String, dynamic>;
+                        return Column(
+                          children: [
+                            if (index == 0 || (index + 1) % 10 == 0) ...[
+                              const SizedBox(height: 12),
+                              const AdArea(),
+                            ],
+                            AnonymousBoardItem(
+                              title: data['title'] ?? '',
+                              content: data['content'] ?? '',
+                              author: data['author'] ?? '',
+                              timestamp: data['timestamp']?.toString() ?? '',
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
               ),
