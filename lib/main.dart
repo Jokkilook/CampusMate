@@ -1,6 +1,7 @@
 import 'package:campusmate/db_test.dart';
 import 'package:campusmate/firebase_test.dart';
 import 'package:campusmate/screens/main_screen.dart';
+import 'package:campusmate/screens/post_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'screens/login_screen.dart';
@@ -59,6 +60,15 @@ class ScreenList extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => DBTest()),
+              ),
+            ),
+
+            // PostScreen
+            ListTile(
+              title: const Text("PostScreen", style: TextStyle(fontSize: 24)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PostScreen()),
               ),
             ),
           ],
