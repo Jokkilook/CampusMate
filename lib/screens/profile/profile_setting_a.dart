@@ -3,6 +3,7 @@ import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ProfileSettingA extends StatefulWidget {
   const ProfileSettingA({super.key, required this.userData});
@@ -13,7 +14,12 @@ class ProfileSettingA extends StatefulWidget {
 }
 
 class _ProfileSettingAState extends State<ProfileSettingA> {
-  late int age;
+  late int year;
+  late int month = 1;
+  late int day = 1;
+  late List<int> yearList;
+  final List<int> monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  late List<int> dayList;
   late String introduce;
 
   final TextEditingController ageController = TextEditingController();
@@ -33,7 +39,9 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
     super.initState();
 
     introduce = "";
-    age = 0;
+    year = DateTime.now().year - 20;
+    yearList = [for (int i = 1990; i < DateTime.now().year; i++) i];
+    dayList = [for (int i = 1; i < 32; i++) i];
 
     setState(() {});
   }
@@ -83,55 +91,151 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("   나이",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87)),
-                        const SizedBox(height: 5),
-                        FractionallySizedBox(
-                          widthFactor: 1,
-                          child: SizedBox(
-                            height: 50,
-                            child: TextField(
-                              controller: ageController,
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                try {
-                                  age = int.parse(ageController.text);
-                                } catch (e) {
-                                  ageController.text = "";
-                                }
-                              },
-                              decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
-                                        width: 1.5,
-                                      )),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
-                                        width: 1.5,
-                                      )),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  labelStyle: const TextStyle(fontSize: 14),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10)),
+                        const Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text("   생년월일",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87)),
+                            SizedBox(
+                              width: 10,
                             ),
-                          ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
+                              child: Text(
+                                "설정이 완료되면 수정할 수 없어요!",
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black45),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            //년도
+                            SizedBox(
+                              width: 110,
+                              height: 50,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black45, width: 1.5),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: DropdownButton(
+                                  underline: Container(),
+                                  icon: const Icon(
+                                      Icons.keyboard_arrow_down_outlined,
+                                      color: Colors.black45),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  isExpanded: true,
+                                  borderRadius: BorderRadius.circular(10),
+                                  value: year,
+                                  items: yearList
+                                      .map((e) => DropdownMenuItem(
+                                          value: e, child: Text('$e')))
+                                      .toList(),
+                                  onChanged: (int? value) {
+                                    year = value!;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ),
+                            //월
+                            SizedBox(
+                              width: 90,
+                              height: 50,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black45, width: 1.5),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: DropdownButton(
+                                  underline: Container(),
+                                  icon: const Icon(
+                                      Icons.keyboard_arrow_down_outlined,
+                                      color: Colors.black45),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  isExpanded: true,
+                                  borderRadius: BorderRadius.circular(10),
+                                  value: month,
+                                  items: monthList
+                                      .map((e) => DropdownMenuItem(
+                                          value: e, child: Text('$e')))
+                                      .toList(),
+                                  onChanged: (int? value) {
+                                    month = value!;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ),
+                            //일
+                            SizedBox(
+                              width: 90,
+                              height: 50,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black45, width: 1.5),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: DropdownButton(
+                                  underline: Container(),
+                                  icon: const Icon(
+                                      Icons.keyboard_arrow_down_outlined,
+                                      color: Colors.black45),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  isExpanded: true,
+                                  borderRadius: BorderRadius.circular(10),
+                                  value: day,
+                                  items: dayList
+                                      .map((e) => DropdownMenuItem(
+                                          value: e, child: Text('$e')))
+                                      .toList(),
+                                  onChanged: (int? value) {
+                                    day = value!;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10),
-                        const Text("   성별",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87)),
+                        const Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text("   성별",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87)),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
+                              child: Text(
+                                "설정이 완료되면 수정할 수 없어요!",
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black45),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 5),
                         Row(
                           children: [
@@ -506,11 +610,11 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
       ),
       bottomNavigationBar: BottomButton(
         text: "다음",
-        isCompleted: age > 0 && introController.value.text.isNotEmpty,
-        onPressed: age > 0 && introController.value.text.isNotEmpty
+        isCompleted: introController.value.text.isNotEmpty,
+        onPressed: introController.value.text.isNotEmpty
             ? () {
                 /* 나이 성별 소개 MBTI 데이터베이스에 삽입 */
-                widget.userData.age = int.parse(ageController.value.text);
+                widget.userData.birthDate = "$year.$month.$day";
                 widget.userData.gender = gender;
                 widget.userData.introduce = introController.value.text;
                 var mbti = [];
@@ -520,7 +624,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                 PJ ? mbti.add("P") : mbti.add("J");
                 widget.userData.mbti =
                     "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
-                print("${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}");
 
                 db.addUser(widget.userData);
                 Navigator.push(

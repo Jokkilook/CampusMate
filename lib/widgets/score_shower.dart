@@ -15,7 +15,7 @@ class Score extends StatelessWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-              color: Colors.black, borderRadius: BorderRadius.circular(100)),
+              color: Colors.black87, borderRadius: BorderRadius.circular(100)),
         ),
         Container(
           width: 50,
@@ -28,7 +28,10 @@ class Score extends StatelessWidget {
           height: 50,
           child: AutoSizeText(
             score,
-            style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                fontSize: 35,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87),
             textAlign: TextAlign.center,
           ),
         )

@@ -157,7 +157,8 @@ class StrangerProfilScreen extends StatelessWidget {
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    Text('나이  ${userData.age}'),
+                                    Text(
+                                        '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}'),
                                     Text('성별  ${userData.gender! ? "남" : "여"}'),
                                     Text('학과  ${userData.dept}'),
                                   ],

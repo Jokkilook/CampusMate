@@ -6,7 +6,8 @@ import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({super.key, this.index = 0});
+  final index;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -16,12 +17,19 @@ class _MainScreenState extends State<MainScreen> {
   int index = 0;
 
   final List<Widget> list = [
-    const MatchingScreen(),
-    const ChatListScreen(),
-    const CommunityScreen(),
-    ProfilScreen(),
-    const MoreScreen()
+    const MatchingScreen(), //0
+    const ChatListScreen(), //1
+    const CommunityScreen(), //2
+    ProfileScreen(), //3
+    const MoreScreen() //4
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    index = widget.index;
+  }
 
   @override
   Widget build(BuildContext context) {

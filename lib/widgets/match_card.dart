@@ -118,7 +118,7 @@ class MatchCard extends StatelessWidget {
                                 SizedBox(
                                   width: 220,
                                   child: AutoSizeText(
-                                    "${doc.get("name")}, ${doc.get("age")}",
+                                    "${doc.get("name")}, ${DateTime.now().year - int.parse(doc.get("birthDate").split(".")[0])}",
                                     maxLines: 1,
                                     style: const TextStyle(
                                         fontSize: 30,

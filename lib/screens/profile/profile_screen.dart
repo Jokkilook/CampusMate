@@ -1,13 +1,14 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/profile/profile_revise_screen.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ProfilScreen extends StatelessWidget {
-  ProfilScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  ProfileScreen({super.key});
 
   final db = DataBase();
   final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -16,6 +17,22 @@ class ProfilScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
+      floatingActionButton: FloatingActionButton(
+        heroTag: "addpost",
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ProfileReviseScreen()),
+          );
+        },
+        child: const Icon(Icons.edit, size: 30),
+        backgroundColor: Colors.green,
+        foregroundColor: const Color(0xFF0A351E),
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+      ),
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
@@ -163,7 +180,8 @@ class ProfilScreen extends StatelessWidget {
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    Text('나이  ${userData.age}'),
+                                    Text(
+                                        '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}'),
                                     Text('성별  ${userData.gender! ? "남" : "여"}'),
                                     Text('학과  ${userData.dept}'),
                                   ],
