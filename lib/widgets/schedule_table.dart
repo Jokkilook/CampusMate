@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:flutter/material.dart';
 
@@ -57,16 +58,18 @@ class _ScheduleTableState extends State<ScheduleTable> {
                 Container(
                     width: 90,
                     height: 35,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
                           width: 0.5, color: const Color(0xFFD2D2D2)),
                     ),
                     child: Center(
-                        child: Text(
+                        child: AutoSizeText(
                       time,
-                      style: const TextStyle(
-                          fontSize: 10, fontWeight: FontWeight.w500),
+                      maxLines: 1,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
                     )))
             ],
           ),
@@ -95,8 +98,6 @@ class _ScheduleTableState extends State<ScheduleTable> {
                           ? null
                           : () {
                               day[detail.key] = !detail.value;
-
-                              print("${detail.key} ${detail.value}");
                               setState(() {});
                             },
                       child: Container(

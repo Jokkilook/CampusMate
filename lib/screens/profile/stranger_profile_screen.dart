@@ -8,7 +8,7 @@ class StrangerProfilScreen extends StatelessWidget {
   StrangerProfilScreen({super.key, required this.uid});
 
   final db = DataBase();
-  final uid;
+  final String uid;
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +216,6 @@ class StrangerProfilScreen extends StatelessWidget {
                                                 ),
                                               ),
                                             );
-                                            print("test");
                                           },
                                           child: const Icon(Icons.help_outline,
                                               size: 16, color: Colors.black45),

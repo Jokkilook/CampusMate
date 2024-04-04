@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 class ProfileReviseScreen extends StatelessWidget {
@@ -122,12 +123,15 @@ class ProfileReviseScreen extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  TextField(
-                    controller: nameController,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                  IntrinsicWidth(
+                    child: TextField(
+                      maxLength: 10,
+                      controller: nameController,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -227,46 +231,42 @@ class ProfileReviseScreen extends StatelessWidget {
                             color: Colors.grey[50],
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  '성향',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '성향',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                MBTISelector(
-                                    parent: this,
-                                    EI: EI,
-                                    NS: NS,
-                                    TF: TF,
-                                    PJ: PJ),
-                                Divider(
-                                  color: Colors.grey[300],
-                                ),
-                                Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  children: [
-                                    for (var tag in userData.tags!)
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 15, vertical: 5),
-                                        child: Text(tag.toString()),
-                                      )
-                                  ],
-                                )
-                              ],
-                            ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              MBTISelector(
+                                  parent: this, EI: EI, NS: NS, TF: TF, PJ: PJ),
+                              Divider(
+                                color: Colors.grey[300],
+                              ),
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  for (var tag in userData.tags!)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      child: Text(tag.toString()),
+                                    ),
+                                ],
+                              ),
+                              OutlinedButton(
+                                  onPressed: () {}, child: const Text("+"))
+                            ],
                           ),
                         ),
 
@@ -278,29 +278,25 @@ class ProfileReviseScreen extends StatelessWidget {
                             color: Colors.grey[50],
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 10),
-                                  child: Text(
-                                    '시간표',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10),
+                                child: Text(
+                                  '시간표',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                                  child: ScheduleTable(
-                                      scheduleData: modifiedData.schedule,
-                                      readOnly: false),
-                                ),
-                                const SizedBox(height: 60)
-                              ],
-                            ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                child: ScheduleTable(
+                                    scheduleData: modifiedData.schedule,
+                                    readOnly: false),
+                              ),
+                              const SizedBox(height: 60)
+                            ],
                           ),
                         )
                       ],
@@ -312,124 +308,6 @@ class ProfileReviseScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class birtDateSelector extends StatefulWidget {
-  const birtDateSelector({super.key});
-
-  @override
-  State<birtDateSelector> createState() => _birtDateSelectorState();
-}
-
-class _birtDateSelectorState extends State<birtDateSelector> {
-  late int year;
-  late int month = 1;
-  late int day = 1;
-  late List<int> yearList;
-  final List<int> monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  late List<int> dayList;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    year = DateTime.now().year - 20;
-    yearList = [for (int i = 1990; i < DateTime.now().year; i++) i];
-    dayList = [for (int i = 1; i < 32; i++) i];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        //년도
-        SizedBox(
-          width: 110,
-          height: 50,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black45, width: 1.5),
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: DropdownButton(
-              underline: Container(),
-              icon: const Icon(Icons.keyboard_arrow_down_outlined,
-                  color: Colors.black45),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(10),
-              value: year,
-              items: yearList
-                  .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                  .toList(),
-              onChanged: (int? value) {
-                year = value!;
-                setState(() {});
-              },
-            ),
-          ),
-        ),
-        //월
-        SizedBox(
-          width: 90,
-          height: 50,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black45, width: 1.5),
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: DropdownButton(
-              underline: Container(),
-              icon: const Icon(Icons.keyboard_arrow_down_outlined,
-                  color: Colors.black45),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(10),
-              value: month,
-              items: monthList
-                  .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                  .toList(),
-              onChanged: (int? value) {
-                month = value!;
-                setState(() {});
-              },
-            ),
-          ),
-        ),
-        //일
-        SizedBox(
-          width: 90,
-          height: 50,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black45, width: 1.5),
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: DropdownButton(
-              underline: Container(),
-              icon: const Icon(Icons.keyboard_arrow_down_outlined,
-                  color: Colors.black45),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(10),
-              value: day,
-              items: dayList
-                  .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                  .toList(),
-              onChanged: (int? value) {
-                day = value!;
-                setState(() {});
-              },
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
