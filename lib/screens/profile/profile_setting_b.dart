@@ -32,7 +32,14 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
     "연애",
     "편입",
     "취업",
-    "토익"
+    "토익",
+    "친분",
+    "연상",
+    "동갑",
+    "연하",
+    "선배",
+    "동기",
+    "후배"
   ];
 
   bool isCompleted = false;
@@ -43,6 +50,7 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
 
     introduce = "";
     age = 0;
+    userTag = widget.userData.tags!.cast<String>();
 
     setState(() {});
   }

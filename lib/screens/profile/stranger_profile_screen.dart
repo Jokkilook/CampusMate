@@ -139,102 +139,110 @@ class StrangerProfilScreen extends StatelessWidget {
                             color: Colors.grey[50],
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${userData.name}님의 정보',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                        '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}'),
-                                    Text('성별  ${userData.gender! ? "남" : "여"}'),
-                                    Text('학과  ${userData.dept}'),
-                                  ],
-                                ),
-                              ),
-                              const Wrap(
-                                  children: [VerticalDivider(width: 25)]),
-                              Flexible(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Flexible(
-                                          child: Text(
-                                            '매너학점 ',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            //매너학점이 뭔지 알려주는 안내 카드 출력
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  const Dialog(
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 40,
-                                                      vertical: 40),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        "매너학점이란?",
-                                                        textAlign:
-                                                            TextAlign.justify,
-                                                        style: TextStyle(
-                                                            fontSize: 25,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      SizedBox(height: 20),
-                                                      Text(
-                                                        "매너학점은 이용자의 평판을 점수화 시킨 것으로 다른 이용자에게 받은 평가를 기준으로 산정됩니다.\n\n A+부터 F까지 9개의 등급이 있습니다.",
-                                                        style: TextStyle(
-                                                          fontSize: 20,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: const Icon(Icons.help_outline,
-                                              size: 16, color: Colors.black45),
-                                        ),
-                                      ],
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        score,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${userData.name}님의 정보',
                                         style: const TextStyle(
-                                          fontSize: 30,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                          '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}'),
+                                      Text(
+                                          '성별  ${userData.gender! ? "남" : "여"}'),
+                                      Text('학과  ${userData.dept}'),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const VerticalDivider(width: 30),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Flexible(
+                                            child: Text(
+                                              '매너학점 ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              //매너학점이 뭔지 알려주는 안내 카드 출력
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    const Dialog(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 40,
+                                                            vertical: 40),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                          "매너학점이란?",
+                                                          textAlign:
+                                                              TextAlign.justify,
+                                                          style: TextStyle(
+                                                              fontSize: 25,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        SizedBox(height: 20),
+                                                        Text(
+                                                          "매너학점은 이용자의 평판을 점수화 시킨 것으로 다른 이용자에게 받은 평가를 기준으로 산정됩니다.\n\n A+부터 F까지 9개의 등급이 있습니다.",
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: const Icon(
+                                                Icons.help_outline,
+                                                size: 16,
+                                                color: Colors.black45),
+                                          ),
+                                        ],
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            score,
+                                            style: const TextStyle(
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 

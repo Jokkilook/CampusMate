@@ -5,11 +5,9 @@ import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
+//ignore: must_be_immutable
 class ProfileReviseScreen extends StatelessWidget {
   ProfileReviseScreen({super.key});
 
@@ -245,30 +243,10 @@ class ProfileReviseScreen extends StatelessWidget {
                               ),
                               MBTISelector(
                                   parent: this, EI: EI, NS: NS, TF: TF, PJ: PJ),
-                              Divider(
-                                color: Colors.grey[300],
-                              ),
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                children: [
-                                  for (var tag in userData.tags!)
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey[200],
-                                          borderRadius:
-                                              BorderRadius.circular(15)),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 5),
-                                      child: Text(tag.toString()),
-                                    ),
-                                ],
-                              ),
-                              OutlinedButton(
-                                  onPressed: () {}, child: const Text("+"))
                             ],
                           ),
                         ),
+                        TagShower(parent: this),
 
                         //시간표
                         Container(
@@ -312,6 +290,115 @@ class ProfileReviseScreen extends StatelessWidget {
   }
 }
 
+class TagShower extends StatefulWidget {
+  const TagShower({super.key, required this.parent});
+  final ProfileReviseScreen parent;
+
+  @override
+  State<TagShower> createState() => _TagShowerState();
+}
+
+class _TagShowerState extends State<TagShower> {
+  late List<String> userTag = widget.parent.modifiedData.tags!.cast<String>();
+  var tagList = [
+    "공부",
+    "동네",
+    "취미",
+    "식사",
+    "카풀",
+    "술",
+    "등하교",
+    "시간 떼우기",
+    "연애",
+    "편입",
+    "취업",
+    "토익",
+    "친분",
+    "연상",
+    "동갑",
+    "연하",
+    "선배",
+    "동기",
+    "후배"
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Text(
+                '태그',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '  ${userTag.length}/8',
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Wrap(
+            spacing: 10,
+            children: [
+              for (var tag in tagList)
+                OutlinedButton(
+                  onPressed: () {
+                    if (userTag.contains(tag)) {
+                      //유저 태그 리스트에 태그가 있으면 삭제
+                      userTag.remove(tag);
+                    } else if (userTag.length < 8) {
+                      //유저 태그 리스트에 태그가 없고 리스트가 8개를 넘지 않으면 추가
+                      userTag.add(tag);
+                    }
+
+                    setState(() {});
+                  },
+                  child: Text(
+                    tag,
+                    style: TextStyle(
+                        color: userTag.contains(tag)
+                            ? const Color(0xff0B351E)
+                            : Colors.black54),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                      side: userTag.contains(tag)
+                          ? BorderSide(width: 2, color: Colors.green[400]!)
+                          : BorderSide(
+                              width: 0, color: Colors.white.withOpacity(0)),
+                      backgroundColor: userTag.contains(tag)
+                          ? Colors.green[400]
+                          : Colors.grey[200],
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5)),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//ignore: must_be_immutable
 class MBTISelector extends StatefulWidget {
   MBTISelector(
       {super.key,
@@ -325,7 +412,7 @@ class MBTISelector extends StatefulWidget {
   bool NS; //true = N, false = S
   bool TF; //true = T, false = F
   bool PJ; //true = P, false = J
-  ProfileReviseScreen parent;
+  final ProfileReviseScreen parent;
 
   @override
   State<MBTISelector> createState() => _MBTISelectorState();

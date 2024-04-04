@@ -98,7 +98,7 @@ class UserGenerator {
       });
     }
     userData.tags = [];
-    for (int i = 0; i < tags.length; i++) {
+    for (int i = 0; i < 8; i++) {
       userData.tags!.add(tags[Random().nextInt(tags.length)]);
     }
     userData.tags = userData.tags!.toSet().toList();
