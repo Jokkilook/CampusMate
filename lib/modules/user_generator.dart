@@ -78,7 +78,8 @@ class UserGenerator {
   void randomAsign() {
     userData = UserData();
     userData.uid = index.toString();
-    userData.age = Random().nextInt(10) + 20;
+    userData.birthDate =
+        "${Random().nextInt(20) + 1990}.${Random().nextInt(11) + 1}.${Random().nextInt(30) + 1}";
     userData.dept = depts[Random().nextInt(depts.length)];
     userData.enterYear = Random().nextInt(6) + 2018;
     userData.email = "dummy@dummy.com";

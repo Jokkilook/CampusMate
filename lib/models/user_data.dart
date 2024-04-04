@@ -8,7 +8,7 @@ class UserData {
   String? email;
   String? password;
   int? enterYear;
-  int? age;
+  String? birthDate;
   bool? gender;
   String? introduce;
   double? score;
@@ -26,7 +26,7 @@ class UserData {
       this.email,
       this.password,
       this.enterYear,
-      this.age,
+      this.birthDate,
       this.gender,
       this.introduce,
       this.score,
@@ -40,7 +40,7 @@ class UserData {
       "email": email,
       "password": password,
       "enterYear": enterYear,
-      "age": age,
+      "birthDate": birthDate,
       "gender": gender,
       "introduce": introduce,
       "score": score,
@@ -58,7 +58,7 @@ class UserData {
     email = json["email"];
     password = json["password"];
     enterYear = json["enterYear"];
-    age = json["age"];
+    birthDate = json["birthDate"];
     gender = json["gender"];
     introduce = json["introduce"];
     mbti = json["mbti"];
@@ -85,7 +85,7 @@ class UserData {
       "email": email,
       "password": password,
       "enterYear": enterYear,
-      "age": age,
+      "birthDate": birthDate,
       "gender": gender,
       "introduce": introduce,
       "score": score,
@@ -104,7 +104,7 @@ class UserData {
       "email": email,
       "password": password,
       "enterYear": enterYear,
-      "age": age,
+      "birthDate": birthDate,
       "gender": gender,
       "introduce": introduce,
       "score": score,

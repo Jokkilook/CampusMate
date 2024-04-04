@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 
 class GeneralBoardItem extends StatelessWidget {
-  final String title;
-  final String contentPreview;
-  final String author;
-  final String timestamp;
-  final int likeCount;
-  final int dislikeCount;
-  final int commentCount;
-
   const GeneralBoardItem({
-    required this.title,
-    required this.contentPreview,
-    required this.author,
-    required this.timestamp,
-    required this.likeCount,
-    required this.dislikeCount,
-    required this.commentCount,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,82 +17,89 @@ class GeneralBoardItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
+              const Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 제목
                   Text(
-                    title,
-                    style: const TextStyle(
+                    '제목',
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(contentPreview),
-                  const SizedBox(
+                  // 내용 첫줄
+                  Text('글의 첫줄을 보여줍니다.'),
+                  SizedBox(
                     height: 5,
                   ),
                   Row(
                     children: [
+                      // 작성자 닉네임
                       Text(
-                        author,
-                        style: const TextStyle(
+                        '닉네임',
+                        style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
+                      // 작성 시간
                       Text(
-                        '| $timestamp',
-                        style: const TextStyle(
+                        '| 방금',
+                        style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
+                  SizedBox(
                     height: 2,
                   ),
                   Row(
                     children: [
-                      const Icon(
+                      // 좋아요
+                      Icon(
                         Icons.thumb_up_alt_outlined,
                         color: Colors.grey,
                         size: 16,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
-                        likeCount.toString(),
-                        style: const TextStyle(
+                        '0',
+                        style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      const Icon(
+                      SizedBox(width: 10),
+                      // 싫어요
+                      Icon(
                         Icons.thumb_down_alt_outlined,
                         color: Colors.grey,
                         size: 16,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
-                        dislikeCount.toString(),
-                        style: const TextStyle(
+                        '0',
+                        style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      const Icon(
+                      SizedBox(width: 10),
+                      // 댓글
+                      Icon(
                         Icons.mode_comment_outlined,
                         color: Colors.grey,
                         size: 16,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
-                        commentCount.toString(),
-                        style: const TextStyle(
+                        '0',
+                        style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
@@ -119,9 +111,9 @@ class GeneralBoardItem extends StatelessWidget {
               Container(
                 width: 80,
                 height: 80,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Colors.grey,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  borderRadius: BorderRadius.circular(5),
                 ),
               ),
             ],
