@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 
 class AnonymousBoardItem extends StatelessWidget {
+  final String title;
+  final String author;
+  final String content;
+  final String likeCount;
+  final String dislikeCount;
+  final String commentCount;
+
   const AnonymousBoardItem({
     super.key,
+    required this.title,
+    required this.author,
+    required this.content,
+    required this.likeCount,
+    required this.dislikeCount,
+    required this.commentCount,
   });
 
   @override
@@ -18,72 +31,80 @@ class AnonymousBoardItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Column(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 제목
                   Text(
-                    '제목',
-                    style: TextStyle(
+                    title,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   // 내용 첫줄
-                  Text('글의 첫줄을 보여줍니다.'),
                   SizedBox(
+                    width: 250,
+                    child: Text(
+                      content,
+                      overflow:
+                          TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
+                      maxLines: 1, // 텍스트가 한 줄로만 표시되도록 제한
+                    ),
+                  ),
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
                     children: [
                       // 좋아요
-                      Icon(
+                      const Icon(
                         Icons.thumb_up_alt_outlined,
                         color: Colors.grey,
                         size: 16,
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
-                        '0',
-                        style: TextStyle(
+                        likeCount,
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       // 싫어요
-                      Icon(
+                      const Icon(
                         Icons.thumb_down_alt_outlined,
                         color: Colors.grey,
                         size: 16,
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
-                        '0',
-                        style: TextStyle(
+                        dislikeCount,
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       // 댓글
-                      Icon(
+                      const Icon(
                         Icons.mode_comment_outlined,
                         color: Colors.grey,
                         size: 16,
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
-                        '0',
-                        style: TextStyle(
+                        commentCount,
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       // 작성 시간
-                      Text(
+                      const Text(
                         '| 방금',
                         style: TextStyle(
                           fontSize: 14,
