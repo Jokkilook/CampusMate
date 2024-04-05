@@ -1,5 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/school_api.dart';
+import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -57,7 +58,14 @@ class _RegistScreenAState extends State<RegistScreenA> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: IconButton(
-              onPressed: (/* 로그인 화면으로 돌아가기 */) {},
+              onPressed: (/* 로그인 화면으로 돌아가기 */) {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                    (route) => false);
+              },
               icon: const Icon(Icons.close),
             ),
           )

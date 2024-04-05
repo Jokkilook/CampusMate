@@ -30,13 +30,13 @@ class MatchCard extends StatelessWidget {
           throw Error();
         } else {
           var data = snapshot.data?.docs ?? [];
-          return Center(child: SwipableCard(data, context));
+          return Center(child: swipableCard(data, context));
         }
       },
     );
   }
 
-  CardSwiper SwipableCard(final data, BuildContext context) {
+  CardSwiper swipableCard(final data, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.height;
 
     return CardSwiper(
@@ -133,7 +133,7 @@ class MatchCard extends StatelessWidget {
                               style: const TextStyle(
                                   fontSize: 25,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.black87),
+                                  color: Colors.black54),
                             ),
                             const SizedBox(height: 10),
                             ExtendedWrap(
@@ -155,17 +155,6 @@ class MatchCard extends StatelessWidget {
                                     ),
                                   )
                               ],
-                              overflowWidget: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(15)),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 5),
-                                child: Text(
-                                  "+",
-                                  style: TextStyle(color: Colors.grey[850]),
-                                ),
-                              ),
                             )
                           ],
                         ),

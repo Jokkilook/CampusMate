@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class RegistScreenC extends StatefulWidget {
   const RegistScreenC({super.key, required this.newUserData});
@@ -46,7 +49,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: IconButton(
-              onPressed: (/* 로그인 화면으로 돌아가기 */) {},
+              onPressed: (/* 로그인 화면으로 돌아가기 */) {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                    (route) => false);
+              },
               icon: const Icon(Icons.close),
             ),
           )
@@ -236,13 +246,11 @@ class _RegistScreenCState extends State<RegistScreenC> {
                           FractionallySizedBox(
                             widthFactor: 1,
                             child: SizedBox(
-                              height: 50,
+                              height: 70,
                               child: TextField(
+                                maxLength: 20,
                                 controller: nickController,
-                                onChanged: (value) {
-                                  //닉네임 중복인지 확인
-                                  setState(() {});
-                                },
+                                onChanged: (value) {},
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),

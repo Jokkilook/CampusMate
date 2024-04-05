@@ -121,9 +121,10 @@ class ProfileReviseScreen extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
+                  //이름입력
                   IntrinsicWidth(
                     child: TextField(
-                      maxLength: 10,
+                      maxLength: 20,
                       controller: nameController,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
@@ -273,10 +274,10 @@ class ProfileReviseScreen extends StatelessWidget {
                                     scheduleData: modifiedData.schedule,
                                     readOnly: false),
                               ),
-                              const SizedBox(height: 60)
                             ],
                           ),
-                        )
+                        ),
+                        const SizedBox(height: 60)
                       ],
                     ),
                   ),

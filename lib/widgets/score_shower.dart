@@ -23,18 +23,12 @@ class Score extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(100)),
         ),
-        SizedBox(
-          width: 50,
-          height: 50,
-          child: AutoSizeText(
-            score,
-            style: const TextStyle(
-                fontSize: 35,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87),
-            textAlign: TextAlign.center,
-          ),
-        )
+        AutoSizeText(
+          score,
+          style: const TextStyle(
+              fontSize: 35, fontWeight: FontWeight.bold, color: Colors.black87),
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   }

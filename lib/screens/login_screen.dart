@@ -104,67 +104,52 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const RegistScreenA(),
-                                  ));
-                            },
-                            child: const Text(
-                              "회원가입",
-                              style: TextStyle(
-                                  color: Color(0xFF0A351E), fontSize: 18),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2BB56B),
-                              minimumSize: const Size(100, 50),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              login().then((value) {
-                                if (value) {
-                                  //print(firebaseAuth.currentUser!.uid);
-                                  db
-                                      .getUser(firebaseAuth.currentUser!.uid)
-                                      .then((value) => userData = value);
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const MainScreen(),
-                                    ),
-                                    (route) => false,
-                                  );
-                                }
-                              });
-                            },
-                            child: const Text(
-                              "로그인",
-                              style: TextStyle(
-                                  color: Color(0xFF0A351E), fontSize: 18),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2BB56B),
-                              minimumSize: const Size(100, 50),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                          ),
-                        )
-                      ],
+                    ElevatedButton(
+                      onPressed: () {
+                        login().then((value) {
+                          if (value) {
+                            //print(firebaseAuth.currentUser!.uid);
+                            db
+                                .getUser(firebaseAuth.currentUser!.uid)
+                                .then((value) => userData = value);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MainScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          }
+                        });
+                      },
+                      child: const Text(
+                        "로그인",
+                        style:
+                            TextStyle(color: Color(0xFF0A351E), fontSize: 18),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2BB56B),
+                        minimumSize: const Size(1000, 50),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegistScreenA(),
+                            ));
+                      },
+                      child: const Text(
+                        "회원가입",
+                        style: TextStyle(
+                            color: Color(0xFF0A351E),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),

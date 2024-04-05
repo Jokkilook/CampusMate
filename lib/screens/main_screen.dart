@@ -1,9 +1,11 @@
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chat_list_screen.dart';
 import 'package:campusmate/screens/community_screen.dart';
 import 'package:campusmate/screens/matching_screen.dart';
 import 'package:campusmate/screens/more_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, this.index = 0});
@@ -35,7 +37,12 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: list[index],
+      body: Consumer<UserDataProvider>(
+        builder: (context, userData, child) {
+          Provider.of<UserDataProvider>(context).userData.name = "낄깔꼴깔김꼴깔";
+          return list[index];
+        },
+      ),
       bottomNavigationBar: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(

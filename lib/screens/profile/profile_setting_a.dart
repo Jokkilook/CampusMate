@@ -343,6 +343,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87)),
                         const SizedBox(height: 5),
+                        //MBTI
                         Row(
                           children: [
                             const Column(

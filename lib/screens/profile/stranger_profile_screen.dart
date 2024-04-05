@@ -159,11 +159,39 @@ class StrangerProfilScreen extends StatelessWidget {
                                       const SizedBox(
                                         height: 5,
                                       ),
-                                      Text(
-                                          '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}'),
-                                      Text(
-                                          '성별  ${userData.gender! ? "남" : "여"}'),
-                                      Text('학과  ${userData.dept}'),
+                                      Row(
+                                        children: [
+                                          const Text('나이'),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            '${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Text('성별'),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            userData.gender! ? "남" : "여",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Text('학과'),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            '${userData.dept}',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
