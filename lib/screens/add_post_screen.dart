@@ -1,19 +1,17 @@
 import 'package:campusmate/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/screens/community_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Color primaryColor = const Color(0xFF2BB56B);
 
+//ignore: must_be_immutable
 class AddPostScreen extends StatelessWidget {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   String _selectedBoard = 'A';
-  PostData postData = PostData();
+  final PostData postData = PostData();
   late UserData userData;
 
   AddPostScreen({super.key});

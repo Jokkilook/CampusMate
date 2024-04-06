@@ -1,5 +1,3 @@
-import 'package:campusmate/models/schedule_data.dart';
-
 class PostData {
   String? boardType;
   String? title;
