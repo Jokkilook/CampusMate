@@ -17,6 +17,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int index = 0;
+  final PageController pageController = PageController();
 
   final List<Widget> list = [
     const MatchingScreen(), //0
@@ -48,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.black.withOpacity(0.5),
-              content: const Text("Click once more to go back"),
+              content: const Text("뒤로가기를 한번 더 누르면 앱이 종료됩니다."),
               duration: const Duration(milliseconds: 1500),
             ),
           );
@@ -64,7 +65,27 @@ class _MainScreenState extends State<MainScreen> {
         body: Consumer<UserDataProvider>(
           builder: (context, userData, child) {
             Provider.of<UserDataProvider>(context).userData.name = "낄깔꼴깔김꼴깔";
-            return list[index];
+            return IndexedStack(
+              index: index,
+              children: [
+                const MatchingScreen(),
+                const ChatListScreen(),
+                const CommunityScreen(),
+                ProfileScreen(),
+                const MoreScreen()
+              ],
+            );
+            // PageView(
+            //   controller: pageController,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   children: [
+            //     const MatchingScreen(),
+            //     const ChatListScreen(),
+            //     const CommunityScreen(),
+            //     ProfileScreen(),
+            //     const MoreScreen()
+            //   ],
+            // );
           },
         ),
         bottomNavigationBar: Container(
@@ -89,6 +110,9 @@ class _MainScreenState extends State<MainScreen> {
             onTap: (value) {
               index = value;
               setState(() {});
+              // pageController.animateToPage(value,
+              //     duration: const Duration(milliseconds: 100),
+              //     curve: Curves.bounceIn);
             },
             elevation: 10,
             items: const [

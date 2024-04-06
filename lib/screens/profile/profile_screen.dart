@@ -20,7 +20,6 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       floatingActionButton: FloatingActionButton(
-        heroTag: "addpost",
         onPressed: () {
           Navigator.push(
             context,
