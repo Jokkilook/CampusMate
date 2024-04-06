@@ -13,10 +13,9 @@ class ProfileReviseScreen extends StatelessWidget {
 
   final db = DataBase();
   final uid = FirebaseAuth.instance.currentUser?.uid;
-  late final UserData modifiedData;
+  late UserData modifiedData;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController introController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
   late bool EI;
   late bool NS;
   late bool TF;
@@ -63,12 +62,8 @@ class ProfileReviseScreen extends StatelessWidget {
               onPressed: () {
                 modifiedData.name = nameController.value.text;
                 modifiedData.introduce = introController.value.text;
-                var mbti = [];
-                EI ? mbti.add("E") : mbti.add("I");
-                NS ? mbti.add("N") : mbti.add("S");
-                TF ? mbti.add("T") : mbti.add("F");
-                PJ ? mbti.add("P") : mbti.add("J");
-                modifiedData.mbti = "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
+                modifiedData.mbti =
+                    "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
                 db.addUser(modifiedData);
                 Navigator.pushAndRemoveUntil(
                     context,
@@ -86,205 +81,217 @@ class ProfileReviseScreen extends StatelessWidget {
 
   SingleChildScrollView wholeProfile(UserData userData, BuildContext context) {
     modifiedData = userData;
+
     introController.value = TextEditingValue(text: modifiedData.introduce!);
     nameController.value = TextEditingValue(text: modifiedData.name!);
+
     EI = userData.mbti![0] == "E";
-    NS = userData.mbti![0] == "N";
-    TF = userData.mbti![0] == "T";
-    PJ = userData.mbti![0] == "P";
+    NS = userData.mbti![1] == "N";
+    TF = userData.mbti![2] == "T";
+    PJ = userData.mbti![3] == "P";
 
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            // 프로필 카드
-            Container(
-              clipBehavior: Clip.hardEdge,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
-                      offset: const Offset(0, 0),
-                      blurRadius: 2)
-                ],
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
+        child: Container(
+          clipBehavior: Clip.hardEdge,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  offset: const Offset(0, 0),
+                  blurRadius: 2)
+            ],
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              Image.network(
+                modifiedData.imageUrl.toString(),
+                height: MediaQuery.of(context).size.width * 0.9,
+                width: double.infinity,
+                fit: BoxFit.fitWidth,
               ),
-              child: Column(
-                children: [
-                  Container(
-                    color: Colors.amber,
-                    height: 200,
+              const SizedBox(
+                height: 20,
+              ),
+              //이름입력
+              IntrinsicWidth(
+                child: TextField(
+                  maxLength: 20,
+                  controller: nameController,
+                  onChanged: (value) {
+                    modifiedData.name = value;
+                  },
+                  onTapOutside: (event) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  //이름입력
-                  IntrinsicWidth(
-                    child: TextField(
-                      maxLength: 20,
-                      controller: nameController,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    // 자기소개
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '자기소개',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextField(
+                            controller: introController,
+                            onChanged: (value) {
+                              modifiedData.introduce = value;
+                            },
+                            onTapOutside: (event) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                            minLines: 1,
+                            maxLines: 10,
+                            maxLength: 500,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.withOpacity(0.6),
+                                      width: 1.5,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey.withOpacity(0.6),
+                                      width: 1.5,
+                                    )),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                hintText: "프로필에 표시될 소개를 적어보세요!",
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10)),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        // 자기소개
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(10),
+                    // 정보, 매너학점
+                    Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '내 정보',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '자기소개',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextField(
-                                controller: introController,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0.6),
-                                          width: 1.5,
-                                        )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: Colors.grey.withOpacity(0.6),
-                                          width: 1.5,
-                                        )),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    hintText: "프로필에 표시될 소개를 적어보세요!",
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 10)),
-                              ),
-                            ],
+                          const SizedBox(
+                            height: 5,
                           ),
-                        ),
-                        // 정보, 매너학점
-                        Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '내 정보',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                  '나이  ${DateTime.now().year - int.parse(modifiedData.birthDate!.split(".")[0])}'),
-                              Text('성별  ${modifiedData.gender! ? "남" : "여"}'),
-                              Text('학과  ${modifiedData.dept}'),
-                            ],
-                          ),
-                        ),
-
-                        //성향, 태그
-                        Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.only(top: 8),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '성향',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              MBTISelector(
-                                  parent: this, EI: EI, NS: NS, TF: TF, PJ: PJ),
-                            ],
-                          ),
-                        ),
-                        TagShower(parent: this),
-
-                        //시간표
-                        Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.only(top: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                child: Text(
-                                  '시간표',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                                child: ScheduleTable(
-                                    scheduleData: modifiedData.schedule,
-                                    readOnly: false),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 60)
-                      ],
+                          Text(
+                              '나이  ${DateTime.now().year - int.parse(modifiedData.birthDate!.split(".")[0])}'),
+                          Text('성별  ${modifiedData.gender! ? "남" : "여"}'),
+                          Text('학과  ${modifiedData.dept}'),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+
+                    //성향, 태그
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '성향',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          MBTISelector(
+                              parent: this, EI: EI, NS: NS, TF: TF, PJ: PJ),
+                        ],
+                      ),
+                    ),
+                    TagShower(parent: this),
+
+                    //시간표
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(top: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            child: Text(
+                              '시간표',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                            child: ScheduleTable(
+                                scheduleData: modifiedData.schedule,
+                                readOnly: false),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 60)
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

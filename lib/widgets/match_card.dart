@@ -3,9 +3,7 @@ import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class MatchCard extends StatelessWidget {
@@ -95,7 +93,12 @@ class MatchCard extends StatelessWidget {
                   //사진부분
                   Flexible(
                     child: Container(
-                      color: Colors.amber,
+                      color: Colors.grey,
+                      child: Image.network(
+                        doc.get("imageUrl"),
+                        height: double.maxFinite,
+                        fit: BoxFit.fitHeight,
+                      ),
                     ),
                   ),
                   //정보부분

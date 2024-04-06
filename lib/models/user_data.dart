@@ -13,6 +13,7 @@ class UserData {
   String? introduce;
   double? score;
   String? mbti;
+  String? imageUrl;
   List<dynamic>? tags;
   ScheduleData schedule = ScheduleData();
 
@@ -31,6 +32,8 @@ class UserData {
       this.introduce,
       this.score,
       this.mbti,
+      this.imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
       this.tags}) {
     data = {
       "uid": uid,
@@ -45,6 +48,7 @@ class UserData {
       "introduce": introduce,
       "score": score,
       "mbti": mbti,
+      "imageUrl": imageUrl,
       "tags": tags,
       "schedule": schedule.schedule
     };
@@ -62,8 +66,10 @@ class UserData {
     gender = json["gender"];
     introduce = json["introduce"];
     mbti = json["mbti"];
+    imageUrl = json["imageUrl"];
     tags = json["tags"];
     score = json["score"];
+
     //DB에서 가져온 데이터는 List<dynamic>이 되어버려서 다시 List<Map<String, bool>> 타입으로 변환해주어야한다.
     schedule.schedule = (json["schedule"] as List)
         .map((e) => Map<String, bool>.from(e))
@@ -90,6 +96,7 @@ class UserData {
       "introduce": introduce,
       "score": score,
       "mbti": mbti,
+      "imageUrl": imageUrl,
       "tags": tags,
       "schedule": schedule.schedule
     };
@@ -109,6 +116,7 @@ class UserData {
       "introduce": introduce,
       "score": score,
       "mbti": mbti,
+      "imageUrl": imageUrl,
       "tags": tags,
       "schedule": schedule.schedule
     };

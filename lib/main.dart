@@ -1,6 +1,7 @@
 import 'package:campusmate/db_test.dart';
 import 'package:campusmate/firebase_test.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/media_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/post_screen.dart';
@@ -22,8 +23,14 @@ class MyApp extends StatelessWidget {
     MobileAds.instance.initialize();
     FirebaseTest().initFirebase();
 
-    return ChangeNotifierProvider(
-      create: (context) => UserDataProvider(userData: UserData()),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (context) => UserDataProvider(userData: UserData())),
+        ChangeNotifierProvider(
+          create: (context) => MediaDataProvider(),
+        )
+      ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: ScreenList(),

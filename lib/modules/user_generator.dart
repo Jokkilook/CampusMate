@@ -14,24 +14,25 @@ class UserGenerator {
   final schools = ["테스트대학교"];
   final depts = ["테스트학과", "컴퓨터공학과", "철학과", "생명공학과", "무슨학과", "시각디자인과"];
   final tags = [
-    "놀기",
-    "시간떼우기",
-    "술",
-    "친구",
-    "연애",
     "공부",
-    "편입",
-    "토익",
-    "취업",
-    "면접",
-    "카풀",
-    "산책",
     "동네",
-    "자취",
-    "학식",
-    "맛집",
-    "게임",
-    "취미"
+    "취미",
+    "식사",
+    "카풀",
+    "술",
+    "등하교",
+    "시간 떼우기",
+    "연애",
+    "편입",
+    "취업",
+    "토익",
+    "친분",
+    "연상",
+    "동갑",
+    "연하",
+    "선배",
+    "동기",
+    "후배"
   ];
   final mbtis = [
     "ENTP",
@@ -86,6 +87,8 @@ class UserGenerator {
     userData.password = "dummypassword";
     userData.gender = Random().nextBool();
     userData.mbti = mbtis[Random().nextInt(mbtis.length)];
+    userData.imageUrl =
+        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35";
     userData.school = schools[Random().nextInt(schools.length)];
     userData.name = RandomNames(Zone.us).name();
     userData.introduce = lorem(
