@@ -61,7 +61,7 @@ class FullProfileCard extends StatelessWidget {
                       userData.imageUrl.toString(),
                       height: MediaQuery.of(context).size.width * 0.9,
                       width: double.infinity,
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.cover,
                     ),
                     const SizedBox(
                       height: 20,

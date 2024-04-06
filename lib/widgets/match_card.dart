@@ -97,7 +97,7 @@ class MatchCard extends StatelessWidget {
                       child: Image.network(
                         doc.get("imageUrl"),
                         height: double.maxFinite,
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

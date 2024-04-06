@@ -1,6 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/main_screen.dart';
+import 'package:campusmate/screens/profile/image_upload_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,28 +9,58 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
-class ProfileReviseScreen extends StatelessWidget {
-  ProfileReviseScreen({super.key});
+class ProfileReviseScreen extends StatefulWidget {
+  const ProfileReviseScreen({super.key});
 
+  @override
+  State<ProfileReviseScreen> createState() => ProfileReviseScreenState();
+}
+
+class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   final db = DataBase();
+
   final uid = FirebaseAuth.instance.currentUser?.uid;
+
   late UserData modifiedData;
+
   final TextEditingController nameController = TextEditingController();
+
   final TextEditingController introController = TextEditingController();
+
   late bool EI;
+
   late bool NS;
+
   late bool TF;
+
   late bool PJ;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      extendBody: true,
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
         title: const Text('프로필 수정'),
+      ),
+      bottomNavigationBar: BottomButton(
+        text: "수정완료",
+        isCompleted: true,
+        onPressed: () {
+          modifiedData.name = nameController.value.text;
+          modifiedData.introduce = introController.value.text;
+          modifiedData.mbti =
+              "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
+          db.addUser(modifiedData);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainScreen(index: 3),
+              ),
+              (route) => false);
+        },
       ),
       body: Stack(
         children: [
@@ -52,28 +83,7 @@ class ProfileReviseScreen extends StatelessWidget {
               }
             },
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: BottomButton(
-              text: "수정완료",
-              isCompleted: true,
-              onPressed: () {
-                modifiedData.name = nameController.value.text;
-                modifiedData.introduce = introController.value.text;
-                modifiedData.mbti =
-                    "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
-                db.addUser(modifiedData);
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MainScreen(index: 3),
-                    ),
-                    (route) => false);
-              },
-            ),
-          )
+          Positioned(left: 0, right: 0, bottom: 0, child: Container())
         ],
       ),
     );
@@ -108,11 +118,21 @@ class ProfileReviseScreen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Image.network(
-                modifiedData.imageUrl.toString(),
-                height: MediaQuery.of(context).size.width * 0.9,
-                width: double.infinity,
-                fit: BoxFit.fitWidth,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ImageUploadScreen(userData: modifiedData)))
+                      .then((value) => setState(() {}));
+                },
+                child: Image.network(
+                  modifiedData.imageUrl.toString(),
+                  height: MediaQuery.of(context).size.width * 0.9,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(
                 height: 20,
@@ -122,9 +142,6 @@ class ProfileReviseScreen extends StatelessWidget {
                 child: TextField(
                   maxLength: 20,
                   controller: nameController,
-                  onChanged: (value) {
-                    modifiedData.name = value;
-                  },
                   onTapOutside: (event) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   },
@@ -163,9 +180,6 @@ class ProfileReviseScreen extends StatelessWidget {
                           ),
                           TextField(
                             controller: introController,
-                            onChanged: (value) {
-                              modifiedData.introduce = value;
-                            },
                             onTapOutside: (event) {
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
@@ -300,7 +314,7 @@ class ProfileReviseScreen extends StatelessWidget {
 
 class TagShower extends StatefulWidget {
   const TagShower({super.key, required this.parent});
-  final ProfileReviseScreen parent;
+  final ProfileReviseScreenState parent;
 
   @override
   State<TagShower> createState() => _TagShowerState();
@@ -420,7 +434,7 @@ class MBTISelector extends StatefulWidget {
   bool NS; //true = N, false = S
   bool TF; //true = T, false = F
   bool PJ; //true = P, false = J
-  final ProfileReviseScreen parent;
+  final ProfileReviseScreenState parent;
 
   @override
   State<MBTISelector> createState() => _MBTISelectorState();

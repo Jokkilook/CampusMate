@@ -18,7 +18,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int index = 0;
-  final PageController pageController = PageController();
 
   final List<Widget> list = [
     const MatchingScreen(), //0
