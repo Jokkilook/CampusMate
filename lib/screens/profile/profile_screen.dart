@@ -5,15 +5,15 @@ import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
   final db = DataBase();
   final uid = FirebaseAuth.instance.currentUser?.uid;
+  final storage = FirebaseStorage.instance.ref();
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +63,7 @@ class ProfileScreen extends StatelessWidget {
 
   SingleChildScrollView wholeProfile(UserData userData, BuildContext context) {
     late final String score;
+    final image = storage.child("images/test.png");
 
     if (userData.score! >= 95) {
       score = "A+";
@@ -107,9 +108,11 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Container(
-                    color: Colors.amber,
+                  Image.network(
+                    "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
                     height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
                   ),
                   const SizedBox(
                     height: 20,

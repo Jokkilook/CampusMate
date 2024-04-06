@@ -4,6 +4,7 @@ import 'package:campusmate/screens/community_screen.dart';
 import 'package:campusmate/screens/matching_screen.dart';
 import 'package:campusmate/screens/more_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
+import 'package:campusmate/widgets/fadein_indexedstack.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -65,7 +66,8 @@ class _MainScreenState extends State<MainScreen> {
         body: Consumer<UserDataProvider>(
           builder: (context, userData, child) {
             Provider.of<UserDataProvider>(context).userData.name = "낄깔꼴깔김꼴깔";
-            return IndexedStack(
+            return FadeIndexedStack(
+              duration: const Duration(milliseconds: 100),
               index: index,
               children: [
                 const MatchingScreen(),
