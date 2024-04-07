@@ -10,7 +10,7 @@ Color primaryColor = const Color(0xFF2BB56B);
 class AddPostScreen extends StatelessWidget {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  String _selectedBoard = 'A';
+  String _selectedBoard = 'General';
   final PostData postData = PostData();
   late UserData userData;
 
@@ -19,7 +19,16 @@ class AddPostScreen extends StatelessWidget {
   Future<void> _addPost(BuildContext context) async {
     try {
       postData.setData();
-      await FirebaseFirestore.instance.collection('posts').add(postData.data!);
+      if (_selectedBoard == 'General') {
+        await FirebaseFirestore.instance
+            .collection('generalPosts')
+            .add(postData.data!);
+      }
+      if (_selectedBoard == 'Anonymous') {
+        await FirebaseFirestore.instance
+            .collection('anonymousPosts')
+            .add(postData.data!);
+      }
     } catch (error) {
       debugPrint('안 올라감ㅋ: $error');
     }
@@ -42,8 +51,8 @@ class AddPostScreen extends StatelessWidget {
                 // 게시판 선택
                 value: _selectedBoard,
                 items: const [
-                  DropdownMenuItem(child: Text('일반'), value: 'A'),
-                  DropdownMenuItem(child: Text('익명'), value: 'B'),
+                  DropdownMenuItem(child: Text('일반'), value: 'General'),
+                  DropdownMenuItem(child: Text('익명'), value: 'Anonymous'),
                 ],
                 onChanged: (value) {
                   // 선택된 게시판 처리
@@ -65,9 +74,8 @@ class AddPostScreen extends StatelessWidget {
                   // 내용 입력
                   controller: _contentController,
                   keyboardType: TextInputType.multiline,
-                  maxLines: null,
+                  maxLines: 10,
                   decoration: const InputDecoration(
-                    labelText: '내용',
                     border: OutlineInputBorder(),
                   ),
                 ),

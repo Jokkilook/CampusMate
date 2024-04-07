@@ -13,7 +13,7 @@ class PostData {
   Map<String, dynamic>? data;
 
   PostData({
-    this.boardType = 'A',
+    this.boardType = 'General',
     this.title,
     this.content,
     this.timestamp,

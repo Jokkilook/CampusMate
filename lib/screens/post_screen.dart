@@ -1,7 +1,8 @@
+import 'package:campusmate/models/post_data.dart';
 import 'package:flutter/material.dart';
 
 class PostScreen extends StatelessWidget {
-  const PostScreen({super.key});
+  const PostScreen({super.key, required PostData postData});
 
   @override
   Widget build(BuildContext context) {

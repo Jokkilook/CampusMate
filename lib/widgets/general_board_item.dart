@@ -35,11 +35,17 @@ class GeneralBoardItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 제목
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: 250,
+                    child: Text(
+                      title,
+                      overflow:
+                          TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
+                      maxLines: 1, // 텍스트가 한 줄로만 표시되도록 제한
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   // 내용 첫줄

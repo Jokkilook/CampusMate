@@ -89,15 +89,6 @@ class ScreenList extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => DBTest()),
               ),
             ),
-
-            // PostScreen
-            ListTile(
-              title: const Text("PostScreen", style: TextStyle(fontSize: 24)),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PostScreen()),
-              ),
-            ),
           ],
         ),
       ),

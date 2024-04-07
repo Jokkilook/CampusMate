@@ -17,10 +17,21 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
+  // 땡겨서 새로고침
+  Future<void> _refreshGeneralPosts() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {});
+  }
+
+  Future<void> _refreshAnonymousPosts() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // 탭의 수를 2개로 설정
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           elevation: 2,
@@ -65,9 +76,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
           child: TabBarView(
             children: [
               // 일반 게시판
-              Expanded(
+              RefreshIndicator(
+                onRefresh: _refreshGeneralPosts,
                 child: FutureBuilder(
-                  future: FirebaseFirestore.instance.collection('posts').get(),
+                  future: FirebaseFirestore.instance
+                      .collection('generalPosts')
+                      .get(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -107,9 +121,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 ),
               ),
               // 익명 게시판
-              Expanded(
+              RefreshIndicator(
+                onRefresh: _refreshAnonymousPosts,
                 child: FutureBuilder(
-                  future: FirebaseFirestore.instance.collection('posts').get(),
+                  future: FirebaseFirestore.instance
+                      .collection('anonymousPosts')
+                      .get(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
