@@ -23,9 +23,9 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
 
   late UserData modifiedData;
 
-  final TextEditingController nameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
-  final TextEditingController introController = TextEditingController();
+  TextEditingController introController = TextEditingController();
 
   late bool EI;
 
@@ -38,29 +38,30 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
         title: const Text('프로필 수정'),
       ),
-      bottomNavigationBar: BottomButton(
-        text: "수정완료",
-        isCompleted: true,
-        onPressed: () {
-          modifiedData.name = nameController.value.text;
-          modifiedData.introduce = introController.value.text;
-          modifiedData.mbti =
-              "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
-          db.addUser(modifiedData);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MainScreen(index: 3),
-              ),
-              (route) => false);
-        },
-      ),
+      // bottomNavigationBar: BottomButton(
+      //   text: "수정완료",
+      //   isCompleted: true,
+      //   onPressed: () {
+      //     modifiedData.name = nameController.value.text;
+      //     modifiedData.introduce = introController.value.text;
+      //     modifiedData.mbti =
+      //         "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
+      //     db.addUser(modifiedData);
+      //     Navigator.pushAndRemoveUntil(
+      //         context,
+      //         MaterialPageRoute(
+      //           builder: (context) => const MainScreen(index: 3),
+      //         ),
+      //         (route) => false);
+      //   },
+      // ),
       body: Stack(
         children: [
           FutureBuilder<DocumentSnapshot>(
@@ -79,21 +80,46 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
               } else {
                 var data = snapshot.data!.data() as Map<String, dynamic>;
                 modifiedData = UserData.fromJson(data);
+
                 introController.value =
                     TextEditingValue(text: modifiedData.introduce!);
                 nameController.value =
                     TextEditingValue(text: modifiedData.name!);
+
                 return wholeProfile(modifiedData, context);
               }
             },
           ),
-          Positioned(left: 0, right: 0, bottom: 0, child: Container())
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: BottomButton(
+              text: "수정완료",
+              isCompleted: true,
+              onPressed: () {
+                modifiedData.name = nameController.value.text;
+                modifiedData.introduce = introController.value.text;
+                modifiedData.mbti =
+                    "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
+                db.addUser(modifiedData);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainScreen(index: 3),
+                    ),
+                    (route) => false);
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
   SingleChildScrollView wholeProfile(UserData userData, BuildContext context) {
+    modifiedData = userData;
+
     EI = userData.mbti![0] == "E";
     NS = userData.mbti![1] == "N";
     TF = userData.mbti![2] == "T";
@@ -137,6 +163,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
               //이름입력
               IntrinsicWidth(
                 child: TextField(
+                  scrollPadding: const EdgeInsets.only(bottom: 100),
                   cursorColor: Colors.black87,
                   decoration: const InputDecoration(
                     contentPadding:
@@ -183,6 +210,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                             height: 10,
                           ),
                           InputTextField(
+                            scrollPadding: const EdgeInsets.only(bottom: 120),
                             controller: introController,
                             minLines: 1,
                             maxLines: 10,
@@ -282,6 +310,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 60)
                   ],
                 ),
               ),

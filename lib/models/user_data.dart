@@ -30,7 +30,7 @@ class UserData {
       this.birthDate,
       this.gender,
       this.introduce,
-      this.score,
+      this.score = 80.00,
       this.mbti,
       this.imageUrl =
           "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",

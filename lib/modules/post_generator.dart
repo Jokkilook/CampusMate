@@ -10,32 +10,38 @@ class PostGenerator {
   DataBase db = DataBase();
   int index = 0;
 
-  void addDummyPost(int quantity) async {
-    AggregateQuerySnapshot query =
-        await db.db.collection("generalPosts").count().get();
+  void addDummyPost(int quantity, {bool isGeneral = true}) async {
+    AggregateQuerySnapshot query = await db.db
+        .collection(isGeneral ? "generalPosts" : "anonymousPosts")
+        .count()
+        .get();
     index = query.count ?? index;
 
     for (int i = 0; i < quantity; i++) {
-      randomAsign();
+      randomAsign(isGeneral);
       postData.setData();
       db.addPost(postData);
       index++;
     }
   }
 
-  void deleteDummyPost(int quantity) async {
+  void deleteDummyPost(int quantity, {bool isGeneral = true}) async {
     QuerySnapshot snapshot = await db.db
-        .collection("generalPosts")
+        .collection(isGeneral ? "generalPosts" : "anonymousPosts")
         .where("uid", isEqualTo: "9UciNePfNfS7KFvbUpgbyMwaSUh1")
         .get();
 
-    for (QueryDocumentSnapshot doc in snapshot.docs) {
-      await db.db.collection('generalPosts').doc(doc.id).delete();
+    for (int i = 0; i < quantity; i++) {
+      await db.db
+          .collection(isGeneral ? "generalPosts" : "anonymousPosts")
+          .doc(snapshot.docs[0].id)
+          .delete();
     }
   }
 
-  void randomAsign() {
+  void randomAsign(bool isGeneral) {
     postData = PostData();
+    postData.boardType = isGeneral ? "General" : "Anonymous";
     postData.title = lorem(paragraphs: 1, words: Random().nextInt(2) + 8);
     postData.content = lorem(
         paragraphs: Random().nextInt(2) + 1, words: Random().nextInt(50) + 5);

@@ -22,7 +22,8 @@ class ProfileScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ProfileReviseScreen()),
+            MaterialPageRoute(
+                builder: (context) => const ProfileReviseScreen()),
           );
         },
         child: const Icon(Icons.edit, size: 30),

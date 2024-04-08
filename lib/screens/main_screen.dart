@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     const ChatListScreen(), //1
     const CommunityScreen(), //2
     ProfileScreen(), //3
-    const MoreScreen() //4
+    MoreScreen() //4
   ];
 
   @override
@@ -64,7 +64,6 @@ class _MainScreenState extends State<MainScreen> {
         extendBody: true,
         body: Consumer<UserDataProvider>(
           builder: (context, userData, child) {
-            Provider.of<UserDataProvider>(context).userData.name = "낄깔꼴깔김꼴깔";
             return FadeIndexedStack(
               duration: const Duration(milliseconds: 100),
               index: index,
@@ -73,20 +72,9 @@ class _MainScreenState extends State<MainScreen> {
                 const ChatListScreen(),
                 const CommunityScreen(),
                 ProfileScreen(),
-                const MoreScreen()
+                MoreScreen()
               ],
             );
-            // PageView(
-            //   controller: pageController,
-            //   physics: const NeverScrollableScrollPhysics(),
-            //   children: [
-            //     const MatchingScreen(),
-            //     const ChatListScreen(),
-            //     const CommunityScreen(),
-            //     ProfileScreen(),
-            //     const MoreScreen()
-            //   ],
-            // );
           },
         ),
         bottomNavigationBar: Container(
@@ -111,9 +99,6 @@ class _MainScreenState extends State<MainScreen> {
             onTap: (value) {
               index = value;
               setState(() {});
-              // pageController.animateToPage(value,
-              //     duration: const Duration(milliseconds: 100),
-              //     curve: Curves.bounceIn);
             },
             elevation: 10,
             items: const [

@@ -8,13 +8,15 @@ class InputTextField extends StatefulWidget {
       this.maxLines,
       this.maxLength,
       this.keyboardType,
-      this.hintText});
+      this.hintText,
+      this.scrollPadding = const EdgeInsets.all(0)});
   final TextEditingController controller;
   final int? minLines;
   final int? maxLines;
   final int? maxLength;
   final TextInputType? keyboardType;
   final String? hintText;
+  final EdgeInsets scrollPadding;
 
   @override
   State<InputTextField> createState() => _InputTextFieldState();
@@ -32,6 +34,7 @@ class _InputTextFieldState extends State<InputTextField> {
       maxLines: widget.maxLines,
       maxLength: widget.maxLength,
       keyboardType: widget.keyboardType,
+      scrollPadding: widget.scrollPadding,
       decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),

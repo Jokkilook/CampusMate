@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -108,17 +110,20 @@ class LoginScreen extends StatelessWidget {
                       onPressed: () {
                         login().then((value) {
                           if (value) {
-                            //print(firebaseAuth.currentUser!.uid);
                             db
                                 .getUser(firebaseAuth.currentUser!.uid)
-                                .then((value) => userData = value);
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MainScreen(),
-                              ),
-                              (route) => false,
-                            );
+                                .then((value) {
+                              userData = value;
+                              context.read<UserDataProvider>().userData =
+                                  userData;
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const MainScreen(),
+                                ),
+                                (route) => false,
+                              );
+                            });
                           }
                         });
                       },

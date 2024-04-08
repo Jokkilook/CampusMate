@@ -1,40 +1,109 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:provider/provider.dart';
 
 class MatchCard extends StatelessWidget {
   const MatchCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
-      future: FirebaseFirestore.instance
-          .collection('users')
-          .where("school", isEqualTo: "테스트대학교")
-          .get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return Consumer<UserDataProvider>(
+      builder: (context, userData, child) {
+        return FutureBuilder<QuerySnapshot>(
+          future: FirebaseFirestore.instance
+              .collection('users')
+              .where("school", isEqualTo: "테스트대학교")
+              .get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-        if (!snapshot.hasData) {
-          return const Text("아직 사용자가 없어요 o_o");
-        }
-        if (snapshot.hasError) {
-          throw Error();
-        } else {
-          var data = snapshot.data?.docs ?? [];
-          return Center(child: swipableCard(data, context));
-        }
+            if (!snapshot.hasData) {
+              return const Center(child: Text("아직 사용자가 없어요 o_o"));
+            }
+            if (snapshot.hasError) {
+              return const Center(child: Text("오류가 발생했어요!"));
+            } else {
+              List<QueryDocumentSnapshot> data = snapshot.data?.docs ?? [];
+              // var data = snapshot.data!.data() as Map<String, dynamic>;
+              return Center(child: swipableCard(data, context));
+            }
+          },
+        );
       },
     );
   }
 
-  CardSwiper swipableCard(final data, BuildContext context) {
+  int matchFilter(UserData myData, UserData otherData) {
+    int matchPercent = 0;
+
+    matchPercent = (compareSchedule(myData, otherData) +
+            compareTags(myData, otherData) +
+            compareMBTI(myData, otherData)) ~/
+        3;
+
+    return matchPercent;
+  }
+
+  int compareMBTI(UserData myData, UserData otherData) {
+    int matchPercent = 0;
+    int count = 0;
+    String myMBTI = myData.mbti!;
+    String otherMBTI = otherData.mbti!;
+    for (int i = 0; i < 4; i++) {
+      if (myMBTI[i] == otherMBTI[i]) count++;
+    }
+    matchPercent = (count / 4 * 100).toInt();
+    return matchPercent;
+  }
+
+  int compareSchedule(UserData myData, UserData otherData) {
+    int matchPercent = 0;
+    int index = 0;
+    int count = 0;
+    for (var day in myData.schedule.schedule) {
+      day.forEach((key, value) {
+        if (value == otherData.schedule.schedule[index][key]) {
+          count++;
+        }
+      });
+      index++;
+    }
+    matchPercent = (count / 60 * 100).toInt();
+    return matchPercent;
+  }
+
+  int compareTags(UserData myData, UserData otherData) {
+    List myTags = myData.tags!;
+    List otherTags = otherData.tags!;
+    int matchPercent = 0;
+    int count = 0;
+
+    if (myTags.length >= otherTags.length) {
+      for (var element in otherTags) {
+        myTags.contains(element) ? count++ : null;
+      }
+    } else {
+      for (var element in myTags) {
+        otherTags.contains(element) ? count++ : null;
+      }
+    }
+
+    matchPercent =
+        (count * 2 / (myTags.length + otherTags.length) * 100).toInt();
+    return matchPercent;
+  }
+
+  CardSwiper swipableCard(
+      List<QueryDocumentSnapshot> data, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.height;
 
     return CardSwiper(
@@ -42,23 +111,24 @@ class MatchCard extends StatelessWidget {
         cardsCount: data.length,
         cardBuilder: (context, index, horizontalOffsetPercentage,
             verticalOffsetPercentage) {
-          final doc = data[index];
+          final doc =
+              UserData.fromJson(data[index].data() as Map<String, dynamic>);
           late final String score;
-          if (doc.get("score") >= 95) {
+          if (doc.score! >= 95) {
             score = "A+";
-          } else if (doc.get("score") >= 90) {
+          } else if (doc.score! >= 90) {
             score = "A";
-          } else if (doc.get("score") >= 85) {
+          } else if (doc.score! >= 85) {
             score = "B+";
-          } else if (doc.get("score") >= 80) {
+          } else if (doc.score! >= 80) {
             score = "B";
-          } else if (doc.get("score") >= 75) {
+          } else if (doc.score! >= 75) {
             score = "C+";
-          } else if (doc.get("score") >= 70) {
+          } else if (doc.score! >= 70) {
             score = "C";
-          } else if (doc.get("score") >= 65) {
+          } else if (doc.score! >= 65) {
             score = "D+";
-          } else if (doc.get("score") >= 60) {
+          } else if (doc.score! >= 60) {
             score = "D";
           } else {
             score = "F";
@@ -69,8 +139,7 @@ class MatchCard extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        StrangerProfilScreen(uid: doc.get("uid")),
+                    builder: (context) => StrangerProfilScreen(uid: doc.uid!),
                   ));
             },
             child: Container(
@@ -96,7 +165,7 @@ class MatchCard extends StatelessWidget {
                       width: double.infinity,
                       color: Colors.grey,
                       child: Image.network(
-                        doc.get("imageUrl"),
+                        doc.imageUrl!,
                         height: double.maxFinite,
                         fit: BoxFit.cover,
                       ),
@@ -112,32 +181,40 @@ class MatchCard extends StatelessWidget {
                           BorderRadius.vertical(bottom: Radius.circular(10)),
                     ),
                     child: Stack(
+                      clipBehavior: Clip.none,
                       children: [
                         Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(
-                                  width: 220,
-                                  child: AutoSizeText(
-                                    "${doc.get("name")}, ${DateTime.now().year - int.parse(doc.get("birthDate").split(".")[0])}",
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    //이름, 나이
+                                    SizedBox(
+                                      width: 220,
+                                      child: AutoSizeText(
+                                        "${doc.name!}, ${DateTime.now().year - int.parse(doc.birthDate!.split(".")[0])}",
+                                        maxLines: 1,
+                                        style: const TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    //MBTI
+                                    Text(
+                                      '${doc.mbti}',
+                                      style: const TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black54),
+                                    ),
+                                  ],
                                 ),
-                                const Flexible(child: SizedBox())
                               ],
-                            ),
-                            Text(
-                              '${doc.get("mbti")}',
-                              style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black54),
                             ),
                             const SizedBox(height: 10),
                             ExtendedWrap(
@@ -145,7 +222,7 @@ class MatchCard extends StatelessWidget {
                               spacing: 10,
                               runSpacing: 10,
                               children: [
-                                for (var tag in doc.get("tags"))
+                                for (var tag in doc.tags!)
                                   Container(
                                     decoration: BoxDecoration(
                                         color: Colors.grey[100],
@@ -162,8 +239,15 @@ class MatchCard extends StatelessWidget {
                             )
                           ],
                         ),
-                        //매너학점
-                        Positioned(right: 0, child: Score(score: score)),
+                        Positioned(
+                          top: -50,
+                          right: 0,
+                          child: ScoreShower(
+                            score: score,
+                            percentage: matchFilter(
+                                context.read<UserDataProvider>().userData, doc),
+                          ),
+                        )
                       ],
                     ),
                   ),
