@@ -53,7 +53,7 @@ class UserGenerator {
     "ISFJ"
   ];
 
-  void addDummy(int quantity) async {
+  void addDummyUser(int quantity) async {
     AggregateQuerySnapshot query =
         await db.db.collection("users").count().get();
     index = query.count ?? index;
@@ -66,7 +66,7 @@ class UserGenerator {
     }
   }
 
-  void deleteDummy(int quantity) async {
+  void deleteDummyUser(int quantity) async {
     AggregateQuerySnapshot query =
         await db.db.collection("users").count().get();
     index = query.count ?? index;

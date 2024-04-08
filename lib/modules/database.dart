@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:campusmate/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -29,4 +30,22 @@ class DataBase {
   }
 
   void updateUser(UserData userData) {}
+
+  void addPost(PostData postData) async {
+    try {
+      postData.setData();
+      if (postData.boardType == 'General') {
+        await FirebaseFirestore.instance
+            .collection('generalPosts')
+            .add(postData.data!);
+      }
+      if (postData.boardType == 'Anonymous') {
+        await FirebaseFirestore.instance
+            .collection('anonymousPosts')
+            .add(postData.data!);
+      }
+    } catch (error) {
+      debugPrint('안 올라감ㅋ: $error');
+    }
+  }
 }

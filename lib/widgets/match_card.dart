@@ -93,6 +93,7 @@ class MatchCard extends StatelessWidget {
                   //사진부분
                   Flexible(
                     child: Container(
+                      width: double.infinity,
                       color: Colors.grey,
                       child: Image.network(
                         doc.get("imageUrl"),

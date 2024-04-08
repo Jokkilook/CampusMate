@@ -45,15 +45,9 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         },
       ),
       appBar: AppBar(
-        title: const Text(
-          "프로필 이미지",
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF5C5C5C)),
-        ),
-        shadowColor: Colors.black,
         elevation: 2,
+        shadowColor: Colors.black,
+        title: const Text('프로필 이미지'),
       ),
       body: Center(
         child: Column(

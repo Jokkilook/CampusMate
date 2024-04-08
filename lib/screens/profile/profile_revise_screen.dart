@@ -3,12 +3,12 @@ import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/profile/image_upload_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-//ignore: must_be_immutable
 class ProfileReviseScreen extends StatefulWidget {
   const ProfileReviseScreen({super.key});
 
@@ -38,7 +38,6 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         elevation: 2,
@@ -79,7 +78,12 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 throw Error();
               } else {
                 var data = snapshot.data!.data() as Map<String, dynamic>;
-                return wholeProfile(UserData.fromJson(data), context);
+                modifiedData = UserData.fromJson(data);
+                introController.value =
+                    TextEditingValue(text: modifiedData.introduce!);
+                nameController.value =
+                    TextEditingValue(text: modifiedData.name!);
+                return wholeProfile(modifiedData, context);
               }
             },
           ),
@@ -90,11 +94,6 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   }
 
   SingleChildScrollView wholeProfile(UserData userData, BuildContext context) {
-    modifiedData = userData;
-
-    introController.value = TextEditingValue(text: modifiedData.introduce!);
-    nameController.value = TextEditingValue(text: modifiedData.name!);
-
     EI = userData.mbti![0] == "E";
     NS = userData.mbti![1] == "N";
     TF = userData.mbti![2] == "T";
@@ -134,12 +133,19 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 10),
               //이름입력
               IntrinsicWidth(
                 child: TextField(
+                  cursorColor: Colors.black87,
+                  decoration: const InputDecoration(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black54)),
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black87)),
+                  ),
                   maxLength: 20,
                   controller: nameController,
                   onTapOutside: (event) {
@@ -152,9 +158,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(
@@ -178,36 +182,14 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          TextField(
+                          InputTextField(
                             controller: introController,
-                            onTapOutside: (event) {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
                             minLines: 1,
                             maxLines: 10,
                             maxLength: 500,
                             keyboardType: TextInputType.multiline,
-                            decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
-                                      color: Colors.grey.withOpacity(0.6),
-                                      width: 1.5,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(
-                                      color: Colors.grey.withOpacity(0.6),
-                                      width: 1.5,
-                                    )),
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                hintText: "프로필에 표시될 소개를 적어보세요!",
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10)),
-                          ),
+                            hintText: "프로필에 표시될 소개를 적어보세요!",
+                          )
                         ],
                       ),
                     ),
@@ -300,7 +282,6 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 60)
                   ],
                 ),
               ),

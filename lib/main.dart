@@ -4,7 +4,6 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/media_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
-import 'package:campusmate/screens/post_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_c.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -31,9 +30,12 @@ class MyApp extends StatelessWidget {
           create: (context) => MediaDataProvider(),
         )
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
+        theme: ThemeData(
+            textSelectionTheme: const TextSelectionThemeData(
+                selectionHandleColor: Colors.green)),
         debugShowCheckedModeBanner: false,
-        home: ScreenList(),
+        home: const ScreenList(),
       ),
     );
   }

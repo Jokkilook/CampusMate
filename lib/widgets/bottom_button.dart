@@ -6,11 +6,13 @@ class BottomButton extends StatelessWidget {
       required this.text,
       this.isCompleted = true,
       this.onPressed,
-      this.isLoading = false});
+      this.isLoading = false,
+      this.padding = const EdgeInsets.all(20)});
   final bool isCompleted;
   final Function()? onPressed;
   final String text;
   final bool isLoading;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {

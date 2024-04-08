@@ -1,4 +1,5 @@
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -37,15 +38,27 @@ class DBTest extends StatelessWidget {
             const Text("버튼 누르면 10개씩 생성됨"),
             ElevatedButton(
               onPressed: () {
-                UserGenerator().addDummy(10);
+                UserGenerator().addDummyUser(10);
               },
               child: const Text("더미유저생성"),
             ),
             ElevatedButton(
               onPressed: () {
-                UserGenerator().deleteDummy(10);
+                UserGenerator().deleteDummyUser(10);
               },
               child: const Text("더미유저삭제"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                PostGenerator().addDummyPost(10);
+              },
+              child: const Text("더미포스트생성"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                PostGenerator().deleteDummyPost(10);
+              },
+              child: const Text("더미포스트삭제"),
             ),
             Flexible(
               child: CardSwiper(
