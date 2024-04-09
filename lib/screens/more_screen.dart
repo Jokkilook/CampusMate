@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+//ignore: must_be_immutable
 class MoreScreen extends StatelessWidget {
   MoreScreen({super.key});
   bool isGeneral = true;

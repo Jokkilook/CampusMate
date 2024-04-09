@@ -2,7 +2,7 @@ import 'package:campusmate/widgets/anonymous_board_item.dart';
 import 'package:campusmate/widgets/general_board_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../models/post_data.dart';
+import '../../models/post_data.dart';
 import 'add_post_screen.dart';
 
 Color primaryColor = const Color(0xFF2BB56B);

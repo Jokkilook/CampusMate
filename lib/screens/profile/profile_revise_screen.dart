@@ -1,5 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/profile/image_upload_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
@@ -8,6 +9,7 @@ import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileReviseScreen extends StatefulWidget {
   const ProfileReviseScreen({super.key});
@@ -102,6 +104,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 modifiedData.introduce = introController.value.text;
                 modifiedData.mbti =
                     "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
+                context.read<UserDataProvider>().userData = modifiedData;
                 db.addUser(modifiedData);
                 Navigator.pushAndRemoveUntil(
                     context,

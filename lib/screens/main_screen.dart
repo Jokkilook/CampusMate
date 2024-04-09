@@ -1,6 +1,6 @@
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/chat_list_screen.dart';
-import 'package:campusmate/screens/community_screen.dart';
+import 'package:campusmate/screens/chatting/chat_list_screen.dart';
+import 'package:campusmate/screens/community/community_screen.dart';
 import 'package:campusmate/screens/matching_screen.dart';
 import 'package:campusmate/screens/more_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
@@ -21,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> list = [
     const MatchingScreen(), //0
-    const ChatListScreen(), //1
+    ChatListScreen(), //1
     const CommunityScreen(), //2
     ProfileScreen(), //3
     MoreScreen() //4
@@ -69,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
               index: index,
               children: [
                 const MatchingScreen(),
-                const ChatListScreen(),
+                ChatListScreen(),
                 const CommunityScreen(),
                 ProfileScreen(),
                 MoreScreen()

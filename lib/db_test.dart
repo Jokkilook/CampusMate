@@ -1,6 +1,8 @@
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
+import 'package:campusmate/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
@@ -59,6 +61,19 @@ class DBTest extends StatelessWidget {
                 PostGenerator().deleteDummyPost(10);
               },
               child: const Text("더미포스트삭제"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                FirebaseAuth.instance
+                    .signOut()
+                    .whenComplete(() => Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        ),
+                        (route) => false));
+              },
+              child: const Text("로그아웃"),
             ),
             Flexible(
               child: CardSwiper(
