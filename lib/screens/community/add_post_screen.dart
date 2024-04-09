@@ -1,11 +1,10 @@
 import 'package:campusmate/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-
-import '../provider/user_data_provider.dart';
 
 Color primaryColor = const Color(0xFF2BB56B);
 

@@ -15,7 +15,7 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatListScreen> {
-  var chatList;
+  List<Map<String, dynamic>>? chatList = [];
 
   @override
   void initState() {
@@ -26,11 +26,12 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
   void loadChatList() async {
     var list = context.read<UserDataProvider>().userData.chatRoomList;
-    if (list != null) {
-      for (var room in list) {
-        var data = await widget.db.db.collection("chats").doc(room).get();
-        chatList.add(data);
-      }
+    if (list == null) {
+      return;
+    }
+    for (var room in list) {
+      var data = await widget.db.db.collection("chats").doc(room).get();
+      chatList!.add(data.data() as Map<String, dynamic>);
     }
   }
 
@@ -40,7 +41,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
-        title: const Text("채팅방"),
+        title: const Text("채팅"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -51,11 +52,14 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             const SizedBox(height: 12),
             Expanded(
               child: ListView.builder(
-                itemCount: chatList != null ? chatList.length : 5,
+                itemCount: chatList != null ? chatList!.length : 5,
                 itemBuilder: (context, index) {
                   return ChatListItem(
                     data: ChatRoomData(
-                        roomName: "asd", roomId: "Asd", lastText: "asd"),
+                        roomName: chatList![index]["roomName"],
+                        roomId: chatList![index]["roomId"],
+                        lastText:
+                            chatList![index]["participantsUID"].toString()),
                   );
                 },
               ),
