@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../models/post_data.dart';
+import '../modules/format_time_stamp.dart';
+
 class AnonymousBoardItem extends StatelessWidget {
-  final String title;
-  final String author;
-  final String content;
-  final String likeCount;
-  final String dislikeCount;
-  final String commentCount;
+  final PostData postData;
 
   const AnonymousBoardItem({
     super.key,
-    required this.title,
-    required this.author,
-    required this.content,
-    required this.likeCount,
-    required this.dislikeCount,
-    required this.commentCount,
+    required this.postData,
   });
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedTime = formatTimeStamp(postData.timestamp ?? '', now);
+
     return Container(
       padding: const EdgeInsets.all(10),
       width: double.infinity,
@@ -39,10 +35,9 @@ class AnonymousBoardItem extends StatelessWidget {
                   SizedBox(
                     width: 250,
                     child: Text(
-                      title,
-                      overflow:
-                          TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
-                      maxLines: 1, // 텍스트가 한 줄로만 표시되도록 제한
+                      postData.title ?? '',
+                      overflow: TextOverflow.ellipsis, // ...처리
+                      maxLines: 1, // 1줄 제한
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -53,9 +48,8 @@ class AnonymousBoardItem extends StatelessWidget {
                   SizedBox(
                     width: 250,
                     child: Text(
-                      content,
-                      overflow:
-                          TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
+                      postData.content ?? '',
+                      overflow: TextOverflow.ellipsis, // ...처리
                       maxLines: 2, // 2줄 제한
                     ),
                   ),
@@ -72,7 +66,7 @@ class AnonymousBoardItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        likeCount,
+                        postData.likeCount.toString(),
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -87,7 +81,7 @@ class AnonymousBoardItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        dislikeCount,
+                        postData.dislikeCount.toString(),
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -102,7 +96,7 @@ class AnonymousBoardItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        commentCount,
+                        postData.commentCount.toString(),
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -110,9 +104,9 @@ class AnonymousBoardItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       // 작성 시간
-                      const Text(
-                        '| 방금',
-                        style: TextStyle(
+                      Text(
+                        '| $formattedTime',
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),

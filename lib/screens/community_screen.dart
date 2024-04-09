@@ -1,3 +1,4 @@
+import 'package:campusmate/screens/post_screen.dart';
 import 'package:campusmate/widgets/anonymous_board_item.dart';
 import 'package:campusmate/widgets/general_board_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -81,6 +82,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 child: FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('generalPosts')
+                      .orderBy('timestamp', descending: true)
                       .get(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -107,13 +109,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       itemBuilder: (context, index) {
                         var postData = PostData.fromJson(
                             data[index].data() as Map<String, dynamic>);
-                        return GeneralBoardItem(
-                          title: postData.title.toString(),
-                          author: postData.author.toString(),
-                          content: postData.content.toString(),
-                          likeCount: postData.likeCount.toString(),
-                          dislikeCount: postData.dislikeCount.toString(),
-                          commentCount: postData.commentCount.toString(),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PostScreen(postData: postData),
+                              ),
+                            );
+                          },
+                          child: GeneralBoardItem(
+                            postData: postData,
+                          ),
                         );
                       },
                     );
@@ -126,6 +134,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 child: FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('anonymousPosts')
+                      .orderBy('timestamp', descending: true)
                       .get(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -152,13 +161,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       itemBuilder: (context, index) {
                         var postData = PostData.fromJson(
                             data[index].data() as Map<String, dynamic>);
-                        return AnonymousBoardItem(
-                          title: postData.title.toString(),
-                          author: postData.author.toString(),
-                          content: postData.content.toString(),
-                          likeCount: postData.likeCount.toString(),
-                          dislikeCount: postData.dislikeCount.toString(),
-                          commentCount: postData.commentCount.toString(),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PostScreen(postData: postData),
+                              ),
+                            );
+                          },
+                          child: AnonymousBoardItem(
+                            postData: postData,
+                          ),
                         );
                       },
                     );

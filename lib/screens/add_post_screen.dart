@@ -3,6 +3,9 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/user_data_provider.dart';
 
 Color primaryColor = const Color(0xFF2BB56B);
 
@@ -87,6 +90,10 @@ class AddPostScreen extends StatelessWidget {
                     text: '작성',
                     isCompleted: true,
                     onPressed: () {
+                      postData.author =
+                          context.read<UserDataProvider>().userData.name;
+                      postData.uid =
+                          context.read<UserDataProvider>().userData.uid;
                       postData.title = _titleController.value.text;
                       postData.content = _contentController.value.text;
                       postData.timestamp = DateTime.now().toString();
