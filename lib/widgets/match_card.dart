@@ -5,7 +5,9 @@ import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
 
@@ -173,8 +175,7 @@ class MatchCard extends StatelessWidget {
                   ),
                   //정보부분
                   Container(
-                    padding: const EdgeInsets.only(
-                        top: 15, bottom: 20, left: 20, right: 20),
+                    width: double.infinity,
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
@@ -183,14 +184,17 @@ class MatchCard extends StatelessWidget {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
+                            Flexible(
+                              flex: 8,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 15,
+                                  bottom: 20,
+                                  left: 20,
+                                ),
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     //이름, 나이
@@ -212,42 +216,72 @@ class MatchCard extends StatelessWidget {
                                           fontWeight: FontWeight.w500,
                                           color: Colors.black54),
                                     ),
+                                    const SizedBox(height: 10),
+                                    ExtendedWrap(
+                                      maxLines: 2,
+                                      spacing: 10,
+                                      runSpacing: 10,
+                                      // overflowWidget: Container(
+                                      //   decoration: BoxDecoration(
+                                      //       color: Colors.grey[100],
+                                      //       borderRadius:
+                                      //           BorderRadius.circular(15)),
+                                      //   padding: const EdgeInsets.symmetric(
+                                      //       horizontal: 15, vertical: 5),
+                                      //   child: Text(
+                                      //     "...",
+                                      //     style: TextStyle(
+                                      //         color: Colors.grey[850]),
+                                      //   ),
+                                      // ),
+                                      children: [
+                                        for (var tag in doc.tags!)
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey[100],
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15, vertical: 5),
+                                            child: Text(
+                                              tag.toString(),
+                                              style: TextStyle(
+                                                  color: Colors.grey[850]),
+                                            ),
+                                          )
+                                      ],
+                                    )
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
-                            const SizedBox(height: 10),
-                            ExtendedWrap(
-                              maxLines: 2,
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: [
-                                for (var tag in doc.tags!)
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[100],
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 5),
-                                    child: Text(
-                                      tag.toString(),
-                                      style: TextStyle(color: Colors.grey[850]),
-                                    ),
-                                  )
-                              ],
+                            Flexible(
+                              flex: 4,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Center(
+                                  child: ScoreShower(
+                                    score: score,
+                                    percentage: matchFilter(
+                                        context
+                                            .read<UserDataProvider>()
+                                            .userData,
+                                        doc),
+                                  ),
+                                ),
+                              ),
                             )
                           ],
                         ),
-                        Positioned(
-                          top: -50,
-                          right: 0,
-                          child: ScoreShower(
-                            score: score,
-                            percentage: matchFilter(
-                                context.read<UserDataProvider>().userData, doc),
-                          ),
-                        )
+                        // Positioned(
+                        //   top: -50,
+                        //   right: 0,
+                        //   child: ScoreShower(
+                        //     score: score,
+                        //     percentage: matchFilter(
+                        //         context.read<UserDataProvider>().userData, doc),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),

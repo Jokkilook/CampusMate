@@ -6,6 +6,7 @@ import 'package:campusmate/widgets/chat_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+//ignore: must_be_immutable
 class ChatListScreen extends StatefulWidget {
   ChatListScreen({super.key});
   DataBase db = DataBase();
@@ -59,7 +60,11 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                         roomName: chatList![index]["roomName"],
                         roomId: chatList![index]["roomId"],
                         lastText:
-                            chatList![index]["participantsUID"].toString()),
+                            chatList![index]["participantsUID"].toString(),
+                        participantsUid:
+                            (chatList![index]["participantsUid"] as List)
+                                .map((e) => e.toString())
+                                .toList()),
                   );
                 },
               ),
