@@ -35,7 +35,7 @@ class GeneralBoardItem extends StatelessWidget {
                     SizedBox(
                       width: 250,
                       child: Text(
-                        postData.title ?? '',
+                        postData.title ?? '제목 없음',
                         overflow:
                             TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
                         maxLines: 1, // 텍스트가 한 줄로만 표시되도록 제한
@@ -49,7 +49,7 @@ class GeneralBoardItem extends StatelessWidget {
                     SizedBox(
                       width: 250,
                       child: Text(
-                        postData.content ?? '',
+                        postData.content ?? '내용 없음',
                         overflow:
                             TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
                         maxLines: 1, // 텍스트가 한 줄로만 표시되도록 제한

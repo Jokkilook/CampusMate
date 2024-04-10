@@ -19,7 +19,7 @@ class AnonymousBoardItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       width: double.infinity,
-      height: 120,
+      height: 124,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -35,7 +35,7 @@ class AnonymousBoardItem extends StatelessWidget {
                   SizedBox(
                     width: 250,
                     child: Text(
-                      postData.title ?? '',
+                      postData.title ?? '제목 없음',
                       overflow: TextOverflow.ellipsis, // ...처리
                       maxLines: 1, // 1줄 제한
                       style: const TextStyle(
@@ -48,7 +48,7 @@ class AnonymousBoardItem extends StatelessWidget {
                   SizedBox(
                     width: 250,
                     child: Text(
-                      postData.content ?? '',
+                      postData.content ?? '내용 없음',
                       overflow: TextOverflow.ellipsis, // ...처리
                       maxLines: 2, // 2줄 제한
                     ),
