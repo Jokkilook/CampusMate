@@ -32,7 +32,7 @@ class AddPostScreen extends StatelessWidget {
             .add(postData.data!);
       }
     } catch (error) {
-      debugPrint('안 올라감ㅋ: $error');
+      debugPrint('에러: $error');
     }
   }
 

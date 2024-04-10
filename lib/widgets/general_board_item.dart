@@ -20,6 +20,7 @@ class GeneralBoardItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         width: double.infinity,
+        height: 130,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
