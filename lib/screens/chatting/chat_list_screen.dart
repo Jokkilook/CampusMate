@@ -2,7 +2,8 @@ import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
-import 'package:campusmate/widgets/chat_list_item.dart';
+import 'package:campusmate/screens/chatting/widget/chat_list_item.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,14 +27,16 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
   }
 
   void loadChatList() async {
-    var list = context.read<UserDataProvider>().userData.chatRoomList;
-    if (list == null) {
-      return;
-    }
-    for (var room in list) {
-      var data = await widget.db.db.collection("chats").doc(room).get();
-      chatList!.add(data.data() as Map<String, dynamic>);
-    }
+    await FirebaseFirestore.instance
+        .collection("chats")
+        .where("participantsUid",
+            arrayContains: context.read<UserDataProvider>().userData.uid)
+        .get()
+        .then((value) {
+      for (var snapshot in value.docs) {
+        chatList!.add(snapshot.data());
+      }
+    });
   }
 
   @override
@@ -52,20 +55,38 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             const AdArea(),
             const SizedBox(height: 12),
             Expanded(
-              child: ListView.builder(
-                itemCount: chatList != null ? chatList!.length : 5,
-                itemBuilder: (context, index) {
-                  return ChatListItem(
-                    data: ChatRoomData(
-                        roomName: chatList![index]["roomName"],
-                        roomId: chatList![index]["roomId"],
-                        lastText:
-                            chatList![index]["participantsUID"].toString(),
-                        participantsUid:
-                            (chatList![index]["participantsUid"] as List)
-                                .map((e) => e.toString())
-                                .toList()),
-                  );
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("chats")
+                    .where("participantsUid",
+                        arrayContains:
+                            context.read<UserDataProvider>().userData.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  if (snapshot.hasData) {
+                    var rooms = snapshot.data!.docs;
+                    return ListView.builder(
+                      itemCount: rooms.length,
+                      itemBuilder: (context, index) {
+                        return ChatListItem(
+                          data: ChatRoomData(
+                              roomName: rooms[index]["roomName"],
+                              roomId: rooms[index]["roomId"],
+                              lastText:
+                                  rooms[index]["participantsUid"].toString(),
+                              participantsUid:
+                                  (rooms[index]["participantsUid"] as List)
+                                      .map((e) => e.toString())
+                                      .toList()),
+                        );
+                      },
+                    );
+                  }
+                  return const CircularProgressIndicator();
                 },
               ),
             )
