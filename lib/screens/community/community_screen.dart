@@ -29,6 +29,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
     setState(() {});
   }
 
+  void refreshScreen() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -189,7 +193,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AddPostScreen()),
-            );
+            ).then((_) {
+              // AddPostScreen이 닫힌 후에 CommunityScreen을 새로고침
+              refreshScreen();
+            });
           },
           child: const Icon(Icons.add, size: 30),
           backgroundColor: primaryColor,
