@@ -1,5 +1,6 @@
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/chatting/widget/chat_list_item.dart';
@@ -56,6 +57,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             const SizedBox(height: 12),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
+                initialData: context.read<ChattingDataProvider>().chatListInit,
                 stream: FirebaseFirestore.instance
                     .collection("chats")
                     .where("participantsUid",
