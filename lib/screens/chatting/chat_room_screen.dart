@@ -5,9 +5,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +29,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getNamesAndImages();
   }
 
   void getNamesAndImages() async {
@@ -119,6 +118,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
         ),
         body: StreamBuilder<QuerySnapshot>(
+          // initialData: await FirebaseFirestore.instance
+          //     .collection("chats/${widget.chatRoomData.roomId}/messages")
+          //     .orderBy("time", descending: true)
+          //     .get(const GetOptions(source: Source.cache)),
           stream: FirebaseFirestore.instance
               .collection("chats/${widget.chatRoomData.roomId}/messages")
               .orderBy("time", descending: true)
