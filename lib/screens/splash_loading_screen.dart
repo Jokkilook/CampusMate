@@ -34,65 +34,42 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
   void getChattingInitData() async {}
 
   void initialize() async {
-    String uid;
+    String uid = "";
+    User user;
+
     //광고 로드
     await MobileAds.instance.initialize();
 
     try {
       //파이어베이스 연결
-      Firebase.initializeApp(
+      await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
-      ).whenComplete(
-        () async {
-          uid = FirebaseAuth.instance.currentUser!.uid;
-          //연결 완료하면 파이어스토어에서 유저 데이터 가져오기 시도
-          try {
-            //처음엔 캐시 데이터에서 찾기
-            var snapshot = await FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .get(const GetOptions(source: Source.cache));
-            var data = snapshot.data() as Map<String, dynamic>;
-            var userData = UserData.fromJson(data);
-            context.read<UserDataProvider>().userData = userData;
-          } catch (e) {
-            //캐시가 없으면 파이어스토어에서 로드
-            var snapshot = await FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .get();
-            var data = snapshot.data() as Map<String, dynamic>;
-            var userData = UserData.fromJson(data);
-            context.read<UserDataProvider>().userData = userData;
-            print(">>>>>>>>>>>>>>>>>>>>>>>>>>$e");
-          }
-
-          //유저 데이터 로드 후 채팅 리스트 데이터 로딩 시도
-          try {
-            //캐시 데이터 탐색
-            context.read<ChattingDataProvider>().chatListInitData =
-                await FirebaseFirestore.instance
-                    .collection("chats")
-                    .where("participantsUid",
-                        arrayContains:
-                            context.read<UserDataProvider>().userData.uid)
-                    .get(const GetOptions(source: Source.cache));
-          } on FirebaseException catch (e) {
-            //없으면 파이어스토어에서 로드
-            context.read<ChattingDataProvider>().chatListInitData =
-                await FirebaseFirestore.instance
-                    .collection("chats")
-                    .where("participantsUid",
-                        arrayContains:
-                            context.read<UserDataProvider>().userData.uid)
-                    .get();
-            print(">>>>>>>>>>>>>>>>>>>>>>>>>>$e");
-          }
-
-          //채팅방 데이터 로딩 시도
-          try {} catch (e) {}
-        },
       );
+
+      if (FirebaseAuth.instance.currentUser == null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+            (route) => false);
+        return;
+      } else {
+        user = FirebaseAuth.instance.currentUser!;
+        uid = user.uid;
+      }
+
+      //채팅데이터프로바이더에 채팅리스트 스트림 로드
+      context.read<ChattingDataProvider>().chatListStream = FirebaseFirestore
+          .instance
+          .collection("chats")
+          .where("participantsUid",
+              arrayContains: context.read<UserDataProvider>().userData.uid)
+          .snapshots();
+
+      var snapshot =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      var data = snapshot.data() as Map<String, dynamic>;
+      var userData = UserData.fromJson(data);
+      context.read<UserDataProvider>().userData = userData;
     } catch (e) {
       Navigator.pushAndRemoveUntil(
           context,

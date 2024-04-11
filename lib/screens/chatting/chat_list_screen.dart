@@ -57,17 +57,18 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             const SizedBox(height: 12),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                initialData:
-                    context.read<ChattingDataProvider>().chatListInitData,
-                stream: FirebaseFirestore.instance
-                    .collection("chats")
-                    .where("participantsUid",
-                        arrayContains:
-                            context.read<UserDataProvider>().userData.uid)
-                    .snapshots(),
+                // initialData:
+                //     context.read<ChattingDataProvider>().chatListInitData,
+                stream: context.read<ChattingDataProvider>().chatListStream,
+                // FirebaseFirestore.instance
+                //     .collection("chats")
+                //     .where("participantsUid",
+                //         arrayContains:
+                //             context.read<UserDataProvider>().userData.uid)
+                //     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (snapshot.hasData) {

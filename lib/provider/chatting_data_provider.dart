@@ -3,4 +3,5 @@ import 'package:flutter/material.dart';
 
 class ChattingDataProvider extends ChangeNotifier {
   QuerySnapshot<Object>? chatListInitData;
+  Stream<QuerySnapshot<Object>>? chatListStream;
 }

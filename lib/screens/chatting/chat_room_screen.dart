@@ -14,7 +14,6 @@ class ChatRoomScreen extends StatefulWidget {
   ChatRoomScreen({super.key, required this.chatRoomData});
   TextEditingController chatController = TextEditingController();
   ChatRoomData chatRoomData;
-  DataBase db = DataBase();
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -53,7 +52,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     }
     await FirebaseFirestore.instance
         .collection("chats/${widget.chatRoomData.roomId}/messages")
-        .doc()
+        .doc("${DateTime.now().microsecondsSinceEpoch}")
         .set(MessageData(
                 senderUID: context.read<UserDataProvider>().userData.uid,
                 content: widget.chatController.value.text,
@@ -66,111 +65,128 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 1000));
-    return Scaffold(
-      body: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          elevation: 2,
-          shadowColor: Colors.black,
-          title: Text(widget.chatRoomData.roomName ?? ""),
-        ),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          height: 70,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //+버튼
-              FilledButton(
-                  style: FilledButton.styleFrom(
-                      fixedSize: const Size(60, 60),
-                      backgroundColor: Colors.green,
-                      shape: const ContinuousRectangleBorder()),
-                  onPressed: () {
-                    focusNode.requestFocus();
-                    sendMessage();
-                  },
-                  child: const Icon(Icons.add)),
-              //텍스트 입력창
-              Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: InputTextField(
-                  focusNode: focusNode,
-                  controller: widget.chatController,
-                  hintText: "메세지를 입력하세요.",
-                ),
-              )),
-              //보내기 버튼
-              FilledButton(
-                  style: FilledButton.styleFrom(
-                      fixedSize: const Size(60, 60),
-                      backgroundColor: Colors.green,
-                      shape: const ContinuousRectangleBorder()),
-                  onPressed: () {
-                    focusNode.requestFocus();
-                    sendMessage();
-                  },
-                  child: const Icon(Icons.send)),
-            ],
+    return PopScope(
+      onPopInvoked: (didPop) {
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+        body: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            elevation: 2,
+            shadowColor: Colors.black,
+            title: Text(widget.chatRoomData.roomName ?? ""),
           ),
-        ),
-        body: StreamBuilder<QuerySnapshot>(
-          // initialData: await FirebaseFirestore.instance
-          //     .collection("chats/${widget.chatRoomData.roomId}/messages")
-          //     .orderBy("time", descending: true)
-          //     .get(const GetOptions(source: Source.cache)),
-          stream: FirebaseFirestore.instance
-              .collection("chats/${widget.chatRoomData.roomId}/messages")
-              .orderBy("time", descending: true)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return const Center(child: Text("에러발생"));
-            }
-
-            if (snapshot.hasData) {
-              var docs = snapshot.data!.docs;
-
-              return Container(
-                color: Colors.grey[50],
-                height: double.infinity,
-                child: ListView.separated(
+          bottomNavigationBar: Container(
+            color: Colors.white,
+            height: 70,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //+버튼
+                FilledButton(
+                    style: FilledButton.styleFrom(
+                        fixedSize: const Size(60, 60),
+                        backgroundColor: Colors.green,
+                        shape: const ContinuousRectangleBorder()),
+                    onPressed: () {
+                      focusNode.requestFocus();
+                      sendMessage();
+                    },
+                    child: const Icon(Icons.add)),
+                //텍스트 입력창
+                Expanded(
+                    child: Padding(
                   padding: const EdgeInsets.all(10),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 10),
-                  reverse: true,
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) {
-                    bool showTime = false;
-                    try {
-                      if (docs[index]["senderUID"] !=
-                              docs[index - 1]["senderUID"] ||
-                          timeStampToHourMinutes(docs[index]["time"]) !=
-                              timeStampToHourMinutes(docs[index - 1]["time"])) {
+                  child: InputTextField(
+                    focusNode: focusNode,
+                    controller: widget.chatController,
+                    hintText: "메세지를 입력하세요.",
+                  ),
+                )),
+                //보내기 버튼
+                FilledButton(
+                    style: FilledButton.styleFrom(
+                        fixedSize: const Size(60, 60),
+                        backgroundColor: Colors.green,
+                        shape: const ContinuousRectangleBorder()),
+                    onPressed: () {
+                      focusNode.requestFocus();
+                      sendMessage();
+                    },
+                    child: const Icon(Icons.send)),
+              ],
+            ),
+          ),
+          body: StreamBuilder<QuerySnapshot>(
+            // initialData: await FirebaseFirestore.instance
+            //     .collection("chats/${widget.chatRoomData.roomId}/messages")
+            //     .orderBy("time", descending: true)
+            //     .get(const GetOptions(source: Source.cache)),
+            stream: FirebaseFirestore.instance
+                .collection("chats/${widget.chatRoomData.roomId}/messages")
+                .orderBy("time", descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError) {
+                return const Center(child: Text("에러발생"));
+              }
+
+              if (snapshot.hasData) {
+                var docs = snapshot.data!.docs;
+
+                return Container(
+                  color: Colors.grey[50],
+                  height: double.infinity,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(10),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10),
+                    reverse: true,
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      bool showTime = false;
+                      try {
+                        if (docs[index]["senderUID"] !=
+                                docs[index - 1]["senderUID"] ||
+                            timeStampToHourMinutes(docs[index]["time"]) !=
+                                timeStampToHourMinutes(
+                                    docs[index - 1]["time"])) {
+                          showTime = true;
+                        }
+                      } catch (e) {
                         showTime = true;
                       }
-                    } catch (e) {
-                      showTime = true;
-                    }
 
-                    if (docs[index]["senderUID"] ==
-                        context.read<UserDataProvider>().userData.uid) {
-                      return MyChatUnit(
-                        data: docs[index],
-                        index: index,
-                        showTime: showTime,
-                      );
-                    }
-                    try {
-                      if (docs[index]["senderUID"] !=
-                          docs[index + 1]["senderUID"]) {
+                      if (docs[index]["senderUID"] ==
+                          context.read<UserDataProvider>().userData.uid) {
+                        return MyChatUnit(
+                          data: docs[index],
+                          index: index,
+                          showTime: showTime,
+                        );
+                      }
+                      try {
+                        if (docs[index]["senderUID"] !=
+                            docs[index + 1]["senderUID"]) {
+                          return OtherChatUnit(
+                            data: docs[index],
+                            senderUid: docs[index]["senderUID"],
+                            viewSender: true,
+                            name: nameMap[docs[index]["senderUID"]]![0] ??
+                                "안불러와졍",
+                            index: index,
+                            showTime: showTime,
+                            imageUrl: nameMap[docs[index]["senderUID"]]![1],
+                          );
+                        }
+                      } catch (e) {
+                        print(">>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<");
                         return OtherChatUnit(
                           data: docs[index],
                           senderUid: docs[index]["senderUID"],
@@ -182,33 +198,22 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           imageUrl: nameMap[docs[index]["senderUID"]]![1],
                         );
                       }
-                    } catch (e) {
-                      print(">>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<");
+
                       return OtherChatUnit(
                         data: docs[index],
                         senderUid: docs[index]["senderUID"],
-                        viewSender: true,
-                        name: nameMap[docs[index]["senderUID"]]![0] ?? "안불러와졍",
                         index: index,
                         showTime: showTime,
                         imageUrl: nameMap[docs[index]["senderUID"]]![1],
                       );
-                    }
-
-                    return OtherChatUnit(
-                      data: docs[index],
-                      senderUid: docs[index]["senderUID"],
-                      index: index,
-                      showTime: showTime,
-                      imageUrl: nameMap[docs[index]["senderUID"]]![1],
-                    );
-                  },
-                ),
-              );
-            }
-            print(">>>>>>>>>>>>>>>>>>>>>this is it<<<<<<<<<<<<<<<<<<<<");
-            return const Center(child: CircularProgressIndicator());
-          },
+                    },
+                  ),
+                );
+              }
+              print(">>>>>>>>>>>>>>>>>>>>>this is it<<<<<<<<<<<<<<<<<<<<");
+              return const Center(child: CircularProgressIndicator());
+            },
+          ),
         ),
       ),
     );
