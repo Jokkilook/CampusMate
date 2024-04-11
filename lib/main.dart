@@ -1,4 +1,5 @@
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/media_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/splash_loading_screen.dart';
@@ -13,6 +14,9 @@ void main() {
             create: (context) => UserDataProvider(userData: UserData())),
         ChangeNotifierProvider(
           create: (context) => MediaDataProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ChattingDataProvider(),
         )
       ],
       child: const MyApp(),

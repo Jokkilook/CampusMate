@@ -1,5 +1,6 @@
 import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/screen_list.dart';
@@ -43,6 +44,14 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
         var data = snapshot.data() as Map<String, dynamic>;
         var userData = UserData.fromJson(data);
         context.read<UserDataProvider>().userData = userData;
+
+        context.read<ChattingDataProvider>().chatListInit =
+            await FirebaseFirestore.instance
+                .collection("chats")
+                .where("participantsUid",
+                    arrayContains:
+                        context.read<UserDataProvider>().userData.uid)
+                .get(const GetOptions(source: Source.cache));
         Future.delayed(const Duration(seconds: 2));
         Navigator.pushAndRemoveUntil(
             context,

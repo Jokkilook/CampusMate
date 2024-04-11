@@ -1,8 +1,6 @@
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ChatListItem extends StatelessWidget {
   const ChatListItem({super.key, required this.data});

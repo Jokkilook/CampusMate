@@ -31,24 +31,28 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getNamesAndImages();
   }
 
   void getNamesAndImages() async {
-    widget.chatRoomData.participantsUid!.forEach((element) async {
-      await widget.db.db.collection("users").doc(element).get().then((value) =>
-          nameMap[element] = [
-            value["name"].toString(),
-            value["imageUrl"].toString()
-          ]);
-    });
+    for (var element in widget.chatRoomData.participantsUid!) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(element)
+          .get()
+          .then(
+            (value) => nameMap[element] = [
+              value["name"].toString(),
+              value["imageUrl"].toString()
+            ],
+          );
+    }
   }
 
   void sendMessage() async {
     if (widget.chatController.value.text == "") {
       return;
     }
-    await widget.db.db
+    await FirebaseFirestore.instance
         .collection("chats/${widget.chatRoomData.roomId}/messages")
         .doc()
         .set(MessageData(
@@ -63,10 +67,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(milliseconds: 1000));
     return Scaffold(
       body: Scaffold(
         resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.grey[200],
         appBar: AppBar(
           elevation: 2,
           shadowColor: Colors.black,
@@ -114,100 +118,94 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             ],
           ),
         ),
-        body: Stack(
-          children: [
-            StreamBuilder<QuerySnapshot>(
-              stream: widget.db.db
-                  .collection("chats/${widget.chatRoomData.roomId}/messages")
-                  .orderBy("time", descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+        body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("chats/${widget.chatRoomData.roomId}/messages")
+              .orderBy("time", descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                if (snapshot.hasError) {
-                  return const Center(child: Text("에러발생"));
-                }
+            if (snapshot.hasError) {
+              return const Center(child: Text("에러발생"));
+            }
 
-                if (snapshot.hasData) {
-                  return Container(
-                    color: Colors.grey[200],
-                    height: double.infinity,
-                    child: ListView.separated(
-                      padding: const EdgeInsets.all(10),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 10),
-                      reverse: true,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        bool showTime = false;
-                        try {
-                          if (snapshot.data!.docs[index]["senderUID"] !=
-                                  snapshot.data!.docs[index - 1]["senderUID"] ||
-                              timeStampToHourMinutes(
-                                      snapshot.data!.docs[index]["time"]) !=
-                                  timeStampToHourMinutes(
-                                      snapshot.data!.docs[index - 1]["time"])) {
-                            showTime = true;
-                          }
-                        } catch (e) {
-                          showTime = true;
-                        }
+            if (snapshot.hasData) {
+              var docs = snapshot.data!.docs;
 
-                        if (snapshot.data!.docs[index]["senderUID"] ==
-                            context.read<UserDataProvider>().userData.uid) {
-                          return MyChatUnit(
-                              data: snapshot.data!.docs[index],
-                              index: index,
-                              showTime: showTime);
-                        }
-                        try {
-                          if (snapshot.data!.docs[index]["senderUID"] !=
-                              snapshot.data!.docs[index + 1]["senderUID"]) {
-                            return OtherChatUnit(
-                                data: snapshot.data!.docs[index],
-                                senderUid: snapshot.data!.docs[index]
-                                    ["senderUID"],
-                                viewSender: true,
-                                name: nameMap[snapshot.data!.docs[index]
-                                        ["senderUID"]]![0] ??
-                                    "안불러와졍",
-                                index: index,
-                                showTime: showTime,
-                                imageUrl: nameMap[snapshot.data!.docs[index]
-                                    ["senderUID"]]![1]);
-                          }
-                        } catch (e) {
-                          return OtherChatUnit(
-                              data: snapshot.data!.docs[index],
-                              senderUid: snapshot.data!.docs[index]
-                                  ["senderUID"],
-                              viewSender: true,
-                              name: nameMap[snapshot.data!.docs[index]
-                                      ["senderUID"]]![0] ??
-                                  "안불러와졍",
-                              index: index,
-                              showTime: showTime,
-                              imageUrl: nameMap[snapshot.data!.docs[index]
-                                  ["senderUID"]]![1]);
-                        }
+              return Container(
+                color: Colors.grey[50],
+                height: double.infinity,
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(10),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
+                  reverse: true,
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    bool showTime = false;
+                    try {
+                      if (docs[index]["senderUID"] !=
+                              docs[index - 1]["senderUID"] ||
+                          timeStampToHourMinutes(docs[index]["time"]) !=
+                              timeStampToHourMinutes(docs[index - 1]["time"])) {
+                        showTime = true;
+                      }
+                    } catch (e) {
+                      showTime = true;
+                    }
 
+                    if (docs[index]["senderUID"] ==
+                        context.read<UserDataProvider>().userData.uid) {
+                      return MyChatUnit(
+                        data: docs[index],
+                        index: index,
+                        showTime: showTime,
+                      );
+                    }
+                    try {
+                      if (docs[index]["senderUID"] !=
+                          docs[index + 1]["senderUID"]) {
                         return OtherChatUnit(
-                            data: snapshot.data!.docs[index],
-                            senderUid: snapshot.data!.docs[index]["senderUID"],
-                            index: index,
-                            showTime: showTime,
-                            imageUrl: nameMap[snapshot.data!.docs[index]
-                                ["senderUID"]]![1]);
-                      },
-                    ),
-                  );
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
-          ],
+                          data: docs[index],
+                          senderUid: docs[index]["senderUID"],
+                          viewSender: true,
+                          name:
+                              nameMap[docs[index]["senderUID"]]![0] ?? "안불러와졍",
+                          index: index,
+                          showTime: showTime,
+                          imageUrl: nameMap[docs[index]["senderUID"]]![1],
+                        );
+                      }
+                    } catch (e) {
+                      print(">>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<");
+                      return OtherChatUnit(
+                        data: docs[index],
+                        senderUid: docs[index]["senderUID"],
+                        viewSender: true,
+                        name: nameMap[docs[index]["senderUID"]]![0] ?? "안불러와졍",
+                        index: index,
+                        showTime: showTime,
+                        imageUrl: nameMap[docs[index]["senderUID"]]![1],
+                      );
+                    }
+
+                    return OtherChatUnit(
+                      data: docs[index],
+                      senderUid: docs[index]["senderUID"],
+                      index: index,
+                      showTime: showTime,
+                      imageUrl: nameMap[docs[index]["senderUID"]]![1],
+                    );
+                  },
+                ),
+              );
+            }
+            print(">>>>>>>>>>>>>>>>>>>>>this is it<<<<<<<<<<<<<<<<<<<<");
+            return const Center(child: CircularProgressIndicator());
+          },
         ),
       ),
     );
@@ -240,7 +238,8 @@ class MyChatUnit extends StatelessWidget {
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.6),
             decoration: BoxDecoration(
-                color: Colors.green, borderRadius: BorderRadius.circular(10)),
+                color: Colors.green[400],
+                borderRadius: BorderRadius.circular(10)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -323,7 +322,7 @@ class OtherChatUnit extends StatelessWidget {
                     constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width * 0.6),
                     decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(10)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
