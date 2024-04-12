@@ -25,42 +25,39 @@ class _PostScreenState extends State<PostScreen> {
   @override
   void initState() {
     super.initState();
+    checkUserViewedPost();
+  }
+
+  Future<void> checkUserViewedPost() async {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
-    // viewers 목록에 사용자의 UID가 있는지 확인
+    // 현재 사용자가 게시물을 이미 본 적이 있는지 확인
     _userAlreadyViewed =
         widget.postData.viewers?.contains(currentUserUid) ?? false;
-    // 사용자의 UID가 viewers 목록에 없는 경우에만 조회수를 증가
+    // 사용자가 아직 게시물을 보지 않은 경우 조회수를 업데이트
     if (!_userAlreadyViewed) {
-      setState(() {
-        widget.postData.viewers?.add(currentUserUid);
-        widget.postData.viewCount = (widget.postData.viewCount ?? 0) + 1;
-        // Firestore에 조회수를 업데이트합니다.
-        _updateViewCount();
-      });
+      await updateViewCount(currentUserUid);
     }
   }
 
-  // Firestore에 조회수를 업데이트하는 함수
-  Future<void> _updateViewCount() async {
+  Future<void> updateViewCount(String currentUserUid) async {
     try {
-      if (widget.postData.boardType == 'General') {
-        await FirebaseFirestore.instance
-            .collection('generalPosts')
-            .doc(widget.postData.uid)
-            .update({
-          'viewers': widget.postData.viewers,
-          'viewCount': widget.postData.viewCount,
-        });
-      } else if (widget.postData.boardType == 'Anonymous') {
-        await FirebaseFirestore.instance
-            .collection('anonymousPosts')
-            .doc(widget.postData.uid)
-            .update({
-          'viewers': widget.postData.viewers,
-          'viewCount': widget.postData.viewCount,
-        });
-      }
-      debugPrint('조회수 업데이트 완료');
+      // 로컬에서 조회수를 증가
+      setState(() {
+        widget.postData.viewers?.add(currentUserUid);
+        widget.postData.viewCount = (widget.postData.viewCount ?? 0) + 1;
+      });
+      // Firestore에서 조회수를 업데이트
+      String collection = widget.postData.boardType == 'General'
+          ? 'generalPosts'
+          : 'anonymousPosts';
+      await FirebaseFirestore.instance
+          .collection(collection)
+          .doc(widget.postData.postUid)
+          .update({
+        'viewers': widget.postData.viewers,
+        'viewCount': widget.postData.viewCount,
+      });
+      debugPrint('조회수 업데이트 성공');
     } catch (error) {
       debugPrint('조회수 업데이트 에러: $error');
     }

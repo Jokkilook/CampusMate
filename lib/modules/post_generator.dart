@@ -47,6 +47,6 @@ class PostGenerator {
         paragraphs: Random().nextInt(2) + 1, words: Random().nextInt(50) + 5);
     postData.timestamp = DateTime.now().toString();
     postData.author = RandomNames(Zone.us).name();
-    postData.uid = "9UciNePfNfS7KFvbUpgbyMwaSUh1";
+    postData.authorUid = "9UciNePfNfS7KFvbUpgbyMwaSUh1";
   }
 }

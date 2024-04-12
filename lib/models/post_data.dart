@@ -4,12 +4,13 @@ class PostData {
   String? content;
   String? timestamp;
   String? author;
-  String? uid;
+  String? authorUid;
+  String? postUid;
   int? viewCount;
   int? likeCount;
   int? dislikeCount;
   int? commentCount;
-  List<String>? viewers;
+  List<dynamic>? viewers;
 
   Map<String, dynamic>? data;
 
@@ -18,8 +19,8 @@ class PostData {
     this.title,
     this.content,
     this.timestamp,
-    this.author,
-    this.uid,
+    this.authorUid,
+    this.postUid,
     this.viewCount = 0,
     this.likeCount = 0,
     this.dislikeCount = 0,
@@ -32,7 +33,8 @@ class PostData {
       'content': content,
       'timestamp': timestamp,
       'author': author,
-      'uid': uid,
+      'authorUid': authorUid,
+      'postUid': postUid,
       'viewCount': viewCount,
       'likeCount': likeCount,
       'dislikeCount': dislikeCount,
@@ -47,7 +49,8 @@ class PostData {
     content = json['content'];
     timestamp = json['timestamp'];
     author = json['author'];
-    uid = json['uid'];
+    authorUid = json['authorUid'];
+    postUid = json['postUid'];
     viewCount = json['viewCount'];
     likeCount = json['likeCount'];
     dislikeCount = json['dislikeCount'];
@@ -60,7 +63,8 @@ class PostData {
       'content': content,
       'timestamp': timestamp,
       'author': author,
-      'uid': uid,
+      'authorUid': authorUid,
+      'postUid': postUid,
       'viewCount': viewCount,
       'likeCount': likeCount,
       'dislikeCount': dislikeCount,
@@ -76,7 +80,8 @@ class PostData {
       'content': content,
       'timestamp': timestamp,
       'author': author,
-      'uid': uid,
+      'authorUid': authorUid,
+      'postUid': postUid,
       'viewCount': viewCount,
       'likeCount': likeCount,
       'dislikeCount': dislikeCount,
