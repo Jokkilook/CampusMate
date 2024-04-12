@@ -1,10 +1,9 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_revise_screen.dart';
-import 'package:campusmate/widgets/full_profile_card.dart';
+import 'package:campusmate/screens/profile/full_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -12,7 +11,6 @@ class ProfileScreen extends StatelessWidget {
 
   final db = DataBase();
   final uid = FirebaseAuth.instance.currentUser?.uid;
-  final storage = FirebaseStorage.instance.ref();
 
   @override
   Widget build(BuildContext context) {

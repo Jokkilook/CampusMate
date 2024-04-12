@@ -105,6 +105,6 @@ class UserGenerator {
       userData.tags!.add(tags[Random().nextInt(tags.length)]);
     }
     userData.tags = userData.tags!.toSet().toList();
-    userData.score = 50 + Random().nextDouble() * 50;
+    userData.score = 80 + Random().nextDouble() * 30;
   }
 }

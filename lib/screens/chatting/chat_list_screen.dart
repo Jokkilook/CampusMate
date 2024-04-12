@@ -57,18 +57,19 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             const SizedBox(height: 12),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                // initialData:
-                //     context.read<ChattingDataProvider>().chatListInitData,
-                stream: context.read<ChattingDataProvider>().chatListStream,
-                // FirebaseFirestore.instance
-                //     .collection("chats")
-                //     .where("participantsUid",
-                //         arrayContains:
-                //             context.read<UserDataProvider>().userData.uid)
-                //     .snapshots(),
+                initialData:
+                    context.read<ChattingDataProvider>().chatListInitData,
+                stream: FirebaseFirestore.instance
+                    .collection("chats")
+                    .where("participantsUid",
+                        arrayContains:
+                            context.read<UserDataProvider>().userData.uid)
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text("오류가 발생했어요..ToT"));
                   }
 
                   if (snapshot.hasData) {
@@ -80,12 +81,12 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                           data: ChatRoomData(
                               roomName: rooms[index]["roomName"],
                               roomId: rooms[index]["roomId"],
-                              lastText:
-                                  rooms[index]["participantsUid"].toString(),
                               participantsUid:
                                   (rooms[index]["participantsUid"] as List)
                                       .map((e) => e.toString())
-                                      .toList()),
+                                      .toList(),
+                              lastMessage: rooms[index]["lastMessage"],
+                              lastMessageTime: rooms[index]["lastMessageTime"]),
                         );
                       },
                     );

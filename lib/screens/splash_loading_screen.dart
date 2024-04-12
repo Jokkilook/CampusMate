@@ -26,6 +26,8 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
     initialize();
   }
 
+  Map<String, QuerySnapshot<Object>> chattingCache = {};
+
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
@@ -64,6 +66,17 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
           .where("participantsUid",
               arrayContains: context.read<UserDataProvider>().userData.uid)
           .snapshots();
+
+      //채팅 데이터 로드
+      //1 채팅방 id 로드
+      //2 id 별 메세지 로드 후 저장 { "아이디":Querysnapshot<> }
+
+      context.read<ChattingDataProvider>().chatListStream!.asyncMap((snapshot) {
+        snapshot.docs.map((doc) {
+          context.read<ChattingDataProvider>().chattingCache[doc["roomId"]] =
+              doc["messages"];
+        });
+      });
 
       var snapshot =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -47,23 +49,6 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
         shadowColor: Colors.black,
         title: const Text('프로필 수정'),
       ),
-      // bottomNavigationBar: BottomButton(
-      //   text: "수정완료",
-      //   isCompleted: true,
-      //   onPressed: () {
-      //     modifiedData.name = nameController.value.text;
-      //     modifiedData.introduce = introController.value.text;
-      //     modifiedData.mbti =
-      //         "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
-      //     db.addUser(modifiedData);
-      //     Navigator.pushAndRemoveUntil(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (context) => const MainScreen(index: 3),
-      //         ),
-      //         (route) => false);
-      //   },
-      // ),
       body: Stack(
         children: [
           FutureBuilder<DocumentSnapshot>(
@@ -73,9 +58,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 .get(const GetOptions(source: Source.cache)),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
                 throw Error();
@@ -99,7 +82,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
             child: BottomButton(
               text: "수정완료",
               isCompleted: true,
-              onPressed: () {
+              onPressed: () async {
                 modifiedData.name = nameController.value.text;
                 modifiedData.introduce = introController.value.text;
                 modifiedData.mbti =

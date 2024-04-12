@@ -132,9 +132,9 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 15),
                     ElevatedButton(
                       onPressed: () {
-                        login().then((value) {
+                        login().then((value) async {
                           if (value) {
-                            db
+                            await db
                                 .getUser(firebaseAuth.currentUser!.uid)
                                 .then((value) {
                               userData = value;

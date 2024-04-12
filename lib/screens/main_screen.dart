@@ -61,6 +61,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         extendBody: true,
         body: Consumer<UserDataProvider>(
           builder: (context, userData, child) {

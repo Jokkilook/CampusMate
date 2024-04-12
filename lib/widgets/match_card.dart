@@ -5,7 +5,6 @@ import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -18,11 +17,11 @@ class MatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserDataProvider>(
       builder: (context, userData, child) {
-        return FutureBuilder<QuerySnapshot>(
-          future: FirebaseFirestore.instance
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
               .collection('users')
-              .where("school", isEqualTo: "테스트대학교")
-              .get(),
+              .where("school", isEqualTo: userData.userData.school)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -108,6 +107,23 @@ class MatchCard extends StatelessWidget {
       List<QueryDocumentSnapshot> data, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.height;
 
+    data.map(
+      (e) {
+        var doc = UserData.fromJson(e.data() as Map<String, dynamic>);
+        if (doc.uid == context.read<UserDataProvider>().userData.uid) {
+          data.remove(e);
+        }
+      },
+    );
+
+    for (var info in data) {
+      var doc = UserData.fromJson(info.data() as Map<String, dynamic>);
+      if (doc.uid == context.read<UserDataProvider>().userData.uid) {
+        data.remove(info);
+        break;
+      }
+    }
+
     return CardSwiper(
         threshold: 100,
         cardsCount: data.length,
@@ -116,6 +132,7 @@ class MatchCard extends StatelessWidget {
           final doc =
               UserData.fromJson(data[index].data() as Map<String, dynamic>);
           late final String score;
+
           if (doc.score! >= 95) {
             score = "A+";
           } else if (doc.score! >= 90) {
@@ -273,15 +290,6 @@ class MatchCard extends StatelessWidget {
                             )
                           ],
                         ),
-                        // Positioned(
-                        //   top: -50,
-                        //   right: 0,
-                        //   child: ScoreShower(
-                        //     score: score,
-                        //     percentage: matchFilter(
-                        //         context.read<UserDataProvider>().userData, doc),
-                        //   ),
-                        // )
                       ],
                     ),
                   ),

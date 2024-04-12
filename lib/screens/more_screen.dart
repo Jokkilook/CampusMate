@@ -1,5 +1,6 @@
 import 'package:campusmate/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
+import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,7 @@ class MoreScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text("${context.read<ChattingDataProvider>().chatListStream}"),
               Text("${userProvider.userData.name}"),
               TextButton(
                   onPressed: () => userProvider.setName("sadsa"),
@@ -47,7 +49,6 @@ class MoreScreen extends StatelessWidget {
                     case 1:
                       isGeneral = false;
                   }
-                  print(isGeneral);
                 },
               ),
               ElevatedButton(

@@ -40,9 +40,11 @@ class ChatListItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      data.lastText!,
+                      data.lastMessage!,
                       style:
                           const TextStyle(fontSize: 14, color: Colors.black54),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     )
                   ],
                 ),
@@ -50,10 +52,7 @@ class ChatListItem extends StatelessWidget {
               Column(
                 children: [
                   const SizedBox(height: 5),
-                  const Text(
-                    "1분 전",
-                    style: TextStyle(fontSize: 10, color: Colors.black54),
-                  ),
+                  Text(timeStampToHourMinutes(data.lastMessageTime!)),
                   Expanded(
                     child: Center(
                       child: IconButton(

@@ -3,5 +3,6 @@ import 'package:flutter/material.dart';
 
 class ChattingDataProvider extends ChangeNotifier {
   QuerySnapshot<Object>? chatListInitData;
-  Stream<QuerySnapshot<Object>>? chatListStream;
+  Stream<QuerySnapshot>? chatListStream;
+  Map<String, QuerySnapshot<Object>> chattingCache = {};
 }
