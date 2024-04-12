@@ -29,7 +29,8 @@ class AddPostScreen extends StatelessWidget {
       if (_selectedBoard == 'Anonymous') {
         await FirebaseFirestore.instance
             .collection('anonymousPosts')
-            .add(postData.data!);
+            .add(postData.data!)
+            .then((value) {});
       }
     } catch (error) {
       debugPrint('에러: $error');
