@@ -9,6 +9,7 @@ class PostData {
   int? likeCount;
   int? dislikeCount;
   int? commentCount;
+  List<String>? viewers;
 
   Map<String, dynamic>? data;
 
@@ -23,6 +24,7 @@ class PostData {
     this.likeCount = 0,
     this.dislikeCount = 0,
     this.commentCount = 0,
+    this.viewers,
   }) {
     data = {
       'boardType': boardType,
@@ -35,6 +37,7 @@ class PostData {
       'likeCount': likeCount,
       'dislikeCount': dislikeCount,
       'commentCount': commentCount,
+      'viewers': viewers,
     };
   }
 
@@ -49,6 +52,7 @@ class PostData {
     likeCount = json['likeCount'];
     dislikeCount = json['dislikeCount'];
     commentCount = json['commentCount'];
+    viewers = json['viewers'];
 
     data = {
       'boardType': boardType,
@@ -61,6 +65,7 @@ class PostData {
       'likeCount': likeCount,
       'dislikeCount': dislikeCount,
       'commentCount': commentCount,
+      'viewers': viewers,
     };
   }
 
@@ -76,6 +81,7 @@ class PostData {
       'likeCount': likeCount,
       'dislikeCount': dislikeCount,
       'commentCount': commentCount,
+      'viewers': viewers,
     };
   }
 }

@@ -1,9 +1,12 @@
 import 'package:campusmate/models/post_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../modules/format_time_stamp.dart';
+import '../provider/user_data_provider.dart';
 
-class PostScreen extends StatelessWidget {
+class PostScreen extends StatefulWidget {
   final PostData postData;
 
   const PostScreen({
@@ -12,127 +15,208 @@ class PostScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<PostScreen> createState() => _PostScreenState();
+}
+
+class _PostScreenState extends State<PostScreen> {
+  bool _isLoading = false;
+  bool _userAlreadyViewed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+    // viewers 목록에 사용자의 UID가 있는지 확인
+    _userAlreadyViewed =
+        widget.postData.viewers?.contains(currentUserUid) ?? false;
+    // 사용자의 UID가 viewers 목록에 없는 경우에만 조회수를 증가
+    if (!_userAlreadyViewed) {
+      setState(() {
+        widget.postData.viewers?.add(currentUserUid);
+        widget.postData.viewCount = (widget.postData.viewCount ?? 0) + 1;
+        // Firestore에 조회수를 업데이트합니다.
+        _updateViewCount();
+      });
+    }
+  }
+
+  // Firestore에 조회수를 업데이트하는 함수
+  Future<void> _updateViewCount() async {
+    try {
+      if (widget.postData.boardType == 'General') {
+        await FirebaseFirestore.instance
+            .collection('generalPosts')
+            .doc(widget.postData.uid)
+            .update({
+          'viewers': widget.postData.viewers,
+          'viewCount': widget.postData.viewCount,
+        });
+      } else if (widget.postData.boardType == 'Anonymous') {
+        await FirebaseFirestore.instance
+            .collection('anonymousPosts')
+            .doc(widget.postData.uid)
+            .update({
+          'viewers': widget.postData.viewers,
+          'viewCount': widget.postData.viewCount,
+        });
+      }
+      debugPrint('조회수 업데이트 완료');
+    } catch (error) {
+      debugPrint('조회수 업데이트 에러: $error');
+    }
+  }
+
+  Future<void> refreshScreen() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    String formattedTime = formatTimeStamp(postData.timestamp ?? '', now);
+    String formattedTime =
+        formatTimeStamp(widget.postData.timestamp ?? '', now);
 
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
         title: Text(
-          postData.boardType == 'General' ? '일반 게시판' : '익명 게시판',
+          widget.postData.boardType == 'General' ? '일반 게시판' : '익명 게시판',
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              refreshScreen();
+            },
+            icon: const Icon(Icons.refresh),
+          ),
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.more_vert),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 제목
-              Text(
-                postData.title ?? '',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  // 프로필 사진
-                  const CircleAvatar(
-                    radius: 18,
-                  ),
-                  const SizedBox(width: 10),
-                  // 작성자
-                  Text(
-                    postData.boardType == 'General'
-                        ? postData.author ?? 'null'
-                        : '익명',
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  // 작성일시
-                  Text(
-                    formattedTime,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // 내용
-              Text(
-                postData.content ?? '',
-              ),
-              const SizedBox(height: 20),
-              // 좋아요, 싫어요 박스
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(25),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : RefreshIndicator(
+              onRefresh: refreshScreen,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 좋아요 버튼
-                      IconButton(
-                        icon: const Icon(
-                          Icons.thumb_up_alt_outlined,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {},
-                      ),
-                      // 좋아요 카운트
                       Text(
-                        postData.likeCount?.toString() ?? '0',
+                        widget.postData.title ?? '',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 18,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            widget.postData.boardType == 'General'
+                                ? widget.postData.author ?? 'null'
+                                : '익명',
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            formattedTime,
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          const Icon(
+                            Icons.account_circle_outlined,
+                            color: Colors.grey,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            widget.postData.viewCount.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        widget.postData.content ?? '',
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(25),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.thumb_up_alt_outlined,
+                                  size: 20,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {},
+                              ),
+                              Text(
+                                widget.postData.likeCount?.toString() ?? '0',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.thumb_down_outlined,
+                                  size: 20,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        '댓글 ${widget.postData.commentCount ?? 0}',
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.grey,
                         ),
-                      ),
-                      const SizedBox(width: 14),
-                      // 싫어요 버튼
-                      IconButton(
-                        icon: const Icon(
-                          Icons.thumb_down_outlined,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {},
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                '댓글 ${postData.commentCount ?? 0}',
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

@@ -131,6 +131,21 @@ class GeneralBoardItem extends StatelessWidget {
                               color: Colors.grey,
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          // 조회수
+                          const Icon(
+                            Icons.account_circle_outlined,
+                            color: Colors.grey,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            postData.viewCount.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ],
                       ),
                     ],

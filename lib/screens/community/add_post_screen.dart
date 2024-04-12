@@ -84,22 +84,23 @@ class AddPostScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Align(
-                  alignment: Alignment.center,
-                  child: BottomButton(
-                    text: '작성',
-                    isCompleted: true,
-                    onPressed: () {
-                      postData.author =
-                          context.read<UserDataProvider>().userData.name;
-                      postData.uid =
-                          context.read<UserDataProvider>().userData.uid;
-                      postData.title = _titleController.value.text;
-                      postData.content = _contentController.value.text;
-                      postData.timestamp = DateTime.now().toString();
-                      _addPost(context);
-                      Navigator.pop(context);
-                    },
-                  )),
+                alignment: Alignment.center,
+                child: BottomButton(
+                  text: '작성',
+                  isCompleted: true,
+                  onPressed: () {
+                    postData.author =
+                        context.read<UserDataProvider>().userData.name;
+                    postData.uid =
+                        context.read<UserDataProvider>().userData.uid;
+                    postData.title = _titleController.value.text;
+                    postData.content = _contentController.value.text;
+                    postData.timestamp = DateTime.now().toString();
+                    _addPost(context);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
             ],
           ),
         ),
