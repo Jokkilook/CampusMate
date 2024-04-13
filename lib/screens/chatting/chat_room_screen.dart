@@ -155,6 +155,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     if (docs.isEmpty) {
                       return const Center(child: Text("채팅을 시작해보세요!"));
                     } else {
+                      DocumentSnapshot<Object>? initData;
+
                       return GestureDetector(
                         onTap: () => focusNode.unfocus(),
                         child: Container(
@@ -169,15 +171,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             itemCount: docs.length,
                             itemBuilder: (context, index) {
                               return FutureBuilder<DocumentSnapshot<Object>>(
+                                initialData: initData,
                                 future: chat
                                     .getSenderProfile(docs[index]["senderUID"]),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
+                                    return const Center();
                                   }
                                   if (snapshot.hasData) {
+                                    initData = snapshot.data!;
                                     bool isOther = true;
                                     bool viewSender = false;
                                     bool showTime = false;

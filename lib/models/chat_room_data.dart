@@ -14,7 +14,7 @@ class ChatRoomData {
       this.lastMessage,
       this.lastMessageTime});
 
-  ChatRoomData.from(Map<String, dynamic> json) {
+  ChatRoomData.fromJson(Map<String, dynamic> json) {
     roomId = json["roomId"];
     roomName = json["roomName"];
     participantsUid = json["participantsUid"];

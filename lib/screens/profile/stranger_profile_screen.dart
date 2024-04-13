@@ -1,6 +1,7 @@
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/modules/auth_service.dart';
+import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/profile/full_profile_card.dart';
@@ -12,8 +13,9 @@ import 'package:provider/provider.dart';
 class StrangerProfilScreen extends StatelessWidget {
   StrangerProfilScreen({super.key, required this.uid});
 
-  final db = DataBase();
   final String uid;
+  final ChattingService chat = ChattingService();
+  final AuthService auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +119,8 @@ class StrangerProfilScreen extends StatelessWidget {
                       right: 0,
                       child: BottomButton(
                         text: "채팅하기",
-                        onPressed: () {
-                          startChatting(data["uid"]);
+                        onPressed: () async {
+                          chat.startChatting(context, auth.getUID(), uid);
                         },
                       ))
                 ],
