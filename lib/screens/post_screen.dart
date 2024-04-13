@@ -1,10 +1,10 @@
-import 'package:campusmate/models/post_data.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 import '../modules/format_time_stamp.dart';
 import '../provider/user_data_provider.dart';
+import '../models/post_data.dart';
 
 class PostScreen extends StatefulWidget {
   final PostData postData;
@@ -30,10 +30,12 @@ class _PostScreenState extends State<PostScreen> {
 
   Future<void> checkUserViewedPost() async {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
-    print(currentUserUid);
+    debugPrint('currentUserUid: $currentUserUid');
     // 현재 사용자가 게시물을 이미 본 적이 있는지 확인
-    _userAlreadyViewed =
-        widget.postData.viewers?.contains(currentUserUid) ?? false;
+    setState(() {
+      _userAlreadyViewed =
+          widget.postData.viewers?.contains(currentUserUid) ?? false;
+    });
     // 사용자가 아직 게시물을 보지 않은 경우 조회수를 업데이트
     if (!_userAlreadyViewed) {
       await updateViewCount(currentUserUid);
@@ -42,23 +44,31 @@ class _PostScreenState extends State<PostScreen> {
 
   Future<void> updateViewCount(String currentUserUid) async {
     try {
-      // 로컬에서 조회수를 증가
-      setState(() {
-        widget.postData.viewers?.add(currentUserUid);
-        widget.postData.viewCount = (widget.postData.viewCount ?? 0) + 1;
-      });
-      // Firestore에서 조회수를 업데이트
-      String collection = widget.postData.boardType == 'General'
-          ? 'generalPosts'
-          : 'anonymousPosts';
-      await FirebaseFirestore.instance
-          .collection(collection)
-          .doc(widget.postData.postId)
-          .update({
-        'viewers': widget.postData.viewers,
-        'viewCount': widget.postData.viewCount,
-      });
-      debugPrint('조회수 업데이트 성공');
+      // 이미 조회한 사용자인지 확인
+      if (widget.postData.viewers == null ||
+          !widget.postData.viewers!.contains(currentUserUid)) {
+        // Firestore에서 조회수를 업데이트
+        await FirebaseFirestore.instance
+            .collection(widget.postData.boardType == 'General'
+                ? 'generalPosts'
+                : 'anonymousPosts')
+            .doc(widget.postData.postId)
+            .update({
+          'viewers':
+              FieldValue.arrayUnion([currentUserUid]), // 현재 사용자를 조회자 목록에 추가
+          'viewCount': FieldValue.increment(1), // 조회수 1 증가
+        });
+        debugPrint('조회수 업데이트 성공');
+
+        // 상태를 업데이트하고 UI를 다시 빌드
+        setState(() {
+          widget.postData.viewers ??= []; // viewers가 null이면 빈 배열로 초기화
+          widget.postData.viewers!.add(currentUserUid);
+          widget.postData.viewCount = (widget.postData.viewCount ?? 0) + 1;
+        });
+      } else {
+        debugPrint('이미 조회한 사용자입니다.');
+      }
     } catch (error) {
       debugPrint('조회수 업데이트 에러: $error');
     }
