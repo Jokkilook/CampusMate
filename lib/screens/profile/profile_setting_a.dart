@@ -309,6 +309,12 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                           child: SizedBox(
                             height: 150,
                             child: TextField(
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              onTapOutside: (event) {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
                               controller: introController,
                               maxLines: 20,
                               keyboardType: TextInputType.multiline,

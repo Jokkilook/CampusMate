@@ -21,4 +21,14 @@ class ChatRoomData {
     lastMessage = json["lastMessage"];
     lastMessageTime = json["lastMessageTime"];
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "roomId": roomId,
+      "roomName": roomName,
+      "participantsUid": participantsUid,
+      "lastMessage": lastMessage,
+      "lastMessageTime": lastMessageTime
+    };
+  }
 }

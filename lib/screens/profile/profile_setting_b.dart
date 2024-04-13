@@ -50,7 +50,6 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
 
     introduce = "";
     age = 0;
-    userTag = widget.userData.tags!.cast<String>();
 
     setState(() {});
   }
@@ -147,15 +146,11 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                                           : Colors.black54),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                    side: userTag.contains(tag)
-                                        ? BorderSide(
-                                            width: 2,
-                                            color: Colors.green.shade700)
-                                        : BorderSide(
-                                            width: 0,
-                                            color: Colors.white.withOpacity(0)),
+                                    side: BorderSide(
+                                        width: 0,
+                                        color: Colors.white.withOpacity(0)),
                                     backgroundColor: userTag.contains(tag)
-                                        ? Colors.green
+                                        ? Colors.green[400]
                                         : Colors.black12,
                                     minimumSize: Size.zero,
                                     padding: const EdgeInsets.symmetric(

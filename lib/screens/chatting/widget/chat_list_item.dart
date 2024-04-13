@@ -1,14 +1,26 @@
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ChatListItem extends StatelessWidget {
   const ChatListItem({super.key, required this.data});
 
   final ChatRoomData data;
 
+  String timeStampToHourMinutes(Timestamp time) {
+    var data = time.toDate().toString();
+    var date = DateTime.parse(data);
+
+    return "${NumberFormat("00").format(date.hour)}:${NumberFormat("00").format(date.minute)}";
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (data.lastMessageTime == null) {
+      return Container();
+    }
     return GestureDetector(
       onTap: () {
         Navigator.push(
