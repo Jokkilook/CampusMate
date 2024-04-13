@@ -22,15 +22,18 @@ class AddPostScreen extends StatelessWidget {
     try {
       postData.setData();
       if (_selectedBoard == 'General') {
-        await FirebaseFirestore.instance
+        DocumentReference docRef = await FirebaseFirestore.instance
             .collection('generalPosts')
             .add(postData.data!);
+        postData.postId = docRef.id;
+        await docRef.update({'postId': postData.postId});
       }
       if (_selectedBoard == 'Anonymous') {
-        await FirebaseFirestore.instance
+        DocumentReference docRef = await FirebaseFirestore.instance
             .collection('anonymousPosts')
-            .add(postData.data!)
-            .then((value) {});
+            .add(postData.data!);
+        postData.postId = docRef.id;
+        await docRef.update({'postId': postData.postId});
       }
     } catch (error) {
       debugPrint('에러: $error');
@@ -97,7 +100,7 @@ class AddPostScreen extends StatelessWidget {
                     postData.title = _titleController.value.text;
                     postData.content = _contentController.value.text;
                     postData.timestamp = DateTime.now().toString();
-                    _addPost(context);
+                    _addPost(context); // 게시물 추가 메서드 호출
                     Navigator.pop(context);
                   },
                 ),
