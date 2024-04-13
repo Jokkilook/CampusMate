@@ -10,7 +10,8 @@ class InputTextField extends StatefulWidget {
       this.keyboardType,
       this.hintText,
       this.scrollPadding = const EdgeInsets.all(0),
-      this.focusNode});
+      this.focusNode,
+      this.canOutsideUnfocus = true});
   final TextEditingController controller;
   final int? minLines;
   final int? maxLines;
@@ -19,6 +20,7 @@ class InputTextField extends StatefulWidget {
   final String? hintText;
   final EdgeInsets scrollPadding;
   final FocusNode? focusNode;
+  final bool canOutsideUnfocus;
 
   @override
   State<InputTextField> createState() => _InputTextFieldState();
@@ -30,9 +32,11 @@ class _InputTextFieldState extends State<InputTextField> {
     return TextField(
       focusNode: widget.focusNode,
       controller: widget.controller,
-      onTapOutside: (event) {
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
+      onTapOutside: widget.canOutsideUnfocus
+          ? (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+          : null,
       minLines: widget.minLines,
       maxLines: widget.maxLines,
       maxLength: widget.maxLength,

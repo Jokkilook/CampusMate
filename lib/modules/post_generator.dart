@@ -28,13 +28,13 @@ class PostGenerator {
   void deleteDummyPost(int quantity, {bool isGeneral = true}) async {
     QuerySnapshot snapshot = await db.db
         .collection(isGeneral ? "generalPosts" : "anonymousPosts")
-        .where("uid", isEqualTo: "9UciNePfNfS7KFvbUpgbyMwaSUh1")
+        .where("uid", isEqualTo: "frGeVOXK5KVE98B4o55ggicM3Kh2")
         .get();
 
     for (int i = 0; i < quantity; i++) {
       await db.db
           .collection(isGeneral ? "generalPosts" : "anonymousPosts")
-          .doc(snapshot.docs[0].id)
+          .doc(snapshot.docs[i].id)
           .delete();
     }
   }
