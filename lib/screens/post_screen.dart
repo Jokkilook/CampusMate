@@ -30,6 +30,7 @@ class _PostScreenState extends State<PostScreen> {
 
   Future<void> checkUserViewedPost() async {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+    print(currentUserUid);
     // 현재 사용자가 게시물을 이미 본 적이 있는지 확인
     _userAlreadyViewed =
         widget.postData.viewers?.contains(currentUserUid) ?? false;
@@ -52,7 +53,7 @@ class _PostScreenState extends State<PostScreen> {
           : 'anonymousPosts';
       await FirebaseFirestore.instance
           .collection(collection)
-          .doc(widget.postData.postUid)
+          .doc(widget.postData.postId)
           .update({
         'viewers': widget.postData.viewers,
         'viewCount': widget.postData.viewCount,

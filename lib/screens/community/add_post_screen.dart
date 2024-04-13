@@ -96,7 +96,6 @@ class AddPostScreen extends StatelessWidget {
                     postData.title = _titleController.value.text;
                     postData.content = _contentController.value.text;
                     postData.timestamp = DateTime.now().toString();
-                    postData.viewers = [];
                     _addPost(context);
                     Navigator.pop(context);
                   },
