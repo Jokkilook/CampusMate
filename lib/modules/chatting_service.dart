@@ -80,8 +80,8 @@ class ChattingService {
         .snapshots();
   }
 
-  Future<DocumentSnapshot<Object>> getSenderProfile(String senderUID) async {
-    return firestore.collection("users").doc(senderUID).get();
+  Future<DocumentSnapshot<Object>> getUserProfile(String UID) async {
+    return firestore.collection("users").doc(UID).get();
   }
 
   void sendMessage({required String roomId, required MessageData data}) {

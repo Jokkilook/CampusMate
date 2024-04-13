@@ -1,9 +1,7 @@
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
-import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
-import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +13,7 @@ import 'widget/chat_bubble.dart';
 //ignore: must_be_immutable
 class ChatRoomScreen extends StatefulWidget {
   ChatRoomScreen({super.key, required this.chatRoomData, this.isNew = false});
-  TextEditingController chatController = TextEditingController();
+
   ChatRoomData chatRoomData;
   bool isNew;
 
@@ -24,49 +22,21 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  Map<String, List<String>> nameMap = {};
   final FocusNode focusNode = FocusNode();
+  TextEditingController chatController = TextEditingController();
+  final scrollController = ScrollController();
   ChattingService chat = ChattingService();
   AuthService auth = AuthService();
+  String senderUID = "";
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getNamesAndImages();
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    focusNode.dispose();
+    chatController.dispose();
+    scrollController.dispose();
   }
-
-  void getNamesAndImages() async {
-    if (widget.isNew) {
-      for (var element in widget.chatRoomData.participantsUid!) {
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(element)
-            .get(const GetOptions(source: Source.cache))
-            .then(
-              (value) => nameMap[element] = [
-                value["name"].toString(),
-                value["imageUrl"].toString()
-              ],
-            );
-      }
-    }
-
-    for (var element in widget.chatRoomData.participantsUid!) {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(element)
-          .get()
-          .then(
-            (value) => nameMap[element] = [
-              value["name"].toString(),
-              value["imageUrl"].toString()
-            ],
-          );
-    }
-  }
-
-  final scrollController = ScrollController();
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -77,14 +47,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    for (var element in widget.chatRoomData.participantsUid!) {
+      if (element != auth.getUID()) senderUID = element;
+    }
+    print(
+        ">>>>>>>>>>>>>>>>>>>>>>${widget.chatRoomData.participantsUid![0]}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     return Scaffold(
       body: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           actions: [
-            // IconButton(onPressed: () {
-
-            // }, icon: const Icon(Icons.more_vert))
             PopupMenuButton(
               itemBuilder: (context) {
                 return [
@@ -130,70 +102,59 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         body: Column(
           children: [
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                initialData: context
-                    .read<ChattingDataProvider>()
-                    .chattingCache[widget.chatRoomData.roomId],
-                //  await FirebaseFirestore.instance
-                //     .collection("chats/${widget.chatRoomData.roomId}/messages")
-                //     .orderBy("time", descending: true)
-                //     .get(const GetOptions(source: Source.cache)),
-                stream: chat.getChattingMessages(widget.chatRoomData.roomId!),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              child: FutureBuilder<DocumentSnapshot<Object>>(
+                  future: chat.getUserProfile(senderUID),
+                  builder: (context, snapshot) {
+                    String name = "";
+                    String imageUrl =
+                        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f350";
+                    try {
+                      name = (snapshot.data!.data()
+                          as Map<String, dynamic>)["name"];
+                      imageUrl = (snapshot.data!.data()
+                          as Map<String, dynamic>)["imageUrl"];
+                    } catch (e) {
+                      print(
+                          ">>>>>>>>>>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    }
+                    return StreamBuilder<QuerySnapshot>(
+                      stream:
+                          chat.getChattingMessages(widget.chatRoomData.roomId!),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
 
-                  if (snapshot.hasError) {
-                    return const Center(child: Text("에러발생"));
-                  }
+                        if (snapshot.hasError) {
+                          return const Center(child: Text("에러발생"));
+                        }
 
-                  if (snapshot.hasData) {
-                    List<QueryDocumentSnapshot<Object?>> docs =
-                        snapshot.data!.docs;
+                        if (snapshot.hasData) {
+                          List<QueryDocumentSnapshot<Object?>> docs =
+                              snapshot.data!.docs;
 
-                    if (docs.isEmpty) {
-                      return const Center(child: Text("채팅을 시작해보세요!"));
-                    } else {
-                      DocumentSnapshot<Object>? initData;
-
-                      return GestureDetector(
-                        onTap: () => focusNode.unfocus(),
-                        child: Container(
-                          color: Colors.grey[50],
-                          height: double.infinity,
-                          child: ListView.separated(
-                            controller: scrollController,
-                            padding: const EdgeInsets.all(10),
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 10),
-                            reverse: true,
-                            itemCount: docs.length,
-                            itemBuilder: (context, index) {
-                              return FutureBuilder<DocumentSnapshot<Object>>(
-                                initialData: initData,
-                                future: chat
-                                    .getSenderProfile(docs[index]["senderUID"]),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center();
-                                  }
-                                  if (snapshot.hasData) {
-                                    initData = snapshot.data!;
+                          if (docs.isEmpty) {
+                            return const Center(child: Text("채팅을 시작해보세요!"));
+                          } else {
+                            return GestureDetector(
+                              onTap: () => focusNode.unfocus(),
+                              child: Container(
+                                color: Colors.grey[50],
+                                height: double.infinity,
+                                child: ListView.separated(
+                                  controller: scrollController,
+                                  padding: const EdgeInsets.all(10),
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 10),
+                                  reverse: true,
+                                  itemCount: docs.length,
+                                  itemBuilder: (context, index) {
                                     bool isOther = true;
                                     bool viewSender = false;
                                     bool showTime = false;
                                     bool showDay = false;
-                                    String name = "";
-                                    String imageUrl =
-                                        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f350";
-                                    var userData = UserData.fromJson(
-                                        snapshot.data!.data()
-                                            as Map<String, dynamic>);
-
-                                    name = userData.name!;
-                                    imageUrl = userData.imageUrl!;
 
                                     try {
                                       //시간출력 여부 결정 (한칸 아래의 메세지가 다른사람이 보낸것 이거나 보낸 시간이 다르면 showTime=true)
@@ -248,35 +209,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       if (docs[index]["senderUID"] !=
                                           docs[index + 1]["senderUID"]) {
                                         viewSender = true;
-                                        chat.firestore
-                                            .collection("users")
-                                            .doc(docs[index]["senderUID"])
-                                            .get()
-                                            .then((value) {
-                                          name = value["name"];
-                                          imageUrl = value["imageUrl"];
-                                        });
-
-                                        print(
-                                            ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$name<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                                        print(
-                                            ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$imageUrl<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                                       }
                                     } catch (e) {
                                       //한칸 위의 메세지가 없으면 보낸 사람 표시 출력
-                                      chat.firestore
-                                          .collection("users")
-                                          .doc(docs[index]["senderUID"])
-                                          .get()
-                                          .then((value) {
-                                        name = value["name"];
-                                        imageUrl = value["imageUrl"];
-                                      });
 
-                                      print(
-                                          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$name<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                                      print(
-                                          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$imageUrl<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                                       viewSender = true;
                                     }
 
@@ -290,20 +226,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       messageData: docs[index],
                                       index: index,
                                     );
-                                  }
-                                  return const CircularProgressIndicator();
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    }
-                  }
+                                  },
+                                ),
+                              ),
+                            );
+                          }
+                        }
 
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    );
+                  }),
             ),
             //채팅 입력바
             Container(
@@ -329,7 +262,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         padding: const EdgeInsets.all(10),
                         child: TextFormField(
                           focusNode: focusNode,
-                          controller: widget.chatController,
+                          controller: chatController,
                           maxLines: 4,
                         )),
                   ),
@@ -341,10 +274,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           shape: const ContinuousRectangleBorder()),
                       onPressed: () {
                         FocusScope.of(context).requestFocus(focusNode);
-                        if (widget.chatController.value.text == "") return;
+                        if (chatController.value.text == "") return;
 
-                        String message = widget.chatController.value.text;
-                        widget.chatController.value = TextEditingValue.empty;
+                        String message = chatController.value.text;
+                        chatController.value = TextEditingValue.empty;
                         MessageData data = MessageData(
                             senderUID: auth.getUID(),
                             content: message,
