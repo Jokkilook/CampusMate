@@ -2,12 +2,9 @@ import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
-import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-
 import 'widget/chat_bubble.dart';
 
 //ignore: must_be_immutable
@@ -28,6 +25,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   ChattingService chat = ChattingService();
   AuthService auth = AuthService();
   String senderUID = "";
+  String? userUID;
 
   @override
   void dispose() {
@@ -48,12 +46,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   Widget build(BuildContext context) {
     for (var element in widget.chatRoomData.participantsUid!) {
-      print(element);
       if (element != auth.getUID()) senderUID = element;
     }
 
-    print(widget.chatRoomData.participantsUid!);
-    print(senderUID);
+    userUID = auth.getUID();
 
     return Scaffold(
       body: Scaffold(
@@ -72,8 +68,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           .get();
 
                       List list = data.data()!["participantsUid"];
-                      list.remove(
-                          context.read<UserDataProvider>().userData.uid);
+                      list.remove(userUID);
 
                       if (list.isEmpty) {
                         FirebaseFirestore.instance
@@ -121,8 +116,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       try {
                         name = doc["name"];
                         imageUrl = doc["imageUrl"];
-                        print(name);
-                        print(imageUrl);
                       } catch (e) {
                         debugPrint(
                             ">>>>>>>>>>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -165,6 +158,45 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       bool viewSender = false;
                                       bool showTime = false;
                                       bool showDay = false;
+                                      //메세지의 읽은 사람 리스트 반환
+                                      List<String> messageReaderList =
+                                          (docs[index]["readers"] as List)
+                                              .map((e) => e.toString())
+                                              .toList();
+
+                                      //사용자가 읽은 사람 리스트에 포함되어 있지 않으면 추가 후 파이어스토어 업데이트
+                                      if (!messageReaderList
+                                          .contains(userUID)) {
+                                        messageReaderList.add(userUID!);
+
+                                        chat.updateReader(
+                                            widget.chatRoomData.roomId!,
+                                            docs[index].id,
+                                            messageReaderList);
+                                      }
+
+                                      //채팅방 데이터에서 참여자 수 반환
+                                      int participantsCount = 0;
+                                      try {
+                                        participantsCount = widget.chatRoomData
+                                            .participantsUid!.length;
+                                      } catch (e) {}
+
+                                      //메세지 데이터에서 읽은 사람 수 반환
+                                      int readerCount = 0;
+                                      try {
+                                        readerCount = messageReaderList.length;
+                                      } catch (e) {}
+
+                                      //출력할 문자로 계산
+                                      String count = "";
+                                      try {
+                                        count =
+                                            (participantsCount - readerCount)
+                                                .toString();
+
+                                        count == "0" ? count = "" : null;
+                                      } catch (e) {}
 
                                       try {
                                         //시간출력 여부 결정 (한칸 아래의 메세지가 다른사람이 보낸것 이거나 보낸 시간이 다르면 showTime=true)
@@ -206,11 +238,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       }
 
                                       //메세지의 uid가 접속중인 유저와 같으면 MyChatUnit
-                                      if (docs[index]["senderUID"] ==
-                                          context
-                                              .read<UserDataProvider>()
-                                              .userData
-                                              .uid) {
+                                      if (docs[index]["senderUID"] == userUID) {
                                         isOther = false;
                                       }
 
@@ -228,6 +256,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
                                       return ChatBubble(
                                         isOther: isOther,
+                                        reader: count,
                                         viewSender: viewSender,
                                         name: name,
                                         imageUrl: imageUrl,
@@ -302,16 +331,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         MessageData data = MessageData(
                             senderUID: auth.getUID(),
                             content: message,
+                            readers: [],
                             time: Timestamp.fromDate(DateTime.now()));
 
                         chat.sendMessage(
                             roomId: widget.chatRoomData.roomId!, data: data);
-
-                        scrollController.animateTo(
-                          0,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
+                        if (scrollController.hasClients) {
+                          scrollController.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
                       },
                       child: const Icon(Icons.send)),
                 ],

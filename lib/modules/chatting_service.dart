@@ -80,6 +80,14 @@ class ChattingService {
         .snapshots();
   }
 
+  void updateReader(
+      String roomId, String messageId, List<String> readerList) async {
+    firestore
+        .collection("chats/$roomId/messages")
+        .doc(messageId)
+        .update({"readers": readerList});
+  }
+
   Future<DocumentSnapshot<Object>> getUserProfile(String uid) async {
     return firestore.collection("users").doc(uid).get();
   }

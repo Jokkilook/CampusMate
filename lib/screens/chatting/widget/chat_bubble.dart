@@ -15,7 +15,8 @@ class ChatBubble extends StatelessWidget {
       this.viewSender = true,
       this.name,
       this.senderUid,
-      this.imageUrl});
+      this.imageUrl,
+      this.reader = ""});
 
   final QueryDocumentSnapshot messageData;
   final int index;
@@ -26,6 +27,7 @@ class ChatBubble extends StatelessWidget {
   final String? name;
   final String? senderUid;
   final String? imageUrl;
+  final String reader;
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -112,12 +114,34 @@ class ChatBubble extends StatelessWidget {
                           width: 50,
                         ),
                   const SizedBox(width: 10),
-                  //왼쪽 시간표시 (시간을 보여줘야하고 내 버블일 때)
-                  showTime && !isOther
-                      ? Text(timeStampToHourMinutes(messageData["time"]),
-                          style: const TextStyle(fontSize: 10))
-                      : Container(),
-                  isOther ? Container() : const SizedBox(width: 6),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          //왼쪽 안읽은 사람 수 표시(내 버블일 때)
+
+                          !isOther
+                              ? Text(reader,
+                                  style: const TextStyle(fontSize: 10))
+                              : Container(),
+                          !isOther ? const SizedBox(width: 6) : Container(),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          //왼쪽 시간표시 (시간을 보여줘야하고 내 버블일 때)
+                          showTime && !isOther
+                              ? Text(
+                                  timeStampToHourMinutes(messageData["time"]),
+                                  style: const TextStyle(fontSize: 10))
+                              : Container(),
+                          isOther ? Container() : const SizedBox(width: 6),
+                        ],
+                      ),
+                    ],
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -148,13 +172,29 @@ class ChatBubble extends StatelessWidget {
                   ),
                 ],
               ),
-
-              //오른쪽 시간표시 (시간을 보여줘야하고 상대방 버블일 때)
-              isOther ? const SizedBox(width: 6) : Container(),
-              showTime && isOther
-                  ? Text(timeStampToHourMinutes(messageData["time"]),
-                      style: const TextStyle(fontSize: 10))
-                  : Container(),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      //오른쪽 안읽은 사람 수 표시(상대방 버블일 때)
+                      isOther ? const SizedBox(width: 6) : Container(),
+                      isOther
+                          ? Text(reader, style: const TextStyle(fontSize: 10))
+                          : Container(),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      //오른쪽 시간표시 (시간을 보여줘야하고 상대방 버블일 때)
+                      isOther ? const SizedBox(width: 6) : Container(),
+                      showTime && isOther
+                          ? Text(timeStampToHourMinutes(messageData["time"]),
+                              style: const TextStyle(fontSize: 10))
+                          : Container(),
+                    ],
+                  )
+                ],
+              )
             ],
           ),
         ),
