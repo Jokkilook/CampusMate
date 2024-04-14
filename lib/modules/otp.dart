@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 class OTP {
-  Timer? _timer;
   String? _code;
 
   String createOTP(int digit) {
@@ -21,7 +20,7 @@ class OTP {
   }
 
   void timerActivate() {
-    _timer = Timer(const Duration(minutes: 3), () {
+    Timer(const Duration(minutes: 3), () {
       _code = "";
     });
   }

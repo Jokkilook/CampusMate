@@ -6,9 +6,7 @@ import 'package:campusmate/screens/regist/regist_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class RegistScreenC extends StatefulWidget {
   const RegistScreenC({super.key, required this.newUserData});
@@ -210,7 +208,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                                       .value.text.isEmpty ||
                                                   isCorrect
                                               ? Colors.black45
-                                              : Colors.red,
+                                              : Colors.red.shade600,
                                           width: 1.5,
                                         )),
                                     focusedBorder: OutlineInputBorder(
@@ -220,7 +218,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                                       .value.text.isEmpty ||
                                                   isCorrect
                                               ? Colors.black45
-                                              : Colors.red,
+                                              : Colors.red.shade600,
                                           width: 1.5,
                                         )),
                                     filled: true,
@@ -250,7 +248,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
                               child: TextField(
                                 maxLength: 20,
                                 controller: nickController,
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),

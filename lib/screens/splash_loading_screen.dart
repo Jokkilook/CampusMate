@@ -6,6 +6,7 @@ import 'package:campusmate/screens/screen_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +35,12 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
 
   void getChattingInitData() async {}
 
+  Future<void> handlBackgroundMessage(RemoteMessage message) async {
+    print(">>>>>>>>>${message.notification?.title}");
+    print(">>>>>>>>>${message.notification?.body}");
+    print(">>>>>>>>>${message.data}");
+  }
+
   void initialize() async {
     String uid = "";
     User user;
@@ -57,6 +64,15 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
         user = FirebaseAuth.instance.currentUser!;
         uid = user.uid;
       }
+
+      final fcm = FirebaseMessaging.instance;
+      final token = await fcm.getToken();
+      print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$token");
+      FirebaseMessaging.onBackgroundMessage(
+        (message) => handlBackgroundMessage(message),
+      );
+
+      print("done");
 
       var snapshot =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();

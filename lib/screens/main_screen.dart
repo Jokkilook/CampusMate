@@ -5,6 +5,7 @@ import 'package:campusmate/screens/matching_screen.dart';
 import 'package:campusmate/screens/more_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:campusmate/widgets/fadein_indexedstack.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,10 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final fcmToken = FirebaseMessaging.instance
+      .getToken()
+      .then((value) => print(">>>>>>>>>>>>>>>>>>>>>>>>>>>$value"));
+
   int index = 0;
 
   final List<Widget> list = [
