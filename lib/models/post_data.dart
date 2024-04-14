@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PostData {
   String? boardType;
   String? title;
   String? content;
-  String? timestamp;
+  Timestamp? timestamp;
   String? author;
   String? authorUid;
   String? postId;

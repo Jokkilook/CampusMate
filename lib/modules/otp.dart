@@ -2,32 +2,32 @@ import 'dart:async';
 import 'dart:math';
 
 class OTP {
-  var timer;
-  var code;
+  Timer? _timer;
+  String? _code;
 
   String createOTP(int digit) {
     final input = pow(10, digit) - 1;
-    code = Random().nextInt(input.toInt());
+    String _strCode = "";
+    _code = (Random().nextInt(input.toInt())).toString();
 
-    var _stringCode = code.toString();
-    if (_stringCode.length != 6) {
-      var count = 6 - _stringCode.length;
+    if (_code!.length != 6) {
+      int count = 6 - _code!.length;
       for (int i = 0; i < count; i++) {
-        _stringCode = "0" + _stringCode;
+        _strCode = "0" + _code!;
       }
     }
 
-    return _stringCode;
+    return _strCode;
   }
 
   void timerActivate() {
-    timer = Timer(const Duration(minutes: 3), () {
-      code = "";
+    _timer = Timer(const Duration(minutes: 3), () {
+      _code = "";
     });
   }
 
   bool verifyOTP(String otp) {
-    if (code.toString() == otp) {
+    if (_code == otp) {
       return true;
     } else {
       return false;
@@ -35,7 +35,7 @@ class OTP {
   }
 
   bool isValid() {
-    if (code == "") {
+    if (_code == "") {
       return false;
     } else {
       return true;

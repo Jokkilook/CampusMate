@@ -20,6 +20,7 @@ class MoreScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset("assets/images/default_image.png"),
               Text("${context.read<ChattingDataProvider>().chatListStream}"),
               Text("${userProvider.userData.name}"),
               TextButton(

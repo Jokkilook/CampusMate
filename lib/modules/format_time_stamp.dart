@@ -1,5 +1,7 @@
-String formatTimeStamp(String timeStamp, DateTime now) {
-  DateTime postTime = DateTime.parse(timeStamp);
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+String formatTimeStamp(Timestamp timeStamp, DateTime now) {
+  DateTime postTime = DateTime.parse(timeStamp.toDate().toString());
 
   Duration difference = now.difference(postTime);
 

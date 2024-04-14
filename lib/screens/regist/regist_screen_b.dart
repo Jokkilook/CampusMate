@@ -260,7 +260,6 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                                 horizontal: 20, vertical: 10)),
                                   ),
                                 ),
-                                Text("${widget.otp.code}"),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,

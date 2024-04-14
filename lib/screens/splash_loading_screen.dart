@@ -1,6 +1,5 @@
 import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/screen_list.dart';
@@ -58,25 +57,6 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
         user = FirebaseAuth.instance.currentUser!;
         uid = user.uid;
       }
-
-      //채팅데이터프로바이더에 채팅리스트 스트림 로드
-      context.read<ChattingDataProvider>().chatListStream = FirebaseFirestore
-          .instance
-          .collection("chats")
-          .where("participantsUid",
-              arrayContains: context.read<UserDataProvider>().userData.uid)
-          .snapshots();
-
-      //채팅 데이터 로드
-      //1 채팅방 id 로드
-      //2 id 별 메세지 로드 후 저장 { "아이디":Querysnapshot<> }
-
-      context.read<ChattingDataProvider>().chatListStream!.asyncMap((snapshot) {
-        snapshot.docs.map((doc) {
-          context.read<ChattingDataProvider>().chattingCache[doc["roomId"]] =
-              doc["messages"];
-        });
-      });
 
       var snapshot =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();

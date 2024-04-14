@@ -6,42 +6,11 @@ import 'package:campusmate/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
 
 class MatchCard extends StatelessWidget {
   const MatchCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<UserDataProvider>(
-      builder: (context, userData, child) {
-        return StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .where("school", isEqualTo: userData.userData.school)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (!snapshot.hasData) {
-              return const Center(child: Text("아직 사용자가 없어요 o_o"));
-            }
-            if (snapshot.hasError) {
-              return const Center(child: Text("오류가 발생했어요!"));
-            } else {
-              List<QueryDocumentSnapshot> data = snapshot.data?.docs ?? [];
-              // var data = snapshot.data!.data() as Map<String, dynamic>;
-              return Center(child: swipableCard(data, context));
-            }
-          },
-        );
-      },
-    );
-  }
 
   int matchFilter(UserData myData, UserData otherData) {
     int matchPercent = 0;
@@ -103,18 +72,44 @@ class MatchCard extends StatelessWidget {
     return matchPercent;
   }
 
-  CardSwiper swipableCard(
-      List<QueryDocumentSnapshot> data, BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.height;
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .where("school",
+              isEqualTo: context.read<UserDataProvider>().userData.school)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    data.map(
-      (e) {
-        var doc = UserData.fromJson(e.data() as Map<String, dynamic>);
-        if (doc.uid == context.read<UserDataProvider>().userData.uid) {
-          data.remove(e);
+        if (!snapshot.hasData) {
+          return const Center(child: Text("아직 사용자가 없어요 o_o"));
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text("오류가 발생했어요!"));
+        }
+        if (snapshot.hasData) {
+          List<QueryDocumentSnapshot> data = snapshot.data?.docs ?? [];
+          print(data.length);
+          print(
+              ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${context.read<UserDataProvider>().userData.school}");
+          // var data = snapshot.data!.data() as Map<String, dynamic>;
+          return Center(child: swipableCard(data, context));
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
       },
     );
+  }
+
+  CardSwiper swipableCard(
+      List<QueryDocumentSnapshot> data, BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.height;
 
     for (var info in data) {
       var doc = UserData.fromJson(info.data() as Map<String, dynamic>);

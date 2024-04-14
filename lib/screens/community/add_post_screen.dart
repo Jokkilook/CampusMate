@@ -99,7 +99,7 @@ class AddPostScreen extends StatelessWidget {
                         context.read<UserDataProvider>().userData.uid;
                     postData.title = _titleController.value.text;
                     postData.content = _contentController.value.text;
-                    postData.timestamp = DateTime.now().toString();
+                    postData.timestamp = Timestamp.fromDate(DateTime.now());
                     _addPost(context);
                     Navigator.pop(context);
                   },

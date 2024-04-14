@@ -48,10 +48,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   Widget build(BuildContext context) {
     for (var element in widget.chatRoomData.participantsUid!) {
+      print(element);
       if (element != auth.getUID()) senderUID = element;
     }
-    print(
-        ">>>>>>>>>>>>>>>>>>>>>>${widget.chatRoomData.participantsUid![0]}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+    print(widget.chatRoomData.participantsUid!);
+    print(senderUID);
+
     return Scaffold(
       body: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -103,140 +106,158 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           children: [
             Expanded(
               child: FutureBuilder<DocumentSnapshot<Object>>(
-                  future: chat.getUserProfile(senderUID),
-                  builder: (context, snapshot) {
-                    String name = "";
-                    String imageUrl =
-                        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f350";
-                    try {
-                      name = (snapshot.data!.data()
-                          as Map<String, dynamic>)["name"];
-                      imageUrl = (snapshot.data!.data()
-                          as Map<String, dynamic>)["imageUrl"];
-                    } catch (e) {
-                      print(
-                          ">>>>>>>>>>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                    }
-                    return StreamBuilder<QuerySnapshot>(
-                      stream:
-                          chat.getChattingMessages(widget.chatRoomData.roomId!),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
+                future: chat.getUserProfile(senderUID),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasData) {
+                    DocumentSnapshot<Object> doc = snapshot.data!;
 
-                        if (snapshot.hasError) {
-                          return const Center(child: Text("에러발생"));
-                        }
+                    if (doc.exists) {
+                      String name = "";
+                      String imageUrl =
+                          "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f350";
+                      try {
+                        name = doc["name"];
+                        imageUrl = doc["imageUrl"];
+                        print(name);
+                        print(imageUrl);
+                      } catch (e) {
+                        debugPrint(
+                            ">>>>>>>>>>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                      }
+                      return StreamBuilder<QuerySnapshot>(
+                        stream: chat
+                            .getChattingMessages(widget.chatRoomData.roomId!),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
 
-                        if (snapshot.hasData) {
-                          List<QueryDocumentSnapshot<Object?>> docs =
-                              snapshot.data!.docs;
+                          if (snapshot.hasError) {
+                            return const Center(child: Text("에러발생"));
+                          }
 
-                          if (docs.isEmpty) {
-                            return const Center(child: Text("채팅을 시작해보세요!"));
-                          } else {
-                            return GestureDetector(
-                              onTap: () => focusNode.unfocus(),
-                              child: Container(
-                                color: Colors.grey[50],
-                                height: double.infinity,
-                                child: ListView.separated(
-                                  controller: scrollController,
-                                  padding: const EdgeInsets.all(10),
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(height: 10),
-                                  reverse: true,
-                                  itemCount: docs.length,
-                                  itemBuilder: (context, index) {
-                                    bool isOther = true;
-                                    bool viewSender = false;
-                                    bool showTime = false;
-                                    bool showDay = false;
+                          if (snapshot.hasData) {
+                            List<QueryDocumentSnapshot<Object?>> docs =
+                                snapshot.data!.docs;
 
-                                    try {
-                                      //시간출력 여부 결정 (한칸 아래의 메세지가 다른사람이 보낸것 이거나 보낸 시간이 다르면 showTime=true)
-                                      if (docs[index]["senderUID"] !=
-                                              docs[index - 1]["senderUID"] ||
-                                          timeStampToHourMinutes(
-                                                  docs[index]["time"]) !=
-                                              timeStampToHourMinutes(
-                                                  docs[index - 1]["time"])) {
+                            if (docs.isEmpty) {
+                              return const Center(child: Text("채팅을 시작해보세요!"));
+                            } else {
+                              return GestureDetector(
+                                onTap: () => focusNode.unfocus(),
+                                child: Container(
+                                  color: Colors.grey[50],
+                                  height: double.infinity,
+                                  child: ListView.separated(
+                                    controller: scrollController,
+                                    padding: const EdgeInsets.all(10),
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(height: 10),
+                                    reverse: true,
+                                    itemCount: docs.length,
+                                    itemBuilder: (context, index) {
+                                      bool isOther = true;
+                                      bool viewSender = false;
+                                      bool showTime = false;
+                                      bool showDay = false;
+
+                                      try {
+                                        //시간출력 여부 결정 (한칸 아래의 메세지가 다른사람이 보낸것 이거나 보낸 시간이 다르면 showTime=true)
+                                        if (docs[index]["senderUID"] !=
+                                                docs[index - 1]["senderUID"] ||
+                                            timeStampToHourMinutes(
+                                                    docs[index]["time"]) !=
+                                                timeStampToHourMinutes(
+                                                    docs[index - 1]["time"])) {
+                                          showTime = true;
+                                        }
+                                      } catch (e) {
+                                        //한칸 아래 메세지가 없으면 시간 출력
                                         showTime = true;
                                       }
-                                    } catch (e) {
-                                      //한칸 아래 메세지가 없으면 시간 출력
-                                      showTime = true;
-                                    }
 
-                                    try {
-                                      //날짜 구분선 출력 여부 (한칸 위 메세지가 다른 날짜면 날짜 구분선 출력)
-                                      var currentDay =
-                                          DateTime.fromMicrosecondsSinceEpoch(
-                                                  (docs[index]["time"]
-                                                          as Timestamp)
-                                                      .microsecondsSinceEpoch)
-                                              .day;
+                                      try {
+                                        //날짜 구분선 출력 여부 (한칸 위 메세지가 다른 날짜면 날짜 구분선 출력)
+                                        var currentDay =
+                                            DateTime.fromMicrosecondsSinceEpoch(
+                                                    (docs[index]["time"]
+                                                            as Timestamp)
+                                                        .microsecondsSinceEpoch)
+                                                .day;
 
-                                      var oneDayAgo =
-                                          DateTime.fromMicrosecondsSinceEpoch(
-                                                  (docs[index + 1]["time"]
-                                                          as Timestamp)
-                                                      .microsecondsSinceEpoch)
-                                              .day;
+                                        var oneDayAgo =
+                                            DateTime.fromMicrosecondsSinceEpoch(
+                                                    (docs[index + 1]["time"]
+                                                            as Timestamp)
+                                                        .microsecondsSinceEpoch)
+                                                .day;
 
-                                      if (currentDay != oneDayAgo) {
+                                        if (currentDay != oneDayAgo) {
+                                          showDay = true;
+                                        }
+                                      } catch (e) {
+                                        //한칸 위 메세지가 없으면 날짜 구분선 출력
                                         showDay = true;
                                       }
-                                    } catch (e) {
-                                      //한칸 위 메세지가 없으면 날짜 구분선 출력
-                                      showDay = true;
-                                    }
 
-                                    //메세지의 uid가 접속중인 유저와 같으면 MyChatUnit
-                                    if (docs[index]["senderUID"] ==
-                                        context
-                                            .read<UserDataProvider>()
-                                            .userData
-                                            .uid) {
-                                      isOther = false;
-                                    }
+                                      //메세지의 uid가 접속중인 유저와 같으면 MyChatUnit
+                                      if (docs[index]["senderUID"] ==
+                                          context
+                                              .read<UserDataProvider>()
+                                              .userData
+                                              .uid) {
+                                        isOther = false;
+                                      }
 
-                                    try {
-                                      //한칸 위의 메세지의 uid와 현재 칸의 uid가 다르면 그 칸에 보낸 사람 표시(프로필과 이름)
-                                      if (docs[index]["senderUID"] !=
-                                          docs[index + 1]["senderUID"]) {
+                                      try {
+                                        //한칸 위의 메세지의 uid와 현재 칸의 uid가 다르면 그 칸에 보낸 사람 표시(프로필과 이름)
+                                        if (docs[index]["senderUID"] !=
+                                            docs[index + 1]["senderUID"]) {
+                                          viewSender = true;
+                                        }
+                                      } catch (e) {
+                                        //한칸 위의 메세지가 없으면 보낸 사람 표시 출력
+
                                         viewSender = true;
                                       }
-                                    } catch (e) {
-                                      //한칸 위의 메세지가 없으면 보낸 사람 표시 출력
 
-                                      viewSender = true;
-                                    }
-
-                                    return ChatBubble(
-                                      isOther: isOther,
-                                      viewSender: viewSender,
-                                      name: name,
-                                      imageUrl: imageUrl,
-                                      showTime: showTime,
-                                      showDay: showDay,
-                                      messageData: docs[index],
-                                      index: index,
-                                    );
-                                  },
+                                      return ChatBubble(
+                                        isOther: isOther,
+                                        viewSender: viewSender,
+                                        name: name,
+                                        imageUrl: imageUrl,
+                                        showTime: showTime,
+                                        showDay: showDay,
+                                        messageData: docs[index],
+                                        index: index,
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
                           }
-                        }
 
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    );
-                  }),
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: Text("데이터를 불러올 수 없습니다."),
+                      );
+                    }
+                  }
+                  return const Center(
+                    child: Text("데이터를 불러올 수 없습니다."),
+                  );
+                },
+              ),
             ),
             //채팅 입력바
             Container(

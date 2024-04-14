@@ -45,7 +45,7 @@ class PostGenerator {
     postData.title = lorem(paragraphs: 1, words: Random().nextInt(2) + 8);
     postData.content = lorem(
         paragraphs: Random().nextInt(2) + 1, words: Random().nextInt(50) + 5);
-    postData.timestamp = DateTime.now().toString();
+    postData.timestamp = Timestamp.fromDate(DateTime.now());
     postData.author = RandomNames(Zone.us).name();
     postData.authorUid = "9UciNePfNfS7KFvbUpgbyMwaSUh1";
   }

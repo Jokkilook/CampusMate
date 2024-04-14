@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,23 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CachedNetworkImage cachedImage = CachedNetworkImage(
+      imageUrl: imageUrl!,
+      placeholder: (context, url) {
+        return Image.asset(
+          "assets/images/default_image.png",
+          fit: BoxFit.cover,
+        );
+      },
+      errorWidget: (context, url, error) {
+        return Image.asset(
+          "assets/images/default_image.png",
+          fit: BoxFit.cover,
+        );
+      },
+      fit: BoxFit.cover,
+    );
+
     return Column(
       children: [
         showDay
@@ -79,16 +97,16 @@ class ChatBubble extends StatelessWidget {
                             );
                           },
                           child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            width: 50,
-                            height: 50,
-                            child: Image.network(
-                                imageUrl ??
-                                    "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
-                                fit: BoxFit.cover),
-                          ),
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              width: 50,
+                              height: 50,
+                              child: cachedImage
+                              // Image.network(
+                              //     "http://via.placeholder.com/350x150",
+                              //     fit: BoxFit.cover),
+                              ),
                         )
                       : Container(
                           width: 50,
