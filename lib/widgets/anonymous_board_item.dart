@@ -16,7 +16,7 @@ class AnonymousBoardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    String formattedTime = formatTimeStamp(postData.timestamp ?? '', now);
+    String formattedTime = formatTimeStamp(postData.timestamp.toString(), now);
 
     return Container(
       padding: const EdgeInsets.all(10),

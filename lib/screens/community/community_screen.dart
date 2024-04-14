@@ -18,18 +18,8 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  // 땡겨서 새로고침
-  Future<void> _refreshGeneralPosts() async {
+  Future<void> _refreshScreen() async {
     await Future.delayed(const Duration(seconds: 1));
-    setState(() {});
-  }
-
-  Future<void> _refreshAnonymousPosts() async {
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() {});
-  }
-
-  void refreshScreen() {
     setState(() {});
   }
 
@@ -82,7 +72,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             children: [
               // 일반 게시판
               RefreshIndicator(
-                onRefresh: _refreshGeneralPosts,
+                onRefresh: _refreshScreen,
                 child: FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('generalPosts')
@@ -122,7 +112,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                     PostScreen(postData: postData),
                               ),
                             ).then((_) {
-                              refreshScreen();
+                              _refreshScreen();
                             });
                           },
                           child: GeneralBoardItem(
@@ -136,7 +126,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
               ),
               // 익명 게시판
               RefreshIndicator(
-                onRefresh: _refreshAnonymousPosts,
+                onRefresh: _refreshScreen,
                 child: FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('anonymousPosts')
@@ -176,7 +166,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                     PostScreen(postData: postData),
                               ),
                             ).then((_) {
-                              refreshScreen();
+                              _refreshScreen();
                             });
                           },
                           child: AnonymousBoardItem(
@@ -199,7 +189,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
               MaterialPageRoute(builder: (context) => AddPostScreen()),
             ).then((_) {
               // AddPostScreen이 닫힌 후에 CommunityScreen을 새로고침
-              refreshScreen();
+              _refreshScreen();
             });
           },
           child: const Icon(Icons.add, size: 30),

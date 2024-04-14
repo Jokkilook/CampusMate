@@ -183,7 +183,7 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedTime =
-        formatTimeStamp(widget.postData.timestamp ?? '', now);
+        formatTimeStamp(widget.postData.timestamp.toString(), now);
 
     bool userLiked = widget.postData.likers!
         .contains(context.read<UserDataProvider>().userData.uid);

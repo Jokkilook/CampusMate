@@ -100,7 +100,7 @@ class AddPostScreen extends StatelessWidget {
                     postData.title = _titleController.value.text;
                     postData.content = _contentController.value.text;
                     postData.timestamp = DateTime.now().toString();
-                    _addPost(context); // 게시물 추가 메서드 호출
+                    _addPost(context);
                     Navigator.pop(context);
                   },
                 ),
