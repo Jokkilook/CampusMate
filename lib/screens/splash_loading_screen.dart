@@ -65,14 +65,14 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
         uid = user.uid;
       }
 
-      final fcm = FirebaseMessaging.instance;
-      final token = await fcm.getToken();
-      print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$token");
-      FirebaseMessaging.onBackgroundMessage(
-        (message) => handlBackgroundMessage(message),
-      );
+      // final fcm = FirebaseMessaging.instance;
+      // final token = await fcm.getToken();
+      // print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$token");
+      // FirebaseMessaging.onBackgroundMessage(
+      //   (message) => handlBackgroundMessage(message),
+      // );
 
-      print("done");
+      // print("done");
 
       var snapshot =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();

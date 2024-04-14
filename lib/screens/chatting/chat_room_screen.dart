@@ -8,17 +8,12 @@ import 'package:intl/intl.dart';
 import 'widget/chat_bubble.dart';
 
 //ignore: must_be_immutable
-class ChatRoomScreen extends StatefulWidget {
+
+class ChatRoomScreen extends StatelessWidget {
   ChatRoomScreen({super.key, required this.chatRoomData, this.isNew = false});
 
   ChatRoomData chatRoomData;
   bool isNew;
-
-  @override
-  State<ChatRoomScreen> createState() => _ChatRoomScreenState();
-}
-
-class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final FocusNode focusNode = FocusNode();
   TextEditingController chatController = TextEditingController();
   final scrollController = ScrollController();
@@ -30,7 +25,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     focusNode.dispose();
     chatController.dispose();
     scrollController.dispose();
@@ -45,7 +39,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    for (var element in widget.chatRoomData.participantsUid!) {
+    for (var element in chatRoomData.participantsUid!) {
       if (element != auth.getUID()) senderUID = element;
     }
 
@@ -53,7 +47,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
     return Scaffold(
       body: Scaffold(
-        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           actions: [
             PopupMenuButton(
@@ -64,7 +57,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     onTap: () async {
                       var data = await FirebaseFirestore.instance
                           .collection("chats")
-                          .doc(widget.chatRoomData.roomId)
+                          .doc(chatRoomData.roomId)
                           .get();
 
                       List list = data.data()!["participantsUid"];
@@ -73,13 +66,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       if (list.isEmpty) {
                         FirebaseFirestore.instance
                             .collection("chats")
-                            .doc(widget.chatRoomData.roomId)
+                            .doc(chatRoomData.roomId)
                             .delete()
                             .whenComplete(() => Navigator.pop(context));
                       } else {
                         FirebaseFirestore.instance
                             .collection("chats")
-                            .doc(widget.chatRoomData.roomId)
+                            .doc(chatRoomData.roomId)
                             .update({"participantsUid": list}).whenComplete(
                                 () => Navigator.pop(context));
                       }
@@ -95,7 +88,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ],
           elevation: 2,
           shadowColor: Colors.black,
-          title: Text(widget.chatRoomData.roomName ?? ""),
+          title: Text(chatRoomData.roomName ?? ""),
         ),
         body: Column(
           children: [
@@ -121,8 +114,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             ">>>>>>>>>>>>>>>>>>>>>>>>$e<<<<<<<<<<<<<<<<<<<<<<<<<<");
                       }
                       return StreamBuilder<QuerySnapshot>(
-                        stream: chat
-                            .getChattingMessages(widget.chatRoomData.roomId!),
+                        stream: chat.getChattingMessages(chatRoomData.roomId!),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -169,16 +161,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           .contains(userUID)) {
                                         messageReaderList.add(userUID!);
 
-                                        chat.updateReader(
-                                            widget.chatRoomData.roomId!,
-                                            docs[index].id,
-                                            messageReaderList);
+                                        chat.updateReader(chatRoomData.roomId!,
+                                            docs[index].id, messageReaderList);
                                       }
 
                                       //채팅방 데이터에서 참여자 수 반환
                                       int participantsCount = 0;
                                       try {
-                                        participantsCount = widget.chatRoomData
+                                        participantsCount = chatRoomData
                                             .participantsUid!.length;
                                       } catch (e) {}
 
@@ -335,7 +325,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             time: Timestamp.fromDate(DateTime.now()));
 
                         chat.sendMessage(
-                            roomId: widget.chatRoomData.roomId!, data: data);
+                            roomId: chatRoomData.roomId!, data: data);
                         if (scrollController.hasClients) {
                           scrollController.animateTo(
                             0,
