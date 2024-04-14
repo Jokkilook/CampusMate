@@ -11,6 +11,8 @@ class PostData {
   int? dislikeCount;
   int? commentCount;
   List<dynamic>? viewers;
+  List<dynamic>? likers;
+  List<dynamic>? dislikers;
 
   Map<String, dynamic>? data;
 
@@ -25,22 +27,11 @@ class PostData {
     this.likeCount = 0,
     this.dislikeCount = 0,
     this.commentCount = 0,
-    this.viewers,
+    this.viewers = const [],
+    this.likers = const [],
+    this.dislikers = const [],
   }) {
-    data = {
-      'boardType': boardType,
-      'title': title,
-      'content': content,
-      'timestamp': timestamp,
-      'author': author,
-      'authorUid': authorUid,
-      'postId': postId,
-      'viewCount': viewCount,
-      'likeCount': likeCount,
-      'dislikeCount': dislikeCount,
-      'commentCount': commentCount,
-      'viewers': viewers,
-    };
+    setData();
   }
 
   PostData.fromJson(Map<String, dynamic> json) {
@@ -55,22 +46,11 @@ class PostData {
     likeCount = json['likeCount'];
     dislikeCount = json['dislikeCount'];
     commentCount = json['commentCount'];
-    viewers = json['viewers'];
+    viewers = json['viewers'] ?? [];
+    likers = json['likers'] ?? [];
+    dislikers = json['dislikers'] ?? [];
 
-    data = {
-      'boardType': boardType,
-      'title': title,
-      'content': content,
-      'timestamp': timestamp,
-      'author': author,
-      'authorUid': authorUid,
-      'postId': postId,
-      'viewCount': viewCount,
-      'likeCount': likeCount,
-      'dislikeCount': dislikeCount,
-      'commentCount': commentCount,
-      'viewers': viewers,
-    };
+    setData();
   }
 
   void setData() {
@@ -87,6 +67,8 @@ class PostData {
       'dislikeCount': dislikeCount,
       'commentCount': commentCount,
       'viewers': viewers,
+      'likers': likers,
+      'dislikers': dislikers,
     };
   }
 }

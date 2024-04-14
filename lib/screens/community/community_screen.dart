@@ -121,7 +121,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                 builder: (context) =>
                                     PostScreen(postData: postData),
                               ),
-                            );
+                            ).then((_) {
+                              refreshScreen();
+                            });
                           },
                           child: GeneralBoardItem(
                             postData: postData,
@@ -173,7 +175,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                 builder: (context) =>
                                     PostScreen(postData: postData),
                               ),
-                            );
+                            ).then((_) {
+                              refreshScreen();
+                            });
                           },
                           child: AnonymousBoardItem(
                             postData: postData,

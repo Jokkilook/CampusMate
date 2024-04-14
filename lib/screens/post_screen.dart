@@ -31,12 +31,10 @@ class _PostScreenState extends State<PostScreen> {
   Future<void> checkUserViewedPost() async {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     debugPrint('currentUserUid: $currentUserUid');
-    // 현재 사용자가 게시물을 이미 본 적이 있는지 확인
     setState(() {
       _userAlreadyViewed =
           widget.postData.viewers?.contains(currentUserUid) ?? false;
     });
-    // 사용자가 아직 게시물을 보지 않은 경우 조회수를 업데이트
     if (!_userAlreadyViewed) {
       await updateViewCount(currentUserUid);
     }
@@ -44,25 +42,21 @@ class _PostScreenState extends State<PostScreen> {
 
   Future<void> updateViewCount(String currentUserUid) async {
     try {
-      // 이미 조회한 사용자인지 확인
       if (widget.postData.viewers == null ||
           !widget.postData.viewers!.contains(currentUserUid)) {
-        // Firestore에서 조회수를 업데이트
         await FirebaseFirestore.instance
             .collection(widget.postData.boardType == 'General'
                 ? 'generalPosts'
                 : 'anonymousPosts')
             .doc(widget.postData.postId)
             .update({
-          'viewers':
-              FieldValue.arrayUnion([currentUserUid]), // 현재 사용자를 조회자 목록에 추가
-          'viewCount': FieldValue.increment(1), // 조회수 1 증가
+          'viewers': FieldValue.arrayUnion([currentUserUid]),
+          'viewCount': FieldValue.increment(1),
         });
         debugPrint('조회수 업데이트 성공');
 
-        // 상태를 업데이트하고 UI를 다시 빌드
         setState(() {
-          widget.postData.viewers ??= []; // viewers가 null이면 빈 배열로 초기화
+          widget.postData.viewers ??= [];
           widget.postData.viewers!.add(currentUserUid);
           widget.postData.viewCount = (widget.postData.viewCount ?? 0) + 1;
         });
@@ -71,6 +65,107 @@ class _PostScreenState extends State<PostScreen> {
       }
     } catch (error) {
       debugPrint('조회수 업데이트 에러: $error');
+    }
+  }
+
+  Future<void> toggleLikeDislike(bool isLike) async {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+    bool userLiked = widget.postData.likers!.contains(currentUserUid);
+    bool userDisliked = widget.postData.dislikers!.contains(currentUserUid);
+
+    if (isLike) {
+      if (userLiked) {
+        await FirebaseFirestore.instance
+            .collection(widget.postData.boardType == 'General'
+                ? 'generalPosts'
+                : 'anonymousPosts')
+            .doc(widget.postData.postId)
+            .update({
+          'likers': FieldValue.arrayRemove([currentUserUid]),
+          'likeCount': FieldValue.increment(-1),
+        });
+        setState(() {
+          widget.postData.likers!.remove(currentUserUid);
+          widget.postData.likeCount = (widget.postData.likeCount ?? 0) - 1;
+        });
+      } else {
+        if (userDisliked) {
+          await FirebaseFirestore.instance
+              .collection(widget.postData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts')
+              .doc(widget.postData.postId)
+              .update({
+            'dislikers': FieldValue.arrayRemove([currentUserUid]),
+            'dislikeCount': FieldValue.increment(-1),
+          });
+          setState(() {
+            widget.postData.dislikers!.remove(currentUserUid);
+            widget.postData.dislikeCount =
+                (widget.postData.dislikeCount ?? 0) - 1;
+          });
+        }
+        await FirebaseFirestore.instance
+            .collection(widget.postData.boardType == 'General'
+                ? 'generalPosts'
+                : 'anonymousPosts')
+            .doc(widget.postData.postId)
+            .update({
+          'likers': FieldValue.arrayUnion([currentUserUid]),
+          'likeCount': FieldValue.increment(1),
+        });
+        setState(() {
+          widget.postData.likers!.add(currentUserUid);
+          widget.postData.likeCount = (widget.postData.likeCount ?? 0) + 1;
+        });
+      }
+    } else {
+      if (userDisliked) {
+        await FirebaseFirestore.instance
+            .collection(widget.postData.boardType == 'General'
+                ? 'generalPosts'
+                : 'anonymousPosts')
+            .doc(widget.postData.postId)
+            .update({
+          'dislikers': FieldValue.arrayRemove([currentUserUid]),
+          'dislikeCount': FieldValue.increment(-1),
+        });
+        setState(() {
+          widget.postData.dislikers!.remove(currentUserUid);
+          widget.postData.dislikeCount =
+              (widget.postData.dislikeCount ?? 0) - 1;
+        });
+      } else {
+        if (userLiked) {
+          await FirebaseFirestore.instance
+              .collection(widget.postData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts')
+              .doc(widget.postData.postId)
+              .update({
+            'likers': FieldValue.arrayRemove([currentUserUid]),
+            'likeCount': FieldValue.increment(-1),
+          });
+          setState(() {
+            widget.postData.likers!.remove(currentUserUid);
+            widget.postData.likeCount = (widget.postData.likeCount ?? 0) - 1;
+          });
+        }
+        await FirebaseFirestore.instance
+            .collection(widget.postData.boardType == 'General'
+                ? 'generalPosts'
+                : 'anonymousPosts')
+            .doc(widget.postData.postId)
+            .update({
+          'dislikers': FieldValue.arrayUnion([currentUserUid]),
+          'dislikeCount': FieldValue.increment(1),
+        });
+        setState(() {
+          widget.postData.dislikers!.add(currentUserUid);
+          widget.postData.dislikeCount =
+              (widget.postData.dislikeCount ?? 0) + 1;
+        });
+      }
     }
   }
 
@@ -89,6 +184,11 @@ class _PostScreenState extends State<PostScreen> {
     DateTime now = DateTime.now();
     String formattedTime =
         formatTimeStamp(widget.postData.timestamp ?? '', now);
+
+    bool userLiked = widget.postData.likers!
+        .contains(context.read<UserDataProvider>().userData.uid);
+    bool userDisliked = widget.postData.dislikers!
+        .contains(context.read<UserDataProvider>().userData.uid);
 
     return Scaffold(
       appBar: AppBar(
@@ -186,12 +286,16 @@ class _PostScreenState extends State<PostScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(
-                                  Icons.thumb_up_alt_outlined,
+                                icon: Icon(
+                                  userLiked
+                                      ? Icons.thumb_up
+                                      : Icons.thumb_up_alt_outlined,
                                   size: 20,
-                                  color: Colors.grey,
+                                  color: userLiked ? Colors.red : Colors.grey,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  toggleLikeDislike(true);
+                                },
                               ),
                               Text(
                                 widget.postData.likeCount?.toString() ?? '0',
@@ -202,12 +306,24 @@ class _PostScreenState extends State<PostScreen> {
                               ),
                               const SizedBox(width: 14),
                               IconButton(
-                                icon: const Icon(
-                                  Icons.thumb_down_outlined,
+                                icon: Icon(
+                                  userDisliked
+                                      ? Icons.thumb_down
+                                      : Icons.thumb_down_outlined,
                                   size: 20,
+                                  color:
+                                      userDisliked ? Colors.blue : Colors.grey,
+                                ),
+                                onPressed: () {
+                                  toggleLikeDislike(false);
+                                },
+                              ),
+                              Text(
+                                widget.postData.dislikeCount?.toString() ?? '0',
+                                style: const TextStyle(
+                                  fontSize: 16,
                                   color: Colors.grey,
                                 ),
-                                onPressed: () {},
                               ),
                             ],
                           ),
