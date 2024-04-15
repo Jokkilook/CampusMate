@@ -1,6 +1,6 @@
-import 'package:campusmate/screens/post_screen.dart';
-import 'package:campusmate/widgets/anonymous_board_item.dart';
-import 'package:campusmate/widgets/general_board_item.dart';
+import 'package:campusmate/screens/community/post_screen.dart';
+import 'package:campusmate/widgets/community/anonymous_board_item.dart';
+import 'package:campusmate/widgets/community/general_board_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../models/post_data.dart';

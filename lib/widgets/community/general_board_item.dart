@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/post_data.dart';
-import '../modules/format_time_stamp.dart';
+import '../../models/post_data.dart';
+import '../../modules/format_time_stamp.dart';
 
 class GeneralBoardItem extends StatelessWidget {
   final PostData postData;

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
-import '../modules/format_time_stamp.dart';
-import '../provider/user_data_provider.dart';
-import '../models/post_data.dart';
+import '../../modules/format_time_stamp.dart';
+import '../../provider/user_data_provider.dart';
+import '../../models/post_data.dart';
 
 class PostScreen extends StatefulWidget {
   final PostData postData;
