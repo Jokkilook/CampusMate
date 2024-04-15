@@ -1,4 +1,3 @@
-import 'package:async/async.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
@@ -21,14 +20,6 @@ class ChatRoomScreen extends StatelessWidget {
   AuthService auth = AuthService();
   String senderUID = "";
   String? userUID;
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
-
-  // @override
-  // void dispose() {
-  //   focusNode.dispose();
-  //   chatController.dispose();
-  //   scrollController.dispose();
-  // }
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -37,24 +28,13 @@ class ChatRoomScreen extends StatelessWidget {
     return "${NumberFormat("00").format(date.hour)}:${NumberFormat("00").format(date.minute)}";
   }
 
-  Future<DocumentSnapshot<Object>> _fetchData() async {
-    dynamic data =
-        await _memoizer.runOnce(() => chat.getUserProfile(senderUID));
-    return data as DocumentSnapshot<Object>;
-  }
-
   @override
   Widget build(BuildContext context) {
     userUID = auth.getUID();
     List<String> senderData = [];
     String name = "";
-    String imageUrl =
-        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f350";
-
-    // for (var element in chatRoomData.participantsUid!) {
-    //   if (element != auth.getUID()) senderUID = element;
-    // }
-
+    String imageUrl = "";
+    bool isDuo = false;
     chatRoomData.participantsInfo!.forEach((key, value) {
       if (key != userUID) {
         senderUID = key;
@@ -68,8 +48,7 @@ class ChatRoomScreen extends StatelessWidget {
     name = senderData[0];
     imageUrl = senderData[1];
 
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$name");
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$imageUrl");
+    if (chatRoomData.participantsUid!.length == 2) isDuo = true;
 
     return Scaffold(
       body: Scaffold(
@@ -94,7 +73,7 @@ class ChatRoomScreen extends StatelessWidget {
           ],
           elevation: 2,
           shadowColor: Colors.black,
-          title: Text(chatRoomData.roomName ?? ""),
+          title: Text(isDuo ? name : chatRoomData.roomName ?? ""),
         ),
         body: Column(
           children: [

@@ -56,61 +56,50 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             const AdArea(),
             const SizedBox(height: 12),
             Expanded(
-              child: FutureBuilder<QuerySnapshot>(
-                future: FirebaseFirestore.instance
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
                     .collection("chats")
                     .where("participantsUid", arrayContains: userUID)
-                    .get(const GetOptions(source: Source.cache)),
+                    .snapshots(),
                 builder: (context, snapshot) {
-                  return StreamBuilder<QuerySnapshot>(
-                    initialData: snapshot.data,
-                    stream: FirebaseFirestore.instance
-                        .collection("chats")
-                        .where("participantsUid", arrayContains: userUID)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return const Center(child: Text("오류가 발생했어요..ToT"));
-                      }
-                      if (!snapshot.hasData) {
-                        return const Text("채팅방이 없습니다.");
-                      }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text("오류가 발생했어요..ToT"));
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text("채팅방이 없습니다.");
+                  }
 
-                      if (snapshot.hasData) {
-                        var rooms = snapshot.data!.docs;
+                  if (snapshot.hasData) {
+                    var rooms = snapshot.data!.docs;
+
+                    return ListView.builder(
+                      itemCount: rooms.length,
+                      itemBuilder: (context, index) {
                         Map<String, List<String>> participantsInfo = {};
+                        (rooms[index]["participantsInfo"] as Map)
+                            .forEach((key, value) {
+                          participantsInfo[key] =
+                              (value as List).map((e) => e.toString()).toList();
+                        });
 
-                        return ListView.builder(
-                          itemCount: rooms.length,
-                          itemBuilder: (context, index) {
-                            (rooms[index]["participantsInfo"] as Map).forEach(
-                              (key, value) {
-                                participantsInfo[key] = (value as List)
-                                    .map((e) => e.toString())
-                                    .toList();
-                              },
-                            );
-                            return ChatListItem(
-                              data: ChatRoomData(
-                                  roomName: rooms[index]["roomName"],
-                                  roomId: rooms[index]["roomId"],
-                                  participantsUid:
-                                      (rooms[index]["participantsUid"] as List)
-                                          .map((e) => e.toString())
-                                          .toList(),
-                                  participantsInfo: participantsInfo,
-                                  lastMessage: rooms[index]["lastMessage"],
-                                  lastMessageTime: rooms[index]
-                                      ["lastMessageTime"]),
-                            );
-                          },
+                        return ChatListItem(
+                          data: ChatRoomData(
+                              roomName: rooms[index]["roomName"],
+                              roomId: rooms[index]["roomId"],
+                              participantsUid:
+                                  (rooms[index]["participantsUid"] as List)
+                                      .map((e) => e.toString())
+                                      .toList(),
+                              participantsInfo: participantsInfo,
+                              lastMessage: rooms[index]["lastMessage"],
+                              lastMessageTime: rooms[index]["lastMessageTime"]),
                         );
-                      }
-                      return const CircularProgressIndicator();
-                    },
-                  );
+                      },
+                    );
+                  }
+                  return const CircularProgressIndicator();
                 },
               ),
             )

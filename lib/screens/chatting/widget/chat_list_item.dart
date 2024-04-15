@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ChatListItem extends StatelessWidget {
@@ -18,6 +21,28 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String userUID = AuthService().getUID();
+    String senderUID = "";
+    String name = "";
+    String imageUrl = "";
+    List<String> senderData = [];
+    bool isDuo = false;
+
+    data.participantsInfo!.forEach((key, value) {
+      if (key != userUID) {
+        senderUID = key;
+        value.sort(
+          (a, b) => a.length.compareTo(b.length),
+        );
+        senderData = value;
+      }
+    });
+
+    if (data.participantsUid!.length == 2) isDuo = true;
+
+    name = senderData[0];
+    imageUrl = senderData[1];
+
     if (data.lastMessageTime == null) {
       return Container();
     }
@@ -33,8 +58,17 @@ class ChatListItem extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Row(
             children: [
-              const CircleAvatar(
-                radius: 30,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: CachedNetworkImage(
+                  width: 60,
+                  height: 60,
+                  imageUrl: imageUrl,
+                  placeholder: (context, url) {
+                    return Image.asset("assets/images/default_image.png");
+                  },
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -43,7 +77,7 @@ class ChatListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      data.roomName!,
+                      isDuo ? name : data.roomName!,
                       style: const TextStyle(fontSize: 17),
                     ),
                     const SizedBox(height: 5),
@@ -60,7 +94,11 @@ class ChatListItem extends StatelessWidget {
               Column(
                 children: [
                   const SizedBox(height: 5),
-                  Text(timeStampToHourMinutes(data.lastMessageTime!)),
+                  Text(
+                    timeStampToHourMinutes(data.lastMessageTime!),
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w500),
+                  ),
                   Expanded(
                     child: Center(
                       child: IconButton(

@@ -101,7 +101,7 @@ class ChatBubble extends StatelessWidget {
                           child: Container(
                               clipBehavior: Clip.hardEdge,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(15)),
                               width: 50,
                               height: 50,
                               child: cachedImage
