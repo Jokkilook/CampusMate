@@ -1,5 +1,5 @@
 import 'package:campusmate/models/chat_room_data.dart';
-import 'package:campusmate/screens/chatting/chat_room_screen.dart';
+import 'package:campusmate/modules/chatting_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -23,11 +23,7 @@ class ChatListItem extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatRoomScreen(chatRoomData: data),
-            ));
+        ChattingService.enterRoom(context, data);
       },
       child: Container(
         color: Colors.transparent,

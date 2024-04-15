@@ -41,6 +41,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String userUID = context.read<UserDataProvider>().userData.uid!;
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -58,18 +59,14 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
               child: FutureBuilder<QuerySnapshot>(
                 future: FirebaseFirestore.instance
                     .collection("chats")
-                    .where("participantsUid",
-                        arrayContains:
-                            context.read<UserDataProvider>().userData.uid)
+                    .where("participantsUid", arrayContains: userUID)
                     .get(const GetOptions(source: Source.cache)),
                 builder: (context, snapshot) {
                   return StreamBuilder<QuerySnapshot>(
                     initialData: snapshot.data,
                     stream: FirebaseFirestore.instance
                         .collection("chats")
-                        .where("participantsUid",
-                            arrayContains:
-                                context.read<UserDataProvider>().userData.uid)
+                        .where("participantsUid", arrayContains: userUID)
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -83,9 +80,18 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
                       if (snapshot.hasData) {
                         var rooms = snapshot.data!.docs;
+                        Map<String, List<String>> participantsInfo = {};
+
                         return ListView.builder(
                           itemCount: rooms.length,
                           itemBuilder: (context, index) {
+                            (rooms[index]["participantsInfo"] as Map).forEach(
+                              (key, value) {
+                                participantsInfo[key] = (value as List)
+                                    .map((e) => e.toString())
+                                    .toList();
+                              },
+                            );
                             return ChatListItem(
                               data: ChatRoomData(
                                   roomName: rooms[index]["roomName"],
@@ -94,6 +100,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                       (rooms[index]["participantsUid"] as List)
                                           .map((e) => e.toString())
                                           .toList(),
+                                  participantsInfo: participantsInfo,
                                   lastMessage: rooms[index]["lastMessage"],
                                   lastMessageTime: rooms[index]
                                       ["lastMessageTime"]),

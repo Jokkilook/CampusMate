@@ -89,7 +89,7 @@ class _MainScreenState extends State<MainScreen> {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.5),
-                blurRadius: 5,
+                blurRadius: 1,
               ),
             ],
             borderRadius: const BorderRadius.only(
