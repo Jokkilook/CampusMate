@@ -40,6 +40,7 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  // 조회수
   Future<void> updateViewCount(String currentUserUid) async {
     try {
       if (widget.postData.viewers == null ||
@@ -68,6 +69,7 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  // 좋아요, 싫어요
   Future<void> toggleLikeDislike(bool isLike) async {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     bool userLiked = widget.postData.likers!.contains(currentUserUid);
