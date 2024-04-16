@@ -4,6 +4,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/chatting/widget/chat_list_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -48,63 +49,61 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
         shadowColor: Colors.black,
         title: const Text("채팅"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
-            const AdArea(),
-            const SizedBox(height: 12),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection("chats")
-                    .where("participantsUid", arrayContains: userUID)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(child: Text("오류가 발생했어요..ToT"));
-                  }
-                  if (!snapshot.hasData) {
-                    return const Text("채팅방이 없습니다.");
-                  }
+      body: Column(
+        children: [
+          const SizedBox(height: 12),
+          const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10), child: AdArea()),
+          const SizedBox(height: 12),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("chats")
+                  .where("participantsUid", arrayContains: userUID)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text("오류가 발생했어요..ToT"));
+                }
+                if (!snapshot.hasData) {
+                  return const Text("채팅방이 없습니다.");
+                }
 
-                  if (snapshot.hasData) {
-                    var rooms = snapshot.data!.docs;
+                if (snapshot.hasData) {
+                  var rooms = snapshot.data!.docs;
 
-                    return ListView.builder(
-                      itemCount: rooms.length,
-                      itemBuilder: (context, index) {
-                        Map<String, List<String>> participantsInfo = {};
-                        (rooms[index]["participantsInfo"] as Map)
-                            .forEach((key, value) {
-                          participantsInfo[key] =
-                              (value as List).map((e) => e.toString()).toList();
-                        });
+                  return ListView.builder(
+                    itemCount: rooms.length,
+                    itemBuilder: (context, index) {
+                      Map<String, List<String>> participantsInfo = {};
+                      (rooms[index]["participantsInfo"] as Map)
+                          .forEach((key, value) {
+                        participantsInfo[key] =
+                            (value as List).map((e) => e.toString()).toList();
+                      });
 
-                        return ChatListItem(
-                          data: ChatRoomData(
-                              roomName: rooms[index]["roomName"],
-                              roomId: rooms[index]["roomId"],
-                              participantsUid:
-                                  (rooms[index]["participantsUid"] as List)
-                                      .map((e) => e.toString())
-                                      .toList(),
-                              participantsInfo: participantsInfo,
-                              lastMessage: rooms[index]["lastMessage"],
-                              lastMessageTime: rooms[index]["lastMessageTime"]),
-                        );
-                      },
-                    );
-                  }
-                  return const CircularProgressIndicator();
-                },
-              ),
-            )
-          ],
-        ),
+                      return ChatListItem(
+                        data: ChatRoomData(
+                            roomName: rooms[index]["roomName"],
+                            roomId: rooms[index]["roomId"],
+                            participantsUid:
+                                (rooms[index]["participantsUid"] as List)
+                                    .map((e) => e.toString())
+                                    .toList(),
+                            participantsInfo: participantsInfo,
+                            lastMessage: rooms[index]["lastMessage"],
+                            lastMessageTime: rooms[index]["lastMessageTime"]),
+                      );
+                    },
+                  );
+                }
+                return const CircularProgressIndicator();
+              },
+            ),
+          )
+        ],
       ),
       bottomNavigationBar: const SizedBox(
         height: 70,

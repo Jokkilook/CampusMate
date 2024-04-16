@@ -1,9 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
+import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'widget/chat_bubble.dart';
 
@@ -52,24 +56,117 @@ class ChatRoomScreen extends StatelessWidget {
 
     return Scaffold(
       body: Scaffold(
-        appBar: AppBar(
-          actions: [
-            PopupMenuButton(
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    child: const Text("채팅방 나가기"),
-                    onTap: () async {
-                      chat.leaveRoom(context, chatRoomData.roomId!, userUID!);
+        endDrawer: Drawer(
+          shape: const ContinuousRectangleBorder(),
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text(
+                    "대화상대",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: chatRoomData.participantsUid!.length - 1,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => StrangerProfilScreen(
+                                    uid: senderUID, readOnly: true),
+                              ));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: CachedNetworkImage(
+                                  width: 50,
+                                  height: 50,
+                                  imageUrl: imageUrl,
+                                  placeholder: (context, url) {
+                                    return Image.asset(
+                                        "assets/images/default_image.png");
+                                  },
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              Text(
+                                name,
+                                style: const TextStyle(
+                                    fontSize: 17, color: Colors.black),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
                     },
                   ),
-                  PopupMenuItem(
-                    child: const Text("신고하기"),
-                    onTap: () {},
+                ),
+                IntrinsicHeight(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Builder(builder: (context) {
+                          return InkWell(
+                            onTap: () async {
+                              Scaffold.of(context).closeEndDrawer();
+                              chat.leaveRoom(
+                                  context, chatRoomData.roomId!, userUID!);
+                            },
+                            child: const SizedBox(
+                              height: 40,
+                              child: Center(
+                                child: Text("나가기",
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.black)),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {},
+                          child: const SizedBox(
+                            height: 40,
+                            child: Center(
+                              child: Text("신고하기",
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.black)),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                ];
-              },
-            )
+                )
+              ],
+            ),
+          ),
+        ),
+        appBar: AppBar(
+          actions: [
+            Builder(builder: (context) {
+              return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  icon: const Icon(Icons.more_vert));
+            }),
           ],
           elevation: 2,
           shadowColor: Colors.black,
@@ -203,6 +300,7 @@ class ChatRoomScreen extends StatelessWidget {
                               return ChatBubble(
                                 isOther: isOther,
                                 reader: count,
+                                senderUid: docs[index]["senderUID"],
                                 viewSender: viewSender,
                                 name: name,
                                 imageUrl: imageUrl,
@@ -223,10 +321,10 @@ class ChatRoomScreen extends StatelessWidget {
             ),
             //하단 채팅 입력바
             Container(
-              constraints: const BoxConstraints(maxHeight: 60),
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   //+버튼
                   FilledButton(
@@ -243,14 +341,18 @@ class ChatRoomScreen extends StatelessWidget {
                     child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: TextFormField(
+                          decoration:
+                              const InputDecoration(border: InputBorder.none),
                           focusNode: focusNode,
                           controller: chatController,
+                          minLines: 1,
                           maxLines: 4,
                         )),
                   ),
                   //보내기 버튼
                   FilledButton(
                       style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.all(0),
                           fixedSize: const Size(60, 60),
                           backgroundColor: Colors.green,
                           shape: RoundedRectangleBorder(
@@ -277,7 +379,10 @@ class ChatRoomScreen extends StatelessWidget {
                           );
                         }
                       },
-                      child: const Icon(Icons.send)),
+                      child: const Icon(
+                        Icons.send,
+                        size: 20,
+                      )),
                 ],
               ),
             ),

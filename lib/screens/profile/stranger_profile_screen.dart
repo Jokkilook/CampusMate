@@ -7,11 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class StrangerProfilScreen extends StatelessWidget {
-  StrangerProfilScreen({super.key, required this.uid});
+  StrangerProfilScreen({super.key, required this.uid, this.readOnly = false});
 
   final String uid;
   final ChattingService chat = ChattingService();
   final AuthService auth = AuthService();
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -47,20 +48,23 @@ class StrangerProfilScreen extends StatelessWidget {
                         FullProfileCard(
                             userData: UserData.fromJson(data),
                             context: context),
-                        const SizedBox(height: 80)
+                        readOnly ? Container() : const SizedBox(height: 80)
                       ],
                     ),
                   ),
-                  Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: BottomButton(
-                        text: "채팅하기",
-                        onPressed: () async {
-                          chat.startChatting(context, auth.getUID(), uid);
-                        },
-                      ))
+                  readOnly
+                      ? Container()
+                      : Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: BottomButton(
+                            text: "채팅하기",
+                            onPressed: () async {
+                              chat.startChatting(context, auth.getUID(), uid);
+                            },
+                          ),
+                        )
                 ],
               );
             }

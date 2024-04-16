@@ -66,120 +66,117 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ],
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: TabBarView(
-            children: [
-              // 일반 게시판
-              RefreshIndicator(
-                onRefresh: _refreshScreen,
-                child: FutureBuilder(
-                  future: FirebaseFirestore.instance
-                      .collection('generalPosts')
-                      .orderBy('timestamp', descending: true)
-                      .get(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    }
-                    var data = snapshot.data!.docs;
-                    if (data.isEmpty) {
-                      return const Center(
-                        child: Text('게시글이 없습니다.'),
-                      );
-                    }
-                    return ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return const Divider(height: 0);
-                      },
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        var postData = PostData.fromJson(
-                            data[index].data() as Map<String, dynamic>);
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PostScreen(postData: postData),
-                              ),
-                            ).then((_) {
-                              _refreshScreen();
-                            });
-                          },
-                          child: GeneralBoardItem(
-                            postData: postData,
-                          ),
-                        );
-                      },
+        body: TabBarView(
+          children: [
+            // 일반 게시판
+            RefreshIndicator(
+              onRefresh: _refreshScreen,
+              child: FutureBuilder(
+                future: FirebaseFirestore.instance
+                    .collection('generalPosts')
+                    .orderBy('timestamp', descending: true)
+                    .get(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                ),
-              ),
-              // 익명 게시판
-              RefreshIndicator(
-                onRefresh: _refreshScreen,
-                child: FutureBuilder(
-                  future: FirebaseFirestore.instance
-                      .collection('anonymousPosts')
-                      .orderBy('timestamp', descending: true)
-                      .get(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    }
-                    var data = snapshot.data!.docs;
-                    if (data.isEmpty) {
-                      return const Center(
-                        child: Text('게시글이 없습니다.'),
-                      );
-                    }
-                    return ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return const Divider(height: 0);
-                      },
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        var postData = PostData.fromJson(
-                            data[index].data() as Map<String, dynamic>);
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PostScreen(postData: postData),
-                              ),
-                            ).then((_) {
-                              _refreshScreen();
-                            });
-                          },
-                          child: AnonymousBoardItem(
-                            postData: postData,
-                          ),
-                        );
-                      },
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
                     );
-                  },
-                ),
+                  }
+                  var data = snapshot.data!.docs;
+                  if (data.isEmpty) {
+                    return const Center(
+                      child: Text('게시글이 없습니다.'),
+                    );
+                  }
+                  return ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return const Divider(height: 0);
+                    },
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      var postData = PostData.fromJson(
+                          data[index].data() as Map<String, dynamic>);
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PostScreen(postData: postData),
+                            ),
+                          ).then((_) {
+                            _refreshScreen();
+                          });
+                        },
+                        child: GeneralBoardItem(
+                          postData: postData,
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+            // 익명 게시판
+            RefreshIndicator(
+              onRefresh: _refreshScreen,
+              child: FutureBuilder(
+                future: FirebaseFirestore.instance
+                    .collection('anonymousPosts')
+                    .orderBy('timestamp', descending: true)
+                    .get(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  }
+                  var data = snapshot.data!.docs;
+                  if (data.isEmpty) {
+                    return const Center(
+                      child: Text('게시글이 없습니다.'),
+                    );
+                  }
+                  return ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return const Divider(height: 0);
+                    },
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      var postData = PostData.fromJson(
+                          data[index].data() as Map<String, dynamic>);
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PostScreen(postData: postData),
+                            ),
+                          ).then((_) {
+                            _refreshScreen();
+                          });
+                        },
+                        child: AnonymousBoardItem(
+                          postData: postData,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           heroTag: "addpost",

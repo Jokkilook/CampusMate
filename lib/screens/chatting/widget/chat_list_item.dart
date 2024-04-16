@@ -4,7 +4,6 @@ import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ChatListItem extends StatelessWidget {
@@ -46,16 +45,17 @@ class ChatListItem extends StatelessWidget {
     if (data.lastMessageTime == null) {
       return Container();
     }
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         ChattingService.enterRoom(context, data);
       },
+      onLongPress: () {},
       child: Container(
         color: Colors.transparent,
         width: double.infinity,
         height: 90,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
             children: [
               ClipRRect(
@@ -78,7 +78,7 @@ class ChatListItem extends StatelessWidget {
                   children: [
                     Text(
                       isDuo ? name : data.roomName!,
-                      style: const TextStyle(fontSize: 17),
+                      style: const TextStyle(fontSize: 17, color: Colors.black),
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -97,7 +97,9 @@ class ChatListItem extends StatelessWidget {
                   Text(
                     timeStampToHourMinutes(data.lastMessageTime!),
                     style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w500),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black),
                   ),
                   Expanded(
                     child: Center(

@@ -93,8 +93,8 @@ class ChatBubble extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    StrangerProfilScreen(uid: senderUid ?? ""),
+                                builder: (context) => StrangerProfilScreen(
+                                    uid: senderUid!, readOnly: true),
                               ),
                             );
                           },

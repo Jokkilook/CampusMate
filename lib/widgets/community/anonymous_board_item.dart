@@ -19,7 +19,7 @@ class AnonymousBoardItem extends StatelessWidget {
     String formattedTime = formatTimeStamp(postData.timestamp!, now);
 
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       width: double.infinity,
       height: 130,
       child: Column(
