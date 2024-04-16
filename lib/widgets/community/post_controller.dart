@@ -1,23 +1,28 @@
-import 'package:campusmate/screens/community/post_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:campusmate/screens/community/edit_post_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:campusmate/models/post_data.dart';
 
-class PostController extends StatelessWidget {
+class PostController extends StatefulWidget {
   const PostController({
-    super.key,
+    Key? key,
     required this.currentUserUid,
-    required this.widget,
-  });
+    required this.postData,
+  }) : super(key: key);
 
   final String currentUserUid;
-  final PostScreen widget;
+  final PostData postData;
 
+  @override
+  State<PostController> createState() => _PostControllerState();
+}
+
+class _PostControllerState extends State<PostController> {
   void _showAlertDialog(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          // title: const Text("알림"),
           content: Text(
             message,
             style: const TextStyle(fontSize: 14),
@@ -57,17 +62,24 @@ class PostController extends StatelessWidget {
       height: 200,
       child: ListView(
         children: [
-          if (currentUserUid == widget.postData.authorUid)
+          if (widget.currentUserUid == widget.postData.authorUid)
             ListTile(
               title: const Text(
                 '수정하기',
                 textAlign: TextAlign.center,
               ),
               onTap: () {
-                // 수정 로직을 여기에 추가하세요
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditPostScreen(
+                      postData: widget.postData,
+                    ),
+                  ),
+                );
               },
             ),
-          if (currentUserUid == widget.postData.authorUid)
+          if (widget.currentUserUid == widget.postData.authorUid)
             ListTile(
               title: const Text(
                 '삭제하기',
@@ -77,7 +89,7 @@ class PostController extends StatelessWidget {
                 _showAlertDialog(context, '정말 삭제하겠습니까?');
               },
             ),
-          if (currentUserUid != widget.postData.authorUid)
+          if (widget.currentUserUid != widget.postData.authorUid)
             ListTile(
               title: const Text(
                 '신고하기',
@@ -85,7 +97,7 @@ class PostController extends StatelessWidget {
               ),
               onTap: () {},
             ),
-          if (currentUserUid != widget.postData.authorUid)
+          if (widget.currentUserUid != widget.postData.authorUid)
             ListTile(
               title: const Text(
                 '차단하기',

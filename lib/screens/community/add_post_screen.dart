@@ -36,6 +36,7 @@ class AddPostScreen extends StatelessWidget {
         postData.postId = docRef.id;
         await docRef.update({'postId': postData.postId});
       }
+      Navigator.pop(context);
     } catch (error) {
       debugPrint('에러: $error');
     }
@@ -134,7 +135,6 @@ class AddPostScreen extends StatelessWidget {
                       return;
                     }
                     _addPost(context);
-                    Navigator.pop(context);
                   },
                 ),
               ),

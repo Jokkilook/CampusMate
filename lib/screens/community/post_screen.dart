@@ -172,11 +172,11 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
-  Future<void> refreshScreen() async {
+  Future<void> _refreshScreen() async {
     setState(() {
       _isLoading = true;
     });
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
       _isLoading = false;
     });
@@ -202,7 +202,7 @@ class _PostScreenState extends State<PostScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              refreshScreen();
+              _refreshScreen();
             },
             icon: const Icon(Icons.refresh),
           ),
@@ -214,9 +214,13 @@ class _PostScreenState extends State<PostScreen> {
                   String currentUserUid =
                       context.read<UserDataProvider>().userData.uid ?? '';
                   return PostController(
-                      currentUserUid: currentUserUid, widget: widget);
+                    currentUserUid: currentUserUid,
+                    postData: widget.postData,
+                  );
                 },
-              );
+              ).then((_) {
+                _refreshScreen();
+              });
             },
             icon: const Icon(Icons.more_vert),
           ),
@@ -227,7 +231,7 @@ class _PostScreenState extends State<PostScreen> {
               child: CircularProgressIndicator(),
             )
           : RefreshIndicator(
-              onRefresh: refreshScreen,
+              onRefresh: _refreshScreen,
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
