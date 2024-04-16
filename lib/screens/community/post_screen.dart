@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../modules/format_time_stamp.dart';
 import '../../provider/user_data_provider.dart';
 import '../../models/post_data.dart';
+import '../../widgets/community/post_controller.dart';
 
 class PostScreen extends StatefulWidget {
   final PostData postData;
@@ -206,7 +207,17 @@ class _PostScreenState extends State<PostScreen> {
             icon: const Icon(Icons.refresh),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  String currentUserUid =
+                      context.read<UserDataProvider>().userData.uid ?? '';
+                  return PostController(
+                      currentUserUid: currentUserUid, widget: widget);
+                },
+              );
+            },
             icon: const Icon(Icons.more_vert),
           ),
         ],

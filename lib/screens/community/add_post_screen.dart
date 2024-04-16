@@ -123,7 +123,7 @@ class AddPostScreen extends StatelessWidget {
                         context.read<UserDataProvider>().userData.uid;
                     postData.timestamp = Timestamp.fromDate(DateTime.now());
                     postData.title = _titleController.value.text;
-                    // 제목, 내용을 작성해야 작성됨
+                    // 제목, 내용을 입력해야 작성됨
                     if (postData.title == "") {
                       _showAlertDialog(context, "제목을 입력해주세요.");
                       return;
