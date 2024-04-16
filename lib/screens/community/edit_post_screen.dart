@@ -1,8 +1,6 @@
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:provider/provider.dart';
 import '../../models/post_data.dart';
 
 class EditPostScreen extends StatefulWidget {

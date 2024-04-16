@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:io';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -10,11 +11,16 @@ import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:campusmate/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+//ignore: must_be_immutable
 class ProfileReviseScreen extends StatefulWidget {
-  const ProfileReviseScreen({super.key});
+  ProfileReviseScreen({super.key});
+  late var image;
+  late UserData modifiedData;
 
   @override
   State<ProfileReviseScreen> createState() => ProfileReviseScreenState();
@@ -22,10 +28,9 @@ class ProfileReviseScreen extends StatefulWidget {
 
 class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   final db = DataBase();
+  ImagePicker imagePicker = ImagePicker();
 
   final uid = FirebaseAuth.instance.currentUser?.uid;
-
-  late UserData modifiedData;
 
   TextEditingController nameController = TextEditingController();
 
@@ -38,9 +43,11 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   late bool TF;
 
   late bool PJ;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    widget.image = null;
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.grey[200],
@@ -51,6 +58,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
       ),
       body: Stack(
         children: [
+          //캐시에서 사용자 정보를 불러옴
           FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance
                 .collection('users')
@@ -64,17 +72,18 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 throw Error();
               } else {
                 var data = snapshot.data!.data() as Map<String, dynamic>;
-                modifiedData = UserData.fromJson(data);
+                widget.modifiedData = UserData.fromJson(data);
 
                 introController.value =
-                    TextEditingValue(text: modifiedData.introduce!);
+                    TextEditingValue(text: widget.modifiedData.introduce!);
                 nameController.value =
-                    TextEditingValue(text: modifiedData.name!);
+                    TextEditingValue(text: widget.modifiedData.name!);
 
-                return wholeProfile(modifiedData, context);
+                return wholeProfile(widget, widget.modifiedData, context);
               }
             },
           ),
+          //수정완료 버튼
           Positioned(
             left: 0,
             right: 0,
@@ -82,13 +91,74 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
             child: BottomButton(
               text: "수정완료",
               isCompleted: true,
+              isLoading: isLoading,
               onPressed: () async {
-                modifiedData.name = nameController.value.text;
-                modifiedData.introduce = introController.value.text;
-                modifiedData.mbti =
+                isLoading = true;
+
+                //로딩 오버레이 표시
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                );
+
+                widget.modifiedData.name = nameController.value.text;
+                widget.modifiedData.introduce = introController.value.text;
+                widget.modifiedData.mbti =
                     "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
-                context.read<UserDataProvider>().userData = modifiedData;
-                db.addUser(modifiedData);
+                context.read<UserDataProvider>().userData = widget.modifiedData;
+
+                //이미지 변경시 이미지 변경 로직 실행
+                if (widget.image != null) {
+                  //파이어스토어에 이미지 파일 업로드
+                  var ref = FirebaseStorage.instance
+                      .ref()
+                      .child("images/${widget.modifiedData.uid}.png");
+
+                  await ref.putFile(File(widget.image!.path));
+                  //변경할 데이터에 변경된 url 저장
+                  widget.modifiedData.imageUrl = await ref.getDownloadURL();
+
+                  //채팅방 프로필 url 업데이트
+                  await FirebaseFirestore.instance
+                      .collection("chats")
+                      .where("participantsUid",
+                          arrayContains: widget.modifiedData.uid)
+                      .get()
+                      .then(
+                    (value) {
+                      if (value.docs.isNotEmpty) {
+                        var docs = value.docs;
+                        for (var doc in docs) {
+                          String id = doc.id;
+                          Map<String, dynamic> data = doc.data();
+                          Map<String, List<String>> userInfo =
+                              (data["participantsInfo"] as Map<String, dynamic>)
+                                  .map((key, value) {
+                            return MapEntry(
+                                key, (value as List<dynamic>).cast<String>());
+                          });
+
+                          userInfo[widget.modifiedData.uid!] = [
+                            widget.modifiedData.name!,
+                            widget.modifiedData.imageUrl!
+                          ];
+
+                          FirebaseFirestore.instance
+                              .collection("chats")
+                              .doc(id)
+                              .update({"participantsInfo": userInfo});
+                        }
+                      }
+                    },
+                  );
+                }
+
+                db.addUser(widget.modifiedData);
+
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
@@ -103,8 +173,9 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
     );
   }
 
-  SingleChildScrollView wholeProfile(UserData userData, BuildContext context) {
-    modifiedData = userData;
+  SingleChildScrollView wholeProfile(
+      ProfileReviseScreen parent, UserData userData, BuildContext context) {
+    widget.modifiedData = userData;
 
     EI = userData.mbti![0] == "E";
     NS = userData.mbti![1] == "N";
@@ -129,21 +200,10 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
           ),
           child: Column(
             children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ImageUploadScreen(userData: modifiedData)))
-                      .then((value) => setState(() {}));
-                },
-                child: Image.network(
-                  modifiedData.imageUrl.toString(),
-                  height: MediaQuery.of(context).size.width * 0.9,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+              ImageViewer(
+                originUrl: widget.modifiedData.imageUrl!,
+                parent: parent,
+                isLoading: isLoading,
               ),
               const SizedBox(height: 10),
               //이름입력
@@ -232,9 +292,10 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                             height: 5,
                           ),
                           Text(
-                              '나이  ${DateTime.now().year - int.parse(modifiedData.birthDate!.split(".")[0])}'),
-                          Text('성별  ${modifiedData.gender! ? "남" : "여"}'),
-                          Text('학과  ${modifiedData.dept}'),
+                              '나이  ${DateTime.now().year - int.parse(widget.modifiedData.birthDate!.split(".")[0])}'),
+                          Text(
+                              '성별  ${widget.modifiedData.gender! ? "남" : "여"}'),
+                          Text('학과  ${widget.modifiedData.dept}'),
                         ],
                       ),
                     ),
@@ -290,7 +351,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                             child: ScheduleTable(
-                                scheduleData: modifiedData.schedule,
+                                scheduleData: widget.modifiedData.schedule,
                                 readOnly: false),
                           ),
                         ],
@@ -308,6 +369,74 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   }
 }
 
+//ignore: must_be_immutable
+class ImageViewer extends StatefulWidget {
+  ImageViewer(
+      {super.key,
+      required this.originUrl,
+      required this.parent,
+      this.isLoading = false});
+  final ProfileReviseScreen parent;
+  bool isLoading;
+  String originUrl;
+  XFile? image;
+
+  @override
+  State<ImageViewer> createState() => _ImageViewerState();
+}
+
+class _ImageViewerState extends State<ImageViewer> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.originUrl = widget.parent.modifiedData.imageUrl!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ImageUploadScreen(
+                      originUrl: widget.parent.modifiedData.imageUrl!,
+                      parent: widget,
+                    ))).then((value) => setState(() {
+              widget.parent.image = widget.image;
+            }));
+      },
+      child: SizedBox(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.width * 0.9,
+        child: !widget.isLoading
+            ? widget.image == null
+                ? Image.network(
+                    widget.originUrl,
+                    fit: BoxFit.cover,
+                  )
+                // CachedNetworkImage(
+                //     imageUrl: widget.originUrl,
+                //     placeholder: (context, url) {
+                //       return const Center(child: Icon(Icons.error_outline));
+                //     },
+                //     width: double.infinity,
+                //     height: MediaQuery.of(context).size.width * 0.9,
+                //     fit: BoxFit.cover,
+                //   )
+                : Image.file(
+                    File(widget.image!.path),
+                    fit: BoxFit.cover,
+                  )
+            : const Center(
+                child: CircularProgressIndicator(),
+              ),
+      ),
+    );
+  }
+}
+
 class TagShower extends StatefulWidget {
   const TagShower({super.key, required this.parent});
   final ProfileReviseScreenState parent;
@@ -317,7 +446,8 @@ class TagShower extends StatefulWidget {
 }
 
 class _TagShowerState extends State<TagShower> {
-  late List<String> userTag = widget.parent.modifiedData.tags!.cast<String>();
+  late List<String> userTag =
+      widget.parent.widget.modifiedData.tags!.cast<String>();
   var tagList = [
     "공부",
     "동네",

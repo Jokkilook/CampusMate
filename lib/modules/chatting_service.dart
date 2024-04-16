@@ -1,6 +1,7 @@
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,24 +26,28 @@ class ChattingService {
     //1:1 채팅방ID 구하기
     String roomId = makeRoomId(ownerUID, targetUID);
     //원래 채팅방이 있는지 조회
-    await firestore
-        .collection("chats")
-        .where("id", isEqualTo: roomId)
-        .get()
-        .then((value) {
+    await firestore.collection("chats").doc(roomId).get().then((value) {
       //채팅방이 있으면 그 채팅방으로 화면 이동
-
-      if (value.size > 0) {
-        var json = value.docs as Map<String, dynamic>;
+      if (value.exists) {
+        var json = value.data() as Map<String, dynamic>;
         ChatRoomData data = ChatRoomData.fromJson(json);
+        if (!data.participantsUid!.contains(ownerUID)) {
+          data.participantsUid!.add(ownerUID);
+          firestore
+              .collection("chats")
+              .doc(roomId)
+              .update({"participantsUid": data.participantsUid});
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ChatRoomScreen(chatRoomData: data),
           ),
         );
+        return;
       } else {
         createRoom(context, targetUID);
+        return;
       }
     });
   }
@@ -144,10 +149,27 @@ class ChattingService {
         .doc("${DateTime.now().microsecondsSinceEpoch}")
         .set(data.toJson())
         .whenComplete(() {
+      var lastMessage = "";
+
+      switch (data.type) {
+        case MessageType.text:
+          lastMessage = data.content!;
+          break;
+        case MessageType.picture:
+          lastMessage = "사진";
+          break;
+        case MessageType.video:
+          lastMessage = "영상";
+          break;
+        default:
+          lastMessage = data.content!;
+          break;
+      }
+
       FirebaseFirestore.instance
           .collection("chats")
           .doc(roomId)
-          .update({"lastMessage": data.content, "lastMessageTime": data.time});
+          .update({"lastMessage": lastMessage, "lastMessageTime": data.time});
     });
   }
 }

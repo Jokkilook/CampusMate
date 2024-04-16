@@ -1,14 +1,16 @@
 import 'dart:io';
-import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/database.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:campusmate/screens/profile/profile_revise_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+//ignore: must_be_immutable
 class ImageUploadScreen extends StatefulWidget {
-  const ImageUploadScreen({super.key, required this.userData});
-  final UserData userData;
+  ImageUploadScreen({super.key, required this.originUrl, required this.parent});
+
+  final String originUrl;
+  ImageViewer parent;
 
   @override
   State<ImageUploadScreen> createState() => _ImageUploadScreenState();
@@ -28,19 +30,13 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         isLoading: isLoading,
         text: "완료",
         isCompleted: !isLoading,
-        onPressed: () async {
+        onPressed: () {
           if (image != null) {
             isLoading = true;
             setState(() {});
-            var ref = FirebaseStorage.instance
-                .ref()
-                .child("images/${widget.userData.uid}.png");
-
-            await ref.putFile(File(image!.path));
-            widget.userData.imageUrl = await ref.getDownloadURL();
-            DataBase().addUser(widget.userData);
+            widget.parent.image = image;
+            //DataBase().addUser(widget.userData);
           }
-
           Navigator.pop(context);
         },
       ),
@@ -59,15 +55,20 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
               height: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.amber,
+                color: Colors.grey[300],
               ),
               child: image != null
                   ? Image.file(
                       File(image!.path),
                       fit: BoxFit.cover,
                     )
-                  : Image.network(
-                      widget.userData.imageUrl.toString(),
+                  : CachedNetworkImage(
+                      imageUrl: widget.originUrl,
+                      placeholder: (context, url) {
+                        return const Center(child: Icon(Icons.error_outline));
+                      },
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.width * 0.9,
                       fit: BoxFit.cover,
                     ),
             ),

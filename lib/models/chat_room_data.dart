@@ -19,8 +19,12 @@ class ChatRoomData {
   ChatRoomData.fromJson(Map<String, dynamic> json) {
     roomId = json["roomId"];
     roomName = json["roomName"];
-    participantsInfo = json["participantsInfo"];
-    participantsUid = json["participantsUid"];
+    participantsInfo =
+        (json["participantsInfo"] as Map<String, dynamic>).map((key, value) {
+      return MapEntry(key, (value as List<dynamic>).cast<String>());
+    });
+    participantsUid =
+        (json["participantsUid"] as List).map((e) => e.toString()).toList();
     lastMessage = json["lastMessage"];
     lastMessageTime = json["lastMessageTime"];
   }

@@ -3,27 +3,40 @@ import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
+import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'widget/chat_bubble.dart';
 
 //ignore: must_be_immutable
-class ChatRoomScreen extends StatelessWidget {
+class ChatRoomScreen extends StatefulWidget {
   ChatRoomScreen({super.key, required this.chatRoomData, this.isNew = false});
 
   ChatRoomData chatRoomData;
   bool isNew;
+
+  @override
+  State<ChatRoomScreen> createState() => _ChatRoomScreenState();
+}
+
+class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final FocusNode focusNode = FocusNode();
+
   TextEditingController chatController = TextEditingController();
+
   final scrollController = ScrollController();
+
   ChattingService chat = ChattingService();
+
   AuthService auth = AuthService();
+
   String senderUID = "";
+
   String? userUID;
+  bool prepareMedia = false;
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -39,7 +52,8 @@ class ChatRoomScreen extends StatelessWidget {
     String name = "";
     String imageUrl = "";
     bool isDuo = false;
-    chatRoomData.participantsInfo!.forEach((key, value) {
+
+    widget.chatRoomData.participantsInfo!.forEach((key, value) {
       if (key != userUID) {
         senderUID = key;
         value.sort(
@@ -52,10 +66,24 @@ class ChatRoomScreen extends StatelessWidget {
     name = senderData[0];
     imageUrl = senderData[1];
 
-    if (chatRoomData.participantsUid!.length == 2) isDuo = true;
+    if (widget.chatRoomData.participantsUid!.length == 2) isDuo = true;
 
     return Scaffold(
       body: Scaffold(
+        appBar: AppBar(
+          actions: [
+            Builder(builder: (context) {
+              return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  icon: const Icon(Icons.more_vert));
+            }),
+          ],
+          elevation: 2,
+          shadowColor: Colors.black,
+          title: Text(isDuo ? name : widget.chatRoomData.roomName ?? ""),
+        ),
         endDrawer: Drawer(
           shape: const ContinuousRectangleBorder(),
           child: SafeArea(
@@ -71,7 +99,7 @@ class ChatRoomScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: chatRoomData.participantsUid!.length - 1,
+                    itemCount: widget.chatRoomData.participantsUid!.length - 1,
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
@@ -124,8 +152,8 @@ class ChatRoomScreen extends StatelessWidget {
                           return InkWell(
                             onTap: () async {
                               Scaffold.of(context).closeEndDrawer();
-                              chat.leaveRoom(
-                                  context, chatRoomData.roomId!, userUID!);
+                              chat.leaveRoom(context,
+                                  widget.chatRoomData.roomId!, userUID!);
                             },
                             child: const SizedBox(
                               height: 40,
@@ -158,25 +186,12 @@ class ChatRoomScreen extends StatelessWidget {
             ),
           ),
         ),
-        appBar: AppBar(
-          actions: [
-            Builder(builder: (context) {
-              return IconButton(
-                  onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                  icon: const Icon(Icons.more_vert));
-            }),
-          ],
-          elevation: 2,
-          shadowColor: Colors.black,
-          title: Text(isDuo ? name : chatRoomData.roomName ?? ""),
-        ),
         body: Column(
           children: [
+            //채팅 메세지 표시 부분
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: chat.getChattingMessages(chatRoomData.roomId!),
+                stream: chat.getChattingMessages(widget.chatRoomData.roomId!),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Center(child: Text("에러발생"));
@@ -190,7 +205,11 @@ class ChatRoomScreen extends StatelessWidget {
                       return const Center(child: Text("채팅을 시작해보세요!"));
                     } else {
                       return GestureDetector(
-                        onTap: () => focusNode.unfocus(),
+                        onTap: () {
+                          prepareMedia = false;
+                          focusNode.unfocus();
+                          setState(() {});
+                        },
                         child: Container(
                           color: Colors.grey[50],
                           height: double.infinity,
@@ -216,7 +235,7 @@ class ChatRoomScreen extends StatelessWidget {
                               if (!messageReaderList.contains(userUID)) {
                                 messageReaderList.add(userUID!);
 
-                                chat.updateReader(chatRoomData.roomId!,
+                                chat.updateReader(widget.chatRoomData.roomId!,
                                     docs[index].id, messageReaderList);
                               }
 
@@ -224,7 +243,7 @@ class ChatRoomScreen extends StatelessWidget {
                               int participantsCount = 0;
                               try {
                                 participantsCount =
-                                    chatRoomData.participantsUid!.length;
+                                    widget.chatRoomData.participantsUid!.length;
                               } catch (e) {}
 
                               //메세지 데이터에서 읽은 사람 수 반환
@@ -298,12 +317,14 @@ class ChatRoomScreen extends StatelessWidget {
                               }
 
                               return ChatBubble(
+                                type: stringToEnumMessageType(
+                                    docs[index]["type"]),
                                 isOther: isOther,
                                 reader: count,
                                 senderUid: docs[index]["senderUID"],
                                 viewSender: viewSender,
                                 name: name,
-                                imageUrl: imageUrl,
+                                profileImageUrl: imageUrl,
                                 showTime: showTime,
                                 showDay: showDay,
                                 messageData: docs[index],
@@ -320,75 +341,187 @@ class ChatRoomScreen extends StatelessWidget {
               ),
             ),
             //하단 채팅 입력바
-            Container(
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  //+버튼
-                  FilledButton(
-                      style: FilledButton.styleFrom(
-                          fixedSize: const Size(60, 60),
-                          backgroundColor: Colors.green,
-                          shape: const ContinuousRectangleBorder()),
-                      onPressed: () {
-                        focusNode.requestFocus();
-                      },
-                      child: const Icon(Icons.add)),
-                  //텍스트 입력창
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.all(10),
+            Column(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(color: Colors.white),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      //+버튼
+                      InkWell(
+                        borderRadius: BorderRadius.circular(100),
+                        onTap: () {
+                          focusNode.unfocus();
+                          prepareMedia = true;
+                          setState(() {});
+                        },
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(100)),
+                            ),
+                            const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                      ),
+                      //텍스트 입력창
+                      Expanded(
                         child: TextFormField(
-                          decoration:
-                              const InputDecoration(border: InputBorder.none),
+                          onTap: () {
+                            prepareMedia = false;
+                            setState(() {});
+                          },
                           focusNode: focusNode,
                           controller: chatController,
                           minLines: 1,
                           maxLines: 4,
-                        )),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                              enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(100)),
+                              hintText: "메세지를 입력하세요.",
+                              hintStyle: const TextStyle(fontSize: 14),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 5)),
+                        ),
+                      ),
+                      //보내기 버튼
+                      InkWell(
+                        borderRadius: BorderRadius.circular(100),
+                        onTap: () {
+                          focusNode.requestFocus();
+                          if (chatController.value.text == "") return;
+
+                          String message = chatController.value.text;
+                          chatController.value = TextEditingValue.empty;
+                          MessageData data = MessageData(
+                              type: MessageType.text,
+                              senderUID: auth.getUID(),
+                              content: message,
+                              readers: [],
+                              time: Timestamp.fromDate(DateTime.now()));
+
+                          chat.sendMessage(
+                              roomId: widget.chatRoomData.roomId!, data: data);
+                          if (scrollController.hasClients) {
+                            scrollController.animateTo(
+                              0,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          }
+                        },
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(100)),
+                            ),
+                            const Icon(
+                              Icons.send,
+                              size: 18,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  //보내기 버튼
-                  FilledButton(
-                      style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.all(0),
-                          fixedSize: const Size(60, 60),
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(1000))),
-                      onPressed: () {
-                        FocusScope.of(context).requestFocus(focusNode);
-                        if (chatController.value.text == "") return;
-
-                        String message = chatController.value.text;
-                        chatController.value = TextEditingValue.empty;
-                        MessageData data = MessageData(
-                            senderUID: auth.getUID(),
-                            content: message,
-                            readers: [],
-                            time: Timestamp.fromDate(DateTime.now()));
-
-                        chat.sendMessage(
-                            roomId: chatRoomData.roomId!, data: data);
-                        if (scrollController.hasClients) {
-                          scrollController.animateTo(
-                            0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        }
-                      },
-                      child: const Icon(
-                        Icons.send,
-                        size: 20,
-                      )),
-                ],
-              ),
+                ),
+                prepareMedia
+                    ? Container(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        color: Colors.grey[200],
+                        child: Center(
+                          child: IntrinsicHeight(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                MediaButton(
+                                  icon: Icons.photo_library_outlined,
+                                  text: "사진",
+                                  onTap: () {
+                                    ImagePicker()
+                                        .pickImage(source: ImageSource.gallery);
+                                  },
+                                ),
+                                MediaButton(
+                                  icon: Icons.video_library_outlined,
+                                  text: "동영상",
+                                ),
+                                MediaButton(
+                                  icon: Icons.camera_alt_outlined,
+                                  text: "카메라",
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container()
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+//ignore: must_be_immutable
+class MediaButton extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  Function()? onTap;
+
+  MediaButton({super.key, required this.text, required this.icon, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(100),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(100)),
+              ),
+              Icon(icon)
+            ],
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(text)
+      ],
     );
   }
 }

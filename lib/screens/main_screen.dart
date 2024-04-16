@@ -18,9 +18,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final fcmToken = FirebaseMessaging.instance
-      .getToken()
-      .then((value) => print(">>>>>>>>>>>>>>>>>>>>>>>>>>>$value"));
+  final fcmToken = FirebaseMessaging.instance.getToken();
 
   int index = 0;
 

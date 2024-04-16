@@ -1,10 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
 
 class ChatBubble extends StatelessWidget {
+  final QueryDocumentSnapshot messageData;
+  final int index;
+  final bool showTime;
+  final bool showDay;
+  final bool isOther;
+  final bool viewSender;
+  final MessageType type;
+  final String? name;
+  final String? senderUid;
+  final String? profileImageUrl;
+  final String reader;
+
   const ChatBubble(
       {super.key,
       required this.messageData,
@@ -13,21 +27,11 @@ class ChatBubble extends StatelessWidget {
       this.showDay = true,
       this.isOther = false,
       this.viewSender = true,
+      this.type = MessageType.text,
       this.name,
       this.senderUid,
-      this.imageUrl,
+      this.profileImageUrl,
       this.reader = ""});
-
-  final QueryDocumentSnapshot messageData;
-  final int index;
-  final bool showTime;
-  final bool showDay;
-  final bool isOther;
-  final bool viewSender;
-  final String? name;
-  final String? senderUid;
-  final String? imageUrl;
-  final String reader;
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -39,7 +43,7 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     CachedNetworkImage cachedImage = CachedNetworkImage(
-      imageUrl: imageUrl!,
+      imageUrl: profileImageUrl!,
       placeholder: (context, url) {
         return Image.asset(
           "assets/images/default_image.png",
@@ -104,11 +108,7 @@ class ChatBubble extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(15)),
                               width: 50,
                               height: 50,
-                              child: cachedImage
-                              // Image.network(
-                              //     "http://via.placeholder.com/350x150",
-                              //     fit: BoxFit.cover),
-                              ),
+                              child: cachedImage),
                         )
                       : Container(
                           width: 50,
@@ -149,8 +149,9 @@ class ChatBubble extends StatelessWidget {
                       viewSender && isOther ? Text(name ?? "") : Container(),
                       const SizedBox(height: 5),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10),
+                        // padding: const EdgeInsets.symmetric(
+                        //     horizontal: 15, vertical: 10),
+                        clipBehavior: Clip.hardEdge,
                         constraints: BoxConstraints(
                             maxWidth: MediaQuery.of(context).size.width * 0.65),
                         decoration: BoxDecoration(
@@ -161,10 +162,50 @@ class ChatBubble extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              messageData["content"],
-                              style: const TextStyle(fontSize: 16),
-                            ),
+                            if (type == MessageType.text)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10),
+                                child: Text(
+                                  messageData["content"],
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            if (type == MessageType.picture)
+                              GestureDetector(
+                                onTap: () {
+                                  // showImageViewer(
+                                  //   context,
+                                  //   CachedNetworkImageProvider(
+                                  //       profileImageUrl!),
+                                  // );
+                                },
+                                child: InstaImageViewer(
+                                  child: CachedNetworkImage(
+                                    imageUrl: profileImageUrl!,
+                                    placeholder: (context, url) {
+                                      return const Center(
+                                        child: Icon(Icons
+                                            .photo_size_select_actual_outlined),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                // CachedNetworkImage(
+                                //   imageUrl: profileImageUrl!,
+                                //   placeholder: (context, url) {
+                                //     return const Center(
+                                //       child: Icon(Icons
+                                //           .photo_size_select_actual_outlined),
+                                //     );
+                                //   },
+                                // ),
+                              ),
+                            if (type == MessageType.video)
+                              const Text(
+                                "이것은 비디오입니다.",
+                                style: TextStyle(fontSize: 16),
+                              ),
                           ],
                         ),
                       ),
