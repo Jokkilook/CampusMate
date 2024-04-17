@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -5,11 +7,14 @@ import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ChattingService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseStorage firestorage = FirebaseStorage.instance;
 
   //1:1채팅방 ID 생성
   String makeRoomId(String ownerUID, String targetUID) {
@@ -143,12 +148,12 @@ class ChattingService {
   }
 
   //메세지 보내기
-  void sendMessage({required String roomId, required MessageData data}) {
-    firestore
+  void sendMessage({required String roomId, required MessageData data}) async {
+    await firestore
         .collection("chats/$roomId/messages")
         .doc("${DateTime.now().microsecondsSinceEpoch}")
         .set(data.toJson())
-        .whenComplete(() {
+        .whenComplete(() async {
       var lastMessage = "";
 
       switch (data.type) {
@@ -166,10 +171,25 @@ class ChattingService {
           break;
       }
 
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("chats")
           .doc(roomId)
           .update({"lastMessage": lastMessage, "lastMessageTime": data.time});
     });
+  }
+
+  void sendMedia(
+      ChatRoomData roomData, MessageData messageData, XFile media) async {
+    String url = "";
+    var ref = FirebaseStorage.instance
+        .ref()
+        .child("images/${roomData.roomId}-${messageData.time}.png");
+    await ref.putFile(File(media.path)).whenComplete(() async {
+      url = await ref.getDownloadURL();
+    });
+
+    messageData.content = url;
+
+    sendMessage(roomId: roomData.roomId!, data: messageData);
   }
 }

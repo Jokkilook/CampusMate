@@ -84,7 +84,6 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),
           (route) => false);
-      print(">>>>>>>>>>>>>>>>>>>>>>>>>>$e");
     }
     Navigator.pushAndRemoveUntil(
         context,

@@ -93,10 +93,7 @@ class MatchCard extends StatelessWidget {
         }
         if (snapshot.hasData) {
           List<QueryDocumentSnapshot> data = snapshot.data?.docs ?? [];
-          print(data.length);
-          print(
-              ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${context.read<UserDataProvider>().userData.school}");
-          // var data = snapshot.data!.data() as Map<String, dynamic>;
+
           return Center(child: swipableCard(data, context));
         } else {
           return const Center(
@@ -120,6 +117,8 @@ class MatchCard extends StatelessWidget {
     }
 
     return CardSwiper(
+        scale: 0.98,
+        backCardOffset: const Offset(0, 10),
         threshold: 100,
         cardsCount: data.length,
         cardBuilder: (context, index, horizontalOffsetPercentage,

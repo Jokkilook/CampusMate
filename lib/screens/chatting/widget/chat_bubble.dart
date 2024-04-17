@@ -42,7 +42,7 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CachedNetworkImage cachedImage = CachedNetworkImage(
+    CachedNetworkImage cachedProfileImage = CachedNetworkImage(
       imageUrl: profileImageUrl!,
       placeholder: (context, url) {
         return Image.asset(
@@ -59,8 +59,23 @@ class ChatBubble extends StatelessWidget {
       fit: BoxFit.cover,
     );
 
+    CachedNetworkImage cachedMediaImage = CachedNetworkImage(
+      imageUrl: messageData["content"]!,
+      placeholder: (context, url) {
+        return Container(
+          color: Colors.grey[300],
+          width: MediaQuery.of(context).size.width * 0.65,
+          height: MediaQuery.of(context).size.width * 0.65,
+          child: const Center(
+            child: Icon(Icons.photo_size_select_actual_outlined),
+          ),
+        );
+      },
+    );
+
     return Column(
       children: [
+        //날짜 구분선 표시
         showDay
             ? Stack(alignment: Alignment.center, children: [
                 const Divider(height: 40),
@@ -91,7 +106,7 @@ class ChatBubble extends StatelessWidget {
                     isOther ? CrossAxisAlignment.start : CrossAxisAlignment.end,
                 children: [
                   //프로필을 보여줘야하고 상대방일 때 사진 표시
-                  viewSender && isOther
+                  (showDay || viewSender) && isOther
                       ? GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -108,7 +123,7 @@ class ChatBubble extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(15)),
                               width: 50,
                               height: 50,
-                              child: cachedImage),
+                              child: cachedProfileImage),
                         )
                       : Container(
                           width: 50,
@@ -121,7 +136,6 @@ class ChatBubble extends StatelessWidget {
                       Row(
                         children: [
                           //왼쪽 안읽은 사람 수 표시(내 버블일 때)
-
                           !isOther
                               ? Text(reader,
                                   style: const TextStyle(fontSize: 10))
@@ -146,11 +160,12 @@ class ChatBubble extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       //프로필을 보여줘야 하고 상대방일 때 이름표시
-                      viewSender && isOther ? Text(name ?? "") : Container(),
+                      (showDay || viewSender) && isOther
+                          ? Text(name ?? "")
+                          : Container(),
                       const SizedBox(height: 5),
+                      //채팅 버블 부분
                       Container(
-                        // padding: const EdgeInsets.symmetric(
-                        //     horizontal: 15, vertical: 10),
                         clipBehavior: Clip.hardEdge,
                         constraints: BoxConstraints(
                             maxWidth: MediaQuery.of(context).size.width * 0.65),
@@ -172,35 +187,7 @@ class ChatBubble extends StatelessWidget {
                                 ),
                               ),
                             if (type == MessageType.picture)
-                              GestureDetector(
-                                onTap: () {
-                                  // showImageViewer(
-                                  //   context,
-                                  //   CachedNetworkImageProvider(
-                                  //       profileImageUrl!),
-                                  // );
-                                },
-                                child: InstaImageViewer(
-                                  child: CachedNetworkImage(
-                                    imageUrl: profileImageUrl!,
-                                    placeholder: (context, url) {
-                                      return const Center(
-                                        child: Icon(Icons
-                                            .photo_size_select_actual_outlined),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                // CachedNetworkImage(
-                                //   imageUrl: profileImageUrl!,
-                                //   placeholder: (context, url) {
-                                //     return const Center(
-                                //       child: Icon(Icons
-                                //           .photo_size_select_actual_outlined),
-                                //     );
-                                //   },
-                                // ),
-                              ),
+                              InstaImageViewer(child: cachedMediaImage),
                             if (type == MessageType.video)
                               const Text(
                                 "이것은 비디오입니다.",

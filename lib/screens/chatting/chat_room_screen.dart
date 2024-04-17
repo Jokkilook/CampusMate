@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -17,6 +19,7 @@ class ChatRoomScreen extends StatefulWidget {
 
   ChatRoomData chatRoomData;
   bool isNew;
+  XFile? media;
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -312,7 +315,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 }
                               } catch (e) {
                                 //한칸 위의 메세지가 없으면 보낸 사람 표시 출력
-
                                 viewSender = true;
                               }
 
@@ -375,56 +377,102 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           ],
                         ),
                       ),
+
                       //텍스트 입력창
-                      Expanded(
-                        child: TextFormField(
-                          onTap: () {
-                            prepareMedia = false;
-                            setState(() {});
-                          },
-                          focusNode: focusNode,
-                          controller: chatController,
-                          minLines: 1,
-                          maxLines: 4,
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                              enabledBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                              focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(100)),
-                              hintText: "메세지를 입력하세요.",
-                              hintStyle: const TextStyle(fontSize: 14),
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 5)),
-                        ),
-                      ),
+                      widget.media == null
+                          ? Expanded(
+                              child: TextFormField(
+                                onTap: () {
+                                  prepareMedia = false;
+                                  setState(() {});
+                                },
+                                focusNode: focusNode,
+                                controller: chatController,
+                                minLines: 1,
+                                maxLines: 4,
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                    enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(100)),
+                                    hintText: "메세지를 입력하세요.",
+                                    hintStyle: const TextStyle(fontSize: 14),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 5)),
+                              ),
+                            )
+                          : Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Image.file(
+                                      height: 100,
+                                      File(widget.media!.path),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      widget.media = null;
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      child: const Icon(Icons.cancel),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                       //보내기 버튼
                       InkWell(
                         borderRadius: BorderRadius.circular(100),
                         onTap: () {
-                          focusNode.requestFocus();
-                          if (chatController.value.text == "") return;
+                          prepareMedia ? null : focusNode.requestFocus();
+                          //입력창이 비었거나 미디어파일 올라간 게 없으면 아무것도 하지 않음
+                          if (chatController.value.text == "" &&
+                              widget.media == null) return;
+                          MessageData data;
+                          String content;
+                          if (widget.media != null) {
+                            data = MessageData(
+                                type: MessageType.picture,
+                                senderUID: auth.getUID(),
+                                content: "",
+                                readers: [],
+                                time: Timestamp.fromDate(DateTime.now()));
 
-                          String message = chatController.value.text;
-                          chatController.value = TextEditingValue.empty;
-                          MessageData data = MessageData(
-                              type: MessageType.text,
-                              senderUID: auth.getUID(),
-                              content: message,
-                              readers: [],
-                              time: Timestamp.fromDate(DateTime.now()));
+                            chat.sendMedia(
+                                widget.chatRoomData, data, widget.media!);
 
-                          chat.sendMessage(
-                              roomId: widget.chatRoomData.roomId!, data: data);
-                          if (scrollController.hasClients) {
-                            scrollController.animateTo(
-                              0,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
+                            widget.media = null;
+                            setState(() {});
+                          } else {
+                            //미디어 파일이 아니면 텍스트 전송
+                            content = chatController.value.text;
+                            chatController.value = TextEditingValue.empty;
+                            data = MessageData(
+                                type: MessageType.text,
+                                senderUID: auth.getUID(),
+                                content: content,
+                                readers: [],
+                                time: Timestamp.fromDate(DateTime.now()));
+
+                            chat.sendMessage(
+                                roomId: widget.chatRoomData.roomId!,
+                                data: data);
+                            if (scrollController.hasClients) {
+                              scrollController.animateTo(
+                                0,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            }
                           }
                         },
                         child: Stack(
@@ -462,18 +510,32 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 MediaButton(
                                   icon: Icons.photo_library_outlined,
                                   text: "사진",
-                                  onTap: () {
-                                    ImagePicker()
+                                  onTap: () async {
+                                    widget.media = await ImagePicker()
                                         .pickImage(source: ImageSource.gallery);
+                                    if (widget.media != null) {
+                                      setState(() {});
+                                    }
                                   },
                                 ),
                                 MediaButton(
                                   icon: Icons.video_library_outlined,
                                   text: "동영상",
+                                  onTap: () async {
+                                    widget.media = await ImagePicker()
+                                        .pickImage(source: ImageSource.gallery);
+                                  },
                                 ),
                                 MediaButton(
                                   icon: Icons.camera_alt_outlined,
                                   text: "카메라",
+                                  onTap: () async {
+                                    widget.media = await ImagePicker()
+                                        .pickImage(source: ImageSource.camera);
+                                    if (widget.media != null) {
+                                      setState(() {});
+                                    }
+                                  },
                                 )
                               ],
                             ),
