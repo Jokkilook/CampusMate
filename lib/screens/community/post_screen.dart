@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -5,14 +6,18 @@ import 'package:provider/provider.dart';
 import '../../modules/format_time_stamp.dart';
 import '../../provider/user_data_provider.dart';
 import '../../models/post_data.dart';
+import '../../widgets/community/comment_item.dart';
+import '../../widgets/community/comment_reply_item.dart';
 import '../../widgets/community/post_controller.dart';
 
 class PostScreen extends StatefulWidget {
   PostData postData;
+  final FirebaseFirestore firestore;
 
   PostScreen({
     Key? key,
     required this.postData,
+    required this.firestore,
   }) : super(key: key);
 
   @override
@@ -173,6 +178,7 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  // 새로고침
   Future<void> _refreshScreen() async {
     setState(() {
       _isLoading = true;
@@ -265,42 +271,62 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            radius: 18,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            widget.postData.boardType == 'General'
-                                ? widget.postData.author ?? 'null'
-                                : '익명',
-                            style: const TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            formattedTime,
-                            style: const TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Icon(
-                            Icons.account_circle_outlined,
-                            color: Colors.grey,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            widget.postData.viewCount.toString(),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
+
+                      // 작성자 닉네임 가져오기
+                      FutureBuilder<DocumentSnapshot>(
+                        future: widget.firestore
+                            .collection('users')
+                            .doc(widget.postData.authorUid)
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          if (!snapshot.hasData || snapshot.data == null) {
+                            return const Text('No Data');
+                          }
+
+                          // 문서에서 사용자 이름 가져오기
+                          String authorName = snapshot.data!['name'];
+
+                          return Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 18,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                widget.postData.boardType == 'General'
+                                    ? authorName
+                                    : '익명',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                formattedTime,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              const Icon(
+                                Icons.account_circle_outlined,
+                                color: Colors.grey,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                widget.postData.viewCount.toString(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -371,6 +397,9 @@ class _PostScreenState extends State<PostScreen> {
                           fontSize: 16,
                         ),
                       ),
+                      const SizedBox(height: 10),
+                      const CommentItem(),
+                      const CommentReplyItem(),
                     ],
                   ),
                 ),

@@ -1,52 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PostData {
-  String? boardType;
-  String? title;
+class PostCommentData {
+  String? postId;
+  String? commentId;
   String? content;
   Timestamp? timestamp;
   String? authorUid;
-  String? postId;
-  int? viewCount;
   int? likeCount;
   int? dislikeCount;
-  int? commentCount;
-  List<dynamic>? viewers;
+  int? replyCount;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
 
   Map<String, dynamic>? data;
 
-  PostData({
-    this.boardType = 'General',
-    this.title,
+  PostCommentData({
+    this.postId,
+    this.commentId,
     this.content,
     this.timestamp,
     this.authorUid,
-    this.postId,
-    this.viewCount = 0,
     this.likeCount = 0,
     this.dislikeCount = 0,
-    this.commentCount = 0,
-    this.viewers = const [],
+    this.replyCount = 0,
     this.likers = const [],
     this.dislikers = const [],
   }) {
     setData();
   }
 
-  PostData.fromJson(Map<String, dynamic> json) {
-    boardType = json['boardType'];
-    title = json['title'];
+  PostCommentData.fromJson(Map<String, dynamic> json) {
+    postId = json['postId'];
+    commentId = json['commentId'];
     content = json['content'];
     timestamp = json['timestamp'];
     authorUid = json['authorUid'];
-    postId = json['postId'];
-    viewCount = json['viewCount'];
     likeCount = json['likeCount'];
     dislikeCount = json['dislikeCount'];
-    commentCount = json['commentCount'];
-    viewers = json['viewers'] ?? [];
+    replyCount = json['replyCount'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
 
@@ -55,17 +46,14 @@ class PostData {
 
   void setData() {
     data = {
-      'boardType': boardType,
-      'title': title,
+      'postId': postId,
+      'commentId': commentId,
       'content': content,
       'timestamp': timestamp,
       'authorUid': authorUid,
-      'postId': postId,
-      'viewCount': viewCount,
       'likeCount': likeCount,
       'dislikeCount': dislikeCount,
-      'commentCount': commentCount,
-      'viewers': viewers,
+      'replyCount': replyCount,
       'likers': likers,
       'dislikers': dislikers,
     };

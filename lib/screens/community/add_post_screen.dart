@@ -118,8 +118,6 @@ class AddPostScreen extends StatelessWidget {
                   text: '작성',
                   isCompleted: true,
                   onPressed: () {
-                    postData.author =
-                        context.read<UserDataProvider>().userData.name;
                     postData.authorUid =
                         context.read<UserDataProvider>().userData.uid;
                     postData.timestamp = Timestamp.fromDate(DateTime.now());
