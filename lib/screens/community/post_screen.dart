@@ -8,9 +8,9 @@ import '../../models/post_data.dart';
 import '../../widgets/community/post_controller.dart';
 
 class PostScreen extends StatefulWidget {
-  final PostData postData;
+  PostData postData;
 
-  const PostScreen({
+  PostScreen({
     Key? key,
     required this.postData,
   }) : super(key: key);
@@ -27,6 +27,7 @@ class _PostScreenState extends State<PostScreen> {
   void initState() {
     super.initState();
     checkUserViewedPost();
+    _refreshScreen();
   }
 
   Future<void> checkUserViewedPost() async {
@@ -176,10 +177,28 @@ class _PostScreenState extends State<PostScreen> {
     setState(() {
       _isLoading = true;
     });
-    await Future.delayed(const Duration(milliseconds: 100));
-    setState(() {
-      _isLoading = false;
-    });
+
+    try {
+      // 데이터 다시 가져오기
+      DocumentSnapshot postSnapshot = await FirebaseFirestore.instance
+          .collection(widget.postData.boardType == 'General'
+              ? 'generalPosts'
+              : 'anonymousPosts')
+          .doc(widget.postData.postId)
+          .get();
+
+      // 새로운 postData로 상태 업데이트
+      setState(() {
+        widget.postData =
+            PostData.fromJson(postSnapshot.data() as Map<String, dynamic>);
+        _isLoading = false;
+      });
+    } catch (error) {
+      debugPrint('데이터 가져오기 에러: $error');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
