@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
+import 'package:video_player/video_player.dart';
 
 class ChatBubble extends StatelessWidget {
   final QueryDocumentSnapshot messageData;
@@ -173,7 +174,17 @@ class ChatBubble extends StatelessWidget {
                             color:
                                 //상대 채팅버블이면 회색, 내 채팅버블이면 초록
                                 isOther ? Colors.grey[200] : Colors.green[400],
-                            borderRadius: BorderRadius.circular(10)),
+                            borderRadius: (type != MessageType.text)
+                                ? const BorderRadius.all(Radius.circular(10))
+                                : isOther
+                                    ? const BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                        topRight: Radius.circular(10))
+                                    : const BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                        topLeft: Radius.circular(10))),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -189,10 +200,10 @@ class ChatBubble extends StatelessWidget {
                             if (type == MessageType.picture)
                               InstaImageViewer(child: cachedMediaImage),
                             if (type == MessageType.video)
-                              const Text(
-                                "이것은 비디오입니다.",
-                                style: TextStyle(fontSize: 16),
-                              ),
+                              VideoPlayer(
+                                VideoPlayerController.networkUrl(
+                                    messageData["content"]),
+                              )
                           ],
                         ),
                       ),

@@ -11,7 +11,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:video_player/video_player.dart';
 import 'widget/chat_bubble.dart';
+import 'package:path/path.dart' as path;
 
 //ignore: must_be_immutable
 class ChatRoomScreen extends StatefulWidget {
@@ -20,6 +22,8 @@ class ChatRoomScreen extends StatefulWidget {
   ChatRoomData chatRoomData;
   bool isNew;
   XFile? media;
+  MessageType type = MessageType.picture;
+  VideoPlayerController? videoPlayerController;
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -363,12 +367,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           alignment: Alignment.center,
                           children: [
                             Container(
-                              width: 40,
-                              height: 40,
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(100)),
+                              width: 50,
+                              height: 50,
+                              //margin: const EdgeInsets.all(5),
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                //borderRadius: BorderRadius.circular(100),
+                              ),
                             ),
                             const Icon(
                               Icons.add,
@@ -403,20 +408,27 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     hintText: "메세지를 입력하세요.",
                                     hintStyle: const TextStyle(fontSize: 14),
                                     contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 5)),
+                                        horizontal: 10)),
                               ),
                             )
                           : Expanded(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Image.file(
-                                      height: 100,
-                                      File(widget.media!.path),
+                                  if (widget.type == MessageType.picture)
+                                    Container(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Image.file(
+                                        height: 100,
+                                        File(widget.media!.path),
+                                      ),
                                     ),
-                                  ),
+                                  if (widget.type == MessageType.video)
+                                    Container(
+                                        padding: const EdgeInsets.all(5),
+                                        height: 100,
+                                        child: VideoPlayer(
+                                            widget.videoPlayerController!)),
                                   InkWell(
                                     onTap: () {
                                       widget.media = null;
@@ -431,7 +443,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             ),
                       //보내기 버튼
                       InkWell(
-                        borderRadius: BorderRadius.circular(100),
+                        radius: 10,
+                        highlightColor: Colors.amber,
+                        //borderRadius: BorderRadius.circular(100),
                         onTap: () {
                           prepareMedia ? null : focusNode.requestFocus();
                           //입력창이 비었거나 미디어파일 올라간 게 없으면 아무것도 하지 않음
@@ -440,8 +454,27 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           MessageData data;
                           String content;
                           if (widget.media != null) {
+                            String extension =
+                                path.extension(widget.media!.path);
+
+                            if (extension == ".jpeg" ||
+                                extension == ".jpg" ||
+                                extension == ".bmp" ||
+                                extension == ".webp" ||
+                                extension == ".png") {
+                              widget.type = MessageType.picture;
+                            }
+
+                            if (extension == ".mp4" ||
+                                extension == ".avi" ||
+                                extension == ".mkv" ||
+                                extension == ".mov" ||
+                                extension == ".wmv") {
+                              widget.type = MessageType.video;
+                            }
+
                             data = MessageData(
-                                type: MessageType.picture,
+                                type: widget.type,
                                 senderUID: auth.getUID(),
                                 content: "",
                                 readers: [],
@@ -479,12 +512,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           alignment: Alignment.center,
                           children: [
                             Container(
-                              width: 40,
-                              height: 40,
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(100)),
+                              width: 50,
+                              height: 50,
+                              //margin: const EdgeInsets.all(5),
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                //borderRadius: BorderRadius.circular(100),
+                              ),
                             ),
                             const Icon(
                               Icons.send,
@@ -523,7 +557,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   text: "동영상",
                                   onTap: () async {
                                     widget.media = await ImagePicker()
-                                        .pickImage(source: ImageSource.gallery);
+                                        .pickVideo(source: ImageSource.gallery);
+
+                                    widget.videoPlayerController =
+                                        VideoPlayerController.file(
+                                            File(widget.media!.path));
+
+                                    if (widget.media != null) {
+                                      debugPrint(path
+                                          .extension(widget.media!.path)
+                                          .toString());
+                                      setState(() {});
+                                    }
                                   },
                                 ),
                                 MediaButton(

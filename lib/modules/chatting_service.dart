@@ -11,6 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class ChattingService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -151,7 +152,7 @@ class ChattingService {
   void sendMessage({required String roomId, required MessageData data}) async {
     await firestore
         .collection("chats/$roomId/messages")
-        .doc("${DateTime.now().microsecondsSinceEpoch}")
+        .doc(const Uuid().v1())
         .set(data.toJson())
         .whenComplete(() async {
       var lastMessage = "";
