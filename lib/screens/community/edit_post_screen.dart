@@ -15,14 +15,11 @@ class EditPostScreen extends StatefulWidget {
 class _EditPostScreenState extends State<EditPostScreen> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
-  late String _selectedBoard;
-
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.postData.title);
     _contentController = TextEditingController(text: widget.postData.content);
-    _selectedBoard = widget.postData.boardType.toString();
   }
 
   @override
@@ -42,7 +39,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
           .update({
         'title': _titleController.text,
         'content': _contentController.text,
-        'boardType': _selectedBoard,
       });
       Navigator.pop(context);
     } catch (error) {
@@ -61,20 +57,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DropdownButtonFormField(
-              value: _selectedBoard,
-              items: const [
-                DropdownMenuItem(child: Text('일반'), value: 'General'),
-                DropdownMenuItem(child: Text('익명'), value: 'Anonymous'),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedBoard = value.toString();
-                });
-              },
-              decoration: const InputDecoration(labelText: '게시판 선택'),
-            ),
-            const SizedBox(height: 20),
             TextField(
               controller: _titleController,
               decoration: const InputDecoration(labelText: '제목'),

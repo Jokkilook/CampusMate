@@ -31,7 +31,6 @@ class _PostControllerState extends State<PostController> {
             TextButton(
               onPressed: () {
                 _deletePost(context);
-                Navigator.of(context).pop();
               },
               child: const Text("확인"),
             ),
@@ -49,6 +48,7 @@ class _PostControllerState extends State<PostController> {
               : 'anonymousPosts')
           .doc(widget.postData.postId)
           .delete();
+      Navigator.pop(context);
       Navigator.pop(context);
       Navigator.pop(context);
     } catch (e) {
@@ -76,7 +76,9 @@ class _PostControllerState extends State<PostController> {
                       postData: widget.postData,
                     ),
                   ),
-                );
+                ).then((_) {
+                  Navigator.pop(context);
+                });
               },
             ),
           if (widget.currentUserUid == widget.postData.authorUid)
