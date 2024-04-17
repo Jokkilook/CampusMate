@@ -60,54 +60,57 @@ class _PostControllerState extends State<PostController> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 200,
-      child: ListView(
-        children: [
-          if (widget.currentUserUid == widget.postData.authorUid)
-            ListTile(
-              title: const Text(
-                '수정하기',
-                textAlign: TextAlign.center,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditPostScreen(
-                      postData: widget.postData,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ListView(
+          children: [
+            if (widget.currentUserUid == widget.postData.authorUid)
+              ListTile(
+                title: const Text(
+                  '수정하기',
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditPostScreen(
+                        postData: widget.postData,
+                      ),
                     ),
-                  ),
-                ).then((_) {
-                  Navigator.pop(context);
-                });
-              },
-            ),
-          if (widget.currentUserUid == widget.postData.authorUid)
-            ListTile(
-              title: const Text(
-                '삭제하기',
-                textAlign: TextAlign.center,
+                  ).then((_) {
+                    Navigator.pop(context);
+                  });
+                },
               ),
-              onTap: () {
-                _showAlertDialog(context, '정말 삭제하겠습니까?');
-              },
-            ),
-          if (widget.currentUserUid != widget.postData.authorUid)
-            ListTile(
-              title: const Text(
-                '신고하기',
-                textAlign: TextAlign.center,
+            if (widget.currentUserUid == widget.postData.authorUid)
+              ListTile(
+                title: const Text(
+                  '삭제하기',
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  _showAlertDialog(context, '정말 삭제하겠습니까?');
+                },
               ),
-              onTap: () {},
-            ),
-          if (widget.currentUserUid != widget.postData.authorUid)
-            ListTile(
-              title: const Text(
-                '차단하기',
-                textAlign: TextAlign.center,
+            if (widget.currentUserUid != widget.postData.authorUid)
+              ListTile(
+                title: const Text(
+                  '신고하기',
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {},
               ),
-              onTap: () {},
-            ),
-        ],
+            if (widget.currentUserUid != widget.postData.authorUid)
+              ListTile(
+                title: const Text(
+                  '차단하기',
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {},
+              ),
+          ],
+        ),
       ),
     );
   }
