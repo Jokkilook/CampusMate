@@ -106,8 +106,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  PostScreen(postData: postData),
+                              builder: (context) => PostScreen(
+                                postData: postData,
+                                firestore: FirebaseFirestore.instance,
+                              ),
                             ),
                           ).then((_) {
                             _refreshScreen();
@@ -115,6 +117,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         },
                         child: GeneralBoardItem(
                           postData: postData,
+                          firestore: FirebaseFirestore.instance,
                         ),
                       );
                     },
@@ -160,8 +163,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  PostScreen(postData: postData),
+                              builder: (context) => PostScreen(
+                                postData: postData,
+                                firestore: FirebaseFirestore.instance,
+                              ),
                             ),
                           ).then((_) {
                             _refreshScreen();

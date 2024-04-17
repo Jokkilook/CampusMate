@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/post_data.dart';
@@ -5,10 +6,12 @@ import '../../modules/format_time_stamp.dart';
 
 class GeneralBoardItem extends StatelessWidget {
   final PostData postData;
+  final FirebaseFirestore firestore;
 
   const GeneralBoardItem({
     super.key,
     required this.postData,
+    required this.firestore,
   });
 
   @override
@@ -38,9 +41,8 @@ class GeneralBoardItem extends StatelessWidget {
                       width: 250,
                       child: Text(
                         postData.title ?? '제목 없음',
-                        overflow:
-                            TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
-                        maxLines: 1, // 텍스트가 한 줄로만 표시되도록 제한
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -52,9 +54,8 @@ class GeneralBoardItem extends StatelessWidget {
                       width: 250,
                       child: Text(
                         postData.content ?? '내용 없음',
-                        overflow:
-                            TextOverflow.ellipsis, // 텍스트가 영역을 벗어날 때 "..."으로 처리
-                        maxLines: 1, // 텍스트가 한 줄로만 표시되도록 제한
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                     const SizedBox(
@@ -62,22 +63,44 @@ class GeneralBoardItem extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        // 작성자 닉네임
-                        Text(
-                          postData.author ?? 'null',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        // 작성 시간
-                        Text(
-                          '| $formattedTime',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
+                        // 작성자 닉네임 가져오기
+                        FutureBuilder<DocumentSnapshot>(
+                          future: firestore
+                              .collection('users')
+                              .doc(postData.authorUid)
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return const Text('No Data');
+                            }
+
+                            // 문서에서 사용자 이름 가져오기
+                            String authorName = snapshot.data!['name'];
+
+                            return Row(
+                              children: [
+                                Text(
+                                  authorName,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                // 작성 시간
+                                Text(
+                                  '| $formattedTime',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
