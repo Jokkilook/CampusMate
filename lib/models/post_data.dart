@@ -14,6 +14,7 @@ class PostData {
   List<dynamic>? viewers;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
+  List<dynamic>? comments;
 
   Map<String, dynamic>? data;
 
@@ -31,6 +32,7 @@ class PostData {
     this.viewers = const [],
     this.likers = const [],
     this.dislikers = const [],
+    this.comments = const [],
   }) {
     setData();
   }
@@ -49,6 +51,7 @@ class PostData {
     viewers = json['viewers'] ?? [];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
+    comments = json['comments'] ?? [];
 
     setData();
   }
@@ -68,6 +71,7 @@ class PostData {
       'viewers': viewers,
       'likers': likers,
       'dislikers': dislikers,
+      'comments': comments,
     };
   }
 }

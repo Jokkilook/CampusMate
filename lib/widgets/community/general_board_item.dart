@@ -74,7 +74,13 @@ class GeneralBoardItem extends StatelessWidget {
                               return Text('Error: ${snapshot.error}');
                             }
                             if (!snapshot.hasData || snapshot.data == null) {
-                              return const Text('No Data');
+                              return const Text(
+                                'name',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              );
                             }
 
                             // 문서에서 사용자 이름 가져오기

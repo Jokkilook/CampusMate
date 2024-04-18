@@ -271,62 +271,66 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 18,
+                          ),
+                          const SizedBox(width: 10),
+                          // 작성자 닉네임 가져오기
+                          FutureBuilder<DocumentSnapshot>(
+                            future: widget.firestore
+                                .collection('users')
+                                .doc(widget.postData.authorUid)
+                                .get(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+                              if (!snapshot.hasData || snapshot.data == null) {
+                                return const Text(
+                                  'name',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                );
+                              }
 
-                      // 작성자 닉네임 가져오기
-                      FutureBuilder<DocumentSnapshot>(
-                        future: widget.firestore
-                            .collection('users')
-                            .doc(widget.postData.authorUid)
-                            .get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-                          if (!snapshot.hasData || snapshot.data == null) {
-                            return const Text('No Data');
-                          }
+                              // 문서에서 사용자 이름 가져오기
+                              String authorName = snapshot.data!['name'];
 
-                          // 문서에서 사용자 이름 가져오기
-                          String authorName = snapshot.data!['name'];
-
-                          return Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 18,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
+                              return Text(
                                 widget.postData.boardType == 'General'
                                     ? authorName
                                     : '익명',
                                 style: const TextStyle(
                                   fontSize: 12,
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                formattedTime,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Icon(
-                                Icons.account_circle_outlined,
-                                color: Colors.grey,
-                                size: 16,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                widget.postData.viewCount.toString(),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            formattedTime,
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          const Icon(
+                            Icons.account_circle_outlined,
+                            color: Colors.grey,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            widget.postData.viewCount.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10),
                       Text(
