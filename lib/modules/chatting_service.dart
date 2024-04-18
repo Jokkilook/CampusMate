@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -9,6 +8,7 @@ import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -182,12 +182,27 @@ class ChattingService {
   void sendMedia(
       ChatRoomData roomData, MessageData messageData, XFile media) async {
     String url = "";
-    var ref = FirebaseStorage.instance
-        .ref()
-        .child("images/${roomData.roomId}-${messageData.time}.png");
-    await ref.putFile(File(media.path)).whenComplete(() async {
-      url = await ref.getDownloadURL();
-    });
+    XFile? compMedia;
+
+    //이미지면 이미지 압축, 비디오면 비디오 압축
+    if (messageData.type == MessageType.picture) {
+      compMedia = await FlutterImageCompress.compressAndGetFile(
+          media.path, "${media.path}.jpg");
+      //파이어스토어에 올리고 url 가져오기
+      var ref = FirebaseStorage.instance.ref().child(
+          "chat/${roomData.roomId}/images/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.jpg");
+      await ref.putFile(File(compMedia!.path)).whenComplete(() async {
+        url = await ref.getDownloadURL();
+      });
+    }
+    if (messageData.type == MessageType.video) {
+      //파이어스토어에 올리고 url 가져오기
+      var ref = FirebaseStorage.instance.ref().child(
+          "chat/${roomData.roomId}/video/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.mp4");
+      await ref.putFile(File(compMedia!.path)).whenComplete(() async {
+        url = await ref.getDownloadURL();
+      });
+    }
 
     messageData.content = url;
 

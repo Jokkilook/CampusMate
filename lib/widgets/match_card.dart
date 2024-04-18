@@ -9,9 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
 
-class MatchCard extends StatelessWidget {
+class MatchCard extends StatefulWidget {
   const MatchCard({super.key});
 
+  @override
+  State<MatchCard> createState() => _MatchCardState();
+}
+
+class _MatchCardState extends State<MatchCard> {
   int matchFilter(UserData myData, UserData otherData) {
     int matchPercent = 0;
 
@@ -93,6 +98,17 @@ class MatchCard extends StatelessWidget {
         }
         if (snapshot.hasData) {
           List<QueryDocumentSnapshot> data = snapshot.data?.docs ?? [];
+          if (data.length < 2) {
+            return Center(
+                child: IconButton.filled(
+              onPressed: () {
+                setState(() {});
+              },
+              icon: const Icon(Icons.refresh),
+              color: Colors.green,
+              iconSize: MediaQuery.of(context).size.width * 0.1,
+            ));
+          }
 
           return Center(child: swipableCard(data, context));
         } else {
