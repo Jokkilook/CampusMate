@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -184,14 +182,27 @@ class ChattingService {
   void sendMedia(
       ChatRoomData roomData, MessageData messageData, XFile media) async {
     String url = "";
+    XFile? compMedia;
 
-    XFile? compMedia = await FlutterImageCompress.compressAndGetFile(
-        media.path, "${media.path}.jpg");
-    var ref = FirebaseStorage.instance.ref().child(
-        "images/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.jpg");
-    await ref.putFile(File(compMedia!.path)).whenComplete(() async {
-      url = await ref.getDownloadURL();
-    });
+    //이미지면 이미지 압축, 비디오면 비디오 압축
+    if (messageData.type == MessageType.picture) {
+      compMedia = await FlutterImageCompress.compressAndGetFile(
+          media.path, "${media.path}.jpg");
+      //파이어스토어에 올리고 url 가져오기
+      var ref = FirebaseStorage.instance.ref().child(
+          "chat/${roomData.roomId}/images/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.jpg");
+      await ref.putFile(File(compMedia!.path)).whenComplete(() async {
+        url = await ref.getDownloadURL();
+      });
+    }
+    if (messageData.type == MessageType.video) {
+      //파이어스토어에 올리고 url 가져오기
+      var ref = FirebaseStorage.instance.ref().child(
+          "chat/${roomData.roomId}/video/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.mp4");
+      await ref.putFile(File(compMedia!.path)).whenComplete(() async {
+        url = await ref.getDownloadURL();
+      });
+    }
 
     messageData.content = url;
 
