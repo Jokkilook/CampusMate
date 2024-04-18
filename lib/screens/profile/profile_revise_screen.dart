@@ -1,5 +1,4 @@
 // ignore_for_file: non_constant_identifier_names
-
 import 'dart:io';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';

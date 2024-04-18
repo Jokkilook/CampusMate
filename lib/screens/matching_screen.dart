@@ -2,14 +2,9 @@ import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/match_card.dart';
 import 'package:flutter/material.dart';
 
-class MatchingScreen extends StatefulWidget {
+class MatchingScreen extends StatelessWidget {
   const MatchingScreen({super.key});
 
-  @override
-  State<MatchingScreen> createState() => _MatchingScreenState();
-}
-
-class _MatchingScreenState extends State<MatchingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

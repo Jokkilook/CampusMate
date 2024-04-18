@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -9,6 +10,7 @@ import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -182,10 +184,12 @@ class ChattingService {
   void sendMedia(
       ChatRoomData roomData, MessageData messageData, XFile media) async {
     String url = "";
-    var ref = FirebaseStorage.instance
-        .ref()
-        .child("images/${roomData.roomId}-${messageData.time}.png");
-    await ref.putFile(File(media.path)).whenComplete(() async {
+
+    XFile? compMedia = await FlutterImageCompress.compressAndGetFile(
+        media.path, "${media.path}.jpg");
+    var ref = FirebaseStorage.instance.ref().child(
+        "images/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.jpg");
+    await ref.putFile(File(compMedia!.path)).whenComplete(() async {
       url = await ref.getDownloadURL();
     });
 

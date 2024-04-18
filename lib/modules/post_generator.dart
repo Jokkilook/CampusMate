@@ -3,7 +3,6 @@ import 'package:campusmate/models/post_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
-import 'package:random_name_generator/random_name_generator.dart';
 
 class PostGenerator {
   PostData postData = PostData();
