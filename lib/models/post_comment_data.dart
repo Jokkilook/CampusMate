@@ -11,6 +11,7 @@ class PostCommentData {
   int? replyCount;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
+  List<dynamic>? replies;
 
   Map<String, dynamic>? data;
 
@@ -25,6 +26,7 @@ class PostCommentData {
     this.replyCount = 0,
     this.likers = const [],
     this.dislikers = const [],
+    this.replies = const [],
   }) {
     setData();
   }
@@ -40,6 +42,7 @@ class PostCommentData {
     replyCount = json['replyCount'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
+    replies = json['replies'] ?? [];
 
     setData();
   }
@@ -56,6 +59,7 @@ class PostCommentData {
       'replyCount': replyCount,
       'likers': likers,
       'dislikers': dislikers,
+      'replies': replies,
     };
   }
 }
