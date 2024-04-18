@@ -21,7 +21,6 @@ class ChatListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String userUID = AuthService().getUID();
-    String senderUID = "";
     String name = "";
     String imageUrl = "";
     List<String> senderData = [];
@@ -29,7 +28,6 @@ class ChatListItem extends StatelessWidget {
 
     data.participantsInfo!.forEach((key, value) {
       if (key != userUID) {
-        senderUID = key;
         value.sort(
           (a, b) => a.length.compareTo(b.length),
         );
