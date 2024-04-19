@@ -480,6 +480,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
                               if (extension == ".mp4" ||
                                   extension == ".avi" ||
+                                  extension == ".webm" ||
                                   extension == ".mkv" ||
                                   extension == ".mov" ||
                                   extension == ".wmv") {

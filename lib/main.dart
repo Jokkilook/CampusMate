@@ -4,9 +4,19 @@ import 'package:campusmate/provider/media_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/splash_loading_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  //회전 방지 코드
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+    [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ],
+  );
+
   runApp(
     MultiProvider(
       providers: [

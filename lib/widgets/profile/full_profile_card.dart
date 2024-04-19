@@ -2,6 +2,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/profile/schedule_table.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:provider/provider.dart';
 
 class FullProfileCard extends StatelessWidget {
@@ -57,11 +58,14 @@ class FullProfileCard extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Image.network(
-                      userData.imageUrl.toString(),
-                      height: MediaQuery.of(context).size.width * 0.9,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                    InstaImageViewer(
+                      imageUrl: userData.imageUrl.toString(),
+                      child: Image.network(
+                        userData.imageUrl.toString(),
+                        height: MediaQuery.of(context).size.width * 0.9,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(
                       height: 20,

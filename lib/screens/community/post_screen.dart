@@ -10,6 +10,7 @@ import '../../widgets/community/comment_item.dart';
 import '../../widgets/community/comment_reply_item.dart';
 import '../../widgets/community/post_controller.dart';
 
+//ignore: must_be_immutable
 class PostScreen extends StatefulWidget {
   PostData postData;
   final FirebaseFirestore firestore;

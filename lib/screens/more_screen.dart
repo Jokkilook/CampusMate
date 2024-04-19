@@ -5,6 +5,7 @@ import 'package:campusmate/modules/user_generator.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
+import 'package:campusmate/screens/test_video_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -21,6 +22,7 @@ class MoreScreen extends StatefulWidget {
   File? compImage;
   double? imageSize;
   double? compSize;
+  XFile? video;
 
   @override
   State<MoreScreen> createState() => _MoreScreenState();
@@ -45,6 +47,30 @@ class _MoreScreenState extends State<MoreScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              TestVideoScreen(file: widget.video),
+                        ));
+                  },
+                  child: const Text("비디오 페이지로 이동")),
+              TextButton(
+                  onPressed: () async {
+                    widget.video = await ImagePicker()
+                        .pickVideo(source: ImageSource.gallery);
+                    setState(() {});
+                  },
+                  child: const Text("동영상 테스트 갤러리")),
+              TextButton(
+                  onPressed: () async {
+                    widget.video = await ImagePicker()
+                        .pickVideo(source: ImageSource.camera);
+                    setState(() {});
+                  },
+                  child: const Text("동영상 테스트 카메라")),
               widget.image != null
                   ? Row(
                       children: [
@@ -140,14 +166,16 @@ class _MoreScreenState extends State<MoreScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  FirebaseAuth.instance
-                      .signOut()
-                      .whenComplete(() => Navigator.pushAndRemoveUntil(
+                  FirebaseAuth.instance.signOut().whenComplete(
+                    () {
+                      Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                             builder: (context) => LoginScreen(),
                           ),
-                          (route) => false));
+                          (route) => false);
+                    },
+                  );
                 },
                 child: const Text("로그아웃"),
               ),

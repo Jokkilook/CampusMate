@@ -73,6 +73,10 @@ class ChattingService {
     ChatRoomData roomData = ChatRoomData(
         roomId: roomId,
         roomName: "새로운 채팅방",
+        leavingTime: {
+          targetUID: Timestamp.fromDate(DateTime.now()),
+          userData.uid!: Timestamp.fromDate(DateTime.now())
+        },
         participantsInfo: {
           userData.uid!: [userData.name!, userData.imageUrl!],
           targetUID: inputData
