@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:campusmate/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:provider/provider.dart';
+import 'package:video_compress/video_compress.dart';
 
 //ignore: must_be_immutable
 class MoreScreen extends StatefulWidget {
@@ -61,6 +61,21 @@ class _MoreScreenState extends State<MoreScreen> {
                   onPressed: () async {
                     widget.video = await ImagePicker()
                         .pickVideo(source: ImageSource.gallery);
+
+                    if (widget.video != null) {
+                      MediaInfo? info = await VideoCompress.compressVideo(
+                          widget.video!.path,
+                          quality: VideoQuality.LowQuality);
+
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TestVideoScreen(
+                              file: widget.video,
+                              path: info!.path,
+                            ),
+                          ));
+                    }
                     setState(() {});
                   },
                   child: const Text("동영상 테스트 갤러리")),

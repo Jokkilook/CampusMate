@@ -576,11 +576,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           .pickVideo(
                                               source: ImageSource.gallery);
 
-                                      widget.videoPlayerController =
-                                          VideoPlayerController.file(
-                                              File(widget.media!.path));
-
                                       if (widget.media != null) {
+                                        widget.videoPlayerController =
+                                            VideoPlayerController.file(
+                                                File(widget.media!.path));
                                         debugPrint(path
                                             .extension(widget.media!.path)
                                             .toString());

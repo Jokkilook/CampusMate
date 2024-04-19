@@ -12,6 +12,8 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:video_compress/video_compress.dart';
+import 'package:video_player/video_player.dart';
 
 class ChattingService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -184,6 +186,7 @@ class ChattingService {
     });
   }
 
+  //미디어파일 보내기
   void sendMedia(
       ChatRoomData roomData, MessageData messageData, XFile media) async {
     String url = "";
@@ -202,6 +205,9 @@ class ChattingService {
     }
     if (messageData.type == MessageType.video) {
       //파이어스토어에 올리고 url 가져오기
+      // MediaInfo? compMedia = await VideoCompress.compressVideo(media.path,
+      //     quality: VideoQuality.DefaultQuality);
+
       var ref = FirebaseStorage.instance.ref().child(
           "chat/${roomData.roomId}/video/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.mp4");
       await ref.putFile(File(compMedia!.path)).whenComplete(() async {
@@ -210,6 +216,7 @@ class ChattingService {
     }
 
     messageData.content = url;
+    messageData.time = Timestamp.now();
 
     sendMessage(roomId: roomData.roomId!, data: messageData);
   }
