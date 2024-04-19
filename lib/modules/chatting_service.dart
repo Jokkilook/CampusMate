@@ -105,13 +105,14 @@ class ChattingService {
 
     if (participantsList.isEmpty) {
       Navigator.pop(context);
-      await messageRef.get().then((value) async {
+      roomRef.delete();
+
+      //콜렉션 통째로 삭제가 안돼서 하나하나 삭제함
+      messageRef.get().then((value) async {
         for (var doc in value.docs) {
           await doc.reference.delete();
         }
       });
-
-      roomRef.delete();
     } else {
       roomRef.update({"participantsUid": participantsList}).whenComplete(
           () => Navigator.pop(context));

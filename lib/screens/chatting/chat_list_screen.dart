@@ -74,6 +74,12 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                 if (snapshot.hasData) {
                   var rooms = snapshot.data!.docs;
 
+                  if (rooms.isEmpty) {
+                    return const Center(
+                      child: Text("아직 채팅방이 없어요!"),
+                    );
+                  }
+
                   return ListView.builder(
                     itemCount: rooms.length,
                     itemBuilder: (context, index) {
@@ -84,17 +90,34 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                             (value as List).map((e) => e.toString()).toList();
                       });
 
-                      return ChatListItem(
-                        data: ChatRoomData(
-                            roomName: rooms[index]["roomName"],
-                            roomId: rooms[index]["roomId"],
-                            participantsUid:
-                                (rooms[index]["participantsUid"] as List)
-                                    .map((e) => e.toString())
-                                    .toList(),
-                            participantsInfo: participantsInfo,
-                            lastMessage: rooms[index]["lastMessage"],
-                            lastMessageTime: rooms[index]["lastMessageTime"]),
+                      //안읽은 메세지 수 스트림
+                      return StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection(
+                                "chats/${rooms[index]["roomId"]}/messages")
+                            .where("time",
+                                isGreaterThan: rooms[index]["leavingTime"]
+                                        [userUID] ??
+                                    Timestamp.fromDate(DateTime.now()))
+                            .snapshots(),
+                        builder: (context, messages) {
+                          var data = messages.data?.docs ?? [];
+                          int count = data.length;
+                          return ChatListItem(
+                            count: count,
+                            data: ChatRoomData(
+                                roomName: rooms[index]["roomName"],
+                                roomId: rooms[index]["roomId"],
+                                participantsUid:
+                                    (rooms[index]["participantsUid"] as List)
+                                        .map((e) => e.toString())
+                                        .toList(),
+                                participantsInfo: participantsInfo,
+                                lastMessage: rooms[index]["lastMessage"],
+                                lastMessageTime: rooms[index]
+                                    ["lastMessageTime"]),
+                          );
+                        },
                       );
                     },
                   );

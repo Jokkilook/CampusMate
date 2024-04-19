@@ -132,6 +132,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 15),
                     ElevatedButton(
                       onPressed: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         login().then((value) async {
                           if (value) {
                             await db
@@ -166,6 +167,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 15),
                     TextButton(
                       onPressed: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -7,6 +7,7 @@ class ChatRoomData {
   Map<String, List<String>>? participantsInfo;
   String? lastMessage;
   Timestamp? lastMessageTime;
+  Map<String, Timestamp>? leavingTime;
 
   ChatRoomData(
       {this.roomId,
@@ -14,7 +15,8 @@ class ChatRoomData {
       this.participantsUid,
       this.participantsInfo,
       this.lastMessage,
-      this.lastMessageTime});
+      this.lastMessageTime,
+      this.leavingTime});
 
   ChatRoomData.fromJson(Map<String, dynamic> json) {
     roomId = json["roomId"];
@@ -27,6 +29,10 @@ class ChatRoomData {
         (json["participantsUid"] as List).map((e) => e.toString()).toList();
     lastMessage = json["lastMessage"];
     lastMessageTime = json["lastMessageTime"];
+    leavingTime =
+        (json["leavingTime"] as Map<String, dynamic>).map((key, value) {
+      return MapEntry(key, (value as Timestamp));
+    });
   }
 
   Map<String, dynamic> toJson() {
@@ -36,7 +42,8 @@ class ChatRoomData {
       "participantsInfo": participantsInfo,
       "participantsUid": participantsUid,
       "lastMessage": lastMessage,
-      "lastMessageTime": lastMessageTime
+      "lastMessageTime": lastMessageTime,
+      "leavingTime": leavingTime
     };
   }
 }
