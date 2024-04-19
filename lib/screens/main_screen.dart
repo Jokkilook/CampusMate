@@ -51,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
         if (canPop) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: Colors.black.withOpacity(0.5),
+              backgroundColor: Colors.black.withOpacity(0.6),
               content: const Text("뒤로가기를 한번 더 누르면 앱이 종료됩니다."),
               duration: const Duration(milliseconds: 1500),
             ),
@@ -98,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
             selectedItemColor: Colors.green,
             unselectedItemColor: Colors.black45,
             showUnselectedLabels: false,
-            type: BottomNavigationBarType.shifting,
+            type: BottomNavigationBarType.fixed,
             currentIndex: index,
             onTap: (value) {
               index = value;
@@ -107,15 +107,15 @@ class _MainScreenState extends State<MainScreen> {
             elevation: 10,
             items: const [
               BottomNavigationBarItem(
-                  icon: Icon(Icons.search_outlined), label: "finding"),
+                  icon: Icon(Icons.search_outlined), label: "친구찾기"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.chat_bubble), label: "chatting"),
+                  icon: Icon(Icons.chat_bubble), label: "채팅"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.view_list_outlined), label: "community"),
+                  icon: Icon(Icons.view_list_outlined), label: "커뮤니티"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle), label: "myInfo"),
+                  icon: Icon(Icons.account_circle), label: "내 정보"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.more_horiz), label: "more")
+                  icon: Icon(Icons.more_horiz), label: "더보기")
             ],
           ),
         ),

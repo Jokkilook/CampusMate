@@ -16,8 +16,9 @@ class AddPostScreen extends StatelessWidget {
   String _selectedBoard = 'General';
   final PostData postData = PostData();
   late UserData userData;
+  final int currentIndex;
 
-  AddPostScreen({super.key});
+  AddPostScreen({super.key, required this.currentIndex});
 
   Future<void> _addPost(BuildContext context) async {
     try {
@@ -67,6 +68,7 @@ class AddPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (currentIndex != 0) _selectedBoard = 'Anonymous';
     return Hero(
       tag: "addpost",
       child: Scaffold(

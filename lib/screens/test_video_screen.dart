@@ -39,6 +39,9 @@ class _TestVideoScreenState extends State<TestVideoScreen> {
       [],
     );
     super.initState();
+
+    Future.delayed(const Duration(seconds: 2))
+        .then((value) => widget.isShow = false);
   }
 
   @override
@@ -117,7 +120,7 @@ class _TestVideoScreenState extends State<TestVideoScreen> {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 0,
+                  bottom: 40,
                   //페이드인&아웃 애니메이션 추가
                   child: AnimatedOpacity(
                       opacity: widget.isShow ? 1 : 0,
@@ -136,7 +139,7 @@ class _TestVideoScreenState extends State<TestVideoScreen> {
                                           backgroundColor:
                                               Colors.white.withOpacity(0.1),
                                           playedColor:
-                                              Colors.green.withOpacity(0.7)),
+                                              Colors.green.withOpacity(0.9)),
                                       allowScrubbing: true),
                                 )
                               : Container(

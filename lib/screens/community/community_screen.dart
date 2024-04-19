@@ -17,10 +17,20 @@ class CommunityScreen extends StatefulWidget {
   State<CommunityScreen> createState() => _CommunityScreenState();
 }
 
-class _CommunityScreenState extends State<CommunityScreen> {
+class _CommunityScreenState extends State<CommunityScreen>
+    with SingleTickerProviderStateMixin {
   Future<void> _refreshScreen() async {
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {});
+  }
+
+  late TabController tabController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -51,6 +61,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
           ],
           bottom: TabBar(
+            controller: tabController,
             isScrollable: false,
             indicatorColor: primaryColor,
             indicatorWeight: 4,
@@ -188,7 +199,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AddPostScreen()),
+              MaterialPageRoute(
+                  builder: (_) =>
+                      AddPostScreen(currentIndex: tabController.index)),
             ).then((_) {
               // AddPostScreen이 닫힌 후에 CommunityScreen을 새로고침
               _refreshScreen();
