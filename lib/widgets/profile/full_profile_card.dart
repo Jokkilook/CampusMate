@@ -1,6 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/widgets/ad_area.dart';
-import 'package:campusmate/widgets/schedule_table.dart';
+import 'package:campusmate/widgets/profile/schedule_table.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

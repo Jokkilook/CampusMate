@@ -2,7 +2,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
-import 'package:campusmate/widgets/schedule_table.dart';
+import 'package:campusmate/widgets/profile/schedule_table.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingC extends StatefulWidget {

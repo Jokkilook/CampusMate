@@ -1,7 +1,7 @@
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_list_screen.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
-import 'package:campusmate/screens/matching_screen.dart';
+import 'package:campusmate/screens/matching/matching_screen.dart';
 import 'package:campusmate/screens/more_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:campusmate/widgets/fadein_indexedstack.dart';

@@ -1,5 +1,5 @@
 import 'package:campusmate/widgets/ad_area.dart';
-import 'package:campusmate/widgets/match_card.dart';
+import 'package:campusmate/widgets/matching/match_card.dart';
 import 'package:flutter/material.dart';
 
 class MatchingScreen extends StatelessWidget {
