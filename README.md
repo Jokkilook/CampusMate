@@ -1,10 +1,10 @@
 # campusmate
 
-A new Flutter project.
+졸업 프로젝트
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+같은 대학교의 친구를 찾기 위한 어플!
 
 A few resources to get you started if this is your first Flutter project:
 
