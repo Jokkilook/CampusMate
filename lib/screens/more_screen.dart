@@ -4,7 +4,7 @@ import 'package:campusmate/modules/user_generator.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/test_video_screen.dart';
+import 'package:campusmate/screens/video_player_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -53,7 +53,7 @@ class _MoreScreenState extends State<MoreScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              TestVideoScreen(file: widget.video),
+                              VideoPlayerScreen(file: widget.video),
                         ));
                   },
                   child: const Text("비디오 페이지로 이동")),
@@ -70,7 +70,7 @@ class _MoreScreenState extends State<MoreScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TestVideoScreen(
+                            builder: (context) => VideoPlayerScreen(
                               file: widget.video,
                               path: info!.path,
                             ),

@@ -18,7 +18,7 @@ class ChattingService {
   FirebaseStorage firestorage = FirebaseStorage.instance;
 
   //1:1채팅방 ID 생성
-  String makeRoomId(String ownerUID, String targetUID) {
+  String makeOTORoomId(String ownerUID, String targetUID) {
     //문자열 순서에 따라 정렬한 후 '_'로 연결 (누가 먼저 시작해도 정렬 후 생성하기 때문에 중복되지 않음)
     List<String> list = [ownerUID, targetUID];
     list.sort();
@@ -30,13 +30,15 @@ class ChattingService {
   void startChatting(
       BuildContext context, String ownerUID, String targetUID) async {
     //1:1 채팅방ID 구하기
-    String roomId = makeRoomId(ownerUID, targetUID);
+    String roomId = makeOTORoomId(ownerUID, targetUID);
     //원래 채팅방이 있는지 조회
     await firestore.collection("chats").doc(roomId).get().then((value) {
       //채팅방이 있으면 그 채팅방으로 화면 이동
       if (value.exists) {
         var json = value.data() as Map<String, dynamic>;
         ChatRoomData data = ChatRoomData.fromJson(json);
+
+        //이미 있는 채팅방 참여자에 UID가 없으면 추가
         if (!data.participantsUid!.contains(ownerUID)) {
           data.participantsUid!.add(ownerUID);
           firestore
@@ -44,26 +46,25 @@ class ChattingService {
               .doc(roomId)
               .update({"participantsUid": data.participantsUid});
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatRoomScreen(chatRoomData: data),
-          ),
-        );
+
+        //채팅방 입장
+        enterRoom(context, data);
         return;
       } else {
-        createRoom(context, targetUID);
+        //기존 채팅방이 없으면 생성
+        createOTORoom(context, targetUID);
         return;
       }
     });
   }
 
-  //채팅방 생성
-  void createRoom(BuildContext context, String targetUID) async {
+  //1:1 채팅방 생성
+  void createOTORoom(BuildContext context, String targetUID) async {
     UserData userData = context.read<UserDataProvider>().userData;
     //1:1 채팅방ID 구하기
-    String roomId = makeRoomId(userData.uid!, targetUID);
+    String roomId = makeOTORoomId(userData.uid!, targetUID);
 
+    //채팅방 데이터 설정
     var data = await getUserProfile(targetUID);
     var doc = data.data() as Map<String, dynamic>;
     String targetName = doc["name"];
@@ -84,8 +85,10 @@ class ChattingService {
         participantsUid: [userData.uid!, targetUID],
         lastMessage: "");
 
+    //파이어스토어에 채팅방 데이터 추가
     await firestore.collection("chats").doc(roomId).set(roomData.toJson());
 
+    //설정된 데이터로 채팅방 입장
     enterRoom(context, roomData);
   }
 
@@ -100,16 +103,19 @@ class ChattingService {
 
   //채팅방 나가기
   void leaveRoom(BuildContext context, String roomId, String userUID) async {
+    //파이어스토어에서 채팅방 데이터 불러오기
     var roomRef = firestore.collection("chats").doc(roomId);
     var messageRef = firestore.collection("chats/$roomId/messages");
     DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
 
+    //채팅방 참여자 목록에서 UID 제거하기
     List participantsList = data.data()!["participantsUid"];
     participantsList.remove(userUID);
 
-    //다 나가서 참여자가 없으면 방 데이터 모두 삭제
+    //다 나가서 참여자가 없으면 방 데이터 모두 삭제 후 화면 나가기
     if (participantsList.isEmpty) {
       roomRef.delete();
+      //다 삭제하고 나가면 오래걸리니까 일단 방 데이터만 지워서 채팅방 리스트에 뜨지 않게 한 다음 나머지 데이터 삭제
       Navigator.pop(context);
 
       //콜렉션 통째로 삭제가 안돼서 하나하나 삭제함
@@ -119,11 +125,14 @@ class ChattingService {
         }
       });
 
+      //파이어 스토어의 데이터 삭제 (이것도 한번에 삭제가 안돼서 하나하나 조회하고 삭제함)
       var imageRef = firestorage.ref().child("chat/$roomId/images");
       var videoRef = firestorage.ref().child("chat/$roomId/videos");
+      var thumbRef = firestorage.ref().child("chat/$roomId/thumbnails");
 
       ListResult imageResult = await imageRef.listAll();
       ListResult videoResult = await videoRef.listAll();
+      ListResult thumbResult = await thumbRef.listAll();
 
       for (Reference ref in imageResult.items) {
         ref.delete();
@@ -132,7 +141,12 @@ class ChattingService {
       for (Reference ref in videoResult.items) {
         ref.delete();
       }
+
+      for (Reference ref in thumbResult.items) {
+        ref.delete();
+      }
     } else {
+      //아니면 참여자 명단에서 내 UID만 쏙 지운 리스트를 파이어스토어에 업데이트 하고 화면 나가기
       roomRef.update({"participantsUid": participantsList}).whenComplete(
           () => Navigator.pop(context));
     }
@@ -186,7 +200,7 @@ class ChattingService {
           lastMessage = "사진";
           break;
         case MessageType.video:
-          lastMessage = "영상";
+          lastMessage = "동영상";
           break;
         default:
           lastMessage = data.content!;
@@ -217,7 +231,7 @@ class ChattingService {
           media.path, "${media.path}.jpg");
       //파이어스토어에 올리고 url 가져오기
       var ref = firestorage.ref().child(
-          "chat/${roomData.roomId}/images/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.jpg");
+          "chat/${roomData.roomId}/images/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}.jpg");
       await ref.putFile(File(compMedia!.path)).whenComplete(() async {
         url = await ref.getDownloadURL();
       });
@@ -228,7 +242,7 @@ class ChattingService {
           thumbnail!.path, "${thumbnail.path}.jpg");
 
       var thumbRef = firestorage.ref().child(
-          "chat/${roomData.roomId}/thumbnails/${roomData.roomId}-thumbnail-${messageData.time!.millisecondsSinceEpoch}.jpg");
+          "chat/${roomData.roomId}/thumbnails/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}-thumbnail-.jpg");
       await thumbRef.putFile(File(compThumbnail!.path)).whenComplete(() async {
         thumbUrl = await thumbRef.getDownloadURL();
       });
@@ -240,13 +254,16 @@ class ChattingService {
 
       //파이어스토어에 올리고 url 가져오기
       var ref = firestorage.ref().child(
-          "chat/${roomData.roomId}/videos/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.mp4");
+          "chat/${roomData.roomId}/videos/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}.mp4");
       await ref.putFile(mediaInfo!.file!).whenComplete(() async {
         url = await ref.getDownloadURL();
       });
     }
 
-    messageData.content = [thumbUrl.isEmpty ? null : thumbUrl, url].join(":-:");
+    thumbUrl.isEmpty
+        ? messageData.content = url
+        : messageData.content = [thumbUrl, url].join(":-:");
+
     messageData.time = Timestamp.now();
 
     sendMessage(roomId: roomData.roomId!, data: messageData);

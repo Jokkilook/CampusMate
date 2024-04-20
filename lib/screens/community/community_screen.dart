@@ -24,17 +24,9 @@ class _CommunityScreenState extends State<CommunityScreen>
     setState(() {});
   }
 
-  late TabController tabController;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    tabController = TabController(length: 2, vsync: this);
-  }
-
   @override
   Widget build(BuildContext context) {
+    int currentIndex = 0;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -61,7 +53,9 @@ class _CommunityScreenState extends State<CommunityScreen>
             ),
           ],
           bottom: TabBar(
-            controller: tabController,
+            onTap: (value) {
+              currentIndex = value;
+            },
             isScrollable: false,
             indicatorColor: primaryColor,
             indicatorWeight: 4,
@@ -200,8 +194,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) =>
-                      AddPostScreen(currentIndex: tabController.index)),
+                  builder: (_) => AddPostScreen(currentIndex: currentIndex)),
             ).then((_) {
               // AddPostScreen이 닫힌 후에 CommunityScreen을 새로고침
               _refreshScreen();

@@ -7,7 +7,7 @@ import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
-import 'package:campusmate/screens/test_video_screen.dart';
+import 'package:campusmate/screens/video_player_screen.dart';
 import 'package:campusmate/widgets/chatting/chat_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -454,7 +454,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  TestVideoScreen(
+                                                  VideoPlayerScreen(
                                                       file: widget.media),
                                             ),
                                           );
@@ -542,18 +542,26 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   readers: [],
                                   time: Timestamp.fromDate(DateTime.now()));
 
+                              var text = "데이터";
+                              if (widget.type == MessageType.video) {
+                                text = "동영상";
+                              }
+                              if (widget.type == MessageType.picture) {
+                                text = "사진";
+                              }
+
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  margin: EdgeInsets.only(
+                                SnackBar(
+                                  margin: const EdgeInsets.only(
                                       bottom: 60, left: 10, right: 10),
                                   behavior: SnackBarBehavior.floating,
-                                  duration: Duration(days: 1),
+                                  duration: const Duration(days: 1),
                                   content: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Expanded(child: Text("사진 전송 중...")),
-                                      SizedBox(
+                                      Expanded(child: Text("$text 전송 중...")),
+                                      const SizedBox(
                                           width: 20,
                                           height: 20,
                                           child: CircularProgressIndicator())
@@ -712,7 +720,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                     const Divider(height: 10),
                                                     InkWell(
                                                       onTap: () async {
-                                                        Navigator.pop(context);
                                                         widget.media =
                                                             await ImagePicker()
                                                                 .pickVideo(
@@ -721,8 +728,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
                                                         if (widget.media !=
                                                             null) {
+                                                          widget.thumbnail =
+                                                              await VideoCompress
+                                                                  .getFileThumbnail(
+                                                                      widget
+                                                                          .media!
+                                                                          .path);
                                                           widget.type =
                                                               MessageType.video;
+                                                          Navigator.pop(
+                                                              context);
                                                           setState(() {});
                                                         }
                                                       },

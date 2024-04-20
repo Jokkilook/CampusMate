@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
-import 'package:campusmate/screens/test_video_screen.dart';
+import 'package:campusmate/screens/video_player_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
@@ -216,7 +216,7 @@ class ChatBubble extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          TestVideoScreen(url: videoUrl),
+                                          VideoPlayerScreen(url: videoUrl),
                                     ),
                                   );
                                 },
