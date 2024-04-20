@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
+import 'package:campusmate/screens/test_video_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
-import 'package:video_player/video_player.dart';
 
 class ChatBubble extends StatelessWidget {
   final QueryDocumentSnapshot messageData;
@@ -43,6 +43,13 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var thumbUrl = "";
+    var videoUrl = "";
+    if (type == MessageType.video) {
+      List<String> list = (messageData["content"] as String).split(":-:");
+      thumbUrl = list[0];
+      videoUrl = list[1];
+    }
     CachedNetworkImage cachedProfileImage = CachedNetworkImage(
       imageUrl: profileImageUrl!,
       placeholder: (context, url) {
@@ -61,7 +68,7 @@ class ChatBubble extends StatelessWidget {
     );
 
     CachedNetworkImage cachedMediaImage = CachedNetworkImage(
-      imageUrl: messageData["content"]!,
+      imageUrl: type == MessageType.video ? thumbUrl : messageData["content"]!,
       placeholder: (context, url) {
         return Container(
           color: Colors.grey[300],
@@ -188,6 +195,7 @@ class ChatBubble extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            //채팅이 텍스트일 때 보여줄 곳
                             if (type == MessageType.text)
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -197,13 +205,40 @@ class ChatBubble extends StatelessWidget {
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ),
+                            //채팅이 사진일 때 보여줄 곳
                             if (type == MessageType.picture)
                               InstaImageViewer(child: cachedMediaImage),
+                            //채팅이 동영상일 때 보여줄 곳
                             if (type == MessageType.video)
-                              VideoPlayer(
-                                VideoPlayerController.networkUrl(
-                                    messageData["content"]),
-                              )
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          TestVideoScreen(url: videoUrl),
+                                    ),
+                                  );
+                                },
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    cachedMediaImage,
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: Container(
+                                        height: 30,
+                                        width: 30,
+                                        color: Colors.black.withOpacity(0.4),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.white,
+                                    )
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
                       ),

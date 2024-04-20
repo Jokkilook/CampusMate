@@ -8,12 +8,13 @@ import 'package:video_player/video_player.dart';
 
 //ignore: must_be_immutable
 class TestVideoScreen extends StatefulWidget {
-  TestVideoScreen({super.key, required this.file, this.path});
+  TestVideoScreen({super.key, this.file, this.path, this.url});
   final XFile? file;
   VideoPlayerController? controller;
   bool isPortrait = true;
   bool isShow = true;
   String? path;
+  String? url;
 
   @override
   State<TestVideoScreen> createState() => _TestVideoScreenState();
@@ -22,7 +23,6 @@ class TestVideoScreen extends StatefulWidget {
 class _TestVideoScreenState extends State<TestVideoScreen> {
   @override
   void initState() {
-    print(widget.path);
     if (widget.path != null) {
       widget.controller = VideoPlayerController.file(File(widget.path!))
         ..addListener(() {
@@ -35,6 +35,31 @@ class _TestVideoScreenState extends State<TestVideoScreen> {
           widget.controller!.play();
           setState(() {});
         });
+    } else if (widget.file != null) {
+      widget.controller = VideoPlayerController.file(File(widget.file!.path))
+        ..addListener(() {
+          if (widget.controller!.value.isCompleted) {
+            widget.isShow = true;
+          }
+          setState(() {});
+        })
+        ..initialize().then((value) {
+          widget.controller!.play();
+          setState(() {});
+        });
+    } else if (widget.url != null) {
+      widget.controller =
+          VideoPlayerController.networkUrl(Uri.parse(widget.url!))
+            ..addListener(() {
+              if (widget.controller!.value.isCompleted) {
+                widget.isShow = true;
+              }
+              setState(() {});
+            })
+            ..initialize().then((value) {
+              widget.controller!.play();
+              setState(() {});
+            });
     } else {
       widget.controller = VideoPlayerController.networkUrl(Uri.parse(
           "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/20220224_171953.mp4?alt=media&token=58eec2f4-6b68-4666-b6e9-b692c44aab4b"))
@@ -90,8 +115,8 @@ class _TestVideoScreenState extends State<TestVideoScreen> {
   String videoTimeShower(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
-    final minutes = twoDigits(duration.inMinutes);
-    final seconds = twoDigits(duration.inSeconds);
+    final minutes = twoDigits(duration.inMinutes % 60);
+    final seconds = twoDigits(duration.inSeconds % 60);
 
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }

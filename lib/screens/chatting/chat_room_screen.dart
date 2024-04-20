@@ -7,11 +7,14 @@ import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
+import 'package:campusmate/screens/test_video_screen.dart';
 import 'package:campusmate/widgets/chatting/chat_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as path;
 
@@ -22,7 +25,8 @@ class ChatRoomScreen extends StatefulWidget {
   ChatRoomData chatRoomData;
   bool isNew;
   XFile? media;
-  MessageType type = MessageType.picture;
+  File? thumbnail;
+  MessageType type = MessageType.text;
   VideoPlayerController? videoPlayerController;
 
   @override
@@ -44,6 +48,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   String? userUID;
   bool prepareMedia = false;
+  bool isCompletelyLeaving = false;
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -78,12 +83,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     return PopScope(
       //스크린이 팝 될 때 실행될 이벤트 ( 채팅방 화면을 나간 시간 저장 )
       onPopInvoked: (didPop) async {
-        await chat.firestore
-            .collection("chats")
-            .doc(widget.chatRoomData.roomId)
-            .set({
-          "leavingTime": {userUID: Timestamp.fromDate(DateTime.now())}
-        }, SetOptions(merge: true));
+        if (!isCompletelyLeaving) {
+          await chat.firestore
+              .collection("chats")
+              .doc(widget.chatRoomData.roomId)
+              .set({
+            "leavingTime": {userUID: Timestamp.fromDate(DateTime.now())}
+          }, SetOptions(merge: true));
+        }
       },
       child: Scaffold(
         body: Scaffold(
@@ -167,10 +174,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(
-                          child: Builder(builder: (context) {
+                          child: Builder(builder: (_) {
                             return InkWell(
                               onTap: () async {
-                                Scaffold.of(context).closeEndDrawer();
+                                isCompletelyLeaving = true;
+                                Scaffold.of(_).closeEndDrawer();
                                 chat.leaveRoom(context,
                                     widget.chatRoomData.roomId!, userUID!);
                               },
@@ -424,10 +432,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                               horizontal: 10)),
                                 ),
                               )
+                            //미디어 표시 창
                             : Expanded(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
+                                    //사진이 올라가 있을 때 보여줄 필드
                                     if (widget.type == MessageType.picture)
                                       Container(
                                         padding: const EdgeInsets.all(5),
@@ -436,20 +446,53 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           File(widget.media!.path),
                                         ),
                                       ),
+                                    //비디오가 올라가 있을 때 보여줄 필드
                                     if (widget.type == MessageType.video)
-                                      Container(
-                                          padding: const EdgeInsets.all(5),
-                                          height: 100,
-                                          child: VideoPlayer(
-                                              widget.videoPlayerController!)),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TestVideoScreen(
+                                                      file: widget.media),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                            padding: const EdgeInsets.all(5),
+                                            height: 100,
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Image.file(
+                                                  File(widget.thumbnail!.path),
+                                                ),
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                  child: Container(
+                                                    height: 30,
+                                                    width: 30,
+                                                    color: Colors.black
+                                                        .withOpacity(0.4),
+                                                  ),
+                                                ),
+                                                const Icon(
+                                                  Icons.play_arrow,
+                                                  color: Colors.white,
+                                                )
+                                              ],
+                                            )),
+                                      ),
                                     InkWell(
                                       onTap: () {
                                         widget.media = null;
+                                        widget.type = MessageType.text;
                                         setState(() {});
                                       },
-                                      child: Container(
-                                        child: const Icon(Icons.cancel),
-                                      ),
+                                      child: const Icon(Icons.cancel),
                                     )
                                   ],
                                 ),
@@ -459,13 +502,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           radius: 10,
                           highlightColor: Colors.amber,
                           //borderRadius: BorderRadius.circular(100),
-                          onTap: () {
+                          onTap: () async {
                             prepareMedia ? null : focusNode.requestFocus();
                             //입력창이 비었거나 미디어파일 올라간 게 없으면 아무것도 하지 않음
                             if (chatController.value.text == "" &&
                                 widget.media == null) return;
+
+                            //입력창에 메세지가 있거나 미디어 파일이 있으면 메세지 데이터 준비
                             MessageData data;
                             String content;
+
+                            //미디어가 비어있지 않으면 확장자 구별 후 메세지 타입 지정
                             if (widget.media != null) {
                               String extension =
                                   path.extension(widget.media!.path);
@@ -487,6 +534,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 widget.type = MessageType.video;
                               }
 
+                              //미디어 전송 데이터 준비
                               data = MessageData(
                                   type: widget.type,
                                   senderUID: auth.getUID(),
@@ -494,15 +542,44 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   readers: [],
                                   time: Timestamp.fromDate(DateTime.now()));
 
-                              chat.sendMedia(
-                                  widget.chatRoomData, data, widget.media!);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  margin: EdgeInsets.only(
+                                      bottom: 60, left: 10, right: 10),
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: Duration(days: 1),
+                                  content: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(child: Text("사진 전송 중...")),
+                                      SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator())
+                                    ],
+                                  ),
+                                ),
+                              );
 
+                              await chat.sendMedia(
+                                  roomData: widget.chatRoomData,
+                                  messageData: data,
+                                  media: widget.media!,
+                                  thumbnail: widget.thumbnail);
+
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar(
+                                  reason: SnackBarClosedReason.remove);
+
+                              //전송 완료 후 미디어 변수 비우기
                               widget.media = null;
                               setState(() {});
                             } else {
                               //미디어 파일이 아니면 텍스트 전송
                               content = chatController.value.text;
                               chatController.value = TextEditingValue.empty;
+
+                              //텍스트 메세지 데이터 준비
                               data = MessageData(
                                   type: MessageType.text,
                                   senderUID: auth.getUID(),
@@ -510,16 +587,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   readers: [],
                                   time: Timestamp.fromDate(DateTime.now()));
 
-                              chat.sendMessage(
+                              await chat.sendMessage(
                                   roomId: widget.chatRoomData.roomId!,
                                   data: data);
-                              if (scrollController.hasClients) {
-                                scrollController.animateTo(
-                                  0,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              }
+                            }
+
+                            //전송 후 맨 아래로 이동
+                            if (scrollController.hasClients) {
+                              scrollController.animateTo(
+                                0,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
                             }
                           },
                           child: Stack(
@@ -564,6 +643,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           .pickImage(
                                               source: ImageSource.gallery);
                                       if (widget.media != null) {
+                                        widget.type = MessageType.picture;
                                         setState(() {});
                                       }
                                     },
@@ -577,12 +657,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                               source: ImageSource.gallery);
 
                                       if (widget.media != null) {
-                                        widget.videoPlayerController =
-                                            VideoPlayerController.file(
-                                                File(widget.media!.path));
-                                        debugPrint(path
-                                            .extension(widget.media!.path)
-                                            .toString());
+                                        widget.thumbnail = await VideoCompress
+                                            .getFileThumbnail(
+                                                widget.media!.path);
+                                        widget.type = MessageType.video;
                                         setState(() {});
                                       }
                                     },
@@ -591,12 +669,82 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     icon: Icons.camera_alt_outlined,
                                     text: "카메라",
                                     onTap: () async {
-                                      widget.media = await ImagePicker()
-                                          .pickImage(
-                                              source: ImageSource.camera);
-                                      if (widget.media != null) {
-                                        setState(() {});
-                                      }
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            insetPadding:
+                                                const EdgeInsets.all(10),
+                                            child: IntrinsicHeight(
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                width: 100,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        Navigator.pop(context);
+                                                        widget.media =
+                                                            await ImagePicker()
+                                                                .pickImage(
+                                                                    source: ImageSource
+                                                                        .camera);
+                                                        if (widget.media !=
+                                                            null) {
+                                                          widget.type =
+                                                              MessageType
+                                                                  .picture;
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      child: const Text(
+                                                        "사진",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    const Divider(height: 10),
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        Navigator.pop(context);
+                                                        widget.media =
+                                                            await ImagePicker()
+                                                                .pickVideo(
+                                                                    source: ImageSource
+                                                                        .camera);
+
+                                                        if (widget.media !=
+                                                            null) {
+                                                          widget.type =
+                                                              MessageType.video;
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      child: const Text(
+                                                        "동영상",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                      // widget.media = await ImagePicker()
+                                      //     .pickImage(
+                                      //         source: ImageSource.camera);
+                                      // if (widget.media != null) {
+                                      //   setState(() {});
+                                      // }
                                     },
                                   )
                                 ],

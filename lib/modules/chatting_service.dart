@@ -9,11 +9,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
-import 'package:video_player/video_player.dart';
 
 class ChattingService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -109,9 +107,10 @@ class ChattingService {
     List participantsList = data.data()!["participantsUid"];
     participantsList.remove(userUID);
 
+    //다 나가서 참여자가 없으면 방 데이터 모두 삭제
     if (participantsList.isEmpty) {
-      Navigator.pop(context);
       roomRef.delete();
+      Navigator.pop(context);
 
       //콜렉션 통째로 삭제가 안돼서 하나하나 삭제함
       messageRef.get().then((value) async {
@@ -119,6 +118,20 @@ class ChattingService {
           await doc.reference.delete();
         }
       });
+
+      var imageRef = firestorage.ref().child("chat/$roomId/images");
+      var videoRef = firestorage.ref().child("chat/$roomId/videos");
+
+      ListResult imageResult = await imageRef.listAll();
+      ListResult videoResult = await videoRef.listAll();
+
+      for (Reference ref in imageResult.items) {
+        ref.delete();
+      }
+
+      for (Reference ref in videoResult.items) {
+        ref.delete();
+      }
     } else {
       roomRef.update({"participantsUid": participantsList}).whenComplete(
           () => Navigator.pop(context));
@@ -156,7 +169,8 @@ class ChattingService {
   }
 
   //메세지 보내기
-  void sendMessage({required String roomId, required MessageData data}) async {
+  Future<void> sendMessage(
+      {required String roomId, required MessageData data}) async {
     await firestore
         .collection("chats/$roomId/messages")
         .doc(const Uuid().v1())
@@ -187,35 +201,52 @@ class ChattingService {
   }
 
   //미디어파일 보내기
-  void sendMedia(
-      ChatRoomData roomData, MessageData messageData, XFile media) async {
+  Future<void> sendMedia(
+      {required ChatRoomData roomData,
+      required MessageData messageData,
+      required XFile media,
+      File? thumbnail}) async {
+    String thumbUrl = "";
     String url = "";
     XFile? compMedia;
 
     //이미지면 이미지 압축, 비디오면 비디오 압축
     if (messageData.type == MessageType.picture) {
+      //이미지 압축
       compMedia = await FlutterImageCompress.compressAndGetFile(
           media.path, "${media.path}.jpg");
       //파이어스토어에 올리고 url 가져오기
-      var ref = FirebaseStorage.instance.ref().child(
+      var ref = firestorage.ref().child(
           "chat/${roomData.roomId}/images/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.jpg");
       await ref.putFile(File(compMedia!.path)).whenComplete(() async {
         url = await ref.getDownloadURL();
       });
     }
     if (messageData.type == MessageType.video) {
-      //파이어스토어에 올리고 url 가져오기
-      // MediaInfo? compMedia = await VideoCompress.compressVideo(media.path,
-      //     quality: VideoQuality.DefaultQuality);
+      //동영상 썸네일 확보 후 파이어스토어에 업로드 후 url 가져오기
+      XFile? compThumbnail = await FlutterImageCompress.compressAndGetFile(
+          thumbnail!.path, "${thumbnail.path}.jpg");
 
-      var ref = FirebaseStorage.instance.ref().child(
-          "chat/${roomData.roomId}/video/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.mp4");
-      await ref.putFile(File(compMedia!.path)).whenComplete(() async {
+      var thumbRef = firestorage.ref().child(
+          "chat/${roomData.roomId}/thumbnails/${roomData.roomId}-thumbnail-${messageData.time!.millisecondsSinceEpoch}.jpg");
+      await thumbRef.putFile(File(compThumbnail!.path)).whenComplete(() async {
+        thumbUrl = await thumbRef.getDownloadURL();
+      });
+      //동영상 압축
+      var mediaInfo = await VideoCompress.compressVideo(
+        media.path,
+        quality: VideoQuality.DefaultQuality,
+      );
+
+      //파이어스토어에 올리고 url 가져오기
+      var ref = firestorage.ref().child(
+          "chat/${roomData.roomId}/videos/${roomData.roomId}-${messageData.time!.millisecondsSinceEpoch}.mp4");
+      await ref.putFile(mediaInfo!.file!).whenComplete(() async {
         url = await ref.getDownloadURL();
       });
     }
 
-    messageData.content = url;
+    messageData.content = [thumbUrl.isEmpty ? null : thumbUrl, url].join(":-:");
     messageData.time = Timestamp.now();
 
     sendMessage(roomId: roomData.roomId!, data: messageData);
