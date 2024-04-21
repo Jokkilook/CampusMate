@@ -7,8 +7,6 @@ class PostReplyData {
   String? content;
   Timestamp? timestamp;
   String? authorUid;
-  int? likeCount;
-  int? dislikeCount;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
 
@@ -21,8 +19,6 @@ class PostReplyData {
     this.content,
     this.timestamp,
     this.authorUid,
-    this.likeCount = 0,
-    this.dislikeCount = 0,
     this.likers = const [],
     this.dislikers = const [],
   }) {
@@ -36,8 +32,6 @@ class PostReplyData {
     content = json['content'];
     timestamp = json['timestamp'];
     authorUid = json['authorUid'];
-    likeCount = json['likeCount'];
-    dislikeCount = json['dislikeCount'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
     setData();
@@ -51,8 +45,6 @@ class PostReplyData {
       'content': content,
       'timestamp': timestamp,
       'authorUid': authorUid,
-      'likeCount': likeCount,
-      'dislikeCount': dislikeCount,
       'likers': likers,
       'dislikers': dislikers,
     };

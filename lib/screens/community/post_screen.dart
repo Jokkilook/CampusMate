@@ -67,7 +67,6 @@ class _PostScreenState extends State<PostScreen> {
         setState(() {
           widget.postData.viewers ??= [];
           widget.postData.viewers!.add(currentUserUid);
-          widget.postData.viewCount = (widget.postData.viewCount ?? 0) + 1;
         });
       } else {
         debugPrint('이미 조회한 사용자입니다.');
@@ -96,7 +95,6 @@ class _PostScreenState extends State<PostScreen> {
         });
         setState(() {
           widget.postData.likers!.remove(currentUserUid);
-          widget.postData.likeCount = (widget.postData.likeCount ?? 0) - 1;
         });
       } else {
         if (userDisliked) {
@@ -111,8 +109,6 @@ class _PostScreenState extends State<PostScreen> {
           });
           setState(() {
             widget.postData.dislikers!.remove(currentUserUid);
-            widget.postData.dislikeCount =
-                (widget.postData.dislikeCount ?? 0) - 1;
           });
         }
         await FirebaseFirestore.instance
@@ -126,7 +122,6 @@ class _PostScreenState extends State<PostScreen> {
         });
         setState(() {
           widget.postData.likers!.add(currentUserUid);
-          widget.postData.likeCount = (widget.postData.likeCount ?? 0) + 1;
         });
       }
     } else {
@@ -142,8 +137,6 @@ class _PostScreenState extends State<PostScreen> {
         });
         setState(() {
           widget.postData.dislikers!.remove(currentUserUid);
-          widget.postData.dislikeCount =
-              (widget.postData.dislikeCount ?? 0) - 1;
         });
       } else {
         if (userLiked) {
@@ -158,7 +151,6 @@ class _PostScreenState extends State<PostScreen> {
           });
           setState(() {
             widget.postData.likers!.remove(currentUserUid);
-            widget.postData.likeCount = (widget.postData.likeCount ?? 0) - 1;
           });
         }
         await FirebaseFirestore.instance
@@ -172,8 +164,6 @@ class _PostScreenState extends State<PostScreen> {
         });
         setState(() {
           widget.postData.dislikers!.add(currentUserUid);
-          widget.postData.dislikeCount =
-              (widget.postData.dislikeCount ?? 0) + 1;
         });
       }
     }
@@ -325,7 +315,7 @@ class _PostScreenState extends State<PostScreen> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            widget.postData.viewCount.toString(),
+                            widget.postData.viewers!.length.toString(),
                             style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
@@ -364,7 +354,7 @@ class _PostScreenState extends State<PostScreen> {
                                 },
                               ),
                               Text(
-                                widget.postData.likeCount?.toString() ?? '0',
+                                widget.postData.likers!.length.toString(),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -385,7 +375,7 @@ class _PostScreenState extends State<PostScreen> {
                                 },
                               ),
                               Text(
-                                widget.postData.dislikeCount?.toString() ?? '0',
+                                widget.postData.dislikers!.length.toString(),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey,
@@ -397,7 +387,7 @@ class _PostScreenState extends State<PostScreen> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        '댓글 ${widget.postData.commentCount ?? 0}',
+                        '댓글 ${widget.postData.comments!.length.toString()}',
                         style: const TextStyle(
                           fontSize: 16,
                         ),

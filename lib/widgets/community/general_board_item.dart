@@ -127,7 +127,7 @@ class GeneralBoardItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          postData.likeCount.toString(),
+                          postData.likers!.length.toString(),
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -142,7 +142,7 @@ class GeneralBoardItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          postData.dislikeCount.toString(),
+                          postData.dislikers!.length.toString(),
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -157,7 +157,7 @@ class GeneralBoardItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          postData.commentCount.toString(),
+                          postData.comments!.length.toString(),
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -172,7 +172,7 @@ class GeneralBoardItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          postData.viewCount.toString(),
+                          postData.viewers!.length.toString(),
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
