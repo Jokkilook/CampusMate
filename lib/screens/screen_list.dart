@@ -7,6 +7,8 @@ import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
+import 'package:campusmate/screens/regist/regist_screen_a.dart';
+import 'package:campusmate/screens/regist/regist_screen_b.dart';
 import 'package:campusmate/screens/regist/regist_screen_c.dart';
 import 'package:flutter/material.dart';
 
@@ -37,6 +39,27 @@ class ScreenList extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => LoginScreen()),
+              ),
+            ),
+
+            /// REGISTA
+            ListTile(
+              title: const Text("REGISTA", style: TextStyle(fontSize: 24)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RegistScreenA()),
+              ),
+            ),
+
+            /// REGISTB
+            ListTile(
+              title: const Text("REGISTB", style: TextStyle(fontSize: 24)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => RegistScreenB(
+                          newUserData: UserData(),
+                        )),
               ),
             ),
 

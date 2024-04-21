@@ -112,49 +112,51 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
 
                 //이미지 변경시 이미지 변경 로직 실행
                 if (widget.image != null) {
-                  //파이어스토어에 이미지 파일 업로드
+                  //프로필 이미지 파일 레퍼런스
                   var ref = FirebaseStorage.instance
                       .ref()
                       .child("images/${widget.modifiedData.uid}.png");
 
+                  //파이어스토어에 이미지 파일 업로드
                   await ref.putFile(File(widget.image!.path));
+
                   //변경할 데이터에 변경된 url 저장
                   widget.modifiedData.imageUrl = await ref.getDownloadURL();
-
-                  //채팅방 프로필 url 업데이트
-                  await FirebaseFirestore.instance
-                      .collection("chats")
-                      .where("participantsUid",
-                          arrayContains: widget.modifiedData.uid)
-                      .get()
-                      .then(
-                    (value) {
-                      if (value.docs.isNotEmpty) {
-                        var docs = value.docs;
-                        for (var doc in docs) {
-                          String id = doc.id;
-                          Map<String, dynamic> data = doc.data();
-                          Map<String, List<String>> userInfo =
-                              (data["participantsInfo"] as Map<String, dynamic>)
-                                  .map((key, value) {
-                            return MapEntry(
-                                key, (value as List<dynamic>).cast<String>());
-                          });
-
-                          userInfo[widget.modifiedData.uid!] = [
-                            widget.modifiedData.name!,
-                            widget.modifiedData.imageUrl!
-                          ];
-
-                          FirebaseFirestore.instance
-                              .collection("chats")
-                              .doc(id)
-                              .update({"participantsInfo": userInfo});
-                        }
-                      }
-                    },
-                  );
                 }
+
+                //채팅방 프로필 url 업데이트
+                await FirebaseFirestore.instance
+                    .collection("chats")
+                    .where("participantsUid",
+                        arrayContains: widget.modifiedData.uid)
+                    .get()
+                    .then(
+                  (value) {
+                    if (value.docs.isNotEmpty) {
+                      var docs = value.docs;
+                      for (var doc in docs) {
+                        String id = doc.id;
+                        Map<String, dynamic> data = doc.data();
+                        Map<String, List<String>> userInfo =
+                            (data["participantsInfo"] as Map<String, dynamic>)
+                                .map((key, value) {
+                          return MapEntry(
+                              key, (value as List<dynamic>).cast<String>());
+                        });
+
+                        userInfo[widget.modifiedData.uid!] = [
+                          widget.modifiedData.name!,
+                          widget.modifiedData.imageUrl!
+                        ];
+
+                        FirebaseFirestore.instance
+                            .collection("chats")
+                            .doc(id)
+                            .update({"participantsInfo": userInfo});
+                      }
+                    }
+                  },
+                );
 
                 db.addUser(widget.modifiedData);
 
