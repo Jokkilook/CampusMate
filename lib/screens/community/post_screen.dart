@@ -1,3 +1,4 @@
+import 'package:campusmate/models/post_comment_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,12 +29,20 @@ class PostScreen extends StatefulWidget {
 class _PostScreenState extends State<PostScreen> {
   bool _isLoading = false;
   bool _userAlreadyViewed = false;
+  late TextEditingController _commentController;
 
   @override
   void initState() {
     super.initState();
+    _commentController = TextEditingController();
     checkUserViewedPost();
     _refreshScreen();
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
   }
 
   Future<void> checkUserViewedPost() async {
@@ -393,13 +402,94 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const CommentItem(),
-                      const CommentReplyItem(),
                     ],
                   ),
                 ),
               ),
             ),
+      bottomNavigationBar: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          color: Colors.grey[200],
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _commentController,
+                  style: const TextStyle(fontSize: 12),
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: '댓글을 입력하세요',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ),
+              // 작성 버튼
+              TextButton(
+                onPressed: () async {
+                  String currentUserUid =
+                      context.read<UserDataProvider>().userData.uid ?? '';
+                  String commentContent = _commentController.text.trim();
+                  if (commentContent.isNotEmpty) {
+                    PostCommentData newComment = PostCommentData(
+                      postId: widget.postData.postId,
+                      content: commentContent,
+                      timestamp: Timestamp.now(),
+                      authorUid: currentUserUid,
+                    );
+
+                    try {
+                      // 댓글 Firestore에 추가
+                      DocumentReference docRef = await FirebaseFirestore
+                          .instance
+                          .collection('comments')
+                          .doc(widget.postData.postId)
+                          .collection('post_comments')
+                          .add(newComment.data!);
+
+                      // commentId 설정
+                      newComment.commentId = docRef.id;
+
+                      // 댓글 데이터 추가
+                      widget.postData.addComment(newComment);
+
+                      // 포스트 데이터 업데이트
+                      await widget.firestore
+                          .collection('generalPosts')
+                          .doc(widget.postData.postId)
+                          .update(
+                              Map<String, dynamic>.from(widget.postData.data!));
+
+                      // 텍스트 필드 내용 지우기
+                      _commentController.clear();
+
+                      // 화면 새로고침
+                      _refreshScreen();
+                    } catch (error) {
+                      debugPrint('Error adding comment: $error');
+                    }
+                  }
+                },
+                child: const Text(
+                  '작성',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
