@@ -135,6 +135,7 @@ class _MatchCardState extends State<MatchCard> {
     return CardSwiper(
         // scale: 0.95,
         // backCardOffset: const Offset(0, 25),
+
         threshold: 100,
         cardsCount: data.length,
         cardBuilder: (context, index, horizontalOffsetPercentage,

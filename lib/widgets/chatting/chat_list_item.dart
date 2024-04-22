@@ -3,15 +3,22 @@ import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 //ignore: must_be_immutable
 class ChatListItem extends StatelessWidget {
-  ChatListItem({super.key, required this.data, this.count = 0});
+  ChatListItem(
+      {super.key,
+      required this.data,
+      this.isGroup = false,
+      this.unreadCount = 0});
 
   final ChatRoomData data;
-  int count;
+  final bool isGroup;
+  final ChattingService chat = ChattingService();
+  int unreadCount;
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -25,29 +32,36 @@ class ChatListItem extends StatelessWidget {
     String userUID = AuthService().getUID();
     String name = "";
     String imageUrl = "";
-    List<String> senderData = [];
-    bool isDuo = false;
+    Map<String, List<String>> userInfo = {};
+    List<List<String>> infoList = [];
 
+    List<String> list;
     data.participantsInfo!.forEach((key, value) {
-      if (key != userUID) {
-        value.sort(
-          (a, b) => a.length.compareTo(b.length),
-        );
-        senderData = value;
-      }
+      value.sort(
+        (a, b) => a.length.compareTo(b.length),
+      );
+      list = value;
+      userInfo[key] = list;
+      infoList.add([list[0], list[1]]);
     });
 
-    if (data.participantsUid!.length == 2) isDuo = true;
-
-    name = senderData[0];
-    imageUrl = senderData[1];
+    if (!isGroup) {
+      userInfo.forEach((key, value) {
+        if (key != userUID) {
+          name = value[0];
+          imageUrl = value[1];
+        }
+      });
+    }
 
     if (data.lastMessageTime == null) {
       return Container();
     }
     return InkWell(
       onTap: () {
-        ChattingService.enterRoom(context, data);
+        isGroup
+            ? chat.enterGroupRoom(context, data)
+            : chat.enterRoom(context, data);
       },
       onLongPress: () {},
       child: Container(
@@ -67,17 +81,63 @@ class ChatListItem extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      width: 60,
-                      height: 60,
-                      imageUrl: imageUrl,
-                      placeholder: (context, url) {
-                        return Image.asset("assets/images/default_image.png");
-                      },
-                      fit: BoxFit.cover,
-                    ),
+                    child: isGroup
+                        ? Container(
+                            padding: const EdgeInsets.all(1),
+                            color: Colors.amber,
+                            width: 60,
+                            height: 60,
+                            child: ExtendedWrap(
+                              spacing: 2,
+                              maxLines: 2,
+                              children: [
+                                for (var info in infoList)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: CachedNetworkImage(
+                                      width: 30,
+                                      height: 30,
+                                      imageUrl: info[1],
+                                      errorWidget: (context, url, error) {
+                                        return Image.asset(
+                                            "assets/images/default_image.png");
+                                      },
+                                      placeholder: (context, url) {
+                                        return Image.asset(
+                                            "assets/images/default_image.png");
+                                      },
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                              ],
+                            )
+                            // GridView.builder(
+                            //   gridDelegate:
+                            //       const SliverGridDelegateWithFixedCrossAxisCount(
+                            //           crossAxisCount: 2),
+                            //   itemCount:
+                            //       userInfo.length > 4 ? 4 : userInfo.length,
+                            //   itemBuilder: (context, index) {
+                            //     return
+                            //   },
+                            // ),
+                            )
+                        : CachedNetworkImage(
+                            width: 60,
+                            height: 60,
+                            imageUrl: imageUrl,
+                            errorWidget: (context, url, error) {
+                              return Image.asset(
+                                  "assets/images/default_image.png");
+                            },
+                            placeholder: (context, url) {
+                              return Image.asset(
+                                  "assets/images/default_image.png");
+                            },
+                            fit: BoxFit.cover,
+                          ),
                   ),
-                  count != 0
+                  unreadCount != 0
                       ? Positioned(
                           top: -5,
                           left: -5,
@@ -89,7 +149,7 @@ class ChatListItem extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(100)),
                             child: Center(
                               child: Text(
-                                count > 100 ? "100+" : "$count",
+                                unreadCount > 100 ? "100+" : "$unreadCount",
                                 style: const TextStyle(
                                     fontSize: 12, color: Colors.white),
                               ),
@@ -107,7 +167,7 @@ class ChatListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isDuo ? name : data.roomName!,
+                      !isGroup ? name : data.roomName!,
                       style: const TextStyle(fontSize: 17, color: Colors.black),
                     ),
                     const SizedBox(height: 5),

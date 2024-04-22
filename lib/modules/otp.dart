@@ -14,6 +14,8 @@ class OTP {
       for (int i = 0; i < count; i++) {
         _strCode = "0" + _code!;
       }
+    } else {
+      _strCode = _code.toString();
     }
 
     return _strCode;

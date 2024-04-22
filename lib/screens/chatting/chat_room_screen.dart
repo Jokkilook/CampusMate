@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -11,7 +10,6 @@ import 'package:campusmate/screens/video_player_screen.dart';
 import 'package:campusmate/widgets/chatting/chat_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:video_compress/video_compress.dart';
@@ -20,10 +18,10 @@ import 'package:path/path.dart' as path;
 
 //ignore: must_be_immutable
 class ChatRoomScreen extends StatefulWidget {
-  ChatRoomScreen({super.key, required this.chatRoomData, this.isNew = false});
+  ChatRoomScreen({super.key, required this.chatRoomData, this.isGroup = false});
 
   ChatRoomData chatRoomData;
-  bool isNew;
+  bool isGroup;
   XFile? media;
   File? thumbnail;
   MessageType type = MessageType.text;
@@ -36,19 +34,29 @@ class ChatRoomScreen extends StatefulWidget {
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final FocusNode focusNode = FocusNode();
 
-  TextEditingController chatController = TextEditingController();
+  late final TextEditingController chatController;
 
-  final scrollController = ScrollController();
+  late final ScrollController scrollController;
 
-  ChattingService chat = ChattingService();
+  late final ChattingService chat;
 
-  AuthService auth = AuthService();
+  late final AuthService auth;
 
   String senderUID = "";
 
   String? userUID;
   bool prepareMedia = false;
   bool isCompletelyLeaving = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    chatController = TextEditingController();
+    scrollController = ScrollController();
+    chat = ChattingService();
+    auth = AuthService();
+  }
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -63,22 +71,28 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     List<String> senderData = [];
     String name = "";
     String imageUrl = "";
-    bool isDuo = false;
+    Map<String, List<String>> userInfo = {};
 
+    List<String> list;
     widget.chatRoomData.participantsInfo!.forEach((key, value) {
-      if (key != userUID) {
-        senderUID = key;
-        value.sort(
-          (a, b) => a.length.compareTo(b.length),
-        );
-        senderData = value;
-      }
+      value.sort(
+        (a, b) => a.length.compareTo(b.length),
+      );
+      list = value;
+      userInfo[key] = list;
     });
 
-    name = senderData[0];
-    imageUrl = senderData[1];
+    if (!widget.isGroup) {
+      userInfo.forEach((key, value) {
+        if (key != userUID) {
+          name = value[0];
+          imageUrl = value[1];
+        }
+      });
+    }
 
-    if (widget.chatRoomData.participantsUid!.length == 2) isDuo = true;
+    print(widget.chatRoomData.roomName);
+    print(widget.isGroup);
 
     return PopScope(
       //스크린이 팝 될 때 실행될 이벤트 ( 채팅방 화면을 나간 시간 저장 )
@@ -106,8 +120,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             ],
             elevation: 2,
             shadowColor: Colors.black,
-            title: Text(isDuo ? name : widget.chatRoomData.roomName ?? ""),
+            title: Text(
+                !widget.isGroup ? name : widget.chatRoomData.roomName ?? ""),
           ),
+
+          //드로어
           endDrawer: Drawer(
             shape: const ContinuousRectangleBorder(),
             child: SafeArea(
@@ -124,8 +141,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount:
-                          widget.chatRoomData.participantsUid!.length - 1,
+                      itemCount: widget.chatRoomData.participantsUid!.length,
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
@@ -133,7 +149,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => StrangerProfilScreen(
-                                      uid: senderUID, readOnly: true),
+                                      uid: widget
+                                          .chatRoomData.participantsUid![index],
+                                      readOnly: true),
                                 ));
                           },
                           child: Container(
@@ -147,7 +165,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   child: CachedNetworkImage(
                                     width: 50,
                                     height: 50,
-                                    imageUrl: imageUrl,
+                                    imageUrl:
+                                        widget.chatRoomData.participantsInfo![
+                                            widget.chatRoomData
+                                                .participantsUid![index]]![1],
                                     placeholder: (context, url) {
                                       return Image.asset(
                                           "assets/images/default_image.png");
@@ -157,7 +178,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 ),
                                 const SizedBox(width: 20),
                                 Text(
-                                  name,
+                                  widget.chatRoomData.participantsUid![index] ==
+                                          userUID
+                                      ? "나"
+                                      : widget.chatRoomData.participantsInfo![
+                                          widget.chatRoomData
+                                              .participantsUid![index]]![0],
                                   style: const TextStyle(
                                       fontSize: 17, color: Colors.black),
                                 )
@@ -180,7 +206,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 isCompletelyLeaving = true;
                                 Scaffold.of(_).closeEndDrawer();
                                 chat.leaveRoom(context,
-                                    widget.chatRoomData.roomId!, userUID!);
+                                    widget.chatRoomData.roomId!, userUID!,
+                                    isGroup: widget.isGroup);
                               },
                               child: const SizedBox(
                                 height: 40,
@@ -218,7 +245,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               //채팅 메세지 표시 부분
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: chat.getChattingMessages(widget.chatRoomData.roomId!),
+                  stream: chat.getChattingMessages(
+                      roomId: widget.chatRoomData.roomId!),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return const Center(child: Text("에러발생"));
@@ -349,8 +377,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   reader: count,
                                   senderUid: docs[index]["senderUID"],
                                   viewSender: viewSender,
-                                  name: name,
-                                  profileImageUrl: imageUrl,
+                                  name: userInfo[docs[index]["senderUID"]]![0],
+                                  profileImageUrl:
+                                      userInfo[docs[index]["senderUID"]]![1],
                                   showTime: showTime,
                                   showDay: showDay,
                                   messageData: docs[index],
@@ -378,11 +407,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         //+버튼
                         InkWell(
                           borderRadius: BorderRadius.circular(100),
-                          onTap: () {
-                            focusNode.unfocus();
-                            prepareMedia = true;
-                            setState(() {});
-                          },
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
@@ -395,12 +419,23 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   //borderRadius: BorderRadius.circular(100),
                                 ),
                               ),
-                              const Icon(
-                                Icons.add,
+                              Icon(
+                                prepareMedia ? Icons.close : Icons.add,
                                 color: Colors.white,
                               )
                             ],
                           ),
+                          onTap: () {
+                            if (prepareMedia) {
+                              focusNode.requestFocus();
+                              prepareMedia = false;
+                            } else {
+                              focusNode.unfocus();
+                              prepareMedia = true;
+                            }
+
+                            setState(() {});
+                          },
                         ),
 
                         //텍스트 입력창
@@ -500,8 +535,26 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         //보내기 버튼
                         InkWell(
                           radius: 10,
-                          highlightColor: Colors.amber,
                           //borderRadius: BorderRadius.circular(100),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                //margin: const EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                  color: Colors.green,
+                                  //borderRadius: BorderRadius.circular(100),
+                                ),
+                              ),
+                              const Icon(
+                                Icons.send,
+                                size: 18,
+                                color: Colors.white,
+                              )
+                            ],
+                          ),
                           onTap: () async {
                             prepareMedia ? null : focusNode.requestFocus();
                             //입력창이 비었거나 미디어파일 올라간 게 없으면 아무것도 하지 않음
@@ -574,7 +627,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   roomData: widget.chatRoomData,
                                   messageData: data,
                                   media: widget.media!,
-                                  thumbnail: widget.thumbnail);
+                                  thumbnail: widget.thumbnail,
+                                  isGroup: widget.isGroup);
 
                               ScaffoldMessenger.of(context).hideCurrentSnackBar(
                                   reason: SnackBarClosedReason.remove);
@@ -597,7 +651,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
                               await chat.sendMessage(
                                   roomId: widget.chatRoomData.roomId!,
-                                  data: data);
+                                  data: data,
+                                  isGroup: widget.isGroup);
                             }
 
                             //전송 후 맨 아래로 이동
@@ -609,29 +664,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               );
                             }
                           },
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 50,
-                                //margin: const EdgeInsets.all(5),
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  //borderRadius: BorderRadius.circular(100),
-                                ),
-                              ),
-                              const Icon(
-                                Icons.send,
-                                size: 18,
-                                color: Colors.white,
-                              )
-                            ],
-                          ),
                         )
                       ],
                     ),
                   ),
+                  //미디어 전송 패널
                   prepareMedia
                       ? Container(
                           width: double.infinity,
@@ -643,7 +680,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
+                                  //사진 버튼
                                   MediaButton(
+                                    color: Colors.yellow[700]!,
                                     icon: Icons.photo_library_outlined,
                                     text: "사진",
                                     onTap: () async {
@@ -656,6 +695,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       }
                                     },
                                   ),
+
+                                  //동영상 버튼
                                   MediaButton(
                                     icon: Icons.video_library_outlined,
                                     text: "동영상",
@@ -673,7 +714,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       }
                                     },
                                   ),
+
+                                  //카메라 버튼
                                   MediaButton(
+                                    color: Colors.red[400]!,
                                     icon: Icons.camera_alt_outlined,
                                     text: "카메라",
                                     onTap: () async {
@@ -681,12 +725,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         context: context,
                                         builder: (context) {
                                           return Dialog(
-                                            insetPadding:
-                                                const EdgeInsets.all(10),
+                                            shape: ContinuousRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
                                             child: IntrinsicHeight(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(5),
+                                              child: SizedBox(
                                                 width: 100,
                                                 child: Column(
                                                   mainAxisAlignment:
@@ -711,13 +754,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                           setState(() {});
                                                         }
                                                       },
-                                                      child: const Text(
-                                                        "사진",
-                                                        textAlign:
-                                                            TextAlign.center,
+                                                      child: const Padding(
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        child: Text(
+                                                          "사진",
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
                                                       ),
                                                     ),
-                                                    const Divider(height: 10),
+                                                    const Divider(height: 0),
                                                     InkWell(
                                                       onTap: () async {
                                                         widget.media =
@@ -741,10 +788,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                           setState(() {});
                                                         }
                                                       },
-                                                      child: const Text(
-                                                        "동영상",
-                                                        textAlign:
-                                                            TextAlign.center,
+                                                      child: const Padding(
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        child: Text(
+                                                          "동영상",
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -754,12 +805,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           );
                                         },
                                       );
-                                      // widget.media = await ImagePicker()
-                                      //     .pickImage(
-                                      //         source: ImageSource.camera);
-                                      // if (widget.media != null) {
-                                      //   setState(() {});
-                                      // }
                                     },
                                   )
                                 ],
@@ -782,9 +827,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 class MediaButton extends StatelessWidget {
   final String text;
   final IconData icon;
+  final Color color;
   Function()? onTap;
 
-  MediaButton({super.key, required this.text, required this.icon, this.onTap});
+  MediaButton(
+      {super.key,
+      required this.text,
+      required this.icon,
+      this.color = Colors.blue,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -800,8 +851,7 @@ class MediaButton extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(100)),
+                    color: color, borderRadius: BorderRadius.circular(100)),
               ),
               Icon(icon)
             ],
