@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'post_comment_data.dart'; // import PostCommentData class
 
 class PostData {
   String? boardType;
@@ -10,7 +11,7 @@ class PostData {
   List<dynamic>? viewers;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
-  List<dynamic>? comments;
+  List<PostCommentData>? comments; // Change to List<PostCommentData>
 
   Map<String, dynamic>? data;
 
@@ -39,7 +40,16 @@ class PostData {
     viewers = json['viewers'] ?? [];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
-    comments = json['comments'] ?? [];
+    if (json['comments'] != null && json['comments'] is Map<String, dynamic>) {
+      // Check if comments is not null and is a Map
+      comments = (json['comments'] as Map<String, dynamic>)
+          .values
+          .map<PostCommentData>(
+              (commentJson) => PostCommentData.fromJson(commentJson))
+          .toList();
+    } else {
+      comments = [];
+    }
 
     setData();
   }
@@ -55,7 +65,12 @@ class PostData {
       'viewers': viewers,
       'likers': likers,
       'dislikers': dislikers,
-      'comments': comments,
+      'comments': comments?.map((comment) => comment.data).toList(),
     };
+  }
+
+  void addComment(PostCommentData comment) {
+    comments?.add(comment);
+    setData();
   }
 }
