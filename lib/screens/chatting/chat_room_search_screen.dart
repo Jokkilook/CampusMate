@@ -29,13 +29,33 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
               children: [
                 SizedBox(
                   width: double.infinity,
-                  height: 60,
-                  child: TextField(
-                    controller: controller,
-                    onChanged: (value) {
-                      widget.searchWord = value;
-                      setState(() {});
-                    },
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.arrow_back)),
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey[300],
+                          ),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none)),
+                            controller: controller,
+                            onChanged: (value) {
+                              widget.searchWord = value;
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Flexible(
