@@ -1,6 +1,7 @@
 import 'package:campusmate/db_test.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/main_screen.dart';
@@ -11,6 +12,7 @@ import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
 import 'package:campusmate/screens/regist/regist_screen_c.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ScreenList extends StatelessWidget {
   const ScreenList({
@@ -19,6 +21,7 @@ class ScreenList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserData userData = context.read<UserDataProvider>().userData;
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -28,7 +31,8 @@ class ScreenList extends StatelessWidget {
               title: const Text("MainScreen", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => const MainScreen()),
+                MaterialPageRoute(
+                    builder: (_) => MainScreen(userData: userData)),
                 (route) => false,
               ),
             ),

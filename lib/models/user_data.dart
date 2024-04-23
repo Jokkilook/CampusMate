@@ -1,4 +1,5 @@
 import 'package:campusmate/models/schedule_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserData {
   String? uid;
@@ -16,26 +17,27 @@ class UserData {
   String? imageUrl;
   List<dynamic>? tags;
   ScheduleData schedule = ScheduleData();
+  Timestamp? registDate;
 
   Map<String, dynamic>? data;
 
-  UserData({
-    this.uid,
-    this.name,
-    this.school,
-    this.dept,
-    this.email,
-    this.password,
-    this.enterYear,
-    this.birthDate,
-    this.gender,
-    this.introduce,
-    this.score = 80.00,
-    this.mbti,
-    this.imageUrl =
-        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
-    this.tags,
-  }) {
+  UserData(
+      {this.uid,
+      this.name,
+      this.school,
+      this.dept,
+      this.email,
+      this.password,
+      this.enterYear,
+      this.birthDate,
+      this.gender,
+      this.introduce,
+      this.score = 80.00,
+      this.mbti,
+      this.imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
+      this.tags,
+      this.registDate}) {
     data = {
       "uid": uid,
       "name": name,
@@ -52,6 +54,7 @@ class UserData {
       "imageUrl": imageUrl,
       "tags": tags,
       "schedule": schedule.schedule,
+      "registDate": registDate
     };
   }
 
@@ -70,6 +73,7 @@ class UserData {
     imageUrl = json["imageUrl"];
     tags = json["tags"];
     score = json["score"];
+    registDate = json["registDate"];
 
     //DB에서 가져온 데이터는 List<dynamic>이 되어버려서 다시 List<Map<String, bool>> 타입으로 변환해주어야한다.
     schedule.schedule = (json["schedule"] as List)
@@ -100,6 +104,28 @@ class UserData {
       "imageUrl": imageUrl,
       "tags": tags,
       "schedule": schedule.schedule,
+      "registDate": registDate
+    };
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "uid": uid,
+      "name": name,
+      "school": school,
+      "dept": dept,
+      "email": email,
+      "password": password,
+      "enterYear": enterYear,
+      "birthDate": birthDate,
+      "gender": gender,
+      "introduce": introduce,
+      "score": score,
+      "mbti": mbti,
+      "imageUrl": imageUrl,
+      "tags": tags,
+      "schedule": schedule.schedule,
+      "registDate": registDate
     };
   }
 
@@ -120,6 +146,7 @@ class UserData {
       "imageUrl": imageUrl,
       "tags": tags,
       "schedule": schedule.schedule,
+      "registDate": registDate
     };
   }
 }

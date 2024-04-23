@@ -168,14 +168,15 @@ class _MoreScreenState extends State<MoreScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  PostGenerator().addDummyPost(10, isGeneral: widget.isGeneral);
+                  PostGenerator()
+                      .addDummyPost(context, 10, isGeneral: widget.isGeneral);
                 },
                 child: const Text("더미포스트생성"),
               ),
               ElevatedButton(
                 onPressed: () {
-                  PostGenerator()
-                      .deleteDummyPost(10, isGeneral: widget.isGeneral);
+                  PostGenerator().deleteDummyPost(context, 10,
+                      isGeneral: widget.isGeneral);
                 },
                 child: const Text("더미포스트삭제"),
               ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -132,11 +133,12 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 15),
                     ElevatedButton(
                       onPressed: () {
+                        //UserData userData;
                         FocusManager.instance.primaryFocus?.unfocus();
                         login().then((value) async {
                           if (value) {
-                            await db
-                                .getUser(firebaseAuth.currentUser!.uid)
+                            await AuthService()
+                                .getUserData(uid: firebaseAuth.currentUser!.uid)
                                 .then((value) {
                               userData = value;
                               context.read<UserDataProvider>().userData =
@@ -144,12 +146,13 @@ class LoginScreen extends StatelessWidget {
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const MainScreen(),
+                                  builder: (context) =>
+                                      MainScreen(userData: userData),
                                 ),
                                 (route) => false,
                               );
                             });
-                          }
+                          } else {}
                         });
                       },
                       child: const Text(

@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 class DataBase {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<UserData> getUser(String uid) async {
-    final ref = db.collection("users").doc(uid);
+  Future<UserData> getUser(String schoold, String uid) async {
+    final ref = db.collection("shcools/$schoold/users").doc(uid);
     DocumentSnapshot doc = await ref.get();
     return UserData.fromJson(doc.data() as Map<String, dynamic>);
   }
@@ -18,7 +18,7 @@ class DataBase {
     //유저 추가 코드
     userData.setData();
     await db
-        .collection("users")
+        .collection("schools/${userData.school}/users")
         .doc(userData.uid)
         .set(userData.data!)
         .onError((error, stackTrace) => debugPrint(error.toString()));
@@ -26,22 +26,22 @@ class DataBase {
 
   void deleteUser(String uid) {
     //유저 삭제 코드
-    db.collection("users").doc(uid).delete();
+    db.collection("schools/테스트대학교/users").doc(uid).delete();
   }
 
   void updateUser(UserData userData) {}
 
-  void addPost(PostData postData) async {
+  void addPost(UserData userData, PostData postData) async {
     try {
       postData.setData();
       if (postData.boardType == 'General') {
         await FirebaseFirestore.instance
-            .collection('generalPosts')
+            .collection('schools/${userData.school}/generalPosts')
             .add(postData.data!);
       }
       if (postData.boardType == 'Anonymous') {
         await FirebaseFirestore.instance
-            .collection('anonymousPosts')
+            .collection('schools/${userData.school}/anonymousPosts')
             .add(postData.data!);
       }
     } catch (error) {

@@ -1,5 +1,6 @@
 import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/screen_list.dart';
@@ -73,11 +74,7 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
       // );
 
       // print("done");
-
-      var snapshot =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      var data = snapshot.data() as Map<String, dynamic>;
-      var userData = UserData.fromJson(data);
+      UserData userData = await AuthService().getUserData(uid: uid);
       context.read<UserDataProvider>().userData = userData;
     } catch (e) {
       Navigator.pushAndRemoveUntil(

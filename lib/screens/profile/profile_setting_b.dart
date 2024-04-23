@@ -1,4 +1,5 @@
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
@@ -173,7 +174,8 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
             ? () {
                 /* 태그 리스트 데이터베이스에 삽입 */
                 widget.userData.tags = userTag;
-                db.addUser(widget.userData);
+                AuthService().setUserData(widget.userData);
+                //db.addUser(widget.userData);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

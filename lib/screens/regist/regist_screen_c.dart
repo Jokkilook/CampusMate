@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -325,7 +327,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
           email: widget.newUserData.email.toString(),
           password: widget.newUserData.password.toString());
       widget.newUserData.uid = auth.currentUser!.uid;
-      db.addUser(widget.newUserData);
+      widget.newUserData.registDate = Timestamp.fromDate(DateTime.now());
+      AuthService().registUser(widget.newUserData);
+      //db.addUser(widget.newUserData);
     } catch (e) {
       throw Error();
     }

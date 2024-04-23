@@ -1,3 +1,4 @@
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_list_screen.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
@@ -10,8 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, this.index = 0});
+  const MainScreen({super.key, this.index = 0, required this.userData});
   final index;
+  final UserData userData;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -21,14 +23,6 @@ class _MainScreenState extends State<MainScreen> {
   final fcmToken = FirebaseMessaging.instance.getToken();
 
   int index = 0;
-
-  final List<Widget> list = [
-    const MatchingScreen(), //0
-    ChatListScreen(), //1
-    const CommunityScreen(), //2
-    ProfileScreen(), //3
-    MoreScreen() //4
-  ];
 
   @override
   void initState() {
@@ -73,9 +67,13 @@ class _MainScreenState extends State<MainScreen> {
               index: index,
               children: [
                 const MatchingScreen(),
-                ChatListScreen(),
+                ChatListScreen(
+                  userData: widget.userData,
+                ),
                 const CommunityScreen(),
-                ProfileScreen(),
+                ProfileScreen(
+                  userData: widget.userData,
+                ),
                 MoreScreen()
               ],
             );

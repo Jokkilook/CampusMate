@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
@@ -55,24 +56,23 @@ class UserGenerator {
 
   void addDummyUser(int quantity) async {
     AggregateQuerySnapshot query =
-        await db.db.collection("users").count().get();
+        await db.db.collection("schools/테스트대학교/users").count().get();
     index = query.count ?? index;
 
     for (int i = 0; i < quantity; i++) {
       randomAsign();
-      userData.setData();
-      db.addUser(userData);
+      AuthService().registUser(userData);
       index++;
     }
   }
 
   void deleteDummyUser(int quantity) async {
     AggregateQuerySnapshot query =
-        await db.db.collection("users").count().get();
+        await db.db.collection("schools/테스트대학교/users").count().get();
     index = query.count ?? index;
 
     for (int i = index; i > index - quantity; i--) {
-      db.deleteUser(i.toString());
+      AuthService().deleteUser(i.toString());
     }
   }
 
@@ -106,5 +106,6 @@ class UserGenerator {
     }
     userData.tags = userData.tags!.toSet().toList();
     userData.score = 80 + Random().nextDouble() * 30;
+    userData.registDate = Timestamp.fromDate(DateTime.now());
   }
 }

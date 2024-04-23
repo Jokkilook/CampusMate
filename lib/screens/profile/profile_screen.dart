@@ -7,10 +7,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({super.key});
+  ProfileScreen({super.key, required this.userData});
 
   final db = DataBase();
   final uid = FirebaseAuth.instance.currentUser?.uid;
+  final UserData userData;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,10 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('프로필'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
+        future: FirebaseFirestore.instance
+            .collection('schools/${userData.school}/users')
+            .doc(uid)
+            .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

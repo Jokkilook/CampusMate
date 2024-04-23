@@ -24,7 +24,7 @@ class StrangerProfilScreen extends StatelessWidget {
         title: const Text('프로필'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
+        future: AuthService().getUserDocumentSnapshot(uid: uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -32,6 +32,7 @@ class StrangerProfilScreen extends StatelessWidget {
             );
           }
           if (snapshot.hasError) {
+            print(">>>>>>>>>>>>>>>>>>>>>>>${snapshot.error}");
             throw Error();
           } else {
             var data = snapshot.data!.data() as Map<String, dynamic>;

@@ -79,11 +79,11 @@ class _MatchCardState extends State<MatchCard> {
 
   @override
   Widget build(BuildContext context) {
+    UserData userData = context.read<UserDataProvider>().userData;
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection('users')
-          .where("school",
-              isEqualTo: context.read<UserDataProvider>().userData.school)
+          .collection('schools/${userData.school}/users')
+          .where("school", isEqualTo: userData.school)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

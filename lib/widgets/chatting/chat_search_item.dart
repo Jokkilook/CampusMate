@@ -25,7 +25,7 @@ class ChatSearchItem extends StatelessWidget {
     List<String> seperedList = data.roomId!.split("_");
 
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Row(
         children: [
           Column(

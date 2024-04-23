@@ -52,13 +52,13 @@ class DBTest extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                PostGenerator().addDummyPost(10);
+                PostGenerator().addDummyPost(context, 10);
               },
               child: const Text("더미포스트생성"),
             ),
             ElevatedButton(
               onPressed: () {
-                PostGenerator().deleteDummyPost(10);
+                PostGenerator().deleteDummyPost(context, 10);
               },
               child: const Text("더미포스트삭제"),
             ),

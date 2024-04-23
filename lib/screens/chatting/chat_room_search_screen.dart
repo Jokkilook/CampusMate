@@ -36,6 +36,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                             Navigator.pop(context);
                           },
                           icon: const Icon(Icons.arrow_back)),
+                      const Divider(),
                       Expanded(
                         child: Container(
                           margin: const EdgeInsets.all(10),
@@ -45,6 +46,9 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                           ),
                           child: TextField(
                             decoration: const InputDecoration(
+                                suffixIcon: Icon(Icons.search),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 10),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none)),
                             controller: controller,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/enums.dart';
@@ -36,10 +37,15 @@ class ChattingService {
   //1:1 채팅시작
   void startChatting(
       BuildContext context, String ownerUID, String targetUID) async {
+    UserData userData = context.read<UserDataProvider>().userData;
     //1:1 채팅방ID 구하기
     String roomId = makeOTORoomId(ownerUID, targetUID);
     //원래 채팅방이 있는지 조회
-    await firestore.collection("chats").doc(roomId).get().then((value) {
+    await firestore
+        .collection("schools/${userData.school}/chats")
+        .doc(roomId)
+        .get()
+        .then((value) {
       //채팅방이 있으면 그 채팅방으로 화면 이동
       if (value.exists) {
         var json = value.data() as Map<String, dynamic>;
@@ -49,7 +55,7 @@ class ChattingService {
         if (!data.participantsUid!.contains(ownerUID)) {
           data.participantsUid!.add(ownerUID);
           firestore
-              .collection("chats")
+              .collection("schools/${userData.school}/chats")
               .doc(roomId)
               .update({"participantsUid": data.participantsUid});
         }
@@ -72,7 +78,7 @@ class ChattingService {
     String roomId = makeOTORoomId(userData.uid!, targetUID);
 
     //채팅방 데이터 설정
-    var data = await getUserProfile(targetUID);
+    var data = await getUserProfile(context, targetUID);
     var doc = data.data() as Map<String, dynamic>;
     String targetName = doc["name"];
     String targetImageUrl = doc["imageUrl"];
@@ -93,7 +99,10 @@ class ChattingService {
         lastMessage: "");
 
     //파이어스토어에 채팅방 데이터 추가
-    await firestore.collection("chats").doc(roomId).set(roomData.toJson());
+    await firestore
+        .collection("schools/${userData.school}/chats")
+        .doc(roomId)
+        .set(roomData.toJson());
 
     //설정된 데이터로 채팅방 입장
     enterRoom(context, roomData);
@@ -109,15 +118,23 @@ class ChattingService {
   }
 
   //단체 채팅방 생성
-  Future createGroupRoom(BuildContext context, String roomName) async {
-    UserData userData = context.read<UserDataProvider>().userData;
+  Future createGroupRoom(
+      {BuildContext? context,
+      String? roomName,
+      String? desc,
+      int? limit}) async {
+    UserData userData = context!.read<UserDataProvider>().userData;
     //단체 채팅방ID 구하기
     String roomId = makeGroupRoomId(userData.uid!);
 
     //채팅방 데이터 설정
-    ChatRoomData roomData = ChatRoomData(
+    GroupChatRoomData roomData = GroupChatRoomData(
         roomId: roomId,
         roomName: roomName,
+        creatorUid: userData.uid,
+        description: desc,
+        limit: limit,
+        createdTime: Timestamp.fromDate(DateTime.now()),
         leavingTime: {userData.uid!: Timestamp.fromDate(DateTime.now())},
         participantsInfo: {
           userData.uid!: [userData.name!, userData.imageUrl!],
@@ -126,13 +143,16 @@ class ChattingService {
         lastMessage: "");
 
     //파이어스토어에 채팅방 데이터 추가
-    await firestore.collection("groupChats").doc(roomId).set(roomData.toJson());
+    await firestore
+        .collection("schools/${userData.school}/groupChats")
+        .doc(roomId)
+        .set(roomData.toJson());
 
     enterGroupRoom(context, roomData);
   }
 
   //단체 채팅방 입장
-  void enterGroupRoom(BuildContext context, ChatRoomData data) async {
+  void enterGroupRoom(BuildContext context, GroupChatRoomData data) async {
     UserData userData = context.read<UserDataProvider>().userData;
     //채팅방 참여자 UID 리스트에 없는지 확인
     if (!data.participantsUid!.contains(userData.uid!)) {
@@ -142,7 +162,10 @@ class ChattingService {
       updatedInfo[userData.uid!] = [userData.name!, userData.imageUrl!];
 
       //참여자 UID 리스트와 프로필 정보 업데이트
-      await firestore.collection("groupChats").doc(data.roomId).update({
+      await firestore
+          .collection("schools/${userData.school}/groupChats")
+          .doc(data.roomId)
+          .update({
         "participantsUid": updatedUIDList,
         "participantsInfo": updatedInfo,
       });
@@ -152,19 +175,22 @@ class ChattingService {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              ChatRoomScreen(chatRoomData: data, isGroup: true),
+          builder: (context) => ChatRoomScreen(
+              chatRoomData: data, groupRoomData: data, isGroup: true),
         ));
   }
 
   //채팅방 나가기
   void leaveRoom(BuildContext context, String roomId, String userUID,
       {bool isGroup = false}) async {
+    UserData userData = context.read<UserDataProvider>().userData;
     //파이어스토어에서 채팅방 데이터 불러오기
-    var roomRef =
-        firestore.collection(isGroup ? "groupChats" : "chats").doc(roomId);
-    var messageRef = firestore
-        .collection("${isGroup ? "groupChats" : "chats"}/$roomId/messages");
+    var roomRef = firestore
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
+        .doc(roomId);
+    var messageRef = firestore.collection(
+        "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages");
     DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
 
     //채팅방 참여자 목록에서 UID 제거하기
@@ -185,15 +211,12 @@ class ChattingService {
       });
 
       //파이어 스토어의 데이터 삭제 (이것도 한번에 삭제가 안돼서 하나하나 조회하고 삭제함)
-      var imageRef = firestorage
-          .ref()
-          .child("${isGroup ? "groupChats" : "chats"}/$roomId/images");
-      var videoRef = firestorage
-          .ref()
-          .child("${isGroup ? "groupChats" : "chats"}/$roomId/videos");
-      var thumbRef = firestorage
-          .ref()
-          .child("${isGroup ? "groupChats" : "chats"}/$roomId/thumbnails");
+      var imageRef = firestorage.ref().child(
+          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/images");
+      var videoRef = firestorage.ref().child(
+          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/videos");
+      var thumbRef = firestorage.ref().child(
+          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/thumbnails");
 
       ListResult imageResult = await imageRef.listAll();
       ListResult videoResult = await videoRef.listAll();
@@ -218,44 +241,58 @@ class ChattingService {
   }
 
   //사용자가 참여한 채팅방 데이터 리스트 반환
-  Stream<QuerySnapshot<Object>> getChattingList(
+  Stream<QuerySnapshot<Object>> getChattingList(BuildContext context,
       {String ownerUID = "", bool isGroup = false}) {
+    UserData userData = context.read<UserDataProvider>().userData;
     return firestore
-        .collection(isGroup ? "groupChats" : "chats")
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
         .where("participantsUid", arrayContains: ownerUID)
         .snapshots();
   }
 
   //채팅방의 메세지 데이터 반환
-  Stream<QuerySnapshot<Object>> getChattingMessages(
+  Stream<QuerySnapshot<Object>> getChattingMessages(BuildContext context,
       {String roomId = "", bool isGroup = false}) {
+    UserData userData = context.read<UserDataProvider>().userData;
     return firestore
-        .collection("${isGroup ? "groupChats" : "chats"}/$roomId/messages")
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages")
         .orderBy("time", descending: true)
         .snapshots();
   }
 
   //메세지 데이터 읽은 사람 갱신
-  void updateReader(String roomId, String messageId, List<String> readerList,
+  void updateReader(BuildContext context, String roomId, String messageId,
+      List<String> readerList,
       {bool isGroup = false}) async {
+    UserData userData = context.read<UserDataProvider>().userData;
     firestore
-        .collection("${isGroup ? "groupChats" : "chats"}/$roomId/messages")
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages")
         .doc(messageId)
         .update({"readers": readerList});
   }
 
   //사용자 정보 반환
-  Future<DocumentSnapshot<Object>> getUserProfile(String uid) async {
-    return firestore.collection("users").doc(uid).get();
+  Future<DocumentSnapshot<Object>> getUserProfile(
+      BuildContext context, String uid) async {
+    UserData userData = context.read<UserDataProvider>().userData;
+    return firestore
+        .collection("schools/${userData.school}/users")
+        .doc(uid)
+        .get();
   }
 
   //메세지 보내기
-  Future<void> sendMessage(
+  Future<void> sendMessage(BuildContext context,
       {required String roomId,
       required MessageData data,
       bool isGroup = false}) async {
+    UserData userData = context.read<UserDataProvider>().userData;
     await firestore
-        .collection("${isGroup ? "groupChats" : "chats"}/$roomId/messages")
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages")
         .doc(const Uuid().v1())
         .set(data.toJson())
         .whenComplete(() async {
@@ -277,14 +314,15 @@ class ChattingService {
       }
 
       await firestore
-          .collection(isGroup ? "groupChats" : "chats")
+          .collection(
+              "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
           .doc(roomId)
           .update({"lastMessage": lastMessage, "lastMessageTime": data.time});
     });
   }
 
   //미디어파일 보내기
-  Future<void> sendMedia(
+  Future<void> sendMedia(BuildContext context,
       {required ChatRoomData roomData,
       required MessageData messageData,
       required XFile media,
@@ -293,6 +331,7 @@ class ChattingService {
     String thumbUrl = "";
     String url = "";
     XFile? compMedia;
+    UserData userData = context.read<UserDataProvider>().userData;
 
     //이미지면 이미지 압축, 비디오면 비디오 압축
     if (messageData.type == MessageType.picture) {
@@ -301,7 +340,7 @@ class ChattingService {
           media.path, "${media.path}.jpg");
       //파이어스토어에 올리고 url 가져오기
       var ref = firestorage.ref().child(
-          "${isGroup ? "groupChats" : "chats"}/${roomData.roomId}/images/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}.jpg");
+          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/${roomData.roomId}/images/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}.jpg");
       await ref.putFile(File(compMedia!.path)).whenComplete(() async {
         url = await ref.getDownloadURL();
       });
@@ -312,7 +351,7 @@ class ChattingService {
           thumbnail!.path, "${thumbnail.path}.jpg");
 
       var thumbRef = firestorage.ref().child(
-          "${isGroup ? "groupChats" : "chats"}/${roomData.roomId}/thumbnails/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}-thumbnail-.jpg");
+          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/${roomData.roomId}/thumbnails/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}-thumbnail-.jpg");
       await thumbRef.putFile(File(compThumbnail!.path)).whenComplete(() async {
         thumbUrl = await thumbRef.getDownloadURL();
       });
@@ -324,7 +363,7 @@ class ChattingService {
 
       //파이어스토어에 올리고 url 가져오기
       var ref = firestorage.ref().child(
-          "${isGroup ? "groupChats" : "chats"}/${roomData.roomId}/videos/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}.mp4");
+          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/${roomData.roomId}/videos/${messageData.time!.millisecondsSinceEpoch}-${roomData.roomId}.mp4");
       await ref.putFile(mediaInfo!.file!).whenComplete(() async {
         url = await ref.getDownloadURL();
       });
@@ -336,6 +375,6 @@ class ChattingService {
 
     messageData.time = Timestamp.now();
 
-    sendMessage(roomId: roomData.roomId!, data: messageData);
+    sendMessage(context, roomId: roomData.roomId!, data: messageData);
   }
 }

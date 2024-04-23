@@ -1,4 +1,5 @@
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -14,7 +15,8 @@ import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class ChatListScreen extends StatefulWidget {
-  ChatListScreen({super.key});
+  ChatListScreen({super.key, required this.userData});
+  UserData userData;
   DataBase db = DataBase();
   bool onCreating = false;
 
@@ -29,26 +31,13 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadChatList();
-  }
-
-  void loadChatList() async {
-    await FirebaseFirestore.instance
-        .collection("chats")
-        .where("participantsUid",
-            arrayContains: context.read<UserDataProvider>().userData.uid)
-        .get()
-        .then((value) {
-      for (var snapshot in value.docs) {
-        chatList!.add(snapshot.data());
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     String userUID = context.read<UserDataProvider>().userData.uid!;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
@@ -81,17 +70,23 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
           showDialog(
             context: context,
             builder: (context) {
-              TextEditingController controller = TextEditingController();
+              TextEditingController titleController = TextEditingController();
+              TextEditingController descController = TextEditingController();
               return Dialog(
+                backgroundColor: Colors.white,
                 shape: ContinuousRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                child: Container(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.4,
                   child: Column(
                     children: [
                       const Text("단체 채팅방 만들기"),
                       const Text("방 이름"),
                       TextField(
-                        controller: controller,
+                        controller: titleController,
+                      ),
+                      TextField(
+                        controller: descController,
                       ),
                       TextButton(
                           onPressed: () async {
@@ -99,7 +94,10 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                               widget.onCreating = true;
                               setState(() {});
                               await ChattingService().createGroupRoom(
-                                  context, controller.value.text);
+                                  context: context,
+                                  roomName: titleController.value.text,
+                                  desc: descController.value.text,
+                                  limit: 30);
                               widget.onCreating = false;
                               setState(() {});
                             }
@@ -117,36 +115,35 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
         length: 2,
         child: Column(
           children: [
-            Builder(builder: (_) {
-              return const SizedBox(
-                width: double.infinity,
-                child: TabBar(
-                  indicatorColor: Colors.transparent,
-                  splashFactory: NoSplash.splashFactory,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  enableFeedback: false,
-                  dividerColor: Colors.transparent,
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                  unselectedLabelStyle: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
-                  tabs: [
-                    Tab(
-                      child: Text("1:1 채팅"),
-                    ),
-                    Tab(
-                      child: Text("단체 채팅"),
-                    )
-                  ],
-                ),
-              );
-            }),
+            //탭 바
+            const SizedBox(
+              width: double.infinity,
+              child: TabBar(
+                indicatorColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+                padding: EdgeInsets.symmetric(vertical: 10),
+                enableFeedback: false,
+                dividerColor: Colors.transparent,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+                unselectedLabelStyle: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500),
+                tabs: [
+                  Tab(
+                    child: Text("1:1 채팅"),
+                  ),
+                  Tab(
+                    child: Text("단체 채팅"),
+                  )
+                ],
+              ),
+            ),
             const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10), child: AdArea()),
             const SizedBox(height: 12),
@@ -155,10 +152,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                 //1:1 채팅방 리스트
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection("chats")
-                        .where("participantsUid", arrayContains: userUID)
-                        .snapshots(),
+                    stream: ChattingService().getChattingList(context),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -166,11 +160,29 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                         return const Center(child: Text("오류가 발생했어요..ToT"));
                       }
                       if (!snapshot.hasData) {
-                        return const Text("채팅방이 없습니다.");
+                        return const Text("아직 채팅방이 없어요!이.");
                       }
 
                       if (snapshot.hasData) {
                         var rooms = snapshot.data!.docs;
+                        //가져온 방 데이터 가장 최신 메세지가 온 순서로 정렬하기
+                        rooms.sort(
+                          (a, b) {
+                            var aa = ChatRoomData.fromJson(
+                                a.data() as Map<String, dynamic>);
+                            var bb = ChatRoomData.fromJson(
+                                b.data() as Map<String, dynamic>);
+                            var aTime = aa.lastMessageTime!;
+                            var bTime = bb.lastMessageTime!;
+                            if (DateTime.parse(aTime.toDate().toString())
+                                .isAfter(DateTime.parse(
+                                    bTime.toDate().toString()))) {
+                              return -1;
+                            } else {
+                              return 1;
+                            }
+                          },
+                        );
 
                         if (rooms.isEmpty) {
                           return const Center(
@@ -193,7 +205,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                             return StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection(
-                                      "chats/${rooms[index]["roomId"]}/messages")
+                                      "schools/${widget.userData.school}/chats/${rooms[index]["roomId"]}/messages")
                                   .where("time",
                                       isGreaterThan: rooms[index]["leavingTime"]
                                               [userUID] ??
@@ -230,7 +242,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
-                        .collection("groupChats")
+                        .collection(
+                            "schools/${widget.userData.school}/groupChats")
                         .where("participantsUid", arrayContains: userUID)
                         .snapshots(),
                     builder: (context, snapshot) {
@@ -267,7 +280,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                             return StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection(
-                                      "groupChats/${rooms[index]["roomId"]}/messages")
+                                      "schools/${widget.userData.school}/groupChats/${rooms[index]["roomId"]}/messages")
                                   .where("time",
                                       isGreaterThan: rooms[index]["leavingTime"]
                                               [userUID] ??

@@ -1,8 +1,10 @@
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileResult extends StatelessWidget {
-  const ProfileResult({super.key});
+  ProfileResult({super.key, required this.userData});
+  UserData userData;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class ProfileResult extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const MainScreen(),
+                      builder: (context) => MainScreen(userData: userData),
                     ));
               },
               child: const Text(

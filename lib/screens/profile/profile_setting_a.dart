@@ -1,4 +1,5 @@
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
@@ -632,7 +633,8 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                 widget.userData.mbti =
                     "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
 
-                db.addUser(widget.userData);
+                AuthService().setUserData(widget.userData);
+                //db.addUser(widget.userData);
                 Navigator.push(
                     context,
                     MaterialPageRoute(

@@ -59,9 +59,7 @@ class ChatListItem extends StatelessWidget {
     }
     return InkWell(
       onTap: () {
-        isGroup
-            ? chat.enterGroupRoom(context, data)
-            : chat.enterRoom(context, data);
+        chat.enterRoom(context, data);
       },
       onLongPress: () {},
       child: Container(

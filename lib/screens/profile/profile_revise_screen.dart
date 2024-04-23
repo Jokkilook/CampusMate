@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:io';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
@@ -29,7 +30,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   final db = DataBase();
   ImagePicker imagePicker = ImagePicker();
 
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final String uid = FirebaseAuth.instance.currentUser?.uid.toString() ?? "";
 
   TextEditingController nameController = TextEditingController();
 
@@ -59,10 +60,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
         children: [
           //캐시에서 사용자 정보를 불러옴
           FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .get(const GetOptions(source: Source.cache)),
+            future: AuthService()
+                .getUserDocumentSnapshot(uid: uid, options: Source.server),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -113,57 +112,94 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 //이미지 변경시 이미지 변경 로직 실행
                 if (widget.image != null) {
                   //프로필 이미지 파일 레퍼런스
-                  var ref = FirebaseStorage.instance
-                      .ref()
-                      .child("images/${widget.modifiedData.uid}.png");
+                  var ref = FirebaseStorage.instance.ref().child(
+                      "${widget.modifiedData.school}/profileImages/${widget.modifiedData.uid}.png");
 
                   //파이어스토어에 이미지 파일 업로드
                   await ref.putFile(File(widget.image!.path));
 
                   //변경할 데이터에 변경된 url 저장
                   widget.modifiedData.imageUrl = await ref.getDownloadURL();
+
+                  //채팅방 프로필 url 업데이트
+                  await FirebaseFirestore.instance
+                      .collection("schools/${widget.modifiedData.school}/chats")
+                      .where("participantsUid",
+                          arrayContains: widget.modifiedData.uid)
+                      .get()
+                      .then(
+                    (value) {
+                      if (value.docs.isNotEmpty) {
+                        var docs = value.docs;
+                        for (var doc in docs) {
+                          String id = doc.id;
+                          Map<String, dynamic> data = doc.data();
+                          Map<String, List<String>> userInfo =
+                              (data["participantsInfo"] as Map<String, dynamic>)
+                                  .map((key, value) {
+                            return MapEntry(
+                                key, (value as List<dynamic>).cast<String>());
+                          });
+
+                          userInfo[widget.modifiedData.uid!] = [
+                            widget.modifiedData.name!,
+                            widget.modifiedData.imageUrl!
+                          ];
+
+                          FirebaseFirestore.instance
+                              .collection(
+                                  "schools/${widget.modifiedData.school}/chats")
+                              .doc(id)
+                              .update({"participantsInfo": userInfo});
+                        }
+                      }
+                    },
+                  );
+
+                  //채팅방 프로필 url 업데이트
+                  await FirebaseFirestore.instance
+                      .collection(
+                          "schools/${widget.modifiedData.school}/groupChats")
+                      .where("participantsUid",
+                          arrayContains: widget.modifiedData.uid)
+                      .get()
+                      .then(
+                    (value) {
+                      if (value.docs.isNotEmpty) {
+                        var docs = value.docs;
+                        for (var doc in docs) {
+                          String id = doc.id;
+                          Map<String, dynamic> data = doc.data();
+                          Map<String, List<String>> userInfo =
+                              (data["participantsInfo"] as Map<String, dynamic>)
+                                  .map((key, value) {
+                            return MapEntry(
+                                key, (value as List<dynamic>).cast<String>());
+                          });
+
+                          userInfo[widget.modifiedData.uid!] = [
+                            widget.modifiedData.name!,
+                            widget.modifiedData.imageUrl!
+                          ];
+
+                          FirebaseFirestore.instance
+                              .collection(
+                                  "schools/${widget.modifiedData.school}/groupChats")
+                              .doc(id)
+                              .update({"participantsInfo": userInfo});
+                        }
+                      }
+                    },
+                  );
                 }
 
-                //채팅방 프로필 url 업데이트
-                await FirebaseFirestore.instance
-                    .collection("chats")
-                    .where("participantsUid",
-                        arrayContains: widget.modifiedData.uid)
-                    .get()
-                    .then(
-                  (value) {
-                    if (value.docs.isNotEmpty) {
-                      var docs = value.docs;
-                      for (var doc in docs) {
-                        String id = doc.id;
-                        Map<String, dynamic> data = doc.data();
-                        Map<String, List<String>> userInfo =
-                            (data["participantsInfo"] as Map<String, dynamic>)
-                                .map((key, value) {
-                          return MapEntry(
-                              key, (value as List<dynamic>).cast<String>());
-                        });
-
-                        userInfo[widget.modifiedData.uid!] = [
-                          widget.modifiedData.name!,
-                          widget.modifiedData.imageUrl!
-                        ];
-
-                        FirebaseFirestore.instance
-                            .collection("chats")
-                            .doc(id)
-                            .update({"participantsInfo": userInfo});
-                      }
-                    }
-                  },
-                );
-
-                db.addUser(widget.modifiedData);
+                AuthService().setUserData(widget.modifiedData);
 
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const MainScreen(index: 3),
+                      builder: (context) =>
+                          MainScreen(userData: widget.modifiedData, index: 3),
                     ),
                     (route) => false);
               },
@@ -438,6 +474,7 @@ class _ImageViewerState extends State<ImageViewer> {
   }
 }
 
+//태그 선택 위젯
 class TagShower extends StatefulWidget {
   const TagShower({super.key, required this.parent});
   final ProfileReviseScreenState parent;
@@ -547,6 +584,7 @@ class _TagShowerState extends State<TagShower> {
   }
 }
 
+//MBTI 선택 위젯
 //ignore: must_be_immutable
 class MBTISelector extends StatefulWidget {
   MBTISelector(

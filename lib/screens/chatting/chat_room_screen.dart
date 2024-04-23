@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/enums.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/video_player_screen.dart';
 import 'package:campusmate/widgets/chatting/chat_bubble.dart';
@@ -12,15 +15,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as path;
 
 //ignore: must_be_immutable
 class ChatRoomScreen extends StatefulWidget {
-  ChatRoomScreen({super.key, required this.chatRoomData, this.isGroup = false});
+  ChatRoomScreen(
+      {super.key,
+      required this.chatRoomData,
+      this.groupRoomData,
+      this.isGroup = false});
 
   ChatRoomData chatRoomData;
+  GroupChatRoomData? groupRoomData;
   bool isGroup;
   XFile? media;
   File? thumbnail;
@@ -41,12 +50,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   late final ChattingService chat;
 
   late final AuthService auth;
+  late final UserData userData;
 
   String senderUID = "";
 
   String? userUID;
   bool prepareMedia = false;
   bool isCompletelyLeaving = false;
+  bool isSending = false;
 
   @override
   void initState() {
@@ -56,6 +67,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     scrollController = ScrollController();
     chat = ChattingService();
     auth = AuthService();
+    userData = context.read<UserDataProvider>().userData;
   }
 
   String timeStampToHourMinutes(Timestamp time) {
@@ -68,7 +80,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   Widget build(BuildContext context) {
     userUID = auth.getUID();
-    List<String> senderData = [];
     String name = "";
     String imageUrl = "";
     Map<String, List<String>> userInfo = {};
@@ -91,15 +102,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       });
     }
 
-    print(widget.chatRoomData.roomName);
-    print(widget.isGroup);
-
     return PopScope(
       //스크린이 팝 될 때 실행될 이벤트 ( 채팅방 화면을 나간 시간 저장 )
       onPopInvoked: (didPop) async {
         if (!isCompletelyLeaving) {
           await chat.firestore
-              .collection("chats")
+              .collection("schools/${userData.school}/chats")
               .doc(widget.chatRoomData.roomId)
               .set({
             "leavingTime": {userUID: Timestamp.fromDate(DateTime.now())}
@@ -245,7 +253,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               //채팅 메세지 표시 부분
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: chat.getChattingMessages(
+                  stream: chat.getChattingMessages(context,
                       roomId: widget.chatRoomData.roomId!),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
@@ -290,8 +298,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 if (!messageReaderList.contains(userUID)) {
                                   messageReaderList.add(userUID!);
 
-                                  chat.updateReader(widget.chatRoomData.roomId!,
-                                      docs[index].id, messageReaderList);
+                                  chat.updateReader(
+                                      context,
+                                      widget.chatRoomData.roomId!,
+                                      docs[index].id,
+                                      messageReaderList);
                                 }
 
                                 //채팅방 데이터에서 참여자 수 반환
@@ -395,6 +406,33 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   },
                 ),
               ),
+              //미디어 전송 로딩 알림바
+              isSending
+                  ? Container(
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[800],
+                          borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            " ${widget.type == MessageType.picture ? "사진" : widget.type == MessageType.video ? "동영상" : "미디어"} 전송 중...",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          const SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: Padding(
+                                padding: EdgeInsets.all(5),
+                                child: CircularProgressIndicator(),
+                              ))
+                        ],
+                      ),
+                    )
+                  : Container(),
               //하단 채팅 입력바
               Column(
                 children: [
@@ -595,47 +633,23 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   readers: [],
                                   time: Timestamp.fromDate(DateTime.now()));
 
-                              var text = "데이터";
-                              if (widget.type == MessageType.video) {
-                                text = "동영상";
-                              }
-                              if (widget.type == MessageType.picture) {
-                                text = "사진";
-                              }
+                              setState(() {
+                                isSending = true;
+                              });
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  margin: const EdgeInsets.only(
-                                      bottom: 60, left: 10, right: 10),
-                                  behavior: SnackBarBehavior.floating,
-                                  duration: const Duration(days: 1),
-                                  content: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(child: Text("$text 전송 중...")),
-                                      const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator())
-                                    ],
-                                  ),
-                                ),
-                              );
-
-                              await chat.sendMedia(
+                              await chat.sendMedia(context,
                                   roomData: widget.chatRoomData,
                                   messageData: data,
                                   media: widget.media!,
                                   thumbnail: widget.thumbnail,
                                   isGroup: widget.isGroup);
 
-                              ScaffoldMessenger.of(context).hideCurrentSnackBar(
-                                  reason: SnackBarClosedReason.remove);
-
                               //전송 완료 후 미디어 변수 비우기
-                              widget.media = null;
-                              setState(() {});
+
+                              setState(() {
+                                isSending = false;
+                                widget.media = null;
+                              });
                             } else {
                               //미디어 파일이 아니면 텍스트 전송
                               content = chatController.value.text;
@@ -649,7 +663,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   readers: [],
                                   time: Timestamp.fromDate(DateTime.now()));
 
-                              await chat.sendMessage(
+                              await chat.sendMessage(context,
                                   roomId: widget.chatRoomData.roomId!,
                                   data: data,
                                   isGroup: widget.isGroup);
