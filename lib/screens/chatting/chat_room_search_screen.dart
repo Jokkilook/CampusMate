@@ -96,12 +96,6 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                           );
                         }
                         return const Text("방 이름을 검색해보세요!");
-                        return ListView.builder(
-                          itemCount: 10,
-                          itemBuilder: (context, index) {
-                            return ChatSearchItem(data: ChatRoomData());
-                          },
-                        );
                       },
                     ),
                   ),

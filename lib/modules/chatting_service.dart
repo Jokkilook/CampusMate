@@ -11,7 +11,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 
 class ChattingService {
@@ -242,12 +241,12 @@ class ChattingService {
 
   //사용자가 참여한 채팅방 데이터 리스트 반환
   Stream<QuerySnapshot<Object>> getChattingList(BuildContext context,
-      {String ownerUID = "", bool isGroup = false}) {
+      {bool isGroup = false}) {
     UserData userData = context.read<UserDataProvider>().userData;
     return firestore
         .collection(
             "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
-        .where("participantsUid", arrayContains: ownerUID)
+        .where("participantsUid", arrayContains: userData.uid)
         .snapshots();
   }
 
@@ -293,7 +292,7 @@ class ChattingService {
     await firestore
         .collection(
             "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages")
-        .doc(const Uuid().v1())
+        .doc("${DateTime.now().millisecondsSinceEpoch}_${userData.uid}")
         .set(data.toJson())
         .whenComplete(() async {
       var lastMessage = "";

@@ -81,7 +81,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   Widget build(BuildContext context) {
     userUID = auth.getUID();
     String name = "";
-    String imageUrl = "";
     Map<String, List<String>> userInfo = {};
 
     List<String> list;
@@ -97,7 +96,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       userInfo.forEach((key, value) {
         if (key != userUID) {
           name = value[0];
-          imageUrl = value[1];
         }
       });
     }

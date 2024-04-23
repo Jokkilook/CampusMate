@@ -113,6 +113,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             child: SizedBox(
                               height: 50,
                               child: TextField(
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                                 readOnly: true,
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
@@ -151,6 +154,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             child: SizedBox(
                               height: 50,
                               child: TextField(
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                                 controller: pwController,
                                 obscureText: true,
                                 decoration: InputDecoration(
@@ -191,6 +197,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             child: SizedBox(
                               height: 50,
                               child: TextField(
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                                 onChanged: (value) {
                                   if (pwController.value.text ==
                                       pwConfirmController.value.text) {
@@ -248,6 +257,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             child: SizedBox(
                               height: 70,
                               child: TextField(
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                                 maxLength: 20,
                                 controller: nickController,
                                 onChanged: (value) {

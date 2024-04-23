@@ -2,6 +2,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 
+//ignore: must_be_immutable
 class ProfileResult extends StatelessWidget {
   ProfileResult({super.key, required this.userData});
   UserData userData;

@@ -121,19 +121,19 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
               child: TabBar(
                 indicatorColor: Colors.transparent,
                 splashFactory: NoSplash.splashFactory,
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(vertical: 5),
                 enableFeedback: false,
                 dividerColor: Colors.transparent,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 labelStyle: TextStyle(
                     color: Colors.black,
-                    fontSize: 20,
+                    fontSize: 25,
                     fontWeight: FontWeight.bold),
                 unselectedLabelStyle: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500),
+                    color: Colors.black45,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
                 tabs: [
                   Tab(
                     child: Text("1:1 채팅"),
@@ -241,11 +241,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                 //단체 채팅방 리스트
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection(
-                            "schools/${widget.userData.school}/groupChats")
-                        .where("participantsUid", arrayContains: userUID)
-                        .snapshots(),
+                    stream: ChattingService()
+                        .getChattingList(context, isGroup: true),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());

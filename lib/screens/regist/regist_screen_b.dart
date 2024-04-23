@@ -138,6 +138,9 @@ class _RegistScreenBState extends State<RegistScreenB> {
                             child: SizedBox(
                               height: 50,
                               child: TextField(
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                                 readOnly: isCompleted,
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (value) {
@@ -227,6 +230,10 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                 SizedBox(
                                   height: 50,
                                   child: TextField(
+                                    onTapOutside: (event) {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                    },
                                     keyboardType: TextInputType.number,
                                     readOnly: isCompleted,
                                     controller: widget.codeController,
@@ -320,8 +327,8 @@ class _RegistScreenBState extends State<RegistScreenB> {
       ),
       bottomNavigationBar: BottomButton(
         text: "다음",
-        isCompleted: true,
-        onPressed: true
+        isCompleted: isCompleted,
+        onPressed: isCompleted
             ? () {
                 /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
                 widget.newUserData.email = widget.emailController.value.text;
