@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:campusmate/models/post_data.dart';
+import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

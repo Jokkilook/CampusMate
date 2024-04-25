@@ -1,5 +1,5 @@
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/modules/post_generator.dart';
+import 'package:campusmate/screens/community/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';

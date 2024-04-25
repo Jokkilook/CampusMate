@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:campusmate/modules/post_generator.dart';
+import 'package:campusmate/screens/community/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';

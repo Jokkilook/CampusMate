@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:campusmate/models/post_data.dart';
+import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';

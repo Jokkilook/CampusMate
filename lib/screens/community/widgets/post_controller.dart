@@ -1,7 +1,7 @@
 import 'package:campusmate/screens/community/edit_post_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:campusmate/models/post_data.dart';
+import 'package:campusmate/screens/community/models/post_data.dart';
 
 class PostController extends StatefulWidget {
   const PostController({

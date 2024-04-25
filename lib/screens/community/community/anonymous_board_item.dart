@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../models/post_data.dart';
-import '../../modules/format_time_stamp.dart';
+import '../models/post_data.dart';
+import '../modules/format_time_stamp.dart';
 
 class AnonymousBoardItem extends StatelessWidget {
   final PostData postData;

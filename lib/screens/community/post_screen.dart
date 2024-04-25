@@ -1,15 +1,15 @@
-import 'package:campusmate/models/post_comment_data.dart';
+import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
-import '../../modules/format_time_stamp.dart';
+import 'modules/format_time_stamp.dart';
 import '../../provider/user_data_provider.dart';
-import '../../models/post_data.dart';
-import '../../widgets/community/comment_item.dart';
-import '../../widgets/community/comment_reply_item.dart';
-import '../../widgets/community/post_controller.dart';
+import 'models/post_data.dart';
+import 'widgets/comment_item.dart';
+import 'widgets/comment_reply_item.dart';
+import 'widgets/post_controller.dart';
 
 //ignore: must_be_immutable
 class PostScreen extends StatefulWidget {

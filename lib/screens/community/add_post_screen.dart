@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/models/post_data.dart';
+import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
 
 import '../../widgets/bottom_button.dart';

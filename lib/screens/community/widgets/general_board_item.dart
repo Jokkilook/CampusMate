@@ -1,0 +1,202 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import '../models/post_data.dart';
+import '../modules/format_time_stamp.dart';
+
+class GeneralBoardItem extends StatelessWidget {
+  final PostData postData;
+  final FirebaseFirestore firestore;
+
+  const GeneralBoardItem({
+    super.key,
+    required this.postData,
+    required this.firestore,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedTime = formatTimeStamp(postData.timestamp!, now);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      width: double.infinity,
+      //height: 100,
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //제목 / 내용
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 제목
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                        postData.title ?? '제목 없음',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    // 내용 첫줄
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                        postData.content ?? '내용 없음',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 5),
+
+                //닉네임, 게시시간 / 좋,싫,댓,조
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //닉네임, 게시시간
+                    Row(
+                      children: [
+                        // 작성자 닉네임 가져오기
+                        FutureBuilder<DocumentSnapshot>(
+                          future: firestore
+                              .collection('users')
+                              .doc(postData.authorUid)
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return const Text(
+                                '닉네임',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            }
+                            // 문서에서 사용자 이름 가져오기
+                            String authorName = snapshot.data!['name'];
+                            //작성자, 게시시간
+                            return Row(
+                              children: [
+                                Text(
+                                  authorName,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                // 작성 시간
+                                Text(
+                                  '| $formattedTime',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    //좋아요, 싫어요, 댓글, 조회수
+                    Row(
+                      children: [
+                        // 좋아요
+                        const Icon(
+                          Icons.thumb_up_alt_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          postData.likers!.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // 싫어요
+                        const Icon(
+                          Icons.thumb_down_alt_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          postData.dislikers!.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // 댓글
+                        const Icon(
+                          Icons.mode_comment_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          postData.comments!.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // 조회수
+                        const Icon(
+                          Icons.account_circle_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          postData.viewers!.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            //이미지 썸네일
+            AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
