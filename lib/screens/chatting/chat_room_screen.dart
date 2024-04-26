@@ -104,12 +104,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       //스크린이 팝 될 때 실행될 이벤트 ( 채팅방 화면을 나간 시간 저장 )
       onPopInvoked: (didPop) async {
         if (!isCompletelyLeaving) {
-          await chat.firestore
-              .collection("schools/${userData.school}/chats")
-              .doc(widget.chatRoomData.roomId)
-              .set({
-            "leavingTime": {userUID: Timestamp.fromDate(DateTime.now())}
-          }, SetOptions(merge: true));
+          chat.recordLeavingTime(
+              isGroup: widget.isGroup, userData, widget.chatRoomData.roomId!);
+
+          // await chat.firestore
+          //     .collection("schools/${userData.school}/chats")
+          //     .doc(widget.chatRoomData.roomId)
+          //     .set({
+          //   "leavingTime": {userUID: Timestamp.fromDate(DateTime.now())}
+          // }, SetOptions(merge: true));
         }
       },
       child: Scaffold(
@@ -252,7 +255,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: chat.getChattingMessages(context,
-                      roomId: widget.chatRoomData.roomId!),
+                      roomId: widget.chatRoomData.roomId!,
+                      isGroup: widget.isGroup),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return const Center(child: Text("에러발생"));
@@ -297,6 +301,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   messageReaderList.add(userUID!);
 
                                   chat.updateReader(
+                                      isGroup: widget.isGroup,
                                       context,
                                       widget.chatRoomData.roomId!,
                                       docs[index].id,
@@ -438,7 +443,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         //+버튼
                         InkWell(
@@ -626,16 +631,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               //미디어 전송 데이터 준비
                               data = MessageData(
                                   type: widget.type,
-                                  senderUID: auth.getUID(),
+                                  senderUID: userUID,
                                   content: "",
-                                  readers: [],
+                                  readers: [userUID!],
                                   time: Timestamp.fromDate(DateTime.now()));
 
                               setState(() {
                                 isSending = true;
                               });
 
-                              await chat.sendMedia(context,
+                              await chat.sendMedia(
+                                  userData: userData,
                                   roomData: widget.chatRoomData,
                                   messageData: data,
                                   media: widget.media!,
@@ -643,11 +649,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   isGroup: widget.isGroup);
 
                               //전송 완료 후 미디어 변수 비우기
-
-                              setState(() {
-                                isSending = false;
-                                widget.media = null;
-                              });
+                              try {
+                                setState(() {
+                                  isSending = false;
+                                  widget.media = null;
+                                });
+                              } catch (e) {}
                             } else {
                               //미디어 파일이 아니면 텍스트 전송
                               content = chatController.value.text;
@@ -656,12 +663,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               //텍스트 메세지 데이터 준비
                               data = MessageData(
                                   type: MessageType.text,
-                                  senderUID: auth.getUID(),
+                                  senderUID: userUID,
                                   content: content,
-                                  readers: [],
+                                  readers: [userUID!],
                                   time: Timestamp.fromDate(DateTime.now()));
 
-                              await chat.sendMessage(context,
+                              await chat.sendMessage(
+                                  userData: userData,
                                   roomId: widget.chatRoomData.roomId!,
                                   data: data,
                                   isGroup: widget.isGroup);

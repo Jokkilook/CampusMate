@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,18 +13,40 @@ class ChatListItem extends StatelessWidget {
   ChatListItem(
       {super.key,
       required this.data,
+      this.groupData,
       this.isGroup = false,
       this.unreadCount = 0});
 
   final ChatRoomData data;
+  final GroupChatRoomData? groupData;
   final bool isGroup;
   final ChattingService chat = ChattingService();
   int unreadCount;
 
   String timeStampToHourMinutes(Timestamp time) {
+    var now = DateTime.now();
     var data = time.toDate().toString();
     var date = DateTime.parse(data);
+    //현재 시간과 메세지 시간 과의 기간 Duration
+    var dateDiff = date.difference(now);
+    //현재 시간 = 메세지 시간 DateTime
+    var pastDate = now.subtract(dateDiff.abs());
+    //어떤 메세지를 출력할지 결정할 n일전 데이터
+    var dayDiff = dateDiff.inDays.abs();
 
+    //어제 온 거면 어제 라고 표시
+    if (dayDiff == 1) {
+      return "어제";
+    }
+    //3일 이상 전에 온거면 날짜 표시
+    else if (dayDiff > 3) {
+      return "${pastDate.month}월 ${pastDate.day}일";
+    }
+    //1일 이상 전에 온거면 n일 전 표시
+    else if (dayDiff > 1) {
+      return "${dateDiff.inDays.abs().toString()}일 전";
+    }
+    //오늘 온거면 시간 표시
     return "${NumberFormat("00").format(date.hour)}:${NumberFormat("00").format(date.minute)}";
   }
 
@@ -59,7 +82,9 @@ class ChatListItem extends StatelessWidget {
     }
     return InkWell(
       onTap: () {
-        chat.enterRoom(context, data);
+        isGroup
+            ? chat.enterGroupRoom(context, groupData!)
+            : chat.enterRoom(context, data);
       },
       onLongPress: () {},
       child: Container(

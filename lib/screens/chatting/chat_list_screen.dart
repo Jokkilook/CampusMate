@@ -1,17 +1,14 @@
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/chatting/chat_list_item.dart';
 import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class ChatListScreen extends StatefulWidget {
@@ -35,7 +32,6 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String userUID = context.read<UserDataProvider>().userData.uid!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -160,7 +156,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                         return const Center(child: Text("오류가 발생했어요..ToT"));
                       }
                       if (!snapshot.hasData) {
-                        return const Text("아직 채팅방이 없어요!이.");
+                        return const Text("아직 채팅방이 없어요!");
                       }
 
                       if (snapshot.hasData) {
@@ -208,12 +204,23 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                       "schools/${widget.userData.school}/chats/${rooms[index]["roomId"]}/messages")
                                   .where("time",
                                       isGreaterThan: rooms[index]["leavingTime"]
-                                              [userUID] ??
+                                              [widget.userData.uid] ??
                                           Timestamp.fromDate(DateTime.now()))
                                   .snapshots(),
                               builder: (context, messages) {
-                                var data = messages.data?.docs ?? [];
+                                //안읽은 메세지에서 내가 보낸 메세지 빼기
+                                //미디어 파일 전송 시 전송 누르고 완료 전에 화면을 나가면 내 화면에서도 안읽은 메세지로 표시되서 필터링 해줌
+                                //파이어베이스에서 not in 쿼리를 지원해주지 않는다... 비교식 where 2번 쓰는 것도 안됌
+                                var ref = messages.data?.docs ?? [];
+                                var data = List.from(ref);
+                                for (var element in ref) {
+                                  if (element.get("senderUID") ==
+                                      widget.userData.uid) {
+                                    data.remove(element);
+                                  }
+                                }
                                 int count = data.length;
+
                                 return ChatListItem(
                                   unreadCount: count,
                                   isGroup: false,
@@ -280,15 +287,27 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                       "schools/${widget.userData.school}/groupChats/${rooms[index]["roomId"]}/messages")
                                   .where("time",
                                       isGreaterThan: rooms[index]["leavingTime"]
-                                              [userUID] ??
+                                              [widget.userData.uid] ??
                                           Timestamp.fromDate(DateTime.now()))
                                   .snapshots(),
                               builder: (context, messages) {
-                                var data = messages.data?.docs ?? [];
+                                //안읽은 메세지에서 내가 보낸 메세지 빼기
+                                //미디어 파일 전송 시 전송 누르고 완료 전에 화면을 나가면 내 화면에서도 안읽은 메세지로 표시되서 필터링 해줌
+                                var ref = messages.data?.docs ?? [];
+                                var data = List.from(ref);
+                                for (var element in ref) {
+                                  if (element.get("senderUID") ==
+                                      widget.userData.uid) {
+                                    data.remove(element);
+                                  }
+                                }
                                 int count = data.length;
                                 return ChatListItem(
                                   unreadCount: count,
                                   isGroup: true,
+                                  groupData: GroupChatRoomData.fromJson(
+                                      rooms[index].data()
+                                          as Map<String, dynamic>),
                                   data: ChatRoomData(
                                       roomName: rooms[index]["roomName"],
                                       roomId: rooms[index]["roomId"],

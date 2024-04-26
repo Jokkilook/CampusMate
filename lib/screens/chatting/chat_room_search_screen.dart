@@ -1,9 +1,11 @@
-import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/chatting_service.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/chatting/chat_search_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class ChatRoomSearchScreen extends StatefulWidget {
@@ -16,6 +18,14 @@ class ChatRoomSearchScreen extends StatefulWidget {
 
 class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
   TextEditingController controller = TextEditingController();
+  late UserData userData;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    userData = context.read<UserDataProvider>().userData;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +56,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                           ),
                           child: TextField(
                             decoration: const InputDecoration(
+                                hintText: "채팅방 제목을 검색해주세요!",
                                 suffixIcon: Icon(Icons.search),
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
@@ -67,10 +78,12 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                     child: StreamBuilder<QuerySnapshot>(
                       stream: (controller.value.text == "")
                           ? FirebaseFirestore.instance
-                              .collection("groupChats")
+                              .collection(
+                                  "schools/${userData.school}/groupChats")
                               .snapshots()
                           : FirebaseFirestore.instance
-                              .collection("groupChats")
+                              .collection(
+                                  "schools/${userData.school}/groupChats")
                               .where("roomName",
                                   isGreaterThanOrEqualTo: controller.value.text)
                               .where("roomName",
@@ -81,21 +94,60 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                             ConnectionState.waiting) {
                           return const CircularProgressIndicator();
                         }
-                        // if (!snapshot.hasData) {
-                        //   return const Text("일치하는 방이 없어요.");
-                        // }
+                        if (!snapshot.hasData) {
+                          return const Text("일치하는 방이 없어요.");
+                        }
                         if (snapshot.hasData) {
                           var rooms = snapshot.data!.docs;
                           return ListView.builder(
                             itemCount: rooms.length,
                             itemBuilder: (context, index) {
-                              var roomData = ChatRoomData.fromJson(
+                              var roomData = GroupChatRoomData.fromJson(
                                   rooms[index].data() as Map<String, dynamic>);
-                              return ChatSearchItem(data: roomData);
+                              return InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) {
+                                        return Dialog(
+                                          clipBehavior: Clip.hardEdge,
+                                          shape: ContinuousRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            width: MediaQuery.of(_).size.width *
+                                                0.8,
+                                            color: Colors.amber,
+                                            child: IntrinsicHeight(
+                                              child: Column(
+                                                children: [
+                                                  Text(roomData.roomName!),
+                                                  Text(roomData.description!),
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(_);
+                                                        Navigator.pop(context);
+                                                        ChattingService()
+                                                            .enterGroupRoom(
+                                                                context,
+                                                                roomData);
+                                                      },
+                                                      child:
+                                                          const Text("입장하기")),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: ChatSearchItem(data: roomData));
                             },
                           );
                         }
-                        return const Text("방 이름을 검색해보세요!");
+                        return const Text("채팅방 제목을 검색해보세요!");
                       },
                     ),
                   ),

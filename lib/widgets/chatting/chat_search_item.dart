@@ -1,10 +1,11 @@
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ChatSearchItem extends StatelessWidget {
-  final ChatRoomData data;
+  final GroupChatRoomData data;
   const ChatSearchItem({super.key, required this.data});
 
   String timeStampToYYYYMMDD({Timestamp? time, String? stringTime}) {
@@ -27,6 +28,7 @@ class ChatSearchItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +38,21 @@ class ChatSearchItem extends StatelessWidget {
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              Text("생성일: ${timeStampToYYYYMMDD(stringTime: seperedList[1])}")
+              Text(
+                data.description ?? "설명",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              Text("만든 날짜: ${timeStampToYYYYMMDD(stringTime: seperedList[1])}")
+            ],
+          ),
+          Row(
+            children: [
+              const Icon(Icons.person),
+              Text(data.participantsUid?.length.toString() ?? "1")
             ],
           )
         ],

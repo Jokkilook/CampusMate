@@ -113,7 +113,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 if (widget.image != null) {
                   //프로필 이미지 파일 레퍼런스
                   var ref = FirebaseStorage.instance.ref().child(
-                      "${widget.modifiedData.school}/profileImages/${widget.modifiedData.uid}.png");
+                      "schools/${widget.modifiedData.school}/profileImages/${widget.modifiedData.uid}.png");
 
                   //파이어스토어에 이미지 파일 업로드
                   await ref.putFile(File(widget.image!.path));

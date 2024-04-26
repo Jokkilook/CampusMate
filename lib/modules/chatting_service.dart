@@ -139,7 +139,8 @@ class ChattingService {
           userData.uid!: [userData.name!, userData.imageUrl!],
         },
         participantsUid: [userData.uid!],
-        lastMessage: "");
+        lastMessage: "새로운 채팅방이 생성되었습니다!",
+        lastMessageTime: Timestamp.now());
 
     //파이어스토어에 채팅방 데이터 추가
     await firestore
@@ -177,6 +178,18 @@ class ChattingService {
           builder: (context) => ChatRoomScreen(
               chatRoomData: data, groupRoomData: data, isGroup: true),
         ));
+  }
+
+  //채팅방 화면 나갔을 때 시간 기록
+  Future recordLeavingTime(UserData userData, String roomId,
+      {bool isGroup = false}) async {
+    await firestore
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
+        .doc(roomId)
+        .set({
+      "leavingTime": {userData.uid: Timestamp.fromDate(DateTime.now())}
+    }, SetOptions(merge: true));
   }
 
   //채팅방 나가기
@@ -284,11 +297,11 @@ class ChattingService {
   }
 
   //메세지 보내기
-  Future<void> sendMessage(BuildContext context,
-      {required String roomId,
+  Future<void> sendMessage(
+      {required UserData userData,
+      required String roomId,
       required MessageData data,
       bool isGroup = false}) async {
-    UserData userData = context.read<UserDataProvider>().userData;
     await firestore
         .collection(
             "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages")
@@ -321,8 +334,9 @@ class ChattingService {
   }
 
   //미디어파일 보내기
-  Future<void> sendMedia(BuildContext context,
-      {required ChatRoomData roomData,
+  Future<void> sendMedia(
+      {required UserData userData,
+      required ChatRoomData roomData,
       required MessageData messageData,
       required XFile media,
       bool isGroup = false,
@@ -330,7 +344,6 @@ class ChattingService {
     String thumbUrl = "";
     String url = "";
     XFile? compMedia;
-    UserData userData = context.read<UserDataProvider>().userData;
 
     //이미지면 이미지 압축, 비디오면 비디오 압축
     if (messageData.type == MessageType.picture) {
@@ -374,6 +387,10 @@ class ChattingService {
 
     messageData.time = Timestamp.now();
 
-    sendMessage(context, roomId: roomData.roomId!, data: messageData);
+    sendMessage(
+        isGroup: isGroup,
+        userData: userData,
+        roomId: roomData.roomId!,
+        data: messageData);
   }
 }
