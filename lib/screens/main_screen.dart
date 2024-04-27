@@ -66,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
               duration: const Duration(milliseconds: 100),
               index: index,
               children: [
-                const MatchingScreen(),
+                MatchingScreen(),
                 ChatListScreen(
                   userData: widget.userData,
                 ),

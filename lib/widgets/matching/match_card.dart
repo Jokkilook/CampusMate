@@ -8,6 +8,7 @@ import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MatchCard extends StatefulWidget {
   const MatchCard({super.key});
@@ -17,6 +18,25 @@ class MatchCard extends StatefulWidget {
 }
 
 class _MatchCardState extends State<MatchCard> {
+  late SharedPreferences pref;
+  bool containTags = true;
+  bool containMBTI = true;
+  bool containSchedule = true;
+
+  Future getPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    containTags = pref.getBool("containTags") ?? true;
+    containMBTI = pref.getBool("containMBTI") ?? true;
+    containSchedule = pref.getBool("containSchedule") ?? true;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPref();
+  }
+
   int matchFilter(
       {required UserData myData,
       required UserData otherData,
@@ -132,25 +152,44 @@ class _MatchCardState extends State<MatchCard> {
   CardSwiper swipableCard(
       List<QueryDocumentSnapshot> data, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.height;
+    final UserData userData = context.read<UserDataProvider>().userData;
 
     for (var info in data) {
       var doc = UserData.fromJson(info.data() as Map<String, dynamic>);
-      if (doc.uid == context.read<UserDataProvider>().userData.uid) {
+      if (doc.uid == userData.uid) {
         data.remove(info);
         break;
       }
     }
 
-    return CardSwiper(
-        // scale: 0.95,
-        // backCardOffset: const Offset(0, 25),
+    //Map<점수(int), 유저데이처(UserData)> 를 생성한다.
+    Map<int, UserData> totalData = {};
 
+    for (var element in data) {
+      UserData strangerData =
+          UserData.fromJson(element.data() as Map<String, dynamic>);
+      totalData[matchFilter(
+        myData: userData,
+        otherData: strangerData,
+        containTags: containTags,
+        containMBTI: containMBTI,
+        containSchedule: containSchedule,
+      )] = strangerData;
+    }
+
+    //위에 점수를 도출한 맵을 Key(점수)가 높은 순으로 정렬해서 할당한다.
+    Map<int, UserData> finalData = {};
+
+    finalData = Map.fromEntries(
+        totalData.entries.toList()..sort((a, b) => b.key.compareTo(a.key)));
+
+    //점수별로 정렬된 카드를 순서대로 출력
+    return CardSwiper(
         threshold: 100,
-        cardsCount: data.length,
+        cardsCount: finalData.length,
         cardBuilder: (context, index, horizontalOffsetPercentage,
             verticalOffsetPercentage) {
-          final doc =
-              UserData.fromJson(data[index].data() as Map<String, dynamic>);
+          final UserData doc = finalData.values.elementAt(index);
           late final String score;
 
           if (doc.score! >= 95) {
@@ -299,11 +338,7 @@ class _MatchCardState extends State<MatchCard> {
                                 child: Center(
                                   child: ScoreShower(
                                     score: score,
-                                    percentage: matchFilter(
-                                        myData: context
-                                            .read<UserDataProvider>()
-                                            .userData,
-                                        otherData: doc),
+                                    percentage: finalData.keys.elementAt(index),
                                   ),
                                 ),
                               ),
