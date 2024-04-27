@@ -99,179 +99,211 @@ class ChatBubble extends StatelessWidget {
                 )
               ])
             : Container(),
-        Align(
-          //내 채팅버블이면 오른쪽 정렬, 상대버블이면 왼쪽 정렬
-          alignment: isOther ? Alignment.centerLeft : Alignment.centerRight,
-          child: Row(
-            mainAxisAlignment:
+        type == MessageType.notice
+            ? Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.grey[300],
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Text(
+                  "$name 님이 ${messageData["content"] == "left" ? "퇴장" : messageData["content"] == "enter" ? "입장" : ""}했습니다.",
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+              )
+            : Align(
                 //내 채팅버블이면 오른쪽 정렬, 상대버블이면 왼쪽 정렬
-                isOther ? MainAxisAlignment.start : MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                crossAxisAlignment:
-                    //내 채팅버블이면 아래쪽, 상대버블이면 위쪽으로 정렬해서 프로필 사진이 위로 올라가게 한다
-                    isOther ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-                children: [
-                  //프로필을 보여줘야하고 상대방일 때 사진 표시
-                  (showDay || viewSender) && isOther
-                      ? GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => StrangerProfilScreen(
-                                    uid: senderUid!, readOnly: true),
-                              ),
-                            );
-                          },
-                          child: Container(
-                              clipBehavior: Clip.hardEdge,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15)),
-                              width: 50,
-                              height: 50,
-                              child: cachedProfileImage),
-                        )
-                      : Container(
-                          width: 50,
-                        ),
-                  const SizedBox(width: 10),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        children: [
-                          //왼쪽 안읽은 사람 수 표시(내 버블일 때)
-                          !isOther
-                              ? Text(reader,
-                                  style: const TextStyle(fontSize: 10))
-                              : Container(),
-                          !isOther ? const SizedBox(width: 6) : Container(),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          //왼쪽 시간표시 (시간을 보여줘야하고 내 버블일 때)
-                          showTime && !isOther
-                              ? Text(
-                                  timeStampToHourMinutes(messageData["time"]),
-                                  style: const TextStyle(fontSize: 10))
-                              : Container(),
-                          isOther ? Container() : const SizedBox(width: 6),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //프로필을 보여줘야 하고 상대방일 때 이름표시
-                      (showDay || viewSender) && isOther
-                          ? Text(name ?? "")
-                          : Container(),
-                      const SizedBox(height: 5),
-                      //채팅 버블 부분
-                      Container(
-                        clipBehavior: Clip.hardEdge,
-                        constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.65),
-                        decoration: BoxDecoration(
-                            color:
-                                //상대 채팅버블이면 회색, 내 채팅버블이면 초록
-                                isOther ? Colors.grey[200] : Colors.green[400],
-                            borderRadius: (type != MessageType.text)
-                                ? const BorderRadius.all(Radius.circular(10))
-                                : isOther
-                                    ? const BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                        topRight: Radius.circular(10))
-                                    : const BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                        topLeft: Radius.circular(10))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            //채팅이 텍스트일 때 보여줄 곳
-                            if (type == MessageType.text)
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                child: Text(
-                                  messageData["content"],
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            //채팅이 사진일 때 보여줄 곳
-                            if (type == MessageType.picture)
-                              InstaImageViewer(child: cachedMediaImage),
-                            //채팅이 동영상일 때 보여줄 곳
-                            if (type == MessageType.video)
-                              InkWell(
+                alignment:
+                    isOther ? Alignment.centerLeft : Alignment.centerRight,
+                child: Row(
+                  mainAxisAlignment:
+                      //내 채팅버블이면 오른쪽 정렬, 상대버블이면 왼쪽 정렬
+                      isOther ? MainAxisAlignment.start : MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      crossAxisAlignment:
+                          //내 채팅버블이면 아래쪽, 상대버블이면 위쪽으로 정렬해서 프로필 사진이 위로 올라가게 한다
+                          isOther
+                              ? CrossAxisAlignment.start
+                              : CrossAxisAlignment.end,
+                      children: [
+                        //프로필을 보여줘야하고 상대방일 때 사진 표시
+                        (showDay || viewSender) && isOther
+                            ? GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          VideoPlayerScreen(url: videoUrl),
+                                          StrangerProfilScreen(
+                                              uid: senderUid!, readOnly: true),
                                     ),
                                   );
                                 },
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    cachedMediaImage,
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: Container(
-                                        height: 30,
-                                        width: 30,
-                                        color: Colors.black.withOpacity(0.4),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.play_arrow,
-                                      color: Colors.white,
-                                    )
-                                  ],
-                                ),
+                                child: Container(
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    width: 50,
+                                    height: 50,
+                                    child: cachedProfileImage),
+                              )
+                            : Container(
+                                width: 50,
                               ),
+                        const SizedBox(width: 10),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              children: [
+                                //왼쪽 안읽은 사람 수 표시(내 버블일 때)
+                                !isOther
+                                    ? Text(reader,
+                                        style: const TextStyle(fontSize: 10))
+                                    : Container(),
+                                !isOther
+                                    ? const SizedBox(width: 6)
+                                    : Container(),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                //왼쪽 시간표시 (시간을 보여줘야하고 내 버블일 때)
+                                showTime && !isOther
+                                    ? Text(
+                                        timeStampToHourMinutes(
+                                            messageData["time"]),
+                                        style: const TextStyle(fontSize: 10))
+                                    : Container(),
+                                isOther
+                                    ? Container()
+                                    : const SizedBox(width: 6),
+                              ],
+                            ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            //프로필을 보여줘야 하고 상대방일 때 이름표시
+                            (showDay || viewSender) && isOther
+                                ? Text(name ?? "")
+                                : Container(),
+                            const SizedBox(height: 5),
+                            //채팅 버블 부분
+                            Container(
+                              clipBehavior: Clip.hardEdge,
+                              constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.65),
+                              decoration: BoxDecoration(
+                                  color:
+                                      //상대 채팅버블이면 회색, 내 채팅버블이면 초록
+                                      isOther
+                                          ? Colors.grey[200]
+                                          : Colors.green[400],
+                                  borderRadius: (type != MessageType.text)
+                                      ? const BorderRadius.all(
+                                          Radius.circular(10))
+                                      : isOther
+                                          ? const BorderRadius.only(
+                                              bottomLeft: Radius.circular(10),
+                                              bottomRight: Radius.circular(10),
+                                              topRight: Radius.circular(10))
+                                          : const BorderRadius.only(
+                                              bottomLeft: Radius.circular(10),
+                                              bottomRight: Radius.circular(10),
+                                              topLeft: Radius.circular(10))),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //채팅이 텍스트일 때 보여줄 곳
+                                  if (type == MessageType.text)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 10),
+                                      child: Text(
+                                        messageData["content"],
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  //채팅이 사진일 때 보여줄 곳
+                                  if (type == MessageType.picture)
+                                    InstaImageViewer(child: cachedMediaImage),
+                                  //채팅이 동영상일 때 보여줄 곳
+                                  if (type == MessageType.video)
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                VideoPlayerScreen(
+                                                    url: videoUrl),
+                                          ),
+                                        );
+                                      },
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          cachedMediaImage,
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            child: Container(
+                                              height: 30,
+                                              width: 30,
+                                              color:
+                                                  Colors.black.withOpacity(0.4),
+                                            ),
+                                          ),
+                                          const Icon(
+                                            Icons.play_arrow,
+                                            color: Colors.white,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            //오른쪽 안읽은 사람 수 표시(상대방 버블일 때)
+                            isOther ? const SizedBox(width: 6) : Container(),
+                            isOther
+                                ? Text(reader,
+                                    style: const TextStyle(fontSize: 10))
+                                : Container(),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            //오른쪽 시간표시 (시간을 보여줘야하고 상대방 버블일 때)
+                            isOther ? const SizedBox(width: 6) : Container(),
+                            showTime && isOther
+                                ? Text(
+                                    timeStampToHourMinutes(messageData["time"]),
+                                    style: const TextStyle(fontSize: 10))
+                                : Container(),
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      //오른쪽 안읽은 사람 수 표시(상대방 버블일 때)
-                      isOther ? const SizedBox(width: 6) : Container(),
-                      isOther
-                          ? Text(reader, style: const TextStyle(fontSize: 10))
-                          : Container(),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      //오른쪽 시간표시 (시간을 보여줘야하고 상대방 버블일 때)
-                      isOther ? const SizedBox(width: 6) : Container(),
-                      showTime && isOther
-                          ? Text(timeStampToHourMinutes(messageData["time"]),
-                              style: const TextStyle(fontSize: 10))
-                          : Container(),
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
       ],
     );
   }

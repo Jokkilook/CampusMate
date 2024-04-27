@@ -17,13 +17,22 @@ class MatchCard extends StatefulWidget {
 }
 
 class _MatchCardState extends State<MatchCard> {
-  int matchFilter(UserData myData, UserData otherData) {
+  int matchFilter(
+      {required UserData myData,
+      required UserData otherData,
+      bool containTags = true,
+      bool containMBTI = true,
+      bool containSchedule = true}) {
     int matchPercent = 0;
+    List<bool> conditionList = [];
+    containTags ? conditionList.add(containTags) : null;
+    containMBTI ? conditionList.add(containMBTI) : null;
+    containSchedule ? conditionList.add(containSchedule) : null;
 
-    matchPercent = (compareSchedule(myData, otherData) +
-            compareTags(myData, otherData) +
-            compareMBTI(myData, otherData)) ~/
-        3;
+    matchPercent = ((containSchedule ? compareSchedule(myData, otherData) : 0) +
+            (containTags ? compareTags(myData, otherData) : 0) +
+            (containMBTI ? compareMBTI(myData, otherData) : 0)) ~/
+        conditionList.length;
 
     return matchPercent;
   }
@@ -291,10 +300,10 @@ class _MatchCardState extends State<MatchCard> {
                                   child: ScoreShower(
                                     score: score,
                                     percentage: matchFilter(
-                                        context
+                                        myData: context
                                             .read<UserDataProvider>()
                                             .userData,
-                                        doc),
+                                        otherData: doc),
                                   ),
                                 ),
                               ),

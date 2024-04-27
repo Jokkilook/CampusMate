@@ -7,10 +7,12 @@ import '../modules/format_time_stamp.dart';
 
 class AnonymousBoardItem extends StatelessWidget {
   final PostData postData;
+  final String school;
 
   const AnonymousBoardItem({
     super.key,
     required this.postData,
+    required this.school,
   });
 
   @override

@@ -57,6 +57,18 @@ class ChattingService {
               .collection("schools/${userData.school}/chats")
               .doc(roomId)
               .update({"participantsUid": data.participantsUid});
+
+          //방 입장 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
+          sendMessage(
+            isGroup: false,
+            userData: userData,
+            roomId: roomId,
+            data: MessageData(
+                type: MessageType.notice,
+                senderUID: userData.uid,
+                content: "enter",
+                time: Timestamp.now()),
+          );
         }
 
         //채팅방 입장
@@ -169,6 +181,19 @@ class ChattingService {
         "participantsUid": updatedUIDList,
         "participantsInfo": updatedInfo,
       });
+
+      //방 입장 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
+      sendMessage(
+        isGroup: true,
+        userData: userData,
+        roomId: data.roomId!,
+        data: MessageData(
+            type: MessageType.notice,
+            senderUID: userData.uid,
+            content: "enter",
+            readers: [],
+            time: Timestamp.now()),
+      );
     }
 
     //채팅방 화면으로 이동
@@ -204,6 +229,19 @@ class ChattingService {
     var messageRef = firestore.collection(
         "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages");
     DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
+
+    //방 나간 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
+    sendMessage(
+      isGroup: isGroup,
+      userData: userData,
+      roomId: roomId,
+      data: MessageData(
+          type: MessageType.notice,
+          senderUID: userUID,
+          content: "left",
+          readers: [],
+          time: Timestamp.now()),
+    );
 
     //채팅방 참여자 목록에서 UID 제거하기
     List participantsList = data.data()!["participantsUid"];
@@ -325,11 +363,13 @@ class ChattingService {
           break;
       }
 
-      await firestore
-          .collection(
-              "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
-          .doc(roomId)
-          .update({"lastMessage": lastMessage, "lastMessageTime": data.time});
+      if (data.type != MessageType.notice) {
+        await firestore
+            .collection(
+                "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
+            .doc(roomId)
+            .update({"lastMessage": lastMessage, "lastMessageTime": data.time});
+      }
     });
   }
 

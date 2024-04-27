@@ -9,11 +9,13 @@ import '../modules/format_time_stamp.dart';
 class GeneralBoardItem extends StatelessWidget {
   final PostData postData;
   final FirebaseFirestore firestore;
+  final String school;
 
   const GeneralBoardItem({
     super.key,
     required this.postData,
     required this.firestore,
+    required this.school,
   });
 
   @override
@@ -73,7 +75,7 @@ class GeneralBoardItem extends StatelessWidget {
                         // 작성자 닉네임 가져오기
                         FutureBuilder<DocumentSnapshot>(
                           future: firestore
-                              .collection('users')
+                              .collection('schools/$school/users')
                               .doc(postData.authorUid)
                               .get(),
                           builder: (context, snapshot) {

@@ -81,6 +81,9 @@ class LoginScreen extends StatelessWidget {
                         height: 50,
                         child: TextField(
                           controller: idController,
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
                           decoration: InputDecoration(
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -109,6 +112,9 @@ class LoginScreen extends StatelessWidget {
                         height: 50,
                         child: TextField(
                           controller: pwContorlloer,
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
                           obscureText: true,
                           decoration: InputDecoration(
                               focusedBorder: OutlineInputBorder(

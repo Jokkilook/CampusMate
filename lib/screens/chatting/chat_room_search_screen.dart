@@ -55,6 +55,9 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                             color: Colors.grey[300],
                           ),
                           child: TextField(
+                            onTapOutside: (event) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
                             decoration: const InputDecoration(
                                 hintText: "채팅방 제목을 검색해주세요!",
                                 suffixIcon: Icon(Icons.search),

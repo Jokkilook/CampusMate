@@ -1,3 +1,4 @@
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';
@@ -9,8 +10,10 @@ import 'add_post_screen.dart';
 Color primaryColor = const Color(0xFF2BB56B);
 
 class CommunityScreen extends StatefulWidget {
+  final UserData userData;
   const CommunityScreen({
     super.key,
+    required this.userData,
   });
 
   @override
@@ -78,7 +81,8 @@ class _CommunityScreenState extends State<CommunityScreen>
               onRefresh: _refreshScreen,
               child: FutureBuilder(
                 future: FirebaseFirestore.instance
-                    .collection('generalPosts')
+                    .collection(
+                        'schools/${widget.userData.school}/generalPosts')
                     .orderBy('timestamp', descending: true)
                     .get(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -114,6 +118,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                               builder: (context) => PostScreen(
                                 postData: postData,
                                 firestore: FirebaseFirestore.instance,
+                                school: widget.userData.school!,
                               ),
                             ),
                           ).then((_) {
@@ -123,6 +128,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                         child: GeneralBoardItem(
                           postData: postData,
                           firestore: FirebaseFirestore.instance,
+                          school: widget.userData.school!,
                         ),
                       );
                     },
@@ -135,7 +141,8 @@ class _CommunityScreenState extends State<CommunityScreen>
               onRefresh: _refreshScreen,
               child: FutureBuilder(
                 future: FirebaseFirestore.instance
-                    .collection('anonymousPosts')
+                    .collection(
+                        'schools/${widget.userData.school}/anonymousPosts')
                     .orderBy('timestamp', descending: true)
                     .get(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -171,6 +178,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                               builder: (context) => PostScreen(
                                 postData: postData,
                                 firestore: FirebaseFirestore.instance,
+                                school: widget.userData.school!,
                               ),
                             ),
                           ).then((_) {
@@ -179,6 +187,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                         },
                         child: AnonymousBoardItem(
                           postData: postData,
+                          school: widget.userData.school!,
                         ),
                       );
                     },
@@ -194,7 +203,10 @@ class _CommunityScreenState extends State<CommunityScreen>
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => AddPostScreen(currentIndex: currentIndex)),
+                  builder: (_) => AddPostScreen(
+                        currentIndex: currentIndex,
+                        userData: widget.userData,
+                      )),
             ).then((_) {
               // AddPostScreen이 닫힌 후에 CommunityScreen을 새로고침
               _refreshScreen();

@@ -70,7 +70,9 @@ class _MainScreenState extends State<MainScreen> {
                 ChatListScreen(
                   userData: widget.userData,
                 ),
-                const CommunityScreen(),
+                CommunityScreen(
+                  userData: widget.userData,
+                ),
                 ProfileScreen(
                   userData: widget.userData,
                 ),

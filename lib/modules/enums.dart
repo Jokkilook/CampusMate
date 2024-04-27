@@ -1,4 +1,4 @@
-enum MessageType { text, picture, video }
+enum MessageType { text, picture, video, notice }
 
 MessageType stringToEnumMessageType(String value) {
   MessageType result;
@@ -21,6 +21,12 @@ MessageType stringToEnumMessageType(String value) {
       break;
     case "video":
       result = MessageType.video;
+      break;
+    case "MessageType.notice":
+      result = MessageType.notice;
+      break;
+    case "notice":
+      result = MessageType.notice;
       break;
     default:
       result = MessageType.text;

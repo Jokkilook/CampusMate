@@ -3,23 +3,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-
 import 'modules/format_time_stamp.dart';
 import '../../provider/user_data_provider.dart';
 import 'models/post_data.dart';
-import 'widgets/comment_item.dart';
-import 'widgets/comment_reply_item.dart';
 import 'widgets/post_controller.dart';
 
 //ignore: must_be_immutable
 class PostScreen extends StatefulWidget {
   PostData postData;
   final FirebaseFirestore firestore;
+  final String school;
 
   PostScreen({
     Key? key,
     required this.postData,
     required this.firestore,
+    required this.school,
   }) : super(key: key);
 
   @override
@@ -63,9 +62,10 @@ class _PostScreenState extends State<PostScreen> {
       if (widget.postData.viewers == null ||
           !widget.postData.viewers!.contains(currentUserUid)) {
         await FirebaseFirestore.instance
-            .collection(widget.postData.boardType == 'General'
-                ? 'generalPosts'
-                : 'anonymousPosts')
+            .collection("schools/${widget.school}" +
+                (widget.postData.boardType == 'General'
+                    ? 'generalPosts'
+                    : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'viewers': FieldValue.arrayUnion([currentUserUid]),
@@ -94,9 +94,10 @@ class _PostScreenState extends State<PostScreen> {
     if (isLike) {
       if (userLiked) {
         await FirebaseFirestore.instance
-            .collection(widget.postData.boardType == 'General'
-                ? 'generalPosts'
-                : 'anonymousPosts')
+            .collection("schools/${widget.school}" +
+                (widget.postData.boardType == 'General'
+                    ? 'generalPosts'
+                    : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'likers': FieldValue.arrayRemove([currentUserUid]),
@@ -108,9 +109,10 @@ class _PostScreenState extends State<PostScreen> {
       } else {
         if (userDisliked) {
           await FirebaseFirestore.instance
-              .collection(widget.postData.boardType == 'General'
-                  ? 'generalPosts'
-                  : 'anonymousPosts')
+              .collection("schools/${widget.school}" +
+                  (widget.postData.boardType == 'General'
+                      ? 'generalPosts'
+                      : 'anonymousPosts'))
               .doc(widget.postData.postId)
               .update({
             'dislikers': FieldValue.arrayRemove([currentUserUid]),
@@ -121,9 +123,10 @@ class _PostScreenState extends State<PostScreen> {
           });
         }
         await FirebaseFirestore.instance
-            .collection(widget.postData.boardType == 'General'
-                ? 'generalPosts'
-                : 'anonymousPosts')
+            .collection("schools/${widget.school}" +
+                (widget.postData.boardType == 'General'
+                    ? 'generalPosts'
+                    : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'likers': FieldValue.arrayUnion([currentUserUid]),
@@ -136,9 +139,10 @@ class _PostScreenState extends State<PostScreen> {
     } else {
       if (userDisliked) {
         await FirebaseFirestore.instance
-            .collection(widget.postData.boardType == 'General'
-                ? 'generalPosts'
-                : 'anonymousPosts')
+            .collection("schools/${widget.school}" +
+                (widget.postData.boardType == 'General'
+                    ? 'generalPosts'
+                    : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'dislikers': FieldValue.arrayRemove([currentUserUid]),
@@ -150,9 +154,10 @@ class _PostScreenState extends State<PostScreen> {
       } else {
         if (userLiked) {
           await FirebaseFirestore.instance
-              .collection(widget.postData.boardType == 'General'
-                  ? 'generalPosts'
-                  : 'anonymousPosts')
+              .collection("schools/${widget.school}" +
+                  (widget.postData.boardType == 'General'
+                      ? 'generalPosts'
+                      : 'anonymousPosts'))
               .doc(widget.postData.postId)
               .update({
             'likers': FieldValue.arrayRemove([currentUserUid]),
@@ -163,9 +168,10 @@ class _PostScreenState extends State<PostScreen> {
           });
         }
         await FirebaseFirestore.instance
-            .collection(widget.postData.boardType == 'General'
-                ? 'generalPosts'
-                : 'anonymousPosts')
+            .collection("schools/${widget.school}" +
+                (widget.postData.boardType == 'General'
+                    ? 'generalPosts'
+                    : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'dislikers': FieldValue.arrayUnion([currentUserUid]),
@@ -187,9 +193,10 @@ class _PostScreenState extends State<PostScreen> {
     try {
       // 데이터 다시 가져오기
       DocumentSnapshot postSnapshot = await FirebaseFirestore.instance
-          .collection(widget.postData.boardType == 'General'
-              ? 'generalPosts'
-              : 'anonymousPosts')
+          .collection("schools/${widget.school}" +
+              (widget.postData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
           .doc(widget.postData.postId)
           .get();
 
@@ -280,7 +287,7 @@ class _PostScreenState extends State<PostScreen> {
                           // 작성자 닉네임 가져오기
                           FutureBuilder<DocumentSnapshot>(
                             future: widget.firestore
-                                .collection('users')
+                                .collection('schools/${widget.school}/users')
                                 .doc(widget.postData.authorUid)
                                 .get(),
                             builder: (context, snapshot) {

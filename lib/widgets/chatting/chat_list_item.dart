@@ -110,29 +110,32 @@ class ChatListItem extends StatelessWidget {
                             color: Colors.amber,
                             width: 60,
                             height: 60,
-                            child: ExtendedWrap(
-                              spacing: 2,
-                              maxLines: 2,
-                              children: [
-                                for (var info in infoList)
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: CachedNetworkImage(
-                                      width: 30,
-                                      height: 30,
-                                      imageUrl: info[1],
-                                      errorWidget: (context, url, error) {
-                                        return Image.asset(
-                                            "assets/images/default_image.png");
-                                      },
-                                      placeholder: (context, url) {
-                                        return Image.asset(
-                                            "assets/images/default_image.png");
-                                      },
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                              ],
+                            child: Center(
+                              child: ExtendedWrap(
+                                spacing: 2,
+                                runSpacing: 2,
+                                maxLines: 2,
+                                children: [
+                                  for (var info in infoList)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: CachedNetworkImage(
+                                        width: 28,
+                                        height: 28,
+                                        imageUrl: info[1],
+                                        errorWidget: (context, url, error) {
+                                          return Image.asset(
+                                              "assets/images/default_image.png");
+                                        },
+                                        placeholder: (context, url) {
+                                          return Image.asset(
+                                              "assets/images/default_image.png");
+                                        },
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                ],
+                              ),
                             )
                             // GridView.builder(
                             //   gridDelegate:

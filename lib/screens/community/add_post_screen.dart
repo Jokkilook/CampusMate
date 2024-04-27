@@ -15,24 +15,25 @@ class AddPostScreen extends StatelessWidget {
   final TextEditingController _contentController = TextEditingController();
   String _selectedBoard = 'General';
   final PostData postData = PostData();
-  late UserData userData;
+  final UserData userData;
   final int currentIndex;
 
-  AddPostScreen({super.key, required this.currentIndex});
+  AddPostScreen(
+      {super.key, required this.currentIndex, required this.userData});
 
   Future<void> _addPost(BuildContext context) async {
     try {
       postData.setData();
       if (_selectedBoard == 'General') {
         DocumentReference docRef = await FirebaseFirestore.instance
-            .collection('generalPosts')
+            .collection('schools/${userData.school}/generalPosts')
             .add(postData.data!);
         postData.postId = docRef.id;
         await docRef.update({'postId': postData.postId});
       }
       if (_selectedBoard == 'Anonymous') {
         DocumentReference docRef = await FirebaseFirestore.instance
-            .collection('anonymousPosts')
+            .collection('schools/${userData.school}/anonymousPosts')
             .add(postData.data!);
         postData.postId = docRef.id;
         await docRef.update({'postId': postData.postId});

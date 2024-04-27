@@ -152,6 +152,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     child: ListView.builder(
                       itemCount: widget.chatRoomData.participantsUid!.length,
                       itemBuilder: (context, index) {
+                        bool isCreator = widget.groupRoomData?.creatorUid ==
+                            widget.chatRoomData.participantsUid![index];
                         return InkWell(
                           onTap: () {
                             Navigator.push(
@@ -185,16 +187,32 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                const SizedBox(width: 20),
-                                Text(
-                                  widget.chatRoomData.participantsUid![index] ==
-                                          userUID
-                                      ? "나"
-                                      : widget.chatRoomData.participantsInfo![
-                                          widget.chatRoomData
-                                              .participantsUid![index]]![0],
-                                  style: const TextStyle(
-                                      fontSize: 17, color: Colors.black),
+                                SizedBox(width: isCreator ? 10 : 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    isCreator
+                                        ? Icon(
+                                            Icons.star,
+                                            color: Colors.yellow[700],
+                                            size: 17,
+                                          )
+                                        : Container(),
+                                    Text(
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      widget.chatRoomData
+                                                  .participantsUid![index] ==
+                                              userUID
+                                          ? "나"
+                                          : widget.chatRoomData
+                                                  .participantsInfo![
+                                              widget.chatRoomData
+                                                  .participantsUid![index]]![0],
+                                      style: const TextStyle(
+                                          fontSize: 17, color: Colors.black),
+                                    ),
+                                  ],
                                 )
                               ],
                             ),
@@ -290,6 +308,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 bool viewSender = false;
                                 bool showTime = false;
                                 bool showDay = false;
+
                                 //메세지의 읽은 사람 리스트 반환
                                 List<String> messageReaderList =
                                     (docs[index]["readers"] as List)
