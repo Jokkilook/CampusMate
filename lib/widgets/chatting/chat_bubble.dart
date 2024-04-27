@@ -99,6 +99,7 @@ class ChatBubble extends StatelessWidget {
                 )
               ])
             : Container(),
+        //유저 입장 퇴장 알림바
         type == MessageType.notice
             ? Container(
                 decoration: BoxDecoration(
@@ -106,10 +107,10 @@ class ChatBubble extends StatelessWidget {
                   color: Colors.grey[300],
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 child: Text(
                   "$name 님이 ${messageData["content"] == "left" ? "퇴장" : messageData["content"] == "enter" ? "입장" : ""}했습니다.",
-                  style: TextStyle(color: Colors.grey[700]),
+                  style: const TextStyle(fontSize: 12, color: Colors.white),
                 ),
               )
             : Align(

@@ -62,7 +62,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                                 hintText: "채팅방 제목을 검색해주세요!",
                                 suffixIcon: Icon(Icons.search),
                                 contentPadding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
+                                    vertical: 10, horizontal: 15),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none)),
                             controller: controller,

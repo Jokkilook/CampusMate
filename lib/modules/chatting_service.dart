@@ -346,24 +346,25 @@ class ChattingService {
         .doc("${DateTime.now().millisecondsSinceEpoch}_${userData.uid}")
         .set(data.toJson())
         .whenComplete(() async {
-      var lastMessage = "";
-
-      switch (data.type) {
-        case MessageType.text:
-          lastMessage = data.content!;
-          break;
-        case MessageType.picture:
-          lastMessage = "사진";
-          break;
-        case MessageType.video:
-          lastMessage = "동영상";
-          break;
-        default:
-          lastMessage = data.content!;
-          break;
-      }
-
+      //알림(인원 출입)메세지가 아니면 마지막 메세지 기록
       if (data.type != MessageType.notice) {
+        var lastMessage = "";
+
+        switch (data.type) {
+          case MessageType.text:
+            lastMessage = data.content!;
+            break;
+          case MessageType.picture:
+            lastMessage = "사진";
+            break;
+          case MessageType.video:
+            lastMessage = "동영상";
+            break;
+          default:
+            lastMessage = data.content!;
+            break;
+        }
+
         await firestore
             .collection(
                 "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
