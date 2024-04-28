@@ -1,4 +1,3 @@
-import 'package:campusmate/db_test.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -106,15 +105,6 @@ class ScreenList extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (_) => ProfileSettingC(userData: UserData())),
-              ),
-            ),
-
-            /// DB TEST
-            ListTile(
-              title: const Text("DB TEST", style: TextStyle(fontSize: 24)),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => DBTest()),
               ),
             ),
 

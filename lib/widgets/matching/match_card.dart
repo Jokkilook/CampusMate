@@ -10,8 +10,12 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//ignore: must_be_immutable
 class MatchCard extends StatefulWidget {
-  const MatchCard({super.key});
+  MatchCard({super.key});
+  bool containTags = true;
+  bool containMBTI = true;
+  bool containSchedule = true;
 
   @override
   State<MatchCard> createState() => _MatchCardState();
@@ -19,15 +23,17 @@ class MatchCard extends StatefulWidget {
 
 class _MatchCardState extends State<MatchCard> {
   late SharedPreferences pref;
-  bool containTags = true;
-  bool containMBTI = true;
-  bool containSchedule = true;
 
   Future getPref() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    containTags = pref.getBool("containTags") ?? true;
-    containMBTI = pref.getBool("containMBTI") ?? true;
-    containSchedule = pref.getBool("containSchedule") ?? true;
+    widget.containTags = pref.getBool("containTags") ?? true;
+    widget.containMBTI = pref.getBool("containMBTI") ?? true;
+    widget.containSchedule = pref.getBool("containSchedule") ?? true;
+  }
+
+  void refresh() {
+    getPref();
+    setState(() {});
   }
 
   @override
@@ -108,12 +114,13 @@ class _MatchCardState extends State<MatchCard> {
 
   @override
   Widget build(BuildContext context) {
+    refresh();
     UserData userData = context.read<UserDataProvider>().userData;
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
+    return FutureBuilder<QuerySnapshot>(
+      future: FirebaseFirestore.instance
           .collection('schools/${userData.school}/users')
           .where("school", isEqualTo: userData.school)
-          .snapshots(),
+          .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -171,9 +178,9 @@ class _MatchCardState extends State<MatchCard> {
       totalData[matchFilter(
         myData: userData,
         otherData: strangerData,
-        containTags: containTags,
-        containMBTI: containMBTI,
-        containSchedule: containSchedule,
+        containTags: widget.containTags,
+        containMBTI: widget.containMBTI,
+        containSchedule: widget.containSchedule,
       )] = strangerData;
     }
 
@@ -185,6 +192,7 @@ class _MatchCardState extends State<MatchCard> {
 
     //점수별로 정렬된 카드를 순서대로 출력
     return CardSwiper(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
         threshold: 100,
         cardsCount: finalData.length,
         cardBuilder: (context, index, horizontalOffsetPercentage,
@@ -297,19 +305,6 @@ class _MatchCardState extends State<MatchCard> {
                                       maxLines: 2,
                                       spacing: 10,
                                       runSpacing: 10,
-                                      // overflowWidget: Container(
-                                      //   decoration: BoxDecoration(
-                                      //       color: Colors.grey[100],
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(15)),
-                                      //   padding: const EdgeInsets.symmetric(
-                                      //       horizontal: 15, vertical: 5),
-                                      //   child: Text(
-                                      //     "...",
-                                      //     style: TextStyle(
-                                      //         color: Colors.grey[850]),
-                                      //   ),
-                                      // ),
                                       children: [
                                         for (var tag in doc.tags!)
                                           Container(

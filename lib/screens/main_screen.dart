@@ -66,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
               duration: const Duration(milliseconds: 100),
               index: index,
               children: [
-                MatchingScreen(),
+                const MatchingScreen(),
                 ChatListScreen(
                   userData: widget.userData,
                 ),
@@ -84,19 +84,10 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: Container(
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                blurRadius: 1,
-              ),
-            ],
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(20)),
-          ),
+              border: Border(top: BorderSide(color: Colors.grey[800]!))),
           height: 70,
           child: BottomNavigationBar(
             selectedItemColor: Colors.green,
-            unselectedItemColor: Colors.black45,
             showUnselectedLabels: false,
             type: BottomNavigationBarType.fixed,
             currentIndex: index,

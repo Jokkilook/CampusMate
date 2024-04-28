@@ -1,6 +1,9 @@
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/matching/match_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MatchingScreen extends StatefulWidget {
@@ -13,12 +16,10 @@ class MatchingScreen extends StatefulWidget {
 class _MatchingScreenState extends State<MatchingScreen> {
   @override
   Widget build(BuildContext context) {
+    UserData userData = context.read<UserDataProvider>().userData;
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black,
-        title: const Text("캠퍼스메이트"),
-        centerTitle: true,
+        title: Text(userData.school!),
         actions: [
           IconButton(
               onPressed: () async {
@@ -28,18 +29,16 @@ class _MatchingScreenState extends State<MatchingScreen> {
                   builder: (_) {
                     return FilterDialog(pref: pref);
                   },
-                ).then((value) {
-                  setState(() {});
-                });
+                ).whenComplete(() => setState(() {}));
               },
               icon: const Icon(Icons.tune))
         ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         child: Column(
           children: [
-            AdArea(),
+            const AdArea(),
             Expanded(child: MatchCard()),
           ],
         ),
@@ -62,7 +61,7 @@ class FilterDialog extends StatefulWidget {
 class _FilterDialogState extends State<FilterDialog> {
   late bool containTags;
   late bool containMBTI;
-  late bool containSchdeule;
+  late bool containSchedule;
   bool showWarning = false;
 
   @override
@@ -76,87 +75,124 @@ class _FilterDialogState extends State<FilterDialog> {
     widget.pref.getBool("containMBTI") ?? true
         ? containMBTI = true
         : containMBTI = false;
-    widget.pref.getBool("containSchdeule") ?? true
-        ? containSchdeule = true
-        : containSchdeule = false;
+    widget.pref.getBool("containSchedule") ?? true
+        ? containSchedule = true
+        : containSchedule = false;
   }
 
   void showWaring() async {
-    showWarning = true;
-    Future.delayed(const Duration(minutes: 2));
-    showWarning = false;
+    setState(() {
+      showWarning = true;
+    });
+    await Future.delayed(const Duration(seconds: 2));
+    try {
+      setState(() {
+        showWarning = false;
+      });
+    } catch (e) {}
+  }
+
+  void setConditions() {
+    widget.pref.setBool("containTags", containTags);
+    widget.pref.setBool("containMBTI", containMBTI);
+    widget.pref.setBool("containSchedule", containSchedule);
   }
 
   @override
   Widget build(BuildContext context) {
-    var list = [containTags, containMBTI, containSchdeule];
+    var list = [containTags, containMBTI, containSchedule];
 
     return PopScope(
       onPopInvoked: (didPop) {
-        widget.pref.setBool("containTags", containTags);
-        widget.pref.setBool("containMBTI", containMBTI);
-        widget.pref.setBool("containSchdeule", containSchdeule);
+        setConditions();
       },
       child: Dialog(
         shape:
             ContinuousRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Container(
           padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              const Text(
-                "매치율 조건 설정",
-                style: TextStyle(fontSize: 20),
-              ),
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("태그 비교"),
-                      Switch(
-                        value: containTags,
-                        onChanged: (value) async {
-                          list.where((element) => element == true).length <= 1
-                              ? setState(() {
-                                  showWaring();
-                                })
-                              : containTags = value;
-                          setState(() {});
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("MBTI 비교"),
-                      Switch(
-                        value: containMBTI,
-                        onChanged: (value) {
-                          containMBTI = value;
-                          setState(() {});
-                        },
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("시간표 비교"),
-                      Switch(
-                        value: containSchdeule,
-                        onChanged: (value) {
-                          containSchdeule = value;
-                          setState(() {});
-                        },
-                      ),
-                    ],
-                  ),
-                  showWarning ? const Text("조건을 1개 이상 선택해야합니다.") : Container()
-                ],
-              )
-            ],
+          child: IntrinsicHeight(
+            child: Column(
+              children: [
+                const Text(
+                  "매치율 조건 설정",
+                  style: TextStyle(fontSize: 20),
+                ),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("태그 비교"),
+                        Switch(
+                          value: containTags,
+                          onChanged: (value) async {
+                            if (!value &&
+                                list
+                                        .where((element) => element == true)
+                                        .length ==
+                                    1) {
+                              showWaring();
+                            } else {
+                              containTags = value;
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("MBTI 비교"),
+                        Switch(
+                          value: containMBTI,
+                          onChanged: (value) {
+                            if (!value &&
+                                list
+                                        .where((element) => element == true)
+                                        .length ==
+                                    1) {
+                              showWaring();
+                            } else {
+                              containMBTI = value;
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("시간표 비교"),
+                        Switch(
+                          value: containSchedule,
+                          onChanged: (value) {
+                            if (!value &&
+                                list
+                                        .where((element) => element == true)
+                                        .length ==
+                                    1) {
+                              showWaring();
+                            } else {
+                              containSchedule = value;
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    showWarning ? const Text("조건을 1개 이상 선택해야합니다.") : Container()
+                  ],
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("확인"))
+              ],
+            ),
           ),
         ),
       ),

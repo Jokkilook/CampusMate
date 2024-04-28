@@ -35,8 +35,6 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black,
         title: const Text("채팅"),
         actions: [
           IconButton(
@@ -122,10 +120,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                 dividerColor: Colors.transparent,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
-                labelStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold),
+                labelStyle:
+                    TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 unselectedLabelStyle: TextStyle(
                     color: Colors.black45,
                     fontSize: 20,
@@ -148,7 +144,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                 //1:1 채팅방 리스트
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: ChattingService().getChattingList(context),
+                    stream:
+                        ChattingService().getChattingRoomListStream(context),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -181,6 +178,12 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                         );
 
                         if (rooms.isEmpty) {
+                          return const Center(
+                            child: Text("아직 채팅방이 없어요!"),
+                          );
+                        }
+
+                        if (rooms[0]["lastMessage"] == "") {
                           return const Center(
                             child: Text("아직 채팅방이 없어요!"),
                           );
@@ -249,12 +252,23 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
                     stream: ChattingService()
-                        .getChattingList(context, isGroup: true),
+                        .getChattingRoomListStream(context, isGroup: true),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return const Center(child: Text("오류가 발생했어요..ToT"));
+                      }
+                      if (snapshot.hasError) {
+                        return Center(
+                            child: Column(
+                          children: [
+                            FilledButton(
+                                onPressed: () {
+                                  setState(() {});
+                                },
+                                child: const Icon(Icons.refresh)),
+                            const Text("오류가 발생했어요..ToT"),
+                          ],
+                        ));
                       }
                       if (!snapshot.hasData) {
                         return const Text("채팅방이 없습니다.");
@@ -298,6 +312,10 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                 for (var element in ref) {
                                   if (element.get("senderUID") ==
                                       widget.userData.uid) {
+                                    data.remove(element);
+                                  }
+                                  if (element.get("type") ==
+                                      "MessageType.notice") {
                                     data.remove(element);
                                   }
                                 }

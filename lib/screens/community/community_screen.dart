@@ -36,7 +36,16 @@ class _CommunityScreenState extends State<CommunityScreen>
         appBar: AppBar(
           elevation: 2,
           shadowColor: Colors.black,
-          title: const Text('커뮤니티'),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("커뮤니티"),
+              Text(
+                widget.userData.school!,
+                style: const TextStyle(fontSize: 15),
+              ),
+            ],
+          ),
           actions: [
             // 검색
             IconButton(

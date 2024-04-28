@@ -67,6 +67,7 @@ class ChattingService {
                 type: MessageType.notice,
                 senderUID: userData.uid,
                 content: "enter",
+                readers: [],
                 time: Timestamp.now()),
           );
         }
@@ -248,7 +249,7 @@ class ChattingService {
     participantsList.remove(userUID);
 
     //나간 후 남은 참여자가 1명이면 방 데이터 모두 삭제 후 화면 나가기
-    if (participantsList.length < (isGroup ? 1 : 2)) {
+    if (participantsList.length == (isGroup ? 0 : 1)) {
       roomRef.delete();
       //다 삭제하고 나가면 오래걸리니까 일단 방 데이터만 지워서 채팅방 리스트에 뜨지 않게 한 다음 나머지 데이터 삭제
       Navigator.pop(context);
@@ -290,8 +291,8 @@ class ChattingService {
     }
   }
 
-  //사용자가 참여한 채팅방 데이터 리스트 반환
-  Stream<QuerySnapshot<Object>> getChattingList(BuildContext context,
+  //사용자가 참여한 채팅방 데이터 스트림 리스트 반환
+  Stream<QuerySnapshot<Object>> getChattingRoomListStream(BuildContext context,
       {bool isGroup = false}) {
     UserData userData = context.read<UserDataProvider>().userData;
     return firestore
@@ -301,8 +302,19 @@ class ChattingService {
         .snapshots();
   }
 
-  //채팅방의 메세지 데이터 반환
-  Stream<QuerySnapshot<Object>> getChattingMessages(BuildContext context,
+  //채팅방 데이터 스트림 반환
+  Stream<DocumentSnapshot<Object>> getChatRoomDataStream(
+      UserData userData, String roomId,
+      {bool isGroup = false}) {
+    return firestore
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
+        .doc(roomId)
+        .snapshots();
+  }
+
+  //채팅방의 메세지 데이터 스트림 반환
+  Stream<QuerySnapshot<Object>> getChattingMessagesStream(BuildContext context,
       {String roomId = "", bool isGroup = false}) {
     UserData userData = context.read<UserDataProvider>().userData;
     return firestore

@@ -78,8 +78,13 @@ class ChatListItem extends StatelessWidget {
     }
 
     if (data.lastMessageTime == null) {
-      return Container();
+      return Container(
+        color: Colors.amber,
+        width: 50,
+        height: 50,
+      );
     }
+
     return InkWell(
       onTap: () {
         isGroup
@@ -167,22 +172,23 @@ class ChatListItem extends StatelessWidget {
                       ? Positioned(
                           top: -5,
                           left: -5,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 1, horizontal: 5),
-                            decoration: BoxDecoration(
-                                color: Colors.red[600],
-                                borderRadius: BorderRadius.circular(100)),
-                            child: Center(
-                              child: Text(
-                                unreadCount > 100 ? "100+" : "$unreadCount",
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container()
+                          child: Badge.count(count: unreadCount)
+                          //  Container(
+                          //   padding: const EdgeInsets.symmetric(
+                          //       vertical: 1, horizontal: 5),
+                          //   decoration: BoxDecoration(
+                          //       color: Colors.red[600],
+                          //       borderRadius: BorderRadius.circular(100)),
+                          //   child: Center(
+                          //     child: Text(
+                          //       unreadCount > 100 ? "100+" : "$unreadCount",
+                          //       style: const TextStyle(
+                          //           fontSize: 12, color: Colors.white),
+                          //     ),
+                          //   ),
+                          // ),
+                          )
+                      : Container(),
                 ],
               ),
               const SizedBox(width: 14),
