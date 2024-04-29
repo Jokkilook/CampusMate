@@ -32,8 +32,6 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black,
         title: const Text('프로필'),
       ),
       body: FutureBuilder<DocumentSnapshot>(

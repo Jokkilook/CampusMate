@@ -40,25 +40,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        // themeMode: Brightness.dark == Brightness.dark
-        //     ? ThemeMode.dark
-        //     : ThemeMode.light,
-        // theme: ThemeData(
-        //   brightness: Brightness.light,
-        //   scaffoldBackgroundColor: Colors.white,
-        // ),
-        // darkTheme: ThemeData(
-        //   brightness: Brightness.dark,
-        //   appBarTheme: AppBarTheme(
-        //       color: Colors.grey[850],
-        //       shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
-        //   scaffoldBackgroundColor: Colors.grey[900],
-        //   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        //     backgroundColor: Colors.grey[900],
-        //   ),
-        // ),
+    return MaterialApp(
+        themeMode: Brightness.dark == Brightness.dark
+            ? ThemeMode.dark
+            : ThemeMode.light,
+        theme: ThemeData(
+          brightness: Brightness.light,
+          appBarTheme: AppBarTheme(
+              scrolledUnderElevation: 0,
+              color: Colors.white,
+              shape: Border(bottom: BorderSide(color: Colors.grey[400]!))),
+          scaffoldBackgroundColor: Colors.white,
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Colors.white,
+          ),
+        ),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          colorScheme: ColorScheme(
+              brightness: Brightness.dark,
+              primary: Colors.white,
+              onPrimary: Colors.red,
+              secondary: Colors.white,
+              onSecondary: Colors.yellow,
+              error: Colors.red,
+              onError: Colors.red,
+              background: Colors.green,
+              onBackground: Colors.grey[700]!,
+              surface: Colors.green,
+              onSurface: Colors.white),
+          appBarTheme: AppBarTheme(
+              color: Colors.grey[850],
+              shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
+          scaffoldBackgroundColor: Colors.grey[900],
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.grey[900],
+          ),
+        ),
         debugShowCheckedModeBanner: false,
-        home: SplashLoadingScreen());
+        home: const SplashLoadingScreen());
   }
 }

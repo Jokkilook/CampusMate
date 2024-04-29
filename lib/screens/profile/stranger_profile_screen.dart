@@ -17,10 +17,7 @@ class StrangerProfilScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black,
         title: const Text('프로필'),
       ),
       body: FutureBuilder<DocumentSnapshot>(

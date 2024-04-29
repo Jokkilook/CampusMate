@@ -34,8 +34,6 @@ class _CommunityScreenState extends State<CommunityScreen>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          elevation: 2,
-          shadowColor: Colors.black,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

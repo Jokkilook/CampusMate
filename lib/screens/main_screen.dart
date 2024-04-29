@@ -84,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: Container(
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.grey[800]!))),
+              border: Border(top: BorderSide(color: Colors.grey[400]!))),
           height: 70,
           child: BottomNavigationBar(
             selectedItemColor: Colors.green,

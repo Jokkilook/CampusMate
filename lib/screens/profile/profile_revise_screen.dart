@@ -50,10 +50,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
     widget.image = null;
     return Scaffold(
       extendBody: true,
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black,
         title: const Text('프로필 수정'),
       ),
       body: Stack(
