@@ -62,14 +62,13 @@ class _PostScreenState extends State<PostScreen> {
       if (widget.postData.viewers == null ||
           !widget.postData.viewers!.contains(currentUserUid)) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}" +
+            .collection("schools/${widget.school}/" +
                 (widget.postData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'viewers': FieldValue.arrayUnion([currentUserUid]),
-          'viewCount': FieldValue.increment(1),
         });
         debugPrint('조회수 업데이트 성공');
 
@@ -86,96 +85,65 @@ class _PostScreenState extends State<PostScreen> {
   }
 
   // 좋아요, 싫어요
-  Future<void> toggleLikeDislike(bool isLike) async {
+  Future<void> voteLikeDislike(bool isLike) async {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     bool userLiked = widget.postData.likers!.contains(currentUserUid);
     bool userDisliked = widget.postData.dislikers!.contains(currentUserUid);
 
-    if (isLike) {
-      if (userLiked) {
+    if (userLiked) {
+      // 이미 좋아요를 누른 경우
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('알림'),
+          content: const Text('이미 좋아요를 눌렀습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    } else if (userDisliked) {
+      // 이미 싫어요를 누른 경우
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('알림'),
+          content: const Text('이미 싫어요를 눌렀습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      if (isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}" +
-                (widget.postData.boardType == 'General'
-                    ? 'generalPosts'
-                    : 'anonymousPosts'))
-            .doc(widget.postData.postId)
-            .update({
-          'likers': FieldValue.arrayRemove([currentUserUid]),
-          'likeCount': FieldValue.increment(-1),
-        });
-        setState(() {
-          widget.postData.likers!.remove(currentUserUid);
-        });
-      } else {
-        if (userDisliked) {
-          await FirebaseFirestore.instance
-              .collection("schools/${widget.school}" +
-                  (widget.postData.boardType == 'General'
-                      ? 'generalPosts'
-                      : 'anonymousPosts'))
-              .doc(widget.postData.postId)
-              .update({
-            'dislikers': FieldValue.arrayRemove([currentUserUid]),
-            'dislikeCount': FieldValue.increment(-1),
-          });
-          setState(() {
-            widget.postData.dislikers!.remove(currentUserUid);
-          });
-        }
-        await FirebaseFirestore.instance
-            .collection("schools/${widget.school}" +
+            .collection("schools/${widget.school}/" +
                 (widget.postData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'likers': FieldValue.arrayUnion([currentUserUid]),
-          'likeCount': FieldValue.increment(1),
         });
         setState(() {
           widget.postData.likers!.add(currentUserUid);
         });
       }
-    } else {
-      if (userDisliked) {
+      if (!isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}" +
-                (widget.postData.boardType == 'General'
-                    ? 'generalPosts'
-                    : 'anonymousPosts'))
-            .doc(widget.postData.postId)
-            .update({
-          'dislikers': FieldValue.arrayRemove([currentUserUid]),
-          'dislikeCount': FieldValue.increment(-1),
-        });
-        setState(() {
-          widget.postData.dislikers!.remove(currentUserUid);
-        });
-      } else {
-        if (userLiked) {
-          await FirebaseFirestore.instance
-              .collection("schools/${widget.school}" +
-                  (widget.postData.boardType == 'General'
-                      ? 'generalPosts'
-                      : 'anonymousPosts'))
-              .doc(widget.postData.postId)
-              .update({
-            'likers': FieldValue.arrayRemove([currentUserUid]),
-            'likeCount': FieldValue.increment(-1),
-          });
-          setState(() {
-            widget.postData.likers!.remove(currentUserUid);
-          });
-        }
-        await FirebaseFirestore.instance
-            .collection("schools/${widget.school}" +
+            .collection("schools/${widget.school}/" +
                 (widget.postData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
             .doc(widget.postData.postId)
             .update({
           'dislikers': FieldValue.arrayUnion([currentUserUid]),
-          'dislikeCount': FieldValue.increment(1),
         });
         setState(() {
           widget.postData.dislikers!.add(currentUserUid);
@@ -193,7 +161,7 @@ class _PostScreenState extends State<PostScreen> {
     try {
       // 데이터 다시 가져오기
       DocumentSnapshot postSnapshot = await FirebaseFirestore.instance
-          .collection("schools/${widget.school}" +
+          .collection("schools/${widget.school}/" +
               (widget.postData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
@@ -218,11 +186,10 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedTime = formatTimeStamp(widget.postData.timestamp!, now);
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
 
-    bool userLiked = widget.postData.likers!
-        .contains(context.read<UserDataProvider>().userData.uid);
-    bool userDisliked = widget.postData.dislikers!
-        .contains(context.read<UserDataProvider>().userData.uid);
+    bool userLiked = widget.postData.likers!.contains(currentUserUid);
+    bool userDisliked = widget.postData.dislikers!.contains(currentUserUid);
 
     return Scaffold(
       appBar: AppBar(
@@ -248,6 +215,7 @@ class _PostScreenState extends State<PostScreen> {
                   return PostController(
                     currentUserUid: currentUserUid,
                     postData: widget.postData,
+                    school: widget.school,
                   );
                 },
               ).then((_) {
@@ -363,10 +331,10 @@ class _PostScreenState extends State<PostScreen> {
                                       ? Icons.thumb_up
                                       : Icons.thumb_up_alt_outlined,
                                   size: 20,
-                                  color: userLiked ? Colors.red : Colors.grey,
+                                  color: Colors.grey,
                                 ),
                                 onPressed: () {
-                                  toggleLikeDislike(true);
+                                  voteLikeDislike(true);
                                 },
                               ),
                               Text(
@@ -383,11 +351,10 @@ class _PostScreenState extends State<PostScreen> {
                                       ? Icons.thumb_down
                                       : Icons.thumb_down_outlined,
                                   size: 20,
-                                  color:
-                                      userDisliked ? Colors.blue : Colors.grey,
+                                  color: Colors.grey,
                                 ),
                                 onPressed: () {
-                                  toggleLikeDislike(false);
+                                  voteLikeDislike(false);
                                 },
                               ),
                               Text(

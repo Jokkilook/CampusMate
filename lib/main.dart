@@ -40,25 +40,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        themeMode: Brightness.dark == Brightness.dark
-            ? ThemeMode.dark
-            : ThemeMode.light,
-        theme: ThemeData(
-          brightness: Brightness.light,
-          scaffoldBackgroundColor: Colors.white,
-        ),
-        darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          appBarTheme: AppBarTheme(
-              color: Colors.grey[850],
-              shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
-          scaffoldBackgroundColor: Colors.grey[900],
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.grey[900],
-          ),
-        ),
+    return const MaterialApp(
+        // themeMode: Brightness.dark == Brightness.dark
+        //     ? ThemeMode.dark
+        //     : ThemeMode.light,
+        // theme: ThemeData(
+        //   brightness: Brightness.light,
+        //   scaffoldBackgroundColor: Colors.white,
+        // ),
+        // darkTheme: ThemeData(
+        //   brightness: Brightness.dark,
+        //   appBarTheme: AppBarTheme(
+        //       color: Colors.grey[850],
+        //       shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
+        //   scaffoldBackgroundColor: Colors.grey[900],
+        //   bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        //     backgroundColor: Colors.grey[900],
+        //   ),
+        // ),
         debugShowCheckedModeBanner: false,
-        home: const SplashLoadingScreen());
+        home: SplashLoadingScreen());
   }
 }

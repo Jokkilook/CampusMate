@@ -5,8 +5,13 @@ import 'models/post_data.dart';
 
 class EditPostScreen extends StatefulWidget {
   final PostData postData;
+  final String school;
 
-  const EditPostScreen({Key? key, required this.postData}) : super(key: key);
+  const EditPostScreen({
+    Key? key,
+    required this.postData,
+    required this.school,
+  }) : super(key: key);
 
   @override
   _EditPostScreenState createState() => _EditPostScreenState();
@@ -32,9 +37,10 @@ class _EditPostScreenState extends State<EditPostScreen> {
   Future<void> _updatePost(BuildContext context) async {
     try {
       await FirebaseFirestore.instance
-          .collection(widget.postData.boardType == 'General'
-              ? 'generalPosts'
-              : 'anonymousPosts')
+          .collection("schools/${widget.school}/" +
+              (widget.postData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
           .doc(widget.postData.postId)
           .update({
         'title': _titleController.text,
