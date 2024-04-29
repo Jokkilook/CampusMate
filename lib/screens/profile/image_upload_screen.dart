@@ -25,7 +25,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       bottomNavigationBar: BottomButton(
         isLoading: isLoading,
         text: "완료",
@@ -41,8 +40,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
         },
       ),
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black,
         title: const Text('프로필 이미지'),
       ),
       body: Center(
