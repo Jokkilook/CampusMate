@@ -34,24 +34,37 @@ class ChatSearchItem extends StatelessWidget {
             children: [
               Text(
                 data.roomName ?? "방 제목",
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
               Text(
                 data.description ?? "설명",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.displayLarge?.color,
                   fontSize: 18,
                 ),
               ),
-              Text("만든 날짜: ${timeStampToYYYYMMDD(stringTime: seperedList[1])}")
+              Text(
+                "만든 날짜: ${timeStampToYYYYMMDD(stringTime: seperedList[1])}",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.displayLarge?.color,
+                ),
+              )
             ],
           ),
           Row(
             children: [
               const Icon(Icons.person),
-              Text(data.participantsUid?.length.toString() ?? "1")
+              Text(
+                data.participantsUid?.length.toString() ?? "1",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.displayLarge?.color,
+                ),
+              )
             ],
           )
         ],

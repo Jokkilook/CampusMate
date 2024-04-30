@@ -141,18 +141,7 @@ class ChatListItem extends StatelessWidget {
                                     )
                                 ],
                               ),
-                            )
-                            // GridView.builder(
-                            //   gridDelegate:
-                            //       const SliverGridDelegateWithFixedCrossAxisCount(
-                            //           crossAxisCount: 2),
-                            //   itemCount:
-                            //       userInfo.length > 4 ? 4 : userInfo.length,
-                            //   itemBuilder: (context, index) {
-                            //     return
-                            //   },
-                            // ),
-                            )
+                            ))
                         : CachedNetworkImage(
                             width: 60,
                             height: 60,
@@ -172,22 +161,7 @@ class ChatListItem extends StatelessWidget {
                       ? Positioned(
                           top: -5,
                           left: -5,
-                          child: Badge.count(count: unreadCount)
-                          //  Container(
-                          //   padding: const EdgeInsets.symmetric(
-                          //       vertical: 1, horizontal: 5),
-                          //   decoration: BoxDecoration(
-                          //       color: Colors.red[600],
-                          //       borderRadius: BorderRadius.circular(100)),
-                          //   child: Center(
-                          //     child: Text(
-                          //       unreadCount > 100 ? "100+" : "$unreadCount",
-                          //       style: const TextStyle(
-                          //           fontSize: 12, color: Colors.white),
-                          //     ),
-                          //   ),
-                          // ),
-                          )
+                          child: Badge.count(count: unreadCount))
                       : Container(),
                 ],
               ),
@@ -200,13 +174,17 @@ class ChatListItem extends StatelessWidget {
                   children: [
                     Text(
                       !isGroup ? name : data.roomName!,
-                      style: const TextStyle(fontSize: 17, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: Theme.of(context).textTheme.titleLarge?.color),
                     ),
                     const SizedBox(height: 5),
                     Text(
                       data.lastMessage!,
-                      style:
-                          const TextStyle(fontSize: 14, color: Colors.black54),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color:
+                              Theme.of(context).textTheme.displayLarge?.color),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     )
@@ -222,14 +200,18 @@ class ChatListItem extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Colors.grey[800]),
+                        color: Theme.of(context).textTheme.displayLarge?.color),
                   ),
                   Expanded(
                     child: Center(
                       child: IconButton(
                           onPressed: () {},
-                          icon: const Icon(Icons.notifications,
-                              size: 20, color: Colors.black38)),
+                          icon: Icon(Icons.notifications,
+                              size: 20,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .displayLarge
+                                  ?.color)),
                     ),
                   )
                 ],

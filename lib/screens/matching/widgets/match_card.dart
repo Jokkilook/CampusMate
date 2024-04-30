@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
-import 'package:campusmate/widgets/profile/score_shower.dart';
+import 'package:campusmate/screens/matching/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
@@ -260,10 +260,10 @@ class _MatchCardState extends State<MatchCard> {
                   //정보부분
                   Container(
                     width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(10)),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardTheme.color,
+                      borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(10)),
                     ),
                     child: Stack(
                       clipBehavior: Clip.none,
@@ -287,7 +287,11 @@ class _MatchCardState extends State<MatchCard> {
                                       child: AutoSizeText(
                                         "${doc.name!}, ${DateTime.now().year - int.parse(doc.birthDate!.split(".")[0])}",
                                         maxLines: 1,
-                                        style: const TextStyle(
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge!
+                                                .color,
                                             fontSize: 30,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -295,10 +299,13 @@ class _MatchCardState extends State<MatchCard> {
                                     //MBTI
                                     Text(
                                       '${doc.mbti}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 25,
                                           fontWeight: FontWeight.w500,
-                                          color: Colors.black54),
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .displayLarge!
+                                              .color),
                                     ),
                                     const SizedBox(height: 10),
                                     ExtendedWrap(
@@ -309,7 +316,8 @@ class _MatchCardState extends State<MatchCard> {
                                         for (var tag in doc.tags!)
                                           Container(
                                             decoration: BoxDecoration(
-                                                color: Colors.grey[100],
+                                                color: Theme.of(context)
+                                                    .canvasColor,
                                                 borderRadius:
                                                     BorderRadius.circular(15)),
                                             padding: const EdgeInsets.symmetric(
@@ -317,7 +325,10 @@ class _MatchCardState extends State<MatchCard> {
                                             child: Text(
                                               tag.toString(),
                                               style: TextStyle(
-                                                  color: Colors.grey[850]),
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .color),
                                             ),
                                           )
                                       ],

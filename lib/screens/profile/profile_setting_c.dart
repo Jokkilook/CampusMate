@@ -4,7 +4,7 @@ import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/profile_setting_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
-import 'package:campusmate/widgets/profile/schedule_table.dart';
+import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

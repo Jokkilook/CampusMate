@@ -1,7 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
-import 'package:campusmate/widgets/matching/match_card.dart';
+import 'package:campusmate/screens/matching/widgets/match_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -2,7 +2,7 @@ import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/widgets/chatting/chat_search_item.dart';
+import 'package:campusmate/screens/chatting/widgets/chat_search_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

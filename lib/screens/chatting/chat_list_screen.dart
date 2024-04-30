@@ -5,7 +5,7 @@ import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
 import 'package:campusmate/widgets/ad_area.dart';
-import 'package:campusmate/widgets/chatting/chat_list_item.dart';
+import 'package:campusmate/screens/chatting/widgets/chat_list_item.dart';
 import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +87,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                             if (!widget.onCreating) {
                               widget.onCreating = true;
                               setState(() {});
+                              Navigator.pop(context);
                               await ChattingService().createGroupRoom(
                                   context: context,
                                   roomName: titleController.value.text,

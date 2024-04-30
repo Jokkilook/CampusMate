@@ -54,6 +54,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
         children: [
           Column(
             children: [
+              //시간대 표시(세로칸)
               for (var time in timeData)
                 Container(
                     width: 90,
@@ -61,7 +62,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).canvasColor,
                       border: Border.all(
                           width: 0.5, color: const Color(0xFFD2D2D2)),
                     ),
@@ -78,11 +79,12 @@ class _ScheduleTableState extends State<ScheduleTable> {
               flex: 8,
               child: Column(
                 children: [
+                  //요일 표시
                   Container(
                       width: 1000,
                       height: 35,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE9E9E9),
+                        color: Theme.of(context).cardColor,
                         border: Border.all(
                             width: 0.5, color: const Color(0xFFD2D2D2)),
                       ),
@@ -92,6 +94,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                       ))),
+                  //나머지 표시
                   for (var detail in day.entries)
                     GestureDetector(
                       onTap: widget.readOnly

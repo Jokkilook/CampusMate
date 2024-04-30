@@ -8,14 +8,11 @@ import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/community/add_post_screen.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/video_player_screen.dart';
-import 'package:campusmate/widgets/chatting/chat_bubble.dart';
+import 'package:campusmate/screens/chatting/widgets/chat_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -141,8 +138,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           icon: const Icon(Icons.more_vert));
                     }),
                   ],
-                  title:
-                      Text(!widget.isGroup ? name : roomData["roomName"] ?? ""),
+                  title: Text(
+                      !widget.isGroup ? name : (roomData["roomName"] ?? "")),
                 ),
 
                 //드로어
@@ -316,7 +313,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 child: Container(
                                   color: (Theme.of(context).brightness ==
                                           Brightness.dark)
-                                      ? Colors.grey[850]
+                                      ? Colors.grey[900]
                                       : Colors.grey[50],
                                   height: double.infinity,
                                   child: ListView.separated(
@@ -505,8 +502,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       child: Column(
                         children: [
                           Container(
-                            decoration:
-                                const BoxDecoration(color: Colors.white),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .appBarTheme
+                                    .backgroundColor),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.end,

@@ -12,15 +12,16 @@ class ScoreShower extends StatelessWidget {
     return Container(
       child: Column(
         children: [
-          const SizedBox(
+          SizedBox(
             width: 50,
             child: AutoSizeText(
               maxLines: 1,
               "매치율",
               style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.titleLarge!.color,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -29,10 +30,11 @@ class ScoreShower extends StatelessWidget {
             child: AutoSizeText(
               maxLines: 1,
               "$percentage%",
-              style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.titleLarge!.color,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -50,9 +52,12 @@ class ScoreShower extends StatelessWidget {
                         maxHeight: 100,
                         maxWidth: 100),
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardTheme.color,
                         borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: Colors.black87, width: 5)),
+                        border: Border.all(
+                            color:
+                                Theme.of(context).textTheme.titleLarge!.color!,
+                            width: 5)),
                   ),
                   Container(
                     constraints: const BoxConstraints(
@@ -63,10 +68,11 @@ class ScoreShower extends StatelessWidget {
                     child: Center(
                       child: AutoSizeText(
                         score,
-                        style: const TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87),
+                        style: TextStyle(
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),

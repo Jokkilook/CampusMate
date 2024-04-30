@@ -1,7 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_revise_screen.dart';
-import 'package:campusmate/widgets/profile/full_profile_card.dart';
+import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

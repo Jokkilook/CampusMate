@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
               scrolledUnderElevation: 0,
               color: Colors.white,
               shape: Border(bottom: BorderSide(color: Colors.grey[400]!))),
+          cardTheme: const CardTheme(color: Colors.white),
           scaffoldBackgroundColor: Colors.white,
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             backgroundColor: Colors.white,
@@ -57,21 +58,24 @@ class MyApp extends StatelessWidget {
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
-          colorScheme: ColorScheme(
-              brightness: Brightness.dark,
-              primary: Colors.white,
-              onPrimary: Colors.red,
-              secondary: Colors.white,
-              onSecondary: Colors.yellow,
-              error: Colors.red,
-              onError: Colors.red,
-              background: Colors.green,
-              onBackground: Colors.grey[700]!,
-              surface: Colors.green,
-              onSurface: Colors.white),
+          textTheme: TextTheme(
+              titleLarge: const TextStyle(color: Colors.white),
+              titleMedium: const TextStyle(color: Colors.white),
+              titleSmall: const TextStyle(color: Colors.white),
+              bodyLarge: TextStyle(color: Colors.grey[300]),
+              displayLarge: TextStyle(color: Colors.grey[400])),
+          drawerTheme: DrawerThemeData(
+            elevation: 0,
+            backgroundColor: Colors.grey[850],
+            scrimColor: Colors.black.withOpacity(0.4),
+          ),
           appBarTheme: AppBarTheme(
+              scrolledUnderElevation: 0,
               color: Colors.grey[850],
               shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
+          cardTheme: CardTheme(color: Colors.grey[850]),
+          cardColor: Colors.grey[700],
+          canvasColor: Colors.grey[600],
           scaffoldBackgroundColor: Colors.grey[900],
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: Colors.grey[900],

@@ -1,6 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/widgets/ad_area.dart';
-import 'package:campusmate/widgets/profile/schedule_table.dart';
+import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +53,7 @@ class FullProfileCard extends StatelessWidget {
                         offset: const Offset(0, 0),
                         blurRadius: 2)
                   ],
-                  color: Colors.white,
+                  color: Theme.of(context).cardTheme.color,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -72,7 +72,8 @@ class FullProfileCard extends StatelessWidget {
                     ),
                     Text(
                       "${userData.name}",
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.titleLarge!.color,
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
@@ -90,21 +91,33 @@ class FullProfileCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Colors.grey[50],
+                              color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   '자기소개',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .color,
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
                                   '${userData.introduce}',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color,
+                                  ),
                                 ),
                               ],
                             ),
@@ -116,7 +129,7 @@ class FullProfileCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Colors.grey[50],
+                              color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: IntrinsicHeight(
@@ -142,10 +155,32 @@ class FullProfileCard extends StatelessWidget {
                                           height: 5,
                                         ),
                                         Text(
-                                            '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}'),
+                                          '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .color,
+                                          ),
+                                        ),
                                         Text(
-                                            '성별  ${userData.gender! ? "남" : "여"}'),
-                                        Text('학과  ${userData.dept}'),
+                                          '성별  ${userData.gender! ? "남" : "여"}',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .color,
+                                          ),
+                                        ),
+                                        Text(
+                                          '학과  ${userData.dept}',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .color,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -157,10 +192,14 @@ class FullProfileCard extends StatelessWidget {
                                       children: [
                                         Row(
                                           children: [
-                                            const Flexible(
+                                            Flexible(
                                               child: Text(
                                                 '매너학점 ',
                                                 style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .titleLarge!
+                                                        .color,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
@@ -204,10 +243,14 @@ class FullProfileCard extends StatelessWidget {
                                                   ),
                                                 );
                                               },
-                                              child: const Icon(
-                                                  Icons.help_outline,
-                                                  size: 16,
-                                                  color: Colors.black45),
+                                              child: Icon(
+                                                Icons.help_outline,
+                                                size: 16,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge!
+                                                    .color,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -215,7 +258,11 @@ class FullProfileCard extends StatelessWidget {
                                           child: Center(
                                             child: Text(
                                               score,
-                                              style: const TextStyle(
+                                              style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .titleLarge!
+                                                    .color,
                                                 fontSize: 30,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -237,16 +284,20 @@ class FullProfileCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Colors.grey[50],
+                              color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     '성향',
                                     style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .color,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -264,7 +315,8 @@ class FullProfileCard extends StatelessWidget {
                                       for (var tag in userData.tags!)
                                         Container(
                                           decoration: BoxDecoration(
-                                              color: Colors.grey[200],
+                                              color:
+                                                  Theme.of(context).canvasColor,
                                               borderRadius:
                                                   BorderRadius.circular(15)),
                                           padding: const EdgeInsets.symmetric(
@@ -283,19 +335,23 @@ class FullProfileCard extends StatelessWidget {
                             width: double.infinity,
                             margin: const EdgeInsets.only(top: 8),
                             decoration: BoxDecoration(
-                              color: Colors.grey[50],
+                              color: Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 10),
                                     child: Text(
                                       '시간표',
                                       style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge!
+                                              .color,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),

@@ -2,7 +2,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
-import 'package:campusmate/widgets/profile/full_profile_card.dart';
+import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

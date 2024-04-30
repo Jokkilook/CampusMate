@@ -89,12 +89,16 @@ class ChatBubble extends StatelessWidget {
                 const Divider(height: 40),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(color: Colors.grey[50]),
+                  decoration: BoxDecoration(
+                      color: (Theme.of(context).brightness == Brightness.dark)
+                          ? Colors.grey[900]
+                          : Colors.grey[50]),
                   child: Text(
                     DateFormat("yyyy년 M월 dd일")
                         .format((messageData["time"] as Timestamp).toDate())
                         .toString(),
-                    style: const TextStyle(color: Colors.black54),
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.displayLarge?.color),
                   ),
                 )
               ])
