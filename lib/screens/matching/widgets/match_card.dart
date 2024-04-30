@@ -192,7 +192,7 @@ class _MatchCardState extends State<MatchCard> {
 
     //점수별로 정렬된 카드를 순서대로 출력
     return CardSwiper(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
         threshold: 100,
         cardsCount: finalData.length,
         cardBuilder: (context, index, horizontalOffsetPercentage,

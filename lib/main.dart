@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/media_data_provider.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
+          title: Colors.white,
           textTheme: TextTheme(
               titleLarge: const TextStyle(color: Colors.white),
               titleMedium: const TextStyle(color: Colors.white),
@@ -70,15 +72,16 @@ class MyApp extends StatelessWidget {
             scrimColor: Colors.black.withOpacity(0.4),
           ),
           appBarTheme: AppBarTheme(
+              elevation: 0,
               scrolledUnderElevation: 0,
-              color: Colors.grey[850],
+              color: AppColors.darkAppbar,
               shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
-          cardTheme: CardTheme(color: Colors.grey[850]),
+          cardTheme: CardTheme(color: AppColors.darkCard),
           cardColor: Colors.grey[700],
           canvasColor: Colors.grey[600],
-          scaffoldBackgroundColor: Colors.grey[900],
+          scaffoldBackgroundColor: AppColors.darkBackground,
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.grey[900],
+            backgroundColor: AppColors.darkBottomNavBar,
           ),
         ),
         debugShowCheckedModeBanner: false,
