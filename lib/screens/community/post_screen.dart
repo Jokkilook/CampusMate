@@ -369,9 +369,10 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Text(
-                        '댓글 ${widget.postData.comments!.length.toString()}',
-                        style: const TextStyle(
+                      const Text(
+                        // 댓글 수 가져와서 넣어야 함
+                        ' 댓글 0',
+                        style: TextStyle(
                           fontSize: 16,
                         ),
                       ),
@@ -424,23 +425,14 @@ class _PostScreenState extends State<PostScreen> {
                       // 댓글 Firestore에 추가
                       DocumentReference docRef = await FirebaseFirestore
                           .instance
+                          .collection("schools/${widget.school}/" +
+                              (widget.postData.boardType == 'General'
+                                  ? 'generalPosts'
+                                  : 'anonymousPosts'))
+                          .doc(widget.postData.postId)
                           .collection('comments')
-                          .doc(widget.postData.postId)
-                          .collection('post_comments')
                           .add(newComment.data!);
-
-                      // commentId 설정
-                      newComment.commentId = docRef.id;
-
-                      // 댓글 데이터 추가
-                      widget.postData.addComment(newComment);
-
-                      // 포스트 데이터 업데이트
-                      await widget.firestore
-                          .collection('generalPosts')
-                          .doc(widget.postData.postId)
-                          .update(
-                              Map<String, dynamic>.from(widget.postData.data!));
+                      await docRef.update({'commentId': docRef.id});
 
                       // 텍스트 필드 내용 지우기
                       _commentController.clear();

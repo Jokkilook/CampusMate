@@ -11,7 +11,6 @@ class PostData {
   List<dynamic>? viewers;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
-  List<PostCommentData>? comments; // Change to List<PostCommentData>
 
   Map<String, dynamic>? data;
 
@@ -25,7 +24,6 @@ class PostData {
     this.viewers = const [],
     this.likers = const [],
     this.dislikers = const [],
-    this.comments = const [],
   }) {
     setData();
   }
@@ -40,16 +38,6 @@ class PostData {
     viewers = json['viewers'] ?? [];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
-    if (json['comments'] != null && json['comments'] is Map<String, dynamic>) {
-      // Check if comments is not null and is a Map
-      comments = (json['comments'] as Map<String, dynamic>)
-          .values
-          .map<PostCommentData>(
-              (commentJson) => PostCommentData.fromJson(commentJson))
-          .toList();
-    } else {
-      comments = [];
-    }
 
     setData();
   }
@@ -65,12 +53,6 @@ class PostData {
       'viewers': viewers,
       'likers': likers,
       'dislikers': dislikers,
-      'comments': comments?.map((comment) => comment.data).toList(),
     };
-  }
-
-  void addComment(PostCommentData comment) {
-    comments?.add(comment);
-    setData();
   }
 }

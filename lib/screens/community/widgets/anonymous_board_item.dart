@@ -103,9 +103,10 @@ class AnonymousBoardItem extends StatelessWidget {
                       size: 14,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      postData.comments!.length.toString(),
-                      style: const TextStyle(
+                    const Text(
+                      // 댓글 수 가져와서 넣어야 함
+                      '0',
+                      style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
