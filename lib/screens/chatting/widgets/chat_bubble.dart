@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/video_player_screen.dart';
@@ -19,6 +20,7 @@ class ChatBubble extends StatelessWidget {
   final String? senderUid;
   final String? profileImageUrl;
   final String reader;
+  final bool isDark;
 
   const ChatBubble(
       {super.key,
@@ -32,7 +34,8 @@ class ChatBubble extends StatelessWidget {
       this.name,
       this.senderUid,
       this.profileImageUrl,
-      this.reader = ""});
+      this.reader = "",
+      this.isDark = false});
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -86,19 +89,24 @@ class ChatBubble extends StatelessWidget {
         //날짜 구분선 표시
         showDay
             ? Stack(alignment: Alignment.center, children: [
-                const Divider(height: 40),
+                Divider(
+                  height: 40,
+                  color: isDark ? AppColors.darkLine : AppColors.lightLine,
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
-                      color: (Theme.of(context).brightness == Brightness.dark)
-                          ? Colors.grey[900]
-                          : Colors.grey[50]),
+                    color: isDark
+                        ? AppColors.darkBackground
+                        : AppColors.lightBackground,
+                  ),
                   child: Text(
                     DateFormat("yyyy년 M월 dd일")
                         .format((messageData["time"] as Timestamp).toDate())
                         .toString(),
                     style: TextStyle(
-                        color: Theme.of(context).textTheme.displayLarge?.color),
+                      color: isDark ? AppColors.darkLine : AppColors.lightLine,
+                    ),
                   ),
                 )
               ])
@@ -210,8 +218,10 @@ class ChatBubble extends StatelessWidget {
                                   color:
                                       //상대 채팅버블이면 회색, 내 채팅버블이면 초록
                                       isOther
-                                          ? Colors.grey[200]
-                                          : Colors.green[400],
+                                          ? (isDark
+                                              ? AppColors.darkTag
+                                              : AppColors.lightTag)
+                                          : Colors.green,
                                   borderRadius: (type != MessageType.text)
                                       ? const BorderRadius.all(
                                           Radius.circular(10))
@@ -234,7 +244,13 @@ class ChatBubble extends StatelessWidget {
                                           horizontal: 15, vertical: 10),
                                       child: Text(
                                         messageData["content"],
-                                        style: const TextStyle(fontSize: 16),
+                                        style: TextStyle(
+                                            color: isOther
+                                                ? (isDark
+                                                    ? AppColors.darkText
+                                                    : AppColors.lightText)
+                                                : Colors.black,
+                                            fontSize: 16),
                                       ),
                                     ),
                                   //채팅이 사진일 때 보여줄 곳

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -82,6 +83,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     userUID = auth.getUID();
     String name = "";
     Map<String, List<String>> userInfo = {};
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     List<String> list;
     widget.chatRoomData.participantsInfo!.forEach((key, value) {
@@ -311,10 +314,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   setState(() {});
                                 },
                                 child: Container(
-                                  color: (Theme.of(context).brightness ==
-                                          Brightness.dark)
-                                      ? Colors.grey[900]
-                                      : Colors.grey[50],
+                                  color: isDark
+                                      ? AppColors.darkBackground
+                                      : AppColors.lightBackground,
                                   height: double.infinity,
                                   child: ListView.separated(
                                     controller: scrollController,
@@ -457,6 +459,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         showDay: showDay,
                                         messageData: docs[index],
                                         index: index,
+                                        isDark: isDark,
                                       );
                                     },
                                   ),
@@ -503,9 +506,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .appBarTheme
-                                    .backgroundColor),
+                                color: isDark
+                                    ? AppColors.darkInput
+                                    : AppColors.lightInput),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -783,7 +786,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   width: double.infinity,
                                   height:
                                       MediaQuery.of(context).size.height * 0.3,
-                                  color: Colors.grey[200],
+                                  color: isDark
+                                      ? AppColors.darkTag
+                                      : AppColors.lightTag,
                                   child: Center(
                                     child: IntrinsicHeight(
                                       child: Row(

@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:flutter/material.dart';
 
 class InputTextField extends StatefulWidget {
@@ -11,7 +12,8 @@ class InputTextField extends StatefulWidget {
       this.hintText,
       this.scrollPadding = const EdgeInsets.all(0),
       this.focusNode,
-      this.canOutsideUnfocus = true});
+      this.canOutsideUnfocus = true,
+      this.isDark = false});
   final TextEditingController controller;
   final int? minLines;
   final int? maxLines;
@@ -21,6 +23,7 @@ class InputTextField extends StatefulWidget {
   final EdgeInsets scrollPadding;
   final FocusNode? focusNode;
   final bool canOutsideUnfocus;
+  final bool isDark;
 
   @override
   State<InputTextField> createState() => _InputTextFieldState();
@@ -46,17 +49,17 @@ class _InputTextFieldState extends State<InputTextField> {
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.6),
+                color: widget.isDark ? AppColors.darkLine : AppColors.lightLine,
                 width: 1.5,
               )),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.6),
+                color: widget.isDark ? AppColors.darkLine : AppColors.lightLine,
                 width: 1.5,
               )),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: widget.isDark ? AppColors.darkInput : AppColors.lightInput,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           hintText: widget.hintText,
           hintStyle: const TextStyle(fontSize: 14),

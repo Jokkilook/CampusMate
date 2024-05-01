@@ -35,6 +35,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return PopScope(
       canPop: canPop,
       onPopInvoked: (bool value) async {
@@ -84,7 +86,9 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: Container(
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.grey[400]!))),
+              border: Border(
+                  top: BorderSide(
+                      color: isDark ? Colors.grey[800]! : Colors.grey[400]!))),
           height: 70,
           child: BottomNavigationBar(
             selectedItemColor: Colors.green,

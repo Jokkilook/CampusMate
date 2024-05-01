@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:io';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
@@ -48,6 +49,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   @override
   Widget build(BuildContext context) {
     widget.image = null;
+
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -210,6 +212,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   SingleChildScrollView wholeProfile(
       ProfileReviseScreen parent, UserData userData, BuildContext context) {
     widget.modifiedData = userData;
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     EI = userData.mbti![0] == "E";
     NS = userData.mbti![1] == "N";
@@ -229,7 +233,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                   offset: const Offset(0, 0),
                   blurRadius: 2)
             ],
-            color: Colors.white,
+            color:
+                isDark ? AppColors.darkBackground : AppColors.lightBackground,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -244,14 +249,21 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
               IntrinsicWidth(
                 child: TextField(
                   scrollPadding: const EdgeInsets.only(bottom: 100),
-                  cursorColor: Colors.black87,
-                  decoration: const InputDecoration(
+                  cursorColor:
+                      isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                  decoration: InputDecoration(
                     contentPadding:
-                        EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                     enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black54)),
+                        borderSide: BorderSide(
+                      color:
+                          isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                    )),
                     focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black87)),
+                        borderSide: BorderSide(
+                      color:
+                          isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                    )),
                   ),
                   maxLength: 20,
                   controller: nameController,
@@ -259,7 +271,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                     FocusManager.instance.primaryFocus?.unfocus();
                   },
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
+                    color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
@@ -276,20 +289,27 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
+                        color: isDark
+                            ? AppColors.darkInnerSection
+                            : AppColors.lightInnerSection,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             '자기소개',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: isDark
+                                    ? AppColors.darkTitle
+                                    : AppColors.lightTitle,
+                                fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
                             height: 10,
                           ),
                           InputTextField(
+                            isDark: isDark,
                             scrollPadding: const EdgeInsets.only(bottom: 120),
                             controller: introController,
                             minLines: 1,
@@ -308,7 +328,9 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
+                        color: isDark
+                            ? AppColors.darkInnerSection
+                            : AppColors.lightInnerSection,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -316,9 +338,12 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             '내 정보',
                             style: TextStyle(
+                              color: isDark
+                                  ? AppColors.darkTitle
+                                  : AppColors.lightTitle,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -341,7 +366,9 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
+                        color: isDark
+                            ? AppColors.darkInnerSection
+                            : AppColors.lightInnerSection,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -368,7 +395,9 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                       width: double.infinity,
                       margin: const EdgeInsets.only(top: 8),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
+                        color: isDark
+                            ? AppColors.darkInnerSection
+                            : AppColors.lightInnerSection,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -403,6 +432,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   }
 }
 
+//이미지 뷰어
 //ignore: must_be_immutable
 class ImageViewer extends StatefulWidget {
   ImageViewer(
@@ -507,12 +537,15 @@ class _TagShowerState extends State<TagShower> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color:
+            isDark ? AppColors.darkInnerSection : AppColors.lightInnerSection,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -528,8 +561,8 @@ class _TagShowerState extends State<TagShower> {
               ),
               Text(
                 '  ${userTag.length}/8',
-                style: const TextStyle(
-                  color: Colors.black54,
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -559,16 +592,18 @@ class _TagShowerState extends State<TagShower> {
                     style: TextStyle(
                         color: userTag.contains(tag)
                             ? const Color(0xff0B351E)
-                            : Colors.black54),
+                            : (isDark
+                                ? AppColors.darkTitle
+                                : AppColors.lightTitle)),
                   ),
                   style: OutlinedButton.styleFrom(
                       side: userTag.contains(tag)
-                          ? BorderSide(width: 2, color: Colors.green[400]!)
+                          ? const BorderSide(width: 2, color: Colors.green)
                           : BorderSide(
                               width: 0, color: Colors.white.withOpacity(0)),
                       backgroundColor: userTag.contains(tag)
-                          ? Colors.green[400]
-                          : Colors.grey[200],
+                          ? Colors.green
+                          : (isDark ? AppColors.darkTag : AppColors.lightTag),
                       minimumSize: Size.zero,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 5)),
@@ -605,6 +640,9 @@ class MBTISelector extends StatefulWidget {
 class _MBTISelectorState extends State<MBTISelector> {
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
+
     return Row(
       children: [
         const Column(
@@ -628,8 +666,9 @@ class _MBTISelectorState extends State<MBTISelector> {
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-              backgroundColor:
-                  widget.EI ? const Color(0xFF2BB56B) : const Color(0xFFE3DFE3),
+              backgroundColor: widget.EI
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -657,8 +696,8 @@ class _MBTISelectorState extends State<MBTISelector> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.EI
-                  ? const Color(0xFF2BB56B)
-                  : const Color(0xFFE3DFE3),
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -686,8 +725,9 @@ class _MBTISelectorState extends State<MBTISelector> {
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-              backgroundColor:
-                  widget.NS ? const Color(0xFF2BB56B) : const Color(0xFFE3DFE3),
+              backgroundColor: widget.NS
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -715,8 +755,8 @@ class _MBTISelectorState extends State<MBTISelector> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.NS
-                  ? const Color(0xFF2BB56B)
-                  : const Color(0xFFE3DFE3),
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -744,8 +784,9 @@ class _MBTISelectorState extends State<MBTISelector> {
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-              backgroundColor:
-                  widget.TF ? const Color(0xFF2BB56B) : const Color(0xFFE3DFE3),
+              backgroundColor: widget.TF
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -773,8 +814,8 @@ class _MBTISelectorState extends State<MBTISelector> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.TF
-                  ? const Color(0xFF2BB56B)
-                  : const Color(0xFFE3DFE3),
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -802,8 +843,9 @@ class _MBTISelectorState extends State<MBTISelector> {
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
-              backgroundColor:
-                  widget.PJ ? const Color(0xFF2BB56B) : const Color(0xFFE3DFE3),
+              backgroundColor: widget.PJ
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -831,8 +873,8 @@ class _MBTISelectorState extends State<MBTISelector> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.PJ
-                  ? const Color(0xFF2BB56B)
-                  : const Color(0xFFE3DFE3),
+                  ? Colors.green
+                  : (isDark ? AppColors.darkTag : AppColors.lightTag),
               minimumSize: const Size(50, 60),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(

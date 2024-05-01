@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        themeMode: Brightness.dark != Brightness.dark
+        themeMode: Brightness.dark == Brightness.dark
             ? ThemeMode.dark
             : ThemeMode.light,
         theme: ThemeData(
