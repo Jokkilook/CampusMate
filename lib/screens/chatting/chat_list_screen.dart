@@ -1,9 +1,9 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/screens/community/community_screen.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_list_item.dart';
 import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
@@ -54,7 +54,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
         child: widget.onCreating
             ? const CircularProgressIndicator()
             : const Icon(Icons.add, size: 30),
-        backgroundColor: primaryColor,
+        backgroundColor: AppColors.button,
         foregroundColor: const Color(0xFF0A351E),
         elevation: 5,
         shape: RoundedRectangleBorder(

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:flutter/material.dart';
 
@@ -42,13 +43,21 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Container(
       clipBehavior: Clip.hardEdge,
       foregroundDecoration: BoxDecoration(
-          border: Border.all(width: 1.5, color: const Color(0xFFD2D2D2)),
+          border: Border.all(
+            width: 1.5,
+            color: isDark ? AppColors.darkLine : AppColors.lightLine,
+          ),
           borderRadius: BorderRadius.circular(10)),
       decoration: BoxDecoration(
-          border: Border.all(width: 1, color: const Color(0xFFD2D2D2)),
+          border: Border.all(
+            width: 1,
+            color: isDark ? AppColors.darkLine : AppColors.lightLine,
+          ),
           borderRadius: BorderRadius.circular(10)),
       child: Row(
         children: [
@@ -62,9 +71,14 @@ class _ScheduleTableState extends State<ScheduleTable> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).canvasColor,
+                      color: isDark
+                          ? AppColors.darkRowCell
+                          : AppColors.lightRowCell,
                       border: Border.all(
-                          width: 0.5, color: const Color(0xFFD2D2D2)),
+                        width: 0.5,
+                        color:
+                            isDark ? AppColors.darkLine : AppColors.lightLine,
+                      ),
                     ),
                     child: Center(
                         child: AutoSizeText(
@@ -84,9 +98,14 @@ class _ScheduleTableState extends State<ScheduleTable> {
                       width: 1000,
                       height: 35,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
+                        color: isDark
+                            ? AppColors.darkHeaderCell
+                            : AppColors.lightHeaderCell,
                         border: Border.all(
-                            width: 0.5, color: const Color(0xFFD2D2D2)),
+                          width: 0.5,
+                          color:
+                              isDark ? AppColors.darkLine : AppColors.lightLine,
+                        ),
                       ),
                       child: Center(
                           child: Text(
@@ -108,10 +127,16 @@ class _ScheduleTableState extends State<ScheduleTable> {
                         height: 35,
                         decoration: BoxDecoration(
                           color: detail.value
-                              ? const Color(0xFFFAFAFA)
-                              : const Color(0xFF2CB66B),
+                              ? (isDark
+                                  ? AppColors.darkCell
+                                  : AppColors.lightCell)
+                              : Colors.green,
                           border: Border.all(
-                              width: 0.5, color: const Color(0xFFD2D2D2)),
+                            width: 0.5,
+                            color: isDark
+                                ? AppColors.darkLine
+                                : AppColors.lightLine,
+                          ),
                         ),
                       ),
                     ),

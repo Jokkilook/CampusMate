@@ -42,10 +42,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        themeMode: Brightness.dark == Brightness.dark
+        themeMode: Brightness.dark != Brightness.dark
             ? ThemeMode.dark
             : ThemeMode.light,
         theme: ThemeData(
+          primaryColor: Colors.green,
           brightness: Brightness.light,
           appBarTheme: AppBarTheme(
               scrolledUnderElevation: 0,
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         darkTheme: ThemeData(
+          primaryColor: Colors.green,
           brightness: Brightness.dark,
           textTheme: TextTheme(
               titleLarge: const TextStyle(color: Colors.white),

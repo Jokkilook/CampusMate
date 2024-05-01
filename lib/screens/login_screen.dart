@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDark =
-        Theme.of(context).brightness == Brightness.dark ? true : false ?? false;
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     Future<bool> login() async {
       try {
         await firebaseAuth.signInWithEmailAndPassword(

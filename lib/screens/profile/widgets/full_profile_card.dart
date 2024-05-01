@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
@@ -14,6 +15,8 @@ class FullProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final String score;
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     if (userData.score! >= 95) {
       score = "A+";
     } else if (userData.score! >= 90) {
@@ -53,7 +56,9 @@ class FullProfileCard extends StatelessWidget {
                         offset: const Offset(0, 0),
                         blurRadius: 2)
                   ],
-                  color: Theme.of(context).cardTheme.color,
+                  color: isDark
+                      ? AppColors.darkBackground
+                      : AppColors.lightBackground,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -73,7 +78,8 @@ class FullProfileCard extends StatelessWidget {
                     Text(
                       "${userData.name}",
                       style: TextStyle(
-                        color: Theme.of(context).textTheme.titleLarge!.color,
+                        color:
+                            isDark ? AppColors.darkTitle : AppColors.lightTitle,
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
@@ -91,7 +97,9 @@ class FullProfileCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
+                              color: isDark
+                                  ? AppColors.darkInnerSection
+                                  : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
@@ -101,10 +109,9 @@ class FullProfileCard extends StatelessWidget {
                                   '자기소개',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge!
-                                        .color,
+                                    color: isDark
+                                        ? AppColors.darkTitle
+                                        : AppColors.lightTitle,
                                   ),
                                 ),
                                 const SizedBox(
@@ -113,10 +120,9 @@ class FullProfileCard extends StatelessWidget {
                                 Text(
                                   '${userData.introduce}',
                                   style: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color,
+                                    color: isDark
+                                        ? AppColors.darkText
+                                        : AppColors.lightText,
                                   ),
                                 ),
                               ],
@@ -129,7 +135,9 @@ class FullProfileCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
+                              color: isDark
+                                  ? AppColors.darkInnerSection
+                                  : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: IntrinsicHeight(
@@ -147,7 +155,10 @@ class FullProfileCard extends StatelessWidget {
                                       children: [
                                         Text(
                                           '${userData.name}님의 정보',
-                                          style: const TextStyle(
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? AppColors.darkTitle
+                                                : AppColors.lightTitle,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -157,34 +168,36 @@ class FullProfileCard extends StatelessWidget {
                                         Text(
                                           '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}',
                                           style: TextStyle(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .color,
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
                                           ),
                                         ),
                                         Text(
                                           '성별  ${userData.gender! ? "남" : "여"}',
                                           style: TextStyle(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .color,
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
                                           ),
                                         ),
                                         Text(
                                           '학과  ${userData.dept}',
                                           style: TextStyle(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .color,
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  const VerticalDivider(width: 30),
+                                  VerticalDivider(
+                                    width: 30,
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
+                                  ),
                                   Expanded(
                                     flex: 1,
                                     child: Column(
@@ -196,10 +209,9 @@ class FullProfileCard extends StatelessWidget {
                                               child: Text(
                                                 '매너학점 ',
                                                 style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .titleLarge!
-                                                        .color,
+                                                    color: isDark
+                                                        ? AppColors.darkTitle
+                                                        : AppColors.lightTitle,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
@@ -209,13 +221,12 @@ class FullProfileCard extends StatelessWidget {
                                                 //매너학점이 뭔지 알려주는 안내 카드 출력
                                                 showDialog(
                                                   context: context,
-                                                  builder: (context) =>
-                                                      const Dialog(
+                                                  builder: (context) => Dialog(
                                                     child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 40,
-                                                              vertical: 40),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 40,
+                                                          vertical: 40),
                                                       child: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -225,15 +236,26 @@ class FullProfileCard extends StatelessWidget {
                                                             textAlign: TextAlign
                                                                 .justify,
                                                             style: TextStyle(
+                                                                color: isDark
+                                                                    ? AppColors
+                                                                        .darkText
+                                                                    : AppColors
+                                                                        .lightText,
                                                                 fontSize: 25,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold),
                                                           ),
-                                                          SizedBox(height: 20),
+                                                          const SizedBox(
+                                                              height: 20),
                                                           Text(
                                                             "매너학점은 이용자의 평판을 점수화 시킨 것으로 다른 이용자에게 받은 평가를 기준으로 산정됩니다.\n\n A+부터 F까지 9개의 등급이 있습니다.",
                                                             style: TextStyle(
+                                                              color: isDark
+                                                                  ? AppColors
+                                                                      .darkText
+                                                                  : AppColors
+                                                                      .lightText,
                                                               fontSize: 20,
                                                             ),
                                                           )
@@ -259,10 +281,9 @@ class FullProfileCard extends StatelessWidget {
                                             child: Text(
                                               score,
                                               style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge!
-                                                    .color,
+                                                color: isDark
+                                                    ? AppColors.darkText
+                                                    : AppColors.lightText,
                                                 fontSize: 30,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -284,7 +305,9 @@ class FullProfileCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
+                              color: isDark
+                                  ? AppColors.darkInnerSection
+                                  : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Expanded(
@@ -294,19 +317,27 @@ class FullProfileCard extends StatelessWidget {
                                   Text(
                                     '성향',
                                     style: TextStyle(
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge!
-                                          .color,
+                                      color: isDark
+                                          ? AppColors.darkTitle
+                                          : AppColors.lightTitle,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  Text('${userData.mbti}'),
+                                  Text(
+                                    '${userData.mbti}',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? AppColors.darkText
+                                          : AppColors.lightText,
+                                    ),
+                                  ),
                                   Divider(
-                                    color: Colors.grey[300],
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
                                   ),
                                   Wrap(
                                     spacing: 10,
@@ -315,13 +346,21 @@ class FullProfileCard extends StatelessWidget {
                                       for (var tag in userData.tags!)
                                         Container(
                                           decoration: BoxDecoration(
-                                              color:
-                                                  Theme.of(context).canvasColor,
+                                              color: isDark
+                                                  ? AppColors.darkTag
+                                                  : AppColors.lightTag,
                                               borderRadius:
                                                   BorderRadius.circular(15)),
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 15, vertical: 5),
-                                          child: Text(tag.toString()),
+                                          child: Text(
+                                            tag.toString(),
+                                            style: TextStyle(
+                                              color: isDark
+                                                  ? AppColors.darkText
+                                                  : AppColors.lightText,
+                                            ),
+                                          ),
                                         )
                                     ],
                                   )
@@ -335,7 +374,9 @@ class FullProfileCard extends StatelessWidget {
                             width: double.infinity,
                             margin: const EdgeInsets.only(top: 8),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
+                              color: isDark
+                                  ? AppColors.darkInnerSection
+                                  : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Expanded(
@@ -348,10 +389,9 @@ class FullProfileCard extends StatelessWidget {
                                     child: Text(
                                       '시간표',
                                       style: TextStyle(
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .titleLarge!
-                                              .color,
+                                          color: isDark
+                                              ? AppColors.darkTitle
+                                              : AppColors.lightTitle,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),

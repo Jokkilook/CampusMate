@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
@@ -160,6 +161,8 @@ class _MatchCardState extends State<MatchCard> {
       List<QueryDocumentSnapshot> data, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.height;
     final UserData userData = context.read<UserDataProvider>().userData;
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     for (var info in data) {
       var doc = UserData.fromJson(info.data() as Map<String, dynamic>);
@@ -316,8 +319,9 @@ class _MatchCardState extends State<MatchCard> {
                                         for (var tag in doc.tags!)
                                           Container(
                                             decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .canvasColor,
+                                                color: isDark
+                                                    ? AppColors.darkTag
+                                                    : AppColors.lightTag,
                                                 borderRadius:
                                                     BorderRadius.circular(15)),
                                             padding: const EdgeInsets.symmetric(
@@ -325,10 +329,9 @@ class _MatchCardState extends State<MatchCard> {
                                             child: Text(
                                               tag.toString(),
                                               style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .textTheme
-                                                      .titleLarge!
-                                                      .color),
+                                                  color: isDark
+                                                      ? AppColors.darkText
+                                                      : AppColors.lightText),
                                             ),
                                           )
                                       ],

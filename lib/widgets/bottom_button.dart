@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:flutter/material.dart';
 
 class BottomButton extends StatelessWidget {
@@ -33,7 +34,7 @@ class BottomButton extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF2BB56B),
+          backgroundColor: AppColors.button,
           minimumSize: Size(10000, height),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

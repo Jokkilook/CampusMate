@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
@@ -220,7 +221,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             });
           },
           child: const Icon(Icons.add, size: 30),
-          backgroundColor: primaryColor,
+          backgroundColor: AppColors.button,
           foregroundColor: const Color(0xFF0A351E),
           elevation: 5,
           shape: RoundedRectangleBorder(
