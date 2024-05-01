@@ -2,6 +2,7 @@ import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'models/post_data.dart';
+import 'widgets/show_alert_dialog.dart';
 
 class EditPostScreen extends StatefulWidget {
   final PostData postData;
@@ -86,6 +87,15 @@ class _EditPostScreenState extends State<EditPostScreen> {
                 text: '작성',
                 isCompleted: true,
                 onPressed: () {
+                  // 제목, 내용을 입력해야 작성됨
+                  if (_titleController.value.text == "") {
+                    showAlertDialog(context, "제목을 입력해주세요.");
+                    return;
+                  }
+                  if (_contentController.value.text == "") {
+                    showAlertDialog(context, "내용을 입력해주세요.");
+                    return;
+                  }
                   _updatePost(context);
                 },
               ),

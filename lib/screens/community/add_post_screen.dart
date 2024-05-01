@@ -6,6 +6,7 @@ import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
 
 import '../../widgets/bottom_button.dart';
+import 'widgets/show_alert_dialog.dart';
 
 Color primaryColor = const Color(0xFF2BB56B);
 
@@ -42,29 +43,6 @@ class AddPostScreen extends StatelessWidget {
     } catch (error) {
       debugPrint('에러: $error');
     }
-  }
-
-  void _showAlertDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          // title: const Text("알림"),
-          content: Text(
-            message,
-            style: const TextStyle(fontSize: 14),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("확인"),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -124,17 +102,17 @@ class AddPostScreen extends StatelessWidget {
                     postData.authorUid =
                         context.read<UserDataProvider>().userData.uid;
                     postData.timestamp = Timestamp.fromDate(DateTime.now());
-                    postData.title = _titleController.value.text;
                     // 제목, 내용을 입력해야 작성됨
-                    if (postData.title == "") {
-                      _showAlertDialog(context, "제목을 입력해주세요.");
+                    if (_titleController.value.text == "") {
+                      showAlertDialog(context, "제목을 입력해주세요.");
                       return;
                     }
+                    if (_contentController.value.text == "") {
+                      showAlertDialog(context, "내용을 입력해주세요.");
+                      return;
+                    }
+                    postData.title = _titleController.value.text;
                     postData.content = _contentController.value.text;
-                    if (postData.content == "") {
-                      _showAlertDialog(context, "내용을 입력해주세요.");
-                      return;
-                    }
                     _addPost(context);
                   },
                 ),

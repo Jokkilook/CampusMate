@@ -8,7 +8,6 @@ class PostCommentData {
   String? authorUid;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
-  List<dynamic>? replies;
 
   Map<String, dynamic>? data;
 
@@ -20,7 +19,6 @@ class PostCommentData {
     this.authorUid,
     this.likers = const [],
     this.dislikers = const [],
-    this.replies = const [],
   }) {
     setData();
   }
@@ -33,7 +31,6 @@ class PostCommentData {
     authorUid = json['authorUid'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
-    replies = json['replies'] ?? [];
 
     setData();
   }
@@ -47,7 +44,6 @@ class PostCommentData {
       'authorUid': authorUid,
       'likers': likers,
       'dislikers': dislikers,
-      'replies': replies,
     };
   }
 }
