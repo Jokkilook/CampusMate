@@ -2,6 +2,7 @@ import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/media_data_provider.dart';
+import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/splash_loading_screen.dart';
 import 'package:flutter/foundation.dart';
@@ -29,6 +30,9 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context) => ChattingDataProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
         )
       ],
       child: const MyApp(),
@@ -42,9 +46,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        themeMode: Brightness.dark == Brightness.dark
-            ? ThemeMode.dark
-            : ThemeMode.light,
+        themeMode: Provider.of<ThemeProvider>(context).currentThemeMode,
         theme: ThemeData(
           primaryColor: Colors.green,
           brightness: Brightness.light,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/screens/community/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
 import 'package:campusmate/provider/chatting_data_provider.dart';
@@ -165,6 +166,25 @@ class _MoreScreenState extends State<MoreScreen> {
                       widget.isGeneral = false;
                   }
                 },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Provider.of<ThemeProvider>(context, listen: false)
+                          .setLightMode();
+                    },
+                    icon: const Icon(Icons.light_mode),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Provider.of<ThemeProvider>(context, listen: false)
+                          .setDarkMode();
+                    },
+                    icon: const Icon(Icons.dark_mode),
+                  ),
+                ],
               ),
               ElevatedButton(
                 onPressed: () {
