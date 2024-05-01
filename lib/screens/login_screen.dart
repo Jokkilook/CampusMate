@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
@@ -24,6 +25,8 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false ?? false;
     Future<bool> login() async {
       try {
         await firebaseAuth.signInWithEmailAndPassword(
@@ -48,7 +51,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          color: const Color(0xFFEDF2F1),
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Center(
             child: SingleChildScrollView(
               child: Padding(
@@ -75,6 +78,7 @@ class LoginScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 100),
+                    //아이디 입력칸
                     FractionallySizedBox(
                       widthFactor: 1,
                       child: SizedBox(
@@ -85,27 +89,43 @@ class LoginScreen extends StatelessWidget {
                             FocusManager.instance.primaryFocus?.unfocus();
                           },
                           decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: isDark
+                                      ? AppColors.darkLine
+                                      : AppColors.lightLine,
+                                  width: 2,
+                                ),
+                              ),
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black45,
-                                    width: 2,
-                                  )),
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: isDark
+                                      ? AppColors.darkLine
+                                      : AppColors.lightLine,
+                                  width: 2,
+                                ),
+                              ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: isDark
+                                  ? AppColors.darkInput
+                                  : AppColors.lightInput,
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
-                              label: const Text("아이디",
+                              label: Text("아이디",
                                   style: TextStyle(
-                                      fontSize: 13, color: Colors.black54)),
-                              labelStyle: const TextStyle(
-                                  fontSize: 13, color: Colors.black54),
+                                      fontSize: 13,
+                                      color: isDark
+                                          ? AppColors.darkHint
+                                          : AppColors.lightHint)),
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10)),
                         ),
                       ),
                     ),
                     const SizedBox(height: 15),
+                    //비밀번호 입력칸
                     FractionallySizedBox(
                       widthFactor: 1,
                       child: SizedBox(
@@ -117,20 +137,38 @@ class LoginScreen extends StatelessWidget {
                           },
                           obscureText: true,
                           decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: isDark
+                                      ? AppColors.darkLine
+                                      : AppColors.lightLine,
+                                  width: 2,
+                                ),
+                              ),
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black45,
-                                    width: 2,
-                                  )),
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: isDark
+                                      ? AppColors.darkLine
+                                      : AppColors.lightLine,
+                                  width: 2,
+                                ),
+                              ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: isDark
+                                  ? AppColors.darkInput
+                                  : AppColors.lightInput,
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               label: const Text(
                                 "비밀번호",
                               ),
-                              labelStyle: const TextStyle(fontSize: 13),
+                              labelStyle: TextStyle(
+                                  fontSize: 13,
+                                  color: isDark
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint),
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10)),
                         ),

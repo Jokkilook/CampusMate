@@ -59,7 +59,6 @@ class MyApp extends StatelessWidget {
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
-          title: Colors.white,
           textTheme: TextTheme(
               titleLarge: const TextStyle(color: Colors.white),
               titleMedium: const TextStyle(color: Colors.white),
