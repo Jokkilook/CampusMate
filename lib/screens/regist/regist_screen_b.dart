@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
 import 'package:campusmate/screens/login_screen.dart';
@@ -66,34 +67,30 @@ class _RegistScreenBState extends State<RegistScreenB> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 40,
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: IconButton(
-              onPressed: (/* 로그인 화면으로 돌아가기 */) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                    (route) => false);
-              },
-              icon: const Icon(Icons.close),
-            ),
+          IconButton(
+            onPressed: (/* 로그인 화면으로 돌아가기 */) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                  (route) => false);
+            },
+            icon: const Icon(Icons.close),
           )
         ],
-        title: const Text(
+        title: Text(
           "회원가입",
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF5C5C5C)),
+              color: isDark ? AppColors.darkTitle : AppColors.lightTitle),
         ),
-        shadowColor: Colors.black,
-        elevation: 2,
       ),
       body: Column(
         children: [
@@ -103,14 +100,14 @@ class _RegistScreenBState extends State<RegistScreenB> {
                 flex: 60,
                 child: Container(
                   height: 10,
-                  color: const Color(0xff2CB66B),
+                  color: Colors.green,
                 ),
               ),
               Expanded(
                 flex: 30,
                 child: Container(
                   height: 10,
-                  color: const Color(0xffE4E4E4),
+                  color: isDark ? AppColors.darkTag : AppColors.lightTag,
                 ),
               ),
             ],
@@ -127,11 +124,14 @@ class _RegistScreenBState extends State<RegistScreenB> {
                         // 이메일 인증번호 섹션 , 다음 버튼 미포함
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("   학교 이메일 인증",
+                          Text("   학교 이메일 인증",
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black45)),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? AppColors.darkHeadText
+                                    : AppColors.lightHeadText,
+                              )),
                           const SizedBox(height: 5),
                           FractionallySizedBox(
                             widthFactor: 1,
@@ -150,18 +150,24 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: isDark
+                                        ? AppColors.darkInput
+                                        : AppColors.lightInput,
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
@@ -173,10 +179,13 @@ class _RegistScreenBState extends State<RegistScreenB> {
                               ),
                             ),
                           ),
-                          const Text(
+                          Text(
                             "   메일 하나당 하나의 계정만 가입 가능합니다.",
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.black54),
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: isDark
+                                    ? AppColors.darkText
+                                    : AppColors.lightText),
                           ),
                           const SizedBox(height: 10),
                           ElevatedButton(
@@ -204,14 +213,14 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                     isSended ? "재발송" : "인증번호 발송 ",
                                     style: TextStyle(
                                         color: inputEmail.isNotEmpty
-                                            ? const Color(0xFF0A351E)
+                                            ? AppColors.buttonText
                                             : Colors.black45,
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
                                   ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2BB56B),
-                              minimumSize: const Size(10000, 60),
+                              backgroundColor: AppColors.button,
+                              minimumSize: const Size(10000, 50),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                             ),
@@ -223,8 +232,11 @@ class _RegistScreenBState extends State<RegistScreenB> {
                               children: [
                                 Text(
                                   isSended ? "   아직 인증번호가 도착하지 않았나요?" : "",
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.black54),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: isDark
+                                          ? AppColors.darkText
+                                          : AppColors.lightText),
                                 ),
                                 const SizedBox(height: 10),
                                 SizedBox(
@@ -241,19 +253,25 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: Colors.black45,
+                                            borderSide: BorderSide(
+                                              color: isDark
+                                                  ? AppColors.darkLine
+                                                  : AppColors.lightLine,
                                               width: 1.5,
                                             )),
                                         focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: Colors.black45,
+                                            borderSide: BorderSide(
+                                              color: isDark
+                                                  ? AppColors.darkLine
+                                                  : AppColors.lightLine,
                                               width: 1.5,
                                             )),
                                         filled: true,
-                                        fillColor: Colors.white,
+                                        fillColor: isDark
+                                            ? AppColors.darkInput
+                                            : AppColors.lightInput,
                                         border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10)),
@@ -271,10 +289,12 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text("   03:00",
+                                    Text("   03:00",
                                         style: TextStyle(
                                             fontSize: 12,
-                                            color: Colors.black54)),
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText)),
                                     Text(isCorrect ? "" : "인증코드가 일지하지 않습니다!   ",
                                         style: TextStyle(
                                             fontSize: 12,
@@ -301,14 +321,14 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                     "확인",
                                     style: TextStyle(
                                         color: isCompleted
-                                            ? const Color(0xFF0A351E)
-                                            : Colors.black45,
+                                            ? null
+                                            : AppColors.buttonText,
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF2BB56B),
-                                    minimumSize: const Size(10000, 60),
+                                    backgroundColor: Colors.green,
+                                    minimumSize: const Size(10000, 50),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),

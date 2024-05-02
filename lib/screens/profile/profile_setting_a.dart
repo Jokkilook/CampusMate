@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
@@ -49,18 +50,18 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 40,
-        title: const Text(
+        title: Text(
           "프로필 설정",
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF5C5C5C)),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
+          ),
         ),
-        shadowColor: Colors.black,
-        elevation: 2,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -72,14 +73,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                   flex: 33,
                   child: Container(
                     height: 10,
-                    color: const Color(0xff2CB66B),
+                    color: Colors.green,
                   ),
                 ),
                 Expanded(
                   flex: 67,
                   child: Container(
                     height: 10,
-                    color: const Color(0xffE4E4E4),
+                    color: isDark ? AppColors.darkTag : AppColors.lightTag,
                   ),
                 ),
               ],
@@ -92,23 +93,30 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text("   생년월일",
                                 style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87)),
-                            SizedBox(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? AppColors.darkHeadText
+                                      : AppColors.lightHeadText,
+                                )),
+                            const SizedBox(
                               width: 10,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
                               child: Text(
                                 "설정이 완료되면 수정할 수 없어요!",
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.black45),
+                                  fontSize: 12,
+                                  color: isDark
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint,
+                                ),
                               ),
                             ),
                           ],
@@ -124,15 +132,23 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: Colors.black45, width: 1.5),
-                                  color: Colors.white,
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
+                                  ),
+                                  color: isDark
+                                      ? AppColors.darkInput
+                                      : AppColors.lightInput,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: DropdownButton(
                                   underline: Container(),
-                                  icon: const Icon(
-                                      Icons.keyboard_arrow_down_outlined,
-                                      color: Colors.black45),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_outlined,
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
+                                  ),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
                                   isExpanded: true,
@@ -156,15 +172,23 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: Colors.black45, width: 1.5),
-                                  color: Colors.white,
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
+                                  ),
+                                  color: isDark
+                                      ? AppColors.darkInput
+                                      : AppColors.lightInput,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: DropdownButton(
                                   underline: Container(),
-                                  icon: const Icon(
-                                      Icons.keyboard_arrow_down_outlined,
-                                      color: Colors.black45),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_outlined,
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
+                                  ),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
                                   isExpanded: true,
@@ -188,15 +212,23 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: Colors.black45, width: 1.5),
-                                  color: Colors.white,
+                                      color: isDark
+                                          ? AppColors.darkLine
+                                          : AppColors.lightLine,
+                                      width: 1.5),
+                                  color: isDark
+                                      ? AppColors.darkInput
+                                      : AppColors.lightInput,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: DropdownButton(
                                   underline: Container(),
-                                  icon: const Icon(
-                                      Icons.keyboard_arrow_down_outlined,
-                                      color: Colors.black45),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_outlined,
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
+                                  ),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
                                   isExpanded: true,
@@ -216,23 +248,30 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        const Row(
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text("   성별",
                                 style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87)),
-                            SizedBox(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? AppColors.darkHeadText
+                                      : AppColors.lightHeadText,
+                                )),
+                            const SizedBox(
                               width: 10,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
                               child: Text(
                                 "설정이 완료되면 수정할 수 없어요!",
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.black45),
+                                  fontSize: 12,
+                                  color: isDark
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint,
+                                ),
                               ),
                             ),
                           ],
@@ -299,11 +338,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        const Text("   소개",
+                        Text("   소개",
                             style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87)),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDark
+                                  ? AppColors.darkHeadText
+                                  : AppColors.lightHeadText,
+                            )),
                         const SizedBox(height: 5),
                         FractionallySizedBox(
                           widthFactor: 1,
@@ -322,18 +364,24 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColors.darkLine
+                                            : AppColors.lightLine,
                                         width: 1.5,
                                       )),
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColors.darkLine
+                                            : AppColors.lightLine,
                                         width: 1.5,
                                       )),
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  fillColor: isDark
+                                      ? AppColors.darkInput
+                                      : AppColors.lightInput,
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   hintText: "프로필에 표시될 소개를 적어보세요!",
@@ -344,11 +392,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        const Text("   MBTI",
+                        Text("   MBTI",
                             style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87)),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDark
+                                  ? AppColors.darkHeadText
+                                  : AppColors.lightHeadText,
+                            )),
                         const SizedBox(height: 5),
                         //MBTI
                         Row(
@@ -367,18 +418,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   "E",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: EI
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                      color: EI ? AppColors.buttonText : null,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: EI
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                  backgroundColor: EI ? AppColors.button : null,
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -398,18 +445,15 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   "I",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !EI
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                      color: !EI ? AppColors.buttonText : null,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: !EI
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                  backgroundColor:
+                                      !EI ? AppColors.button : null,
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(

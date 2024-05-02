@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/school_api.dart';
 import 'package:campusmate/screens/login_screen.dart';
@@ -51,34 +52,30 @@ class _RegistScreenAState extends State<RegistScreenA> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 40,
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: IconButton(
-              onPressed: (/* 로그인 화면으로 돌아가기 */) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                    (route) => false);
-              },
-              icon: const Icon(Icons.close),
-            ),
+          IconButton(
+            onPressed: (/* 로그인 화면으로 돌아가기 */) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                  (route) => false);
+            },
+            icon: const Icon(Icons.close),
           )
         ],
-        title: const Text(
+        title: Text(
           "회원가입",
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF5C5C5C)),
+              color: isDark ? AppColors.darkTitle : AppColors.lightTitle),
         ),
-        shadowColor: Colors.black,
-        elevation: 2,
       ),
       body: Column(
         children: [
@@ -89,14 +86,14 @@ class _RegistScreenAState extends State<RegistScreenA> {
                 flex: 10,
                 child: Container(
                   height: 10,
-                  color: const Color(0xff2CB66B),
+                  color: Colors.green,
                 ),
               ),
               Expanded(
                 flex: 90,
                 child: Container(
                   height: 10,
-                  color: const Color(0xffE4E4E4),
+                  color: isDark ? AppColors.darkTag : AppColors.lightTag,
                 ),
               ),
             ],
@@ -112,11 +109,16 @@ class _RegistScreenAState extends State<RegistScreenA> {
                       // 다음버튼 제외한 UI 섹션
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("  입학연도",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54)),
+                        Text(
+                          "  입학연도",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? AppColors.darkHeadText
+                                : AppColors.lightHeadText,
+                          ),
+                        ),
                         const SizedBox(height: 5),
                         FractionallySizedBox(
                           widthFactor: 1,
@@ -125,15 +127,23 @@ class _RegistScreenAState extends State<RegistScreenA> {
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Colors.black45, width: 1.5),
-                                color: Colors.white,
+                                    color: isDark
+                                        ? AppColors.darkLine
+                                        : AppColors.lightLine,
+                                    width: 1.5),
+                                color: isDark
+                                    ? AppColors.darkInput
+                                    : AppColors.lightInput,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: DropdownButton(
                                 underline: Container(),
-                                icon: const Icon(
-                                    Icons.keyboard_arrow_down_outlined,
-                                    color: Colors.black45),
+                                icon: Icon(
+                                  Icons.keyboard_arrow_down_outlined,
+                                  color: isDark
+                                      ? AppColors.darkLine
+                                      : AppColors.lightLine,
+                                ),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 isExpanded: true,
@@ -152,37 +162,51 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Text("   학교 선택",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54)),
+                        Text(
+                          "   학교 선택",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? AppColors.darkHeadText
+                                : AppColors.lightHeadText,
+                          ),
+                        ),
                         const SizedBox(height: 5),
                         DropdownSearch<String>(
-                          dropdownButtonProps: const DropdownButtonProps(
+                          dropdownButtonProps: DropdownButtonProps(
                               icon: Icon(
                                 Icons.search_outlined,
-                                color: Colors.black45,
+                                color: isDark
+                                    ? AppColors.darkLine
+                                    : AppColors.lightLine,
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 20)),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20)),
                           dropdownDecoratorProps: DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                   hintText: "학교를 선택하세요",
                                   hintStyle: const TextStyle(fontSize: 13),
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColors.darkLine
+                                            : AppColors.lightLine,
                                         width: 1.5,
                                       )),
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColors.darkLine
+                                            : AppColors.lightLine,
                                         width: 1.5,
                                       )),
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  fillColor: isDark
+                                      ? AppColors.darkInput
+                                      : AppColors.lightInput,
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   contentPadding: const EdgeInsets.symmetric(
@@ -204,44 +228,60 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        const Text("   학과 선택",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54)),
+                        Text(
+                          "   학과 선택",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? AppColors.darkHeadText
+                                : AppColors.lightHeadText,
+                          ),
+                        ),
                         const SizedBox(height: 5),
                         DropdownSearch<String>(
                           enabled: isReady,
-                          dropdownButtonProps: const DropdownButtonProps(
+                          dropdownButtonProps: DropdownButtonProps(
                               icon: Icon(
                                 Icons.search_outlined,
-                                color: Colors.black45,
+                                color: isDark
+                                    ? AppColors.darkLine
+                                    : AppColors.lightLine,
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 20)),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20)),
                           dropdownDecoratorProps: DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                   hintText: "학과를 선택하세요",
                                   hintStyle: const TextStyle(fontSize: 13),
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black38,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColors.darkLine
+                                            : AppColors.lightLine,
                                         width: 1.5,
                                       )),
                                   enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColors.darkLine
+                                            : AppColors.lightLine,
                                         width: 1.5,
                                       )),
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColors.darkLine
+                                            : AppColors.lightLine,
                                         width: 1.5,
                                       )),
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  fillColor: isDark
+                                      ? AppColors.darkInput
+                                      : AppColors.lightInput,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),

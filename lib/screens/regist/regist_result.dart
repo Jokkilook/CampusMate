@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:flutter/material.dart';
@@ -8,25 +9,27 @@ class RegistResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               "가입 완료!",
               style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black54),
+                  color: isDark ? AppColors.darkTitle : AppColors.lightTitle),
             ),
-            const Text(
+            Text(
               "프로필을 설정해 볼까요?",
               style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black54),
+                  color: isDark ? AppColors.darkTitle : AppColors.lightTitle),
             ),
             const SizedBox(height: 50),
             ElevatedButton(
@@ -38,16 +41,16 @@ class RegistResult extends StatelessWidget {
                       builder: (context) => ProfileSettingA(userData: userData),
                     ));
               },
-              child: const Text(
+              child: Text(
                 "프로필 설정하기",
                 style: TextStyle(
-                    color: Color(0xFF0A351E),
+                    color: AppColors.buttonText,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2BB56B),
-                minimumSize: const Size(10000, 60),
+                backgroundColor: AppColors.button,
+                minimumSize: const Size(10000, 50),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),

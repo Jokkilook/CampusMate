@@ -28,8 +28,7 @@ class BottomButton extends StatelessWidget {
             : Text(
                 text,
                 style: TextStyle(
-                    color:
-                        isCompleted ? const Color(0xFF0A351E) : Colors.black45,
+                    color: isCompleted ? AppColors.buttonText : Colors.black45,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),

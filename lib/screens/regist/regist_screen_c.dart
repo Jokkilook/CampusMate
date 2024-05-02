@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
@@ -42,34 +43,31 @@ class _RegistScreenCState extends State<RegistScreenC> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 40,
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: IconButton(
-              onPressed: (/* 로그인 화면으로 돌아가기 */) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                    (route) => false);
-              },
-              icon: const Icon(Icons.close),
-            ),
+          IconButton(
+            onPressed: (/* 로그인 화면으로 돌아가기 */) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                  (route) => false);
+            },
+            icon: const Icon(Icons.close),
           )
         ],
-        title: const Text(
+        title: Text(
           "회원가입",
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF5C5C5C)),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
+          ),
         ),
-        shadowColor: Colors.black,
-        elevation: 2,
       ),
       body: Column(
         children: [
@@ -79,14 +77,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
                 flex: 100,
                 child: Container(
                   height: 10,
-                  color: const Color(0xff2CB66B),
+                  color: Colors.green,
                 ),
               ),
               Expanded(
                 flex: 00,
                 child: Container(
                   height: 10,
-                  color: const Color(0xffE4E4E4),
+                  color: isDark ? AppColors.darkTag : AppColors.lightTag,
                 ),
               ),
             ],
@@ -102,11 +100,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("   아이디",
+                          Text("   아이디",
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black45)),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? AppColors.darkHeadText
+                                    : AppColors.lightHeadText,
+                              )),
                           const SizedBox(height: 5),
                           FractionallySizedBox(
                             widthFactor: 1,
@@ -120,18 +121,24 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: isDark
+                                        ? AppColors.darkInput
+                                        : AppColors.lightInput,
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
@@ -143,11 +150,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          const Text("   비밀번호",
+                          Text("   비밀번호",
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black45)),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? AppColors.darkHeadText
+                                    : AppColors.lightHeadText,
+                              )),
                           const SizedBox(height: 5),
                           FractionallySizedBox(
                             widthFactor: 1,
@@ -162,18 +172,24 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: isDark
+                                        ? AppColors.darkInput
+                                        : AppColors.lightInput,
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
@@ -186,11 +202,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          const Text("   비밀번호 확인",
+                          Text("   비밀번호 확인",
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black45)),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? AppColors.darkHeadText
+                                    : AppColors.lightHeadText,
+                              )),
                           const SizedBox(height: 5),
                           FractionallySizedBox(
                             widthFactor: 1,
@@ -218,7 +237,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                           color: pwConfirmController
                                                       .value.text.isEmpty ||
                                                   isCorrect
-                                              ? Colors.black45
+                                              ? (isDark
+                                                  ? AppColors.darkLine
+                                                  : AppColors.lightLine)
                                               : Colors.red.shade600,
                                           width: 1.5,
                                         )),
@@ -228,12 +249,16 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                           color: pwConfirmController
                                                       .value.text.isEmpty ||
                                                   isCorrect
-                                              ? Colors.black45
+                                              ? (isDark
+                                                  ? AppColors.darkLine
+                                                  : AppColors.lightLine)
                                               : Colors.red.shade600,
                                           width: 1.5,
                                         )),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: isDark
+                                        ? AppColors.darkInput
+                                        : AppColors.lightInput,
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
@@ -246,11 +271,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          const Text("   닉네임",
+                          Text("   닉네임",
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black45)),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? AppColors.darkHeadText
+                                    : AppColors.lightHeadText,
+                              )),
                           const SizedBox(height: 5),
                           FractionallySizedBox(
                             widthFactor: 1,
@@ -268,18 +296,24 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                 decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Colors.black45,
+                                        borderSide: BorderSide(
+                                          color: isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                           width: 1.5,
                                         )),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: isDark
+                                        ? AppColors.darkInput
+                                        : AppColors.lightInput,
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
