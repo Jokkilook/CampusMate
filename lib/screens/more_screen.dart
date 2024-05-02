@@ -184,6 +184,13 @@ class _MoreScreenState extends State<MoreScreen> {
                     },
                     icon: const Icon(Icons.dark_mode),
                   ),
+                  IconButton(
+                    onPressed: () {
+                      Provider.of<ThemeProvider>(context, listen: false)
+                          .setSystemMode();
+                    },
+                    icon: const Icon(Icons.settings_brightness),
+                  ),
                 ],
               ),
               ElevatedButton(

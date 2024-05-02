@@ -201,11 +201,11 @@ class LoginScreen extends StatelessWidget {
                       },
                       child: const Text(
                         "로그인",
-                        style:
-                            TextStyle(color: Color(0xFF0A351E), fontSize: 18),
+                        style: TextStyle(
+                            color: AppColors.buttonText, fontSize: 18),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2BB56B),
+                        backgroundColor: AppColors.button,
                         minimumSize: const Size(1000, 50),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
@@ -224,7 +224,7 @@ class LoginScreen extends StatelessWidget {
                       child: const Text(
                         "회원가입",
                         style: TextStyle(
-                            color: Color(0xFF0A351E),
+                            color: AppColors.button,
                             fontSize: 18,
                             fontWeight: FontWeight.bold),
                       ),

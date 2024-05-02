@@ -47,7 +47,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         themeMode:
             //ThemeMode.dark,
-
             Provider.of<ThemeProvider>(context).currentThemeMode,
         theme: ThemeData(
           dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),

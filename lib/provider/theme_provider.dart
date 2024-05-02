@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeMode currentThemeMode = ThemeMode.light;
+  ThemeMode currentThemeMode = ThemeMode.system;
 
   //라이트모드
   setLightMode() {
@@ -12,6 +12,12 @@ class ThemeProvider extends ChangeNotifier {
   //다크모드
   setDarkMode() {
     currentThemeMode = ThemeMode.dark;
+    notifyListeners();
+  }
+
+  //시스템모드
+  setSystemMode() {
+    currentThemeMode = ThemeMode.system;
     notifyListeners();
   }
 }
