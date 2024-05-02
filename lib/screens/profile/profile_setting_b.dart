@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
@@ -57,17 +58,18 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "프로필 설정",
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF5C5C5C)),
+              color: isDark ? AppColors.darkTitle : AppColors.lightTitle),
         ),
-        shadowColor: Colors.black,
-        elevation: 2,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -79,14 +81,14 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                   flex: 66,
                   child: Container(
                     height: 10,
-                    color: const Color(0xff2CB66B),
+                    color: Colors.green,
                   ),
                 ),
                 Expanded(
                   flex: 37,
                   child: Container(
                     height: 10,
-                    color: const Color(0xffE4E4E4),
+                    color: isDark ? AppColors.darkTag : AppColors.lightTag,
                   ),
                 ),
               ],
@@ -99,23 +101,29 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text("   선호 태그 선택",
                                 style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87)),
-                            SizedBox(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? AppColors.darkHeadText
+                                      : AppColors.lightHeadText,
+                                )),
+                            const SizedBox(
                               width: 10,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 2),
                               child: Text(
                                 "최대 8가지 선택",
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.black45),
+                                    fontSize: 12,
+                                    color: isDark
+                                        ? AppColors.darkHint
+                                        : AppColors.lightHint),
                               ),
                             ),
                           ],
@@ -144,15 +152,19 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                                   style: TextStyle(
                                       color: userTag.contains(tag)
                                           ? const Color(0xff0B351E)
-                                          : Colors.black54),
+                                          : (isDark
+                                              ? AppColors.darkTitle
+                                              : AppColors.lightTitle)),
                                 ),
                                 style: OutlinedButton.styleFrom(
                                     side: BorderSide(
                                         width: 0,
                                         color: Colors.white.withOpacity(0)),
                                     backgroundColor: userTag.contains(tag)
-                                        ? Colors.green[400]
-                                        : Colors.black12,
+                                        ? Colors.green
+                                        : (isDark
+                                            ? AppColors.darkTag
+                                            : AppColors.lightTag),
                                     minimumSize: Size.zero,
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10)),
@@ -172,6 +184,8 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
         isCompleted: userTag.isNotEmpty,
         onPressed: userTag.isNotEmpty
             ? () {
+                //선택된 태그가 없으면 아무 것도 안함(혹시 모를 유저의 이상행동 방지)
+                if (userTag.isEmpty) return;
                 /* 태그 리스트 데이터베이스에 삽입 */
                 widget.userData.tags = userTag;
                 AuthService().setUserData(widget.userData);

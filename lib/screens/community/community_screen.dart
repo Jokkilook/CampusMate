@@ -30,6 +30,9 @@ class _CommunityScreenState extends State<CommunityScreen>
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
+
     int currentIndex = 0;
     return DefaultTabController(
       length: 2,
@@ -70,7 +73,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             isScrollable: false,
             indicatorColor: primaryColor,
             indicatorWeight: 4,
-            labelColor: Colors.black,
+            labelColor: isDark ? AppColors.darkTitle : AppColors.lightTitle,
             unselectedLabelColor: Colors.grey,
             labelStyle: const TextStyle(
               fontSize: 18,

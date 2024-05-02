@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/chatting_service.dart';
@@ -29,6 +30,8 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -52,7 +55,9 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                           margin: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.grey[300],
+                            color: isDark
+                                ? AppColors.darkSearchInput
+                                : AppColors.lightSearchInput,
                           ),
                           child: TextField(
                             onTapOutside: (event) {

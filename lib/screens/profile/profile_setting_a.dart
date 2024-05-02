@@ -132,10 +132,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: isDark
-                                        ? AppColors.darkLine
-                                        : AppColors.lightLine,
-                                  ),
+                                      color: isDark
+                                          ? AppColors.darkLine
+                                          : AppColors.lightLine,
+                                      width: 1.5),
                                   color: isDark
                                       ? AppColors.darkInput
                                       : AppColors.lightInput,
@@ -172,10 +172,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: isDark
-                                        ? AppColors.darkLine
-                                        : AppColors.lightLine,
-                                  ),
+                                      color: isDark
+                                          ? AppColors.darkLine
+                                          : AppColors.lightLine,
+                                      width: 1.5),
                                   color: isDark
                                       ? AppColors.darkInput
                                       : AppColors.lightInput,
@@ -290,15 +290,21 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   "남",
                                   style: TextStyle(
                                       color: gender
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: gender
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(10000, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -318,15 +324,21 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   "여",
                                   style: TextStyle(
                                       color: !gender
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: !gender
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(10000, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -404,9 +416,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                         //MBTI
                         Row(
                           children: [
-                            const Column(
-                              children: [],
-                            ),
                             Expanded(
                               flex: 1,
                               child: ElevatedButton(
@@ -418,14 +427,24 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   "E",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: EI ? AppColors.buttonText : null,
+                                      color: EI
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: EI ? AppColors.button : null,
+                                  backgroundColor: EI
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -445,15 +464,24 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   "I",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !EI ? AppColors.buttonText : null,
+                                      color: !EI
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor:
-                                      !EI ? AppColors.button : null,
+                                  backgroundColor: !EI
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -475,8 +503,12 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: NS
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -484,8 +516,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                   backgroundColor: NS
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -506,8 +540,12 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: !NS
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -515,8 +553,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                   backgroundColor: !NS
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -538,8 +578,12 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: TF
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -547,8 +591,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                   backgroundColor: TF
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -569,8 +615,12 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: !TF
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -578,8 +628,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                   backgroundColor: !TF
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -601,8 +653,12 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: PJ
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -610,8 +666,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                   backgroundColor: PJ
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -632,8 +690,12 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: !PJ
-                                          ? const Color(0xFF0A351E)
-                                          : Colors.black45,
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -641,8 +703,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
                                   backgroundColor: !PJ
-                                      ? const Color(0xFF2BB56B)
-                                      : const Color(0xFFE3DFE3),
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
                                   minimumSize: const Size(50, 60),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(

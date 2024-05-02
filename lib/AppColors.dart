@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   //공통 컬러
   static const Color button = Colors.green;
-  static final Color buttonText = Colors.green[900]!;
+  static const Color buttonText = Color.fromARGB(255, 10, 50, 10);
 
   //라이트모드 컬러
   static const Color lightBackground = Colors.white;
@@ -21,6 +21,9 @@ class AppColors {
   static final Color lightTag = Colors.grey[200]!;
   static final Color lightLine = Colors.grey[500]!;
   static const Color lightInput = Colors.white;
+  static final Color lightSearchInput = Colors.grey[300]!;
+  static const Color lightUnselectedButton = Color(0xFFe3e3e4);
+  static const Color lightUnselectedButtonText = Color(0xFF7E7E7E);
 
   //다크모드 컬러
   static final Color darkBackground = Colors.grey[900]!;
@@ -38,4 +41,7 @@ class AppColors {
   static final Color darkTag = Colors.grey[800]!;
   static final Color darkLine = Colors.grey[700]!;
   static final Color darkInput = Colors.grey[850]!;
+  static final Color darkSearchInput = Colors.grey[800]!;
+  static final Color darkUnselectedButton = Colors.grey[800]!;
+  static final Color darkUnselectedButtonText = Colors.grey[400]!;
 }

@@ -5,7 +5,6 @@ import 'package:campusmate/provider/media_data_provider.dart';
 import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/splash_loading_screen.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -46,12 +45,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        themeMode: ThemeMode.dark,
+        themeMode:
+            //ThemeMode.dark,
 
-        //Provider.of<ThemeProvider>(context).currentThemeMode,
+            Provider.of<ThemeProvider>(context).currentThemeMode,
         theme: ThemeData(
+          dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
+          indicatorColor: Colors.green,
           primaryColor: Colors.green,
           brightness: Brightness.light,
+          drawerTheme: DrawerThemeData(
+            elevation: 0,
+            backgroundColor: Colors.grey[100],
+            scrimColor: Colors.black.withOpacity(0.4),
+          ),
           appBarTheme: AppBarTheme(
               scrolledUnderElevation: 0,
               color: Colors.white,
@@ -61,16 +68,15 @@ class MyApp extends StatelessWidget {
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             backgroundColor: Colors.white,
           ),
+          badgeTheme: const BadgeThemeData(
+              backgroundColor: Color.fromARGB(255, 230, 50, 50),
+              textColor: Colors.white),
         ),
         darkTheme: ThemeData(
+          dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
+          indicatorColor: Colors.green,
           primaryColor: Colors.green,
           brightness: Brightness.dark,
-          textTheme: TextTheme(
-              titleLarge: const TextStyle(color: Colors.white),
-              titleMedium: const TextStyle(color: Colors.white),
-              titleSmall: const TextStyle(color: Colors.white),
-              bodyLarge: TextStyle(color: Colors.grey[300]),
-              displayLarge: TextStyle(color: Colors.grey[400])),
           drawerTheme: DrawerThemeData(
             elevation: 0,
             backgroundColor: Colors.grey[850],
@@ -88,6 +94,9 @@ class MyApp extends StatelessWidget {
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: AppColors.darkBottomNavBar,
           ),
+          badgeTheme: const BadgeThemeData(
+              backgroundColor: Color.fromARGB(255, 230, 50, 50),
+              textColor: Colors.white),
         ),
         debugShowCheckedModeBanner: false,
         home: const SplashLoadingScreen());

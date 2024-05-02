@@ -32,6 +32,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -111,23 +113,24 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
         child: Column(
           children: [
             //탭 바
-            const SizedBox(
+            SizedBox(
               width: double.infinity,
               child: TabBar(
+                labelColor: isDark ? AppColors.darkTitle : AppColors.lightTitle,
                 indicatorColor: Colors.transparent,
                 splashFactory: NoSplash.splashFactory,
-                padding: EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.symmetric(vertical: 5),
                 enableFeedback: false,
                 dividerColor: Colors.transparent,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 labelStyle:
-                    TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                unselectedLabelStyle: TextStyle(
-                    color: Colors.black45,
+                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                unselectedLabelStyle: const TextStyle(
+                    color: Colors.grey,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
-                tabs: [
+                tabs: const [
                   Tab(
                     child: Text("1:1 채팅"),
                   ),

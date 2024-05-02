@@ -7,6 +7,7 @@ import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
+import 'package:campusmate/screens/profile/profile_setting_result.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
 import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
@@ -120,6 +121,17 @@ class ScreenList extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (_) => ProfileSettingC(userData: UserData())),
+              ),
+            ),
+
+            /// PROFILERESULT
+            ListTile(
+              title:
+                  const Text("PROFILE RESULT", style: TextStyle(fontSize: 24)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ProfileSettingResult(userData: userData)),
               ),
             ),
 

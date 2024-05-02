@@ -12,7 +12,6 @@ class AuthService {
   }
 
   Future registUser(UserData userData) async {
-    userData.setData();
     firesotre
         .collection("schools/${userData.school}/users")
         .doc(userData.uid)
@@ -26,7 +25,6 @@ class AuthService {
   }
 
   Future setUserData(UserData userData) async {
-    userData.setData();
     firesotre
         .collection("schools/${userData.school}/users")
         .doc(userData.uid)

@@ -19,8 +19,6 @@ class UserData {
   ScheduleData schedule = ScheduleData();
   Timestamp? registDate;
 
-  Map<String, dynamic>? data;
-
   UserData(
       {this.uid,
       this.name,
@@ -37,26 +35,7 @@ class UserData {
       this.imageUrl =
           "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
       this.tags,
-      this.registDate}) {
-    data = {
-      "uid": uid,
-      "name": name,
-      "school": school,
-      "dept": dept,
-      "email": email,
-      "password": password,
-      "enterYear": enterYear,
-      "birthDate": birthDate,
-      "gender": gender,
-      "introduce": introduce,
-      "score": score,
-      "mbti": mbti,
-      "imageUrl": imageUrl,
-      "tags": tags,
-      "schedule": schedule.schedule,
-      "registDate": registDate
-    };
-  }
+      this.registDate});
 
   UserData.fromJson(Map<String, dynamic> json) {
     uid = json["uid"];
@@ -87,50 +66,10 @@ class UserData {
           map.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
       num++;
     }
-
-    data = {
-      "uid": uid,
-      "name": name,
-      "school": school,
-      "dept": dept,
-      "email": email,
-      "password": password,
-      "enterYear": enterYear,
-      "birthDate": birthDate,
-      "gender": gender,
-      "introduce": introduce,
-      "score": score,
-      "mbti": mbti,
-      "imageUrl": imageUrl,
-      "tags": tags,
-      "schedule": schedule.schedule,
-      "registDate": registDate
-    };
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "uid": uid,
-      "name": name,
-      "school": school,
-      "dept": dept,
-      "email": email,
-      "password": password,
-      "enterYear": enterYear,
-      "birthDate": birthDate,
-      "gender": gender,
-      "introduce": introduce,
-      "score": score,
-      "mbti": mbti,
-      "imageUrl": imageUrl,
-      "tags": tags,
-      "schedule": schedule.schedule,
-      "registDate": registDate
-    };
-  }
-
-  void setData() {
-    data = {
       "uid": uid,
       "name": name,
       "school": school,

@@ -6,7 +6,6 @@ import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
-import 'package:campusmate/screens/profile/image_upload_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
@@ -14,13 +13,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class ProfileReviseScreen extends StatefulWidget {
   ProfileReviseScreen({super.key});
-  late var image;
+  late XFile? image;
   late UserData modifiedData;
 
   @override
@@ -110,12 +110,18 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
 
                 //이미지 변경시 이미지 변경 로직 실행
                 if (widget.image != null) {
+                  //이미지 압축
+                  XFile? compMedia =
+                      await FlutterImageCompress.compressAndGetFile(
+                          widget.image?.path ?? "",
+                          "${widget.image?.path}.jpg");
+
                   //프로필 이미지 파일 레퍼런스
                   var ref = FirebaseStorage.instance.ref().child(
                       "schools/${widget.modifiedData.school}/profileImages/${widget.modifiedData.uid}.png");
 
                   //파이어스토어에 이미지 파일 업로드
-                  await ref.putFile(File(widget.image!.path));
+                  await ref.putFile(File(compMedia!.path));
 
                   //변경할 데이터에 변경된 url 저장
                   widget.modifiedData.imageUrl = await ref.getDownloadURL();
@@ -461,15 +467,63 @@ class _ImageViewerState extends State<ImageViewer> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ImageUploadScreen(
-                      originUrl: widget.parent.modifiedData.imageUrl!,
-                      parent: widget,
-                    ))).then((value) => setState(() {
-              widget.parent.image = widget.image;
-            }));
+        showDialog(
+          barrierColor: Colors.black.withOpacity(0.4),
+          context: context,
+          builder: (context) {
+            return Dialog(
+              clipBehavior: Clip.hardEdge,
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: IntrinsicHeight(
+                child: SizedBox(
+                  width: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          Navigator.pop(context);
+                          widget.image = await ImagePicker()
+                              .pickImage(source: ImageSource.gallery);
+                          if (widget.image != null) {
+                            setState(() {});
+                          }
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "갤러리",
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ),
+                      const Divider(height: 0),
+                      InkWell(
+                        onTap: () async {
+                          Navigator.pop(context);
+                          widget.image = await ImagePicker()
+                              .pickImage(source: ImageSource.camera);
+                          if (widget.image != null) {
+                            setState(() {});
+                          }
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "카메라",
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
       },
       child: SizedBox(
         width: double.infinity,
@@ -480,15 +534,6 @@ class _ImageViewerState extends State<ImageViewer> {
                     widget.originUrl,
                     fit: BoxFit.cover,
                   )
-                // CachedNetworkImage(
-                //     imageUrl: widget.originUrl,
-                //     placeholder: (context, url) {
-                //       return const Center(child: Icon(Icons.error_outline));
-                //     },
-                //     width: double.infinity,
-                //     height: MediaQuery.of(context).size.width * 0.9,
-                //     fit: BoxFit.cover,
-                //   )
                 : Image.file(
                     File(widget.image!.path),
                     fit: BoxFit.cover,

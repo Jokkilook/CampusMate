@@ -87,7 +87,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
     List<String> list;
-    widget.chatRoomData.participantsInfo!.forEach((key, value) {
+    widget.chatRoomData.participantsInfo?.forEach((key, value) {
       value.sort(
         (a, b) => a.length.compareTo(b.length),
       );
@@ -108,13 +108,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       onPopInvoked: (didPop) async {
         if (!isCompletelyLeaving) {
           chat.recordLeavingTime(
-              isGroup: widget.isGroup, userData, widget.chatRoomData.roomId!);
+              isGroup: widget.isGroup,
+              userData,
+              widget.chatRoomData.roomId ?? "boo");
         }
       },
       child: Scaffold(
         body: StreamBuilder<DocumentSnapshot>(
           stream: chat.getChatRoomDataStream(
-              userData, widget.chatRoomData.roomId!,
+              userData, widget.chatRoomData.roomId ?? "boo",
               isGroup: widget.isGroup),
           builder: (context, roomSnapshot) {
             if (roomSnapshot.hasError) {
@@ -222,9 +224,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                         [index]][0],
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
-                                            style: const TextStyle(
-                                                fontSize: 17,
-                                                color: Colors.black),
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              color: isDark
+                                                  ? AppColors.darkText
+                                                  : AppColors.lightText,
+                                            ),
                                           ),
                                         ],
                                       )
@@ -250,13 +255,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           widget.chatRoomData.roomId!, userUID!,
                                           isGroup: widget.isGroup);
                                     },
-                                    child: const SizedBox(
+                                    child: SizedBox(
                                       height: 40,
                                       child: Center(
-                                        child: Text("나가기",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black)),
+                                        child: Text(
+                                          "나가기",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   );
@@ -268,13 +278,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     onTap: () async {
                                       Scaffold.of(_).closeEndDrawer();
                                     },
-                                    child: const SizedBox(
+                                    child: SizedBox(
                                       height: 40,
                                       child: Center(
-                                        child: Text("신고하기",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black)),
+                                        child: Text(
+                                          "신고하기",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   );
@@ -293,7 +308,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     Expanded(
                       child: StreamBuilder<QuerySnapshot>(
                         stream: chat.getChattingMessagesStream(context,
-                            roomId: widget.chatRoomData.roomId!,
+                            roomId: widget.chatRoomData.roomId ?? "boo",
                             isGroup: widget.isGroup),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
@@ -841,9 +856,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                             text: "카메라",
                                             onTap: () async {
                                               showDialog(
+                                                barrierColor: Colors.black
+                                                    .withOpacity(0.4),
                                                 context: context,
                                                 builder: (context) {
                                                   return Dialog(
+                                                    clipBehavior: Clip.hardEdge,
                                                     shape:
                                                         ContinuousRectangleBorder(
                                                             borderRadius:

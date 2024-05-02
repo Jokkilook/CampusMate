@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,8 @@ class ChatSearchItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> seperedList = data.roomId!.split("_");
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -35,23 +38,26 @@ class ChatSearchItem extends StatelessWidget {
               Text(
                 data.roomName ?? "방 제목",
                 style: TextStyle(
-                    color: Theme.of(context).textTheme.titleLarge?.color,
-                    fontSize: 20,
+                    color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 5),
               Text(
                 data.description ?? "설명",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Theme.of(context).textTheme.displayLarge?.color,
-                  fontSize: 18,
+                  color: isDark ? AppColors.darkText : AppColors.lightText,
+                  fontSize: 15,
                 ),
               ),
+              const SizedBox(height: 5),
               Text(
                 "만든 날짜: ${timeStampToYYYYMMDD(stringTime: seperedList[1])}",
                 style: TextStyle(
-                  color: Theme.of(context).textTheme.displayLarge?.color,
+                  fontSize: 12,
+                  color: isDark ? AppColors.darkHint : AppColors.lightHint,
                 ),
               )
             ],
@@ -62,7 +68,7 @@ class ChatSearchItem extends StatelessWidget {
               Text(
                 data.participantsUid?.length.toString() ?? "1",
                 style: TextStyle(
-                  color: Theme.of(context).textTheme.displayLarge?.color,
+                  color: isDark ? AppColors.darkHint : AppColors.lightHint,
                 ),
               )
             ],

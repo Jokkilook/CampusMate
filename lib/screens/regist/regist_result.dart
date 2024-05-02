@@ -41,7 +41,7 @@ class RegistResult extends StatelessWidget {
                       builder: (context) => ProfileSettingA(userData: userData),
                     ));
               },
-              child: Text(
+              child: const Text(
                 "프로필 설정하기",
                 style: TextStyle(
                     color: AppColors.buttonText,

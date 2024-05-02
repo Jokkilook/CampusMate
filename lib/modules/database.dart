@@ -16,11 +16,10 @@ class DataBase {
 
   void addUser(UserData userData) async {
     //유저 추가 코드
-    userData.setData();
     await db
         .collection("schools/${userData.school}/users")
         .doc(userData.uid)
-        .set(userData.data!)
+        .set(userData.toJson())
         .onError((error, stackTrace) => debugPrint(error.toString()));
   }
 
