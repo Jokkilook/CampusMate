@@ -207,24 +207,6 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
                       if (snapshot.hasData) {
                         var rooms = snapshot.data!.docs;
-                        //가져온 방 데이터 가장 최신 메세지가 온 순서로 정렬하기
-                        rooms.sort(
-                          (a, b) {
-                            var aa = ChatRoomData.fromJson(
-                                a.data() as Map<String, dynamic>);
-                            var bb = ChatRoomData.fromJson(
-                                b.data() as Map<String, dynamic>);
-                            var aTime = aa.lastMessageTime!;
-                            var bTime = bb.lastMessageTime!;
-                            if (DateTime.parse(aTime.toDate().toString())
-                                .isAfter(DateTime.parse(
-                                    bTime.toDate().toString()))) {
-                              return -1;
-                            } else {
-                              return 1;
-                            }
-                          },
-                        );
 
                         if (rooms.isEmpty) {
                           return const Center(
@@ -237,6 +219,27 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                             child: Text("아직 채팅방이 없어요!"),
                           );
                         }
+
+                        //가져온 방 데이터 가장 최신 메세지가 온 순서로 정렬하기
+                        rooms.sort(
+                          (a, b) {
+                            var aa = ChatRoomData.fromJson(
+                                a.data() as Map<String, dynamic>);
+                            var bb = ChatRoomData.fromJson(
+                                b.data() as Map<String, dynamic>);
+                            var aTime = aa.lastMessageTime;
+                            var bTime = bb.lastMessageTime;
+                            if (DateTime.parse(
+                                    aTime?.toDate().toString() ?? "20000101")
+                                .isAfter(DateTime.parse(
+                                    bTime?.toDate().toString() ??
+                                        "20000101"))) {
+                              return -1;
+                            } else {
+                              return 1;
+                            }
+                          },
+                        );
 
                         return ListView.builder(
                           itemCount: rooms.length,
@@ -274,6 +277,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                 int count = data.length;
 
                                 return ChatListItem(
+                                  isDark: isDark,
                                   unreadCount: count,
                                   isGroup: false,
                                   data: ChatRoomData(

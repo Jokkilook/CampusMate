@@ -64,7 +64,7 @@ class _MoreScreenState extends State<MoreScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ThemeSettingScreen(),
+                    builder: (context) => ThemeSettingScreen(),
                   ));
             },
           ),

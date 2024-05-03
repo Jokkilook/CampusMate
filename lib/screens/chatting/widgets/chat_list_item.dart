@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
@@ -15,13 +16,15 @@ class ChatListItem extends StatelessWidget {
       required this.data,
       this.groupData,
       this.isGroup = false,
-      this.unreadCount = 0});
+      this.unreadCount = 0,
+      this.isDark = false});
 
   final ChatRoomData data;
   final GroupChatRoomData? groupData;
   final bool isGroup;
   final ChattingService chat = ChattingService();
   int unreadCount;
+  bool isDark;
 
   String timeStampToHourMinutes(Timestamp time) {
     var now = DateTime.now();
@@ -75,6 +78,10 @@ class ChatListItem extends StatelessWidget {
           imageUrl = value[1];
         }
       });
+    }
+
+    if (data.lastMessageTime == null) {
+      return Container();
     }
 
     return InkWell(
@@ -168,15 +175,18 @@ class ChatListItem extends StatelessWidget {
                       !isGroup ? name : data.roomName!,
                       style: TextStyle(
                           fontSize: 17,
-                          color: Theme.of(context).textTheme.titleLarge?.color),
+                          color: isDark
+                              ? AppColors.darkTitle
+                              : AppColors.lightTitle),
                     ),
                     const SizedBox(height: 5),
                     Text(
                       data.lastMessage!,
                       style: TextStyle(
                           fontSize: 14,
-                          color:
-                              Theme.of(context).textTheme.displayLarge?.color),
+                          color: isDark
+                              ? AppColors.darkText
+                              : AppColors.lightText),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     )
@@ -192,7 +202,8 @@ class ChatListItem extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.displayLarge?.color),
+                        color:
+                            isDark ? AppColors.darkHint : AppColors.lightHint),
                   ),
                   Expanded(
                     child: Center(
@@ -200,10 +211,9 @@ class ChatListItem extends StatelessWidget {
                           onPressed: () {},
                           icon: Icon(Icons.notifications,
                               size: 20,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .displayLarge
-                                  ?.color)),
+                              color: isDark
+                                  ? AppColors.darkHint
+                                  : AppColors.lightHint)),
                     ),
                   )
                 ],

@@ -44,10 +44,10 @@ ThemeType stringToEnumThemeType(String value) {
       result = ThemeType.light;
       break;
     case "dark":
-      result = ThemeType.light;
+      result = ThemeType.dark;
       break;
     case "system":
-      result = ThemeType.light;
+      result = ThemeType.system;
       break;
     default:
       result = ThemeType.system;
