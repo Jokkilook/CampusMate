@@ -3,7 +3,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_list_screen.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
 import 'package:campusmate/screens/matching/matching_screen.dart';
-import 'package:campusmate/screens/more_screen.dart';
+import 'package:campusmate/screens/more/more_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:campusmate/widgets/fadein_indexedstack.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -47,8 +47,12 @@ class _MainScreenState extends State<MainScreen> {
         if (canPop) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: Colors.black.withOpacity(0.6),
-              content: const Text("뒤로가기를 한번 더 누르면 앱이 종료됩니다."),
+              elevation: 0,
+              backgroundColor: Colors.black.withOpacity(0.8),
+              content: const Text(
+                "뒤로가기를 한번 더 누르면 앱이 종료됩니다.",
+                style: TextStyle(color: Colors.white),
+              ),
               duration: const Duration(milliseconds: 1500),
             ),
           );

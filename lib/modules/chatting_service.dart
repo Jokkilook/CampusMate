@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -167,12 +168,59 @@ class ChattingService {
   //단체 채팅방 입장
   void enterGroupRoom(BuildContext context, GroupChatRoomData data) async {
     UserData userData = context.read<UserDataProvider>().userData;
+
     //채팅방 참여자 UID 리스트에 없는지 확인
     if (!data.participantsUid!.contains(userData.uid!)) {
       List<String> updatedUIDList = data.participantsUid!;
       updatedUIDList.add(userData.uid!);
       Map<String, List<String>> updatedInfo = data.participantsInfo!;
       updatedInfo[userData.uid!] = [userData.name!, userData.imageUrl!];
+
+      //입장 시도 시점에서의 단체 채팅방 데이터 로딩
+      var checkData = await firestore
+          .collection("schools/${userData.school}/groupChats")
+          .doc(data.roomId)
+          .get();
+
+      //참여인원이 꽉찼으면 return
+      if (checkData["limit"] == (checkData["participantsUid"] as List).length) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: IntrinsicHeight(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "입장 인원이 꽉 찼어요!",
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.darkTitle
+                                    : AppColors.lightTitle,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("확인"))
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+
+        return;
+      }
 
       //참여자 UID 리스트와 프로필 정보 업데이트
       await firestore

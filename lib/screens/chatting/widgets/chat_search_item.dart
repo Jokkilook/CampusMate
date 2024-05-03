@@ -54,7 +54,7 @@ class ChatSearchItem extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                "만든 날짜: ${timeStampToYYYYMMDD(stringTime: seperedList[1])}",
+                "생성일: ${timeStampToYYYYMMDD(stringTime: seperedList[1])}",
                 style: TextStyle(
                   fontSize: 12,
                   color: isDark ? AppColors.darkHint : AppColors.lightHint,

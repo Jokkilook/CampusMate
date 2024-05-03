@@ -23,11 +23,15 @@ class ChatListScreen extends StatefulWidget {
 
 class _ChatRoomScreenState extends State<ChatListScreen> {
   List<Map<String, dynamic>>? chatList = [];
+  late TextEditingController titleController;
+  late TextEditingController descController;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    titleController = TextEditingController();
+    descController = TextEditingController();
   }
 
   @override
@@ -51,6 +55,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
               icon: const Icon(Icons.search))
         ],
       ),
+      //채팅방 생성 플로팅버튼
       floatingActionButton: FloatingActionButton(
         heroTag: "createRoom",
         child: widget.onCreating
@@ -66,23 +71,63 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
           showDialog(
             context: context,
             builder: (context) {
-              TextEditingController titleController = TextEditingController();
-              TextEditingController descController = TextEditingController();
               return Dialog(
-                backgroundColor: Colors.white,
                 shape: ContinuousRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                child: SizedBox(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
                   height: MediaQuery.of(context).size.height * 0.4,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("단체 채팅방 만들기"),
-                      const Text("방 이름"),
-                      TextField(
-                        controller: titleController,
+                      Text(
+                        "단체 채팅방 만들기",
+                        style: TextStyle(
+                            color: isDark
+                                ? AppColors.darkTitle
+                                : AppColors.lightTitle,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
                       ),
-                      TextField(
-                        controller: descController,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "방 이름",
+                            style: TextStyle(
+                                color: isDark
+                                    ? AppColors.darkHeadText
+                                    : AppColors.lightHeadText,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            onTapOutside: (event) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                            maxLength: 20,
+                            controller: titleController,
+                          ),
+                          Text(
+                            "방 설명",
+                            style: TextStyle(
+                                color: isDark
+                                    ? AppColors.darkHeadText
+                                    : AppColors.lightHeadText,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            onTapOutside: (event) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                            maxLength: 100,
+                            maxLines: 2,
+                            minLines: 1,
+                            controller: descController,
+                            keyboardType: TextInputType.multiline,
+                          ),
+                        ],
                       ),
                       TextButton(
                           onPressed: () async {

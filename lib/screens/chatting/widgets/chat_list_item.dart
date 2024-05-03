@@ -77,14 +77,6 @@ class ChatListItem extends StatelessWidget {
       });
     }
 
-    if (data.lastMessageTime == null) {
-      return Container(
-        color: Colors.amber,
-        width: 50,
-        height: 50,
-      );
-    }
-
     return InkWell(
       onTap: () {
         isGroup
@@ -112,7 +104,7 @@ class ChatListItem extends StatelessWidget {
                     child: isGroup
                         ? Container(
                             padding: const EdgeInsets.all(1),
-                            color: Colors.amber,
+                            color: Colors.grey,
                             width: 60,
                             height: 60,
                             child: Center(

@@ -20,7 +20,7 @@ import 'package:provider/provider.dart';
 //ignore: must_be_immutable
 class ProfileReviseScreen extends StatefulWidget {
   ProfileReviseScreen({super.key});
-  late XFile? image;
+
   late UserData modifiedData;
 
   @override
@@ -44,12 +44,19 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   late bool TF;
 
   late bool PJ;
+
+  late var image;
+
   bool isLoading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    image = null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    widget.image = null;
-
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -109,12 +116,11 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 context.read<UserDataProvider>().userData = widget.modifiedData;
 
                 //이미지 변경시 이미지 변경 로직 실행
-                if (widget.image != null) {
+                if (image != null) {
                   //이미지 압축
                   XFile? compMedia =
                       await FlutterImageCompress.compressAndGetFile(
-                          widget.image?.path ?? "",
-                          "${widget.image?.path}.jpg");
+                          image?.path ?? "", "${image?.path}.jpg");
 
                   //프로필 이미지 파일 레퍼런스
                   var ref = FirebaseStorage.instance.ref().child(
@@ -245,10 +251,79 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
           ),
           child: Column(
             children: [
-              ImageViewer(
-                originUrl: widget.modifiedData.imageUrl!,
-                parent: parent,
-                isLoading: isLoading,
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    barrierColor: Colors.black.withOpacity(0.4),
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        clipBehavior: Clip.hardEdge,
+                        shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: IntrinsicHeight(
+                          child: SizedBox(
+                            width: 100,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                InkWell(
+                                  onTap: () async {
+                                    Navigator.pop(context);
+                                    image = await ImagePicker()
+                                        .pickImage(source: ImageSource.gallery);
+                                    if (image != null) {
+                                      setState(() {});
+                                    }
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Text(
+                                      "갤러리",
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ),
+                                const Divider(height: 0),
+                                InkWell(
+                                  onTap: () async {
+                                    Navigator.pop(context);
+                                    image = await ImagePicker()
+                                        .pickImage(source: ImageSource.camera);
+                                    if (image != null) {
+                                      setState(() {});
+                                    }
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Text(
+                                      "카메라",
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.width * 0.9,
+                  child: image == null
+                      ? Image.network(
+                          widget.modifiedData.imageUrl!,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          File(image!.path),
+                          fit: BoxFit.cover,
+                        ),
+                ),
               ),
               const SizedBox(height: 10),
               //이름입력
@@ -433,114 +508,6 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-//이미지 뷰어
-//ignore: must_be_immutable
-class ImageViewer extends StatefulWidget {
-  ImageViewer(
-      {super.key,
-      required this.originUrl,
-      required this.parent,
-      this.isLoading = false});
-  final ProfileReviseScreen parent;
-  bool isLoading;
-  String originUrl;
-  XFile? image;
-
-  @override
-  State<ImageViewer> createState() => _ImageViewerState();
-}
-
-class _ImageViewerState extends State<ImageViewer> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    widget.originUrl = widget.parent.modifiedData.imageUrl!;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-          barrierColor: Colors.black.withOpacity(0.4),
-          context: context,
-          builder: (context) {
-            return Dialog(
-              clipBehavior: Clip.hardEdge,
-              shape: ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              child: IntrinsicHeight(
-                child: SizedBox(
-                  width: 100,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          widget.image = await ImagePicker()
-                              .pickImage(source: ImageSource.gallery);
-                          if (widget.image != null) {
-                            setState(() {});
-                          }
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            "갤러리",
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 0),
-                      InkWell(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          widget.image = await ImagePicker()
-                              .pickImage(source: ImageSource.camera);
-                          if (widget.image != null) {
-                            setState(() {});
-                          }
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            "카메라",
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-      child: SizedBox(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.width * 0.9,
-        child: !widget.isLoading
-            ? widget.image == null
-                ? Image.network(
-                    widget.originUrl,
-                    fit: BoxFit.cover,
-                  )
-                : Image.file(
-                    File(widget.image!.path),
-                    fit: BoxFit.cover,
-                  )
-            : const Center(
-                child: CircularProgressIndicator(),
-              ),
       ),
     );
   }

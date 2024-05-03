@@ -1,11 +1,13 @@
 import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_search_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
@@ -26,6 +28,19 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
     // TODO: implement initState
     super.initState();
     userData = context.read<UserDataProvider>().userData;
+  }
+
+  String timeStampToYYYYMMDD({Timestamp? time, String? stringTime}) {
+    if (time != null) {
+      var data = time.toDate().toString();
+      var date = DateTime.parse(data);
+      return "${NumberFormat("0000").format(date.year)}년 ${NumberFormat("00").format(date.month)}월 ${NumberFormat("00").format(date.day)}일";
+    } else if (stringTime != null) {
+      var date = DateTime.fromMillisecondsSinceEpoch(int.parse(stringTime));
+      return "${NumberFormat("0000").format(date.year)}년 ${NumberFormat("00").format(date.month)}월 ${NumberFormat("00").format(date.day)}일";
+    }
+
+    return "0000년 00월 00일";
   }
 
   @override
@@ -113,7 +128,11 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                               var roomData = GroupChatRoomData.fromJson(
                                   rooms[index].data() as Map<String, dynamic>);
                               return InkWell(
-                                  onTap: () {
+                                  onTap: () async {
+                                    var creatorData = await AuthService()
+                                        .getUserData(
+                                            uid: roomData.creatorUid ?? "");
+
                                     showDialog(
                                       context: context,
                                       builder: (_) {
@@ -123,15 +142,73 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(10)),
                                           child: Container(
-                                            padding: const EdgeInsets.all(10),
+                                            padding: const EdgeInsets.all(20),
                                             width: MediaQuery.of(_).size.width *
                                                 0.8,
-                                            color: Colors.amber,
                                             child: IntrinsicHeight(
                                               child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
                                                 children: [
-                                                  Text(roomData.roomName!),
-                                                  Text(roomData.description!),
+                                                  SizedBox(
+                                                    width: double.infinity,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        //방 이름
+                                                        Text(
+                                                          roomData.roomName!,
+                                                          style: TextStyle(
+                                                            fontSize: 25,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: isDark
+                                                                ? AppColors
+                                                                    .darkTitle
+                                                                : AppColors
+                                                                    .lightTitle,
+                                                          ),
+                                                        ),
+                                                        //방 정보
+                                                        Text(
+                                                          "방장: ${creatorData.name}",
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: isDark
+                                                                ? AppColors
+                                                                    .darkHint
+                                                                : AppColors
+                                                                    .lightHint,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          "생성일: ${timeStampToYYYYMMDD(time: roomData.createdTime)}",
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: isDark
+                                                                ? AppColors
+                                                                    .darkHint
+                                                                : AppColors
+                                                                    .lightHint,
+                                                          ),
+                                                        ),
+                                                        const Divider(),
+                                                        //방 설명
+                                                        Text(
+                                                          roomData.description!,
+                                                          style: TextStyle(
+                                                            color: isDark
+                                                                ? AppColors
+                                                                    .darkText
+                                                                : AppColors
+                                                                    .lightText,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                   TextButton(
                                                       onPressed: () {
                                                         Navigator.pop(_);

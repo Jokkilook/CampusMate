@@ -32,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        title: const Text('프로필'),
+        title: const Text('내 프로필'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance

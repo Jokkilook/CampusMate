@@ -10,7 +10,7 @@ import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
-import 'package:campusmate/screens/video_player_screen.dart';
+import 'package:campusmate/screens/chatting/video_player_screen.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -250,6 +250,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   return InkWell(
                                     onTap: () async {
                                       isCompletelyLeaving = true;
+
                                       Scaffold.of(_).closeEndDrawer();
                                       chat.leaveRoom(context,
                                           widget.chatRoomData.roomId!, userUID!,
@@ -563,7 +564,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   },
                                 ),
                                 //텍스트 입력창
-                                widget.media == null
+                                (widget.media == null || isSending)
                                     ? Expanded(
                                         child: TextFormField(
                                           onTap: () {
@@ -710,7 +711,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     String content;
 
                                     //미디어가 비어있지 않으면 확장자 구별 후 메세지 타입 지정
-                                    if (widget.media != null) {
+                                    if (widget.media != null && !isSending) {
                                       String extension =
                                           path.extension(widget.media!.path);
 
@@ -903,7 +904,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                                 padding:
                                                                     EdgeInsets
                                                                         .all(
-                                                                            10),
+                                                                            15),
                                                                 child: Text(
                                                                   "사진",
                                                                   textAlign:
@@ -916,6 +917,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                                 height: 0),
                                                             InkWell(
                                                               onTap: () async {
+                                                                Navigator.pop(
+                                                                    context);
                                                                 widget.media =
                                                                     await ImagePicker()
                                                                         .pickVideo(
@@ -943,7 +946,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                                 padding:
                                                                     EdgeInsets
                                                                         .all(
-                                                                            10),
+                                                                            15),
                                                                 child: Text(
                                                                   "동영상",
                                                                   textAlign:

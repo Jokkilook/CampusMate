@@ -51,7 +51,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         colorSchemeSeed: Colors.green,
-        dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
+        dialogTheme: const DialogTheme(
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+        ),
         indicatorColor: Colors.green,
         drawerTheme: DrawerThemeData(
           elevation: 0,
@@ -75,7 +78,8 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         colorSchemeSeed: Colors.green,
-        dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
+        dialogTheme: const DialogTheme(
+            surfaceTintColor: Colors.transparent, elevation: 0),
         indicatorColor: Colors.green,
         drawerTheme: DrawerThemeData(
           elevation: 0,

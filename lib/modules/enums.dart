@@ -34,3 +34,24 @@ MessageType stringToEnumMessageType(String value) {
 
   return result;
 }
+
+enum ThemeType { light, dark, system }
+
+ThemeType stringToEnumThemeType(String value) {
+  ThemeType result;
+  switch (value) {
+    case "light":
+      result = ThemeType.light;
+      break;
+    case "dark":
+      result = ThemeType.light;
+      break;
+    case "system":
+      result = ThemeType.light;
+      break;
+    default:
+      result = ThemeType.system;
+      break;
+  }
+  return result;
+}

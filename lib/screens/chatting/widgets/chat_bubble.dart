@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
-import 'package:campusmate/screens/video_player_screen.dart';
+import 'package:campusmate/screens/chatting/video_player_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
@@ -116,13 +116,15 @@ class ChatBubble extends StatelessWidget {
             ? Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
-                  color: Colors.grey[300],
+                  color: isDark ? AppColors.darkTag : AppColors.lightTag,
                 ),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 child: Text(
                   "$name 님이 ${messageData["content"] == "left" ? "퇴장" : messageData["content"] == "enter" ? "입장" : ""}했습니다.",
-                  style: const TextStyle(fontSize: 12, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? AppColors.darkHint : AppColors.lightHint),
                 ),
               )
             : Align(
