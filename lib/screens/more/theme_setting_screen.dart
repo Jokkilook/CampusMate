@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//ignore: must_be_immutable
 class ThemeSettingScreen extends StatefulWidget {
   ThemeSettingScreen({super.key});
   bool isLoading = false;
@@ -19,7 +20,6 @@ class _ThemeSettingScreenState extends State<ThemeSettingScreen> {
   void initPref() async {
     widget.isLoading = true;
     _pref = await SharedPreferences.getInstance();
-    print("Com");
     _type = stringToEnumThemeType(_pref.getString("theme") ?? "system");
     widget.isLoading = false;
     setState(() {});
@@ -28,6 +28,7 @@ class _ThemeSettingScreenState extends State<ThemeSettingScreen> {
   @override
   void initState() {
     // TODO: implement initState
+    super.initState();
     initPref();
   }
 

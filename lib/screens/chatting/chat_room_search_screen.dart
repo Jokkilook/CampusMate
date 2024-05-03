@@ -149,6 +149,9 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.end,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   SizedBox(
                                                     width: double.infinity,
