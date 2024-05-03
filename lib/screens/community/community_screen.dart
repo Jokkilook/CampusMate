@@ -54,7 +54,6 @@ class _CommunityScreenState extends State<CommunityScreen>
               onPressed: () {},
               icon: const Icon(
                 Icons.search,
-                size: 30,
               ),
             ),
             // 내가 쓴 글 조회
@@ -62,7 +61,6 @@ class _CommunityScreenState extends State<CommunityScreen>
               onPressed: () {},
               icon: const Icon(
                 Icons.person_outlined,
-                size: 30,
               ),
             ),
           ],
@@ -73,6 +71,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             isScrollable: false,
             indicatorColor: primaryColor,
             indicatorWeight: 4,
+            indicatorSize: TabBarIndicatorSize.tab,
             labelColor: isDark ? AppColors.darkTitle : AppColors.lightTitle,
             unselectedLabelColor: Colors.grey,
             labelStyle: const TextStyle(
@@ -115,7 +114,11 @@ class _CommunityScreenState extends State<CommunityScreen>
                   }
                   return ListView.separated(
                     separatorBuilder: (context, index) {
-                      return const Divider(height: 0);
+                      return Divider(
+                        height: 0,
+                        color:
+                            isDark ? AppColors.darkLine : AppColors.lightLine,
+                      );
                     },
                     itemCount: data.length,
                     itemBuilder: (context, index) {
@@ -173,9 +176,14 @@ class _CommunityScreenState extends State<CommunityScreen>
                       child: Text('게시글이 없습니다.'),
                     );
                   }
+
                   return ListView.separated(
                     separatorBuilder: (context, index) {
-                      return const Divider(height: 0);
+                      return Divider(
+                        height: 0,
+                        color:
+                            isDark ? AppColors.darkLine : AppColors.lightLine,
+                      );
                     },
                     itemCount: data.length,
                     itemBuilder: (context, index) {

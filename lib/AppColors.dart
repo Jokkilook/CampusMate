@@ -4,6 +4,7 @@ class AppColors {
   //공통 컬러
   static const Color button = Colors.green;
   static const Color buttonText = Color.fromARGB(255, 10, 50, 10);
+  static const Color alertText = Color.fromARGB(255, 230, 50, 50);
 
   //라이트모드 컬러
   static const Color lightBackground = Colors.white;

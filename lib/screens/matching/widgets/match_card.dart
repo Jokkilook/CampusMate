@@ -305,10 +305,9 @@ class _MatchCardState extends State<MatchCard> {
                                       style: TextStyle(
                                           fontSize: 25,
                                           fontWeight: FontWeight.w500,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .displayLarge!
-                                              .color),
+                                          color: isDark
+                                              ? AppColors.darkHint
+                                              : AppColors.lightHint),
                                     ),
                                     const SizedBox(height: 10),
                                     ExtendedWrap(

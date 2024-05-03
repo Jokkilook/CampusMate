@@ -45,59 +45,60 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        themeMode:
-            //ThemeMode.dark,
-            Provider.of<ThemeProvider>(context).currentThemeMode,
-        theme: ThemeData(
-          dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
-          indicatorColor: Colors.green,
-          primaryColor: Colors.green,
-          brightness: Brightness.light,
-          drawerTheme: DrawerThemeData(
-            elevation: 0,
-            backgroundColor: Colors.grey[100],
-            scrimColor: Colors.black.withOpacity(0.4),
-          ),
-          appBarTheme: AppBarTheme(
-              scrolledUnderElevation: 0,
-              color: Colors.white,
-              shape: Border(bottom: BorderSide(color: Colors.grey[400]!))),
-          cardTheme: const CardTheme(color: Colors.white),
-          scaffoldBackgroundColor: Colors.white,
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: Colors.white,
-          ),
-          badgeTheme: const BadgeThemeData(
-              backgroundColor: Color.fromARGB(255, 230, 50, 50),
-              textColor: Colors.white),
+      debugShowCheckedModeBanner: false,
+      home: const SplashLoadingScreen(),
+      themeMode: Provider.of<ThemeProvider>(context).currentThemeMode,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        colorSchemeSeed: Colors.green,
+        dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
+        indicatorColor: Colors.green,
+        drawerTheme: DrawerThemeData(
+          elevation: 0,
+          backgroundColor: Colors.grey[100],
+          scrimColor: Colors.black.withOpacity(0.4),
         ),
-        darkTheme: ThemeData(
-          dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
-          indicatorColor: Colors.green,
-          primaryColor: Colors.green,
-          brightness: Brightness.dark,
-          drawerTheme: DrawerThemeData(
-            elevation: 0,
-            backgroundColor: Colors.grey[850],
-            scrimColor: Colors.black.withOpacity(0.4),
-          ),
-          appBarTheme: AppBarTheme(
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              color: AppColors.darkAppbar,
-              shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
-          cardTheme: CardTheme(color: AppColors.darkCard),
-          cardColor: Colors.grey[700],
-          canvasColor: Colors.grey[600],
-          scaffoldBackgroundColor: AppColors.darkBackground,
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: AppColors.darkBottomNavBar,
-          ),
-          badgeTheme: const BadgeThemeData(
-              backgroundColor: Color.fromARGB(255, 230, 50, 50),
-              textColor: Colors.white),
+        appBarTheme: AppBarTheme(
+            scrolledUnderElevation: 0,
+            color: Colors.white,
+            shape: Border(bottom: BorderSide(color: Colors.grey[400]!))),
+        cardTheme: const CardTheme(color: Colors.white),
+        scaffoldBackgroundColor: Colors.white,
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
         ),
-        debugShowCheckedModeBanner: false,
-        home: const SplashLoadingScreen());
+        badgeTheme: const BadgeThemeData(
+          backgroundColor: Color.fromARGB(255, 230, 50, 50),
+          textColor: Colors.white,
+        ),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.green,
+        dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
+        indicatorColor: Colors.green,
+        drawerTheme: DrawerThemeData(
+          elevation: 0,
+          backgroundColor: Colors.grey[850],
+          scrimColor: Colors.black.withOpacity(0.4),
+        ),
+        appBarTheme: AppBarTheme(
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            color: AppColors.darkAppbar,
+            shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
+        cardTheme: CardTheme(color: AppColors.darkCard),
+        cardColor: Colors.grey[700],
+        canvasColor: Colors.grey[600],
+        scaffoldBackgroundColor: AppColors.darkBackground,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: AppColors.darkBottomNavBar,
+        ),
+        badgeTheme: const BadgeThemeData(
+          backgroundColor: Color.fromARGB(255, 230, 50, 50),
+          textColor: Colors.white,
+        ),
+      ),
+    );
   }
 }

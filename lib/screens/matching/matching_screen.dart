@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
@@ -183,7 +184,14 @@ class _FilterDialogState extends State<FilterDialog> {
                         ),
                       ],
                     ),
-                    showWarning ? const Text("조건을 1개 이상 선택해야합니다.") : Container()
+                    showWarning
+                        ? const Text(
+                            "조건을 1개 이상 선택해야합니다.",
+                            style: TextStyle(
+                                color: AppColors.alertText,
+                                fontWeight: FontWeight.bold),
+                          )
+                        : Container()
                   ],
                 ),
                 TextButton(
