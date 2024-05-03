@@ -50,11 +50,10 @@ class AnonymousBoardItem extends StatelessWidget {
                   child: Text(
                     textAlign: TextAlign.start,
                     postData.content ?? '내용 없음',
-                    maxLines: 2, // 2줄 제한
+                    maxLines: 1, // 1줄 제한
                     style: const TextStyle(
                       textBaseline: TextBaseline.alphabetic,
                       overflow: TextOverflow.ellipsis, //오버플로우 ... 처리
-                      height: 3,
                     ),
                     textHeightBehavior: const TextHeightBehavior(
                       applyHeightToFirstAscent: true,
@@ -64,76 +63,84 @@ class AnonymousBoardItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 좋아요
-                    const Icon(
-                      Icons.thumb_up_alt_outlined,
-                      color: Colors.grey,
-                      size: 14,
+                    Row(
+                      children: [
+                        // 작성 시간
+                        Text(
+                          '익명 | $formattedTime',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      postData.likers!.length.toString(),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // 싫어요
-                    const Icon(
-                      Icons.thumb_down_alt_outlined,
-                      color: Colors.grey,
-                      size: 14,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      postData.likers!.length.toString(),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // 댓글
-                    const Icon(
-                      Icons.mode_comment_outlined,
-                      color: Colors.grey,
-                      size: 14,
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      // 댓글 수 가져와서 넣어야 함
-                      '0',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // 조회수
-                    const Icon(
-                      Icons.account_circle_outlined,
-                      color: Colors.grey,
-                      size: 14,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      postData.viewers!.length.toString(),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    // 작성 시간
-                    Text(
-                      '| $formattedTime',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                    Row(
+                      children: [
+                        // 좋아요
+                        const Icon(
+                          Icons.thumb_up_alt_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          postData.likers!.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // 싫어요
+                        const Icon(
+                          Icons.thumb_down_alt_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          postData.likers!.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // 댓글
+                        const Icon(
+                          Icons.mode_comment_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        const Text(
+                          // 댓글 수 가져와서 넣어야 함
+                          '0',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // 조회수
+                        const Icon(
+                          Icons.account_circle_outlined,
+                          color: Colors.grey,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          postData.viewers!.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
