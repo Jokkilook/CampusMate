@@ -1,13 +1,21 @@
+import 'package:campusmate/screens/community/models/post_comment_data.dart';
+import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CommentItem extends StatelessWidget {
-  const CommentItem({
+  PostCommentData postCommentData;
+
+  CommentItem({
     super.key,
+    required this.postCommentData,
   });
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedTime = formatTimeStamp(postCommentData.timestamp!, now);
+
     return Container(
       child: Column(
         children: [
@@ -35,62 +43,79 @@ class CommentItem extends StatelessWidget {
           // 댓글 내용
           Container(
             padding: const EdgeInsets.only(left: 46, right: 10),
-            child: const Text(
-                'initState() 메서드는 StatefulWidget의 상태가 생성될 때 호출되는 메서드입니다. 이 메서드는 상태가 처음 생성될 때 한 번만 호출되며, 주로 초기화 작업을 수행하는 데 사용됩니다.'),
+            child: Text(
+              postCommentData.content.toString(),
+            ),
           ),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.only(left: 46, right: 10),
-            child: const Row(
+            child: Row(
               children: [
-                // 댓글
-                Icon(
+                // 답글 수
+                const Icon(
                   Icons.mode_comment_outlined,
                   color: Colors.grey,
                   size: 16,
                 ),
-                SizedBox(width: 4),
-                Text(
+                const SizedBox(width: 4),
+                const Text(
                   '0',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
                   ),
                 ),
-                SizedBox(width: 14),
-                // 좋아요
-                Icon(
-                  Icons.thumb_up_alt_outlined,
-                  color: Colors.grey,
-                  size: 16,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  '0',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                const SizedBox(width: 14),
+                GestureDetector(
+                  child: Row(
+                    children: [
+                      // 좋아요
+                      const Icon(
+                        Icons.thumb_up_alt_outlined,
+                        color: Colors.grey,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        postCommentData.likers!.length.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 14),
-                // 싫어요
-                Icon(
-                  Icons.thumb_down_alt_outlined,
-                  color: Colors.grey,
-                  size: 16,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  '0',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+
+                const SizedBox(width: 14),
+
+                GestureDetector(
+                  child: Row(
+                    children: [
+                      // 싫어요
+                      const Icon(
+                        Icons.thumb_down_alt_outlined,
+                        color: Colors.grey,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        postCommentData.dislikers!.length.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Spacer(),
+
+                const Spacer(),
+
                 Text(
-                  '방금',
-                  style: TextStyle(
+                  formattedTime,
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
                   ),

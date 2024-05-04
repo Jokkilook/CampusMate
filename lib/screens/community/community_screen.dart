@@ -1,5 +1,6 @@
 import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';
@@ -133,6 +134,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                                 postData: postData,
                                 firestore: FirebaseFirestore.instance,
                                 school: widget.userData.school!,
+                                userData: widget.userData,
                               ),
                             ),
                           ).then((_) {
@@ -198,6 +200,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                                 postData: postData,
                                 firestore: FirebaseFirestore.instance,
                                 school: widget.userData.school!,
+                                userData: widget.userData,
                               ),
                             ),
                           ).then((_) {

@@ -1,11 +1,16 @@
-import 'package:campusmate/screens/community/models/post_comment_data.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'modules/format_time_stamp.dart';
+
+import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/community/models/post_comment_data.dart';
+import 'package:campusmate/screens/community/widgets/comment_item.dart';
+
 import '../../provider/user_data_provider.dart';
 import 'models/post_data.dart';
+import 'modules/format_time_stamp.dart';
 import 'widgets/post_controller.dart';
 
 //ignore: must_be_immutable
@@ -13,12 +18,14 @@ class PostScreen extends StatefulWidget {
   PostData postData;
   final FirebaseFirestore firestore;
   final String school;
+  final UserData userData;
 
   PostScreen({
     Key? key,
     required this.postData,
     required this.firestore,
     required this.school,
+    required this.userData,
   }) : super(key: key);
 
   @override
@@ -191,12 +198,28 @@ class _PostScreenState extends State<PostScreen> {
     bool userLiked = widget.postData.likers!.contains(currentUserUid);
     bool userDisliked = widget.postData.dislikers!.contains(currentUserUid);
 
+    debugPrint("경로: schools/${widget.school}/" +
+        (widget.postData.boardType == 'General'
+            ? 'generalPosts'
+            : 'anonymousPosts') +
+        '${widget.postData.postId}' +
+        'comments');
+
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
         shadowColor: Colors.black,
-        title: Text(
-          widget.postData.boardType == 'General' ? '일반 게시판' : '익명 게시판',
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.postData.boardType == 'General' ? '일반 게시판' : '익명 게시판',
+            ),
+            Text(
+              widget.userData.school!,
+              style: const TextStyle(fontSize: 15),
+            ),
+          ],
         ),
         actions: [
           IconButton(
@@ -210,8 +233,6 @@ class _PostScreenState extends State<PostScreen> {
               showModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  String currentUserUid =
-                      context.read<UserDataProvider>().userData.uid ?? '';
                   return PostController(
                     currentUserUid: currentUserUid,
                     postData: widget.postData,
@@ -377,6 +398,37 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
+
+                      // 댓글
+                      FutureBuilder<QuerySnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection(
+                                "schools/${widget.school}/${widget.postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}/${widget.postData.postId}/comments")
+                            .orderBy('timestamp', descending: true)
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            final List<DocumentSnapshot> comments =
+                                snapshot.data!.docs;
+                            return ListView.builder(
+                              itemCount: comments.length,
+                              itemBuilder: (context, index) {
+                                var postCommentData = PostCommentData.fromJson(
+                                    comments[index].data()
+                                        as Map<String, dynamic>);
+                                return CommentItem(
+                                  postCommentData: postCommentData,
+                                );
+                              },
+                            );
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),
