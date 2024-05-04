@@ -51,11 +51,15 @@ class ProfileScreen extends StatelessWidget {
           }
           if (snapshot.hasError) {
             throw Error();
-          } else {
-            var data = snapshot.data!.data() as Map<String, dynamic>;
+          }
+
+          if (snapshot.hasData) {
+            var data = snapshot.data?.data() as Map<String, dynamic>;
             return FullProfileCard(
                 userData: UserData.fromJson(data), context: context);
           }
+
+          return const Center(child: Text("데이터를 불러오지 못했어요 T0T"));
         },
       ),
       bottomNavigationBar: const SizedBox(

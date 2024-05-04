@@ -1,4 +1,3 @@
-import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_list_screen.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
@@ -11,9 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, this.index = 0, required this.userData});
+  const MainScreen({super.key, this.index = 0});
   final index;
-  final UserData userData;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -73,12 +71,8 @@ class _MainScreenState extends State<MainScreen> {
               index: index,
               children: [
                 const MatchingScreen(),
-                ChatListScreen(
-                  userData: widget.userData,
-                ),
-                CommunityScreen(
-                  userData: widget.userData,
-                ),
+                ChatListScreen(),
+                const CommunityScreen(),
                 ProfileScreen(),
                 const MoreScreen()
               ],

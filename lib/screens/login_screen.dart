@@ -1,32 +1,38 @@
 import 'dart:convert';
-
 import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
-import 'package:campusmate/provider/chatting_data_provider.dart';
+import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_a.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController idController = TextEditingController();
+
   final TextEditingController pwContorlloer = TextEditingController();
+
   final firebaseAuth = FirebaseAuth.instance;
+
   final db = DataBase();
-  late final UserData userData;
 
   @override
   Widget build(BuildContext context) {
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
+
     Future<bool> login() async {
       try {
         await firebaseAuth.signInWithEmailAndPassword(
@@ -34,14 +40,6 @@ class LoginScreen extends StatelessWidget {
             password: sha256
                 .convert(utf8.encode(pwContorlloer.value.text))
                 .toString());
-
-        //채팅데이터프로바이더에 채팅리스트 스트림 로드
-        context.read<ChattingDataProvider>().chatListStream = FirebaseFirestore
-            .instance
-            .collection("chats")
-            .where("participantsUid",
-                arrayContains: context.read<UserDataProvider>().userData.uid)
-            .snapshots();
         return true;
       } catch (e) {
         return false;
@@ -184,14 +182,13 @@ class LoginScreen extends StatelessWidget {
                             await AuthService()
                                 .getUserData(uid: firebaseAuth.currentUser!.uid)
                                 .then((value) {
-                              userData = value;
+                              UserData userData = value;
                               context.read<UserDataProvider>().userData =
                                   userData;
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(userData: userData),
+                                  builder: (context) => const MainScreen(),
                                 ),
                                 (route) => false,
                               );

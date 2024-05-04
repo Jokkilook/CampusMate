@@ -20,7 +20,6 @@ class _MoreScreenState extends State<MoreScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     list = [isGeneral, !isGeneral];
   }
@@ -61,8 +60,8 @@ class _MoreScreenState extends State<MoreScreen> {
               "로그아웃",
               style: TextStyle(color: AppColors.alertText),
             ),
-            onTap: () {
-              AuthService().SignOut(context);
+            onTap: () async {
+              await AuthService().signOut(context);
             },
           ),
           ElevatedButton(

@@ -20,11 +20,12 @@ class BottomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: padding,
       child: ElevatedButton(
         onPressed: isCompleted ? onPressed : null,
         child: isLoading
-            ? const CircularProgressIndicator()
+            ? const SizedBox(
+                width: 20, height: 20, child: CircularProgressIndicator())
             : Text(
                 text,
                 style: TextStyle(

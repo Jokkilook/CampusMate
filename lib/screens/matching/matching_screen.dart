@@ -17,7 +17,7 @@ class MatchingScreen extends StatefulWidget {
 class _MatchingScreenState extends State<MatchingScreen> {
   @override
   Widget build(BuildContext context) {
-    UserData userData = context.read<UserDataProvider>().userData;
+    final UserData userData = context.read<UserDataProvider>().userData;
     return Scaffold(
       appBar: AppBar(
         title: Text(userData.school!),

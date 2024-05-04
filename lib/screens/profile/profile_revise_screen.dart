@@ -209,8 +209,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          MainScreen(userData: widget.modifiedData, index: 3),
+                      builder: (context) => const MainScreen(index: 3),
                     ),
                     (route) => false);
               },

@@ -4,16 +4,18 @@ import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/modules/database.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_list_item.dart';
 import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class ChatListScreen extends StatefulWidget {
-  ChatListScreen({super.key, required this.userData});
-  UserData userData;
+  ChatListScreen({super.key});
+
   DataBase db = DataBase();
   bool onCreating = false;
 
@@ -36,6 +38,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final UserData userData = context.read<UserDataProvider>().userData;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
@@ -256,10 +259,10 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                             return StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection(
-                                      "schools/${widget.userData.school}/chats/${rooms[index]["roomId"]}/messages")
+                                      "schools/${userData.school}/chats/${rooms[index]["roomId"]}/messages")
                                   .where("time",
                                       isGreaterThan: rooms[index]["leavingTime"]
-                                              [widget.userData.uid] ??
+                                              [userData.uid] ??
                                           Timestamp.fromDate(DateTime.now()))
                                   .snapshots(),
                               builder: (context, messages) {
@@ -270,7 +273,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                 var data = List.from(ref);
                                 for (var element in ref) {
                                   if (element.get("senderUID") ==
-                                      widget.userData.uid) {
+                                      userData.uid) {
                                     data.remove(element);
                                   }
                                 }
@@ -351,10 +354,10 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                             return StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection(
-                                      "schools/${widget.userData.school}/groupChats/${rooms[index]["roomId"]}/messages")
+                                      "schools/${userData.school}/groupChats/${rooms[index]["roomId"]}/messages")
                                   .where("time",
                                       isGreaterThan: rooms[index]["leavingTime"]
-                                              [widget.userData.uid] ??
+                                              [userData.uid] ??
                                           Timestamp.fromDate(DateTime.now()))
                                   .snapshots(),
                               builder: (context, messages) {
@@ -364,7 +367,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                 var data = List.from(ref);
                                 for (var element in ref) {
                                   if (element.get("senderUID") ==
-                                      widget.userData.uid) {
+                                      userData.uid) {
                                     data.remove(element);
                                   }
                                   if (element.get("type") ==

@@ -32,8 +32,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("MainScreen", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => MainScreen(userData: userData)),
+                MaterialPageRoute(builder: (_) => const MainScreen()),
                 (route) => false,
               ),
             ),

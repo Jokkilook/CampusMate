@@ -21,13 +21,11 @@ class ChatRoomSearchScreen extends StatefulWidget {
 
 class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
   TextEditingController controller = TextEditingController();
-  late UserData userData;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    userData = context.read<UserDataProvider>().userData;
   }
 
   String timeStampToYYYYMMDD({Timestamp? time, String? stringTime}) {
@@ -45,6 +43,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final UserData userData = context.read<UserDataProvider>().userData;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(

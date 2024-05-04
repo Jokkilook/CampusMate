@@ -39,7 +39,7 @@ class ProfileSettingResult extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MainScreen(userData: userData),
+                      builder: (context) => const MainScreen(),
                     ));
               },
               child: const Text(

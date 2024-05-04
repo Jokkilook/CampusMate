@@ -1,5 +1,5 @@
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/provider/theme_provider.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +13,7 @@ class AuthService {
 
   //현재 로그인 된 유저의 UID 반환
   String getUID() {
-    String uid = auth.currentUser!.uid;
+    String uid = auth.currentUser?.uid ?? "";
     return uid;
   }
 
@@ -86,26 +86,35 @@ class AuthService {
   }
 
   //비밀번호 변경
-  void changePassword(String newPassword) {
-    auth.currentUser?.updatePassword(newPassword);
+  Future changePassword(
+      String uid, String email, String pw, String newPassword) async {
+    String school = await getUserSchoolInfo(uid);
+
+    await auth.currentUser?.updatePassword(newPassword);
+    firesotre
+        .collection("schools/$school/users")
+        .doc(uid)
+        .update({"password": newPassword});
   }
 
   //로그아웃
-  void SignOut(BuildContext context) async {
+  Future signOut(BuildContext context) async {
     //기기 저장 데이터 삭제
     SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.clear();
+    pref.remove("containTags");
+    pref.remove("containMBTI");
+    pref.remove("containTSchedule");
 
     //파이어베이스 로그아웃 후 로그인 페이지로 이동
     await auth.signOut().whenComplete(() {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+            builder: (context) => const LoginScreen(),
           ),
           (route) => false);
+      context.read<UserDataProvider>().userData = UserData();
     });
-    Provider.of<ThemeProvider>(context, listen: false).setSystemMode();
   }
 
   void unregister() {}
