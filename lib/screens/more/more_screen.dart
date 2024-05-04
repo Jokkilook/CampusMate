@@ -1,3 +1,4 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/screens/community/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
@@ -54,6 +55,16 @@ class _MoreScreenState extends State<MoreScreen> {
                   ));
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text(
+              "로그아웃",
+              style: TextStyle(color: AppColors.alertText),
+            ),
+            onTap: () {
+              AuthService().SignOut(context);
+            },
+          ),
           ElevatedButton(
             onPressed: () {
               UserGenerator().addDummyUser(10);
@@ -95,12 +106,6 @@ class _MoreScreenState extends State<MoreScreen> {
                   .deleteDummyPost(context, 10, isGeneral: isGeneral);
             },
             child: const Text("더미포스트삭제"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              AuthService().SignOut(context);
-            },
-            child: const Text("로그아웃"),
           ),
         ],
       ),

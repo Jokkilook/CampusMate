@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'post_comment_data.dart'; // import PostCommentData class
 
 class PostData {
   String? boardType;
