@@ -6,11 +6,13 @@ import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+//ignore: must_be_immutable
 class RegistScreenC extends StatefulWidget {
   const RegistScreenC({super.key, required this.newUserData});
 
@@ -159,48 +161,12 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                     : AppColors.lightHeadText,
                               )),
                           const SizedBox(height: 5),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: SizedBox(
-                              height: 50,
-                              child: TextField(
-                                onTapOutside: (event) {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                },
-                                controller: pwController,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: isDark
-                                              ? AppColors.darkLine
-                                              : AppColors.lightLine,
-                                          width: 1.5,
-                                        )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: isDark
-                                              ? AppColors.darkLine
-                                              : AppColors.lightLine,
-                                          width: 1.5,
-                                        )),
-                                    filled: true,
-                                    fillColor: isDark
-                                        ? AppColors.darkInput
-                                        : AppColors.lightInput,
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    hintText: "사용할 비밀번호를 입력하세요.",
-                                    hintStyle: const TextStyle(fontSize: 13),
-                                    labelStyle: const TextStyle(fontSize: 14),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10)),
-                              ),
-                            ),
-                          ),
+                          InputTextField(
+                              obscrueSee: true,
+                              obscureText: true,
+                              hintText: "사용할 비밀번호를 입력하세요.",
+                              isDark: isDark,
+                              controller: pwController),
                           const SizedBox(height: 10),
                           Text("   비밀번호 확인",
                               style: TextStyle(
@@ -211,65 +177,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                     : AppColors.lightHeadText,
                               )),
                           const SizedBox(height: 5),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: SizedBox(
-                              height: 50,
-                              child: TextField(
-                                onTapOutside: (event) {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                },
-                                onChanged: (value) {
-                                  if (pwController.value.text ==
-                                      pwConfirmController.value.text) {
-                                    isCorrect = true;
-                                  } else {
-                                    isCorrect = false;
-                                  }
-                                  setState(() {});
-                                },
-                                controller: pwConfirmController,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: pwConfirmController
-                                                      .value.text.isEmpty ||
-                                                  isCorrect
-                                              ? (isDark
-                                                  ? AppColors.darkLine
-                                                  : AppColors.lightLine)
-                                              : Colors.red.shade600,
-                                          width: 1.5,
-                                        )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: pwConfirmController
-                                                      .value.text.isEmpty ||
-                                                  isCorrect
-                                              ? (isDark
-                                                  ? AppColors.darkLine
-                                                  : AppColors.lightLine)
-                                              : Colors.red.shade600,
-                                          width: 1.5,
-                                        )),
-                                    filled: true,
-                                    fillColor: isDark
-                                        ? AppColors.darkInput
-                                        : AppColors.lightInput,
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    hintText: "사용할 비밀번호를 다시 한번 입력하세요.",
-                                    hintStyle: const TextStyle(fontSize: 13),
-                                    labelStyle: const TextStyle(fontSize: 14),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10)),
-                              ),
-                            ),
-                          ),
+                          InputTextField(
+                              hintText: "사용할 비밀번호를 다시 한번 입력하세요.",
+                              isDark: isDark,
+                              checkWithOther: true,
+                              checkongController: pwController,
+                              obscrueSee: true,
+                              obscureText: true,
+                              controller: pwConfirmController),
                           const SizedBox(height: 10),
                           Text("   닉네임",
                               style: TextStyle(
@@ -280,51 +195,11 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                     : AppColors.lightHeadText,
                               )),
                           const SizedBox(height: 5),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: SizedBox(
-                              height: 70,
-                              child: TextField(
-                                onTapOutside: (event) {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                },
-                                maxLength: 20,
-                                controller: nickController,
-                                onChanged: (value) {
-                                  setState(() {});
-                                },
-                                decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: isDark
-                                              ? AppColors.darkLine
-                                              : AppColors.lightLine,
-                                          width: 1.5,
-                                        )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: isDark
-                                              ? AppColors.darkLine
-                                              : AppColors.lightLine,
-                                          width: 1.5,
-                                        )),
-                                    filled: true,
-                                    fillColor: isDark
-                                        ? AppColors.darkInput
-                                        : AppColors.lightInput,
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    hintText: "사용할 닉네임을 입력하세요.",
-                                    hintStyle: const TextStyle(fontSize: 13),
-                                    labelStyle: const TextStyle(fontSize: 14),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10)),
-                              ),
-                            ),
-                          ),
+                          InputTextField(
+                              maxLength: 20,
+                              hintText: "사용할 닉네임을 입력하세요.",
+                              isDark: isDark,
+                              controller: nickController),
                           const SizedBox(height: 10),
                         ]),
                   ],
@@ -365,27 +240,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
   }
 
   void registAndLogin() async {
-    await auth.createUserWithEmailAndPassword(
-        email: widget.newUserData.email.toString(),
-        password: widget.newUserData.password.toString());
+    await AuthService().registUser(widget.newUserData);
     try {
       await auth.signInWithEmailAndPassword(
           email: widget.newUserData.email.toString(),
           password: widget.newUserData.password.toString());
       widget.newUserData.uid = auth.currentUser!.uid;
-      widget.newUserData.registDate = Timestamp.fromDate(DateTime.now());
-      AuthService().registUser(widget.newUserData);
-      //db.addUser(widget.newUserData);
     } catch (e) {
       throw Error();
     }
-  }
-
-  void login() async {
-    try {
-      await auth.signInWithEmailAndPassword(
-          email: widget.newUserData.email.toString(),
-          password: widget.newUserData.password.toString());
-    } catch (e) {}
   }
 }

@@ -1,9 +1,8 @@
+import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/screens/community/modules/post_generator.dart';
 import 'package:campusmate/modules/user_generator.dart';
-import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/more/my_info_screen.dart';
 import 'package:campusmate/screens/more/theme_setting_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
@@ -99,16 +98,7 @@ class _MoreScreenState extends State<MoreScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              FirebaseAuth.instance.signOut().whenComplete(
-                () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
-                      ),
-                      (route) => false);
-                },
-              );
+              AuthService().SignOut(context);
             },
             child: const Text("로그아웃"),
           ),

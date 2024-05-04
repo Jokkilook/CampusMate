@@ -79,10 +79,8 @@ class _MainScreenState extends State<MainScreen> {
                 CommunityScreen(
                   userData: widget.userData,
                 ),
-                ProfileScreen(
-                  userData: widget.userData,
-                ),
-                MoreScreen()
+                ProfileScreen(),
+                const MoreScreen()
               ],
             );
           },

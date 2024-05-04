@@ -42,6 +42,7 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
     print(">>>>>>>>>${message.data}");
   }
 
+  //로딩 초기 작업
   void initialize() async {
     String uid = "";
     User user;

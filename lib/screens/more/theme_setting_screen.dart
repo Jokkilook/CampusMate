@@ -102,7 +102,7 @@ class _ThemeSettingScreenState extends State<ThemeSettingScreen> {
                     });
                   },
                   leading: const Icon(Icons.settings_brightness),
-                  title: const Text("시스템 테마"),
+                  title: const Text("시스템 테마 (기본값)"),
                   trailing: Radio(
                     value: ThemeType.system,
                     groupValue: _type,

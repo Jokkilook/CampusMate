@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class ThemeProvider extends ChangeNotifier {
   ThemeMode currentThemeMode = ThemeMode.system;
 
+  ThemeProvider({this.currentThemeMode = ThemeMode.system});
+
   //라이트모드
   setLightMode() {
     currentThemeMode = ThemeMode.light;

@@ -1,5 +1,7 @@
+import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/screens/more/password_update_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +35,24 @@ class MyInfoScreen extends StatelessWidget {
         children: [
           Text(userData.name ?? ""),
           Text("이메일 : ${userData.email}"),
-          Text("가입일 : ${timeStampToYYYYMMDD(time: userData.registDate)}")
+          Text("가입일 : ${timeStampToYYYYMMDD(time: userData.registDate)}"),
+          ListTile(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PasswordUpdateScreen(),
+                  ));
+            },
+            title: const Text("비밀번호 변경"),
+          ),
+          ListTile(
+            onTap: () {},
+            title: const Text(
+              "회원 탈퇴",
+              style: TextStyle(color: AppColors.alertText),
+            ),
+          )
         ],
       ),
     );
