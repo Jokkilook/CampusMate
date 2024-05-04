@@ -21,7 +21,7 @@ class AppColors {
   static final Color lightCell = Colors.grey[50]!;
   static final Color lightTag = Colors.grey[200]!;
   static final Color lightLine = Colors.grey[500]!;
-  static const Color lightInput = Colors.white;
+  static final Color lightInput = Colors.grey[50]!;
   static final Color lightSearchInput = Colors.grey[300]!;
   static const Color lightUnselectedButton = Color(0xFFe3e3e4);
   static const Color lightUnselectedButtonText = Color(0xFF7E7E7E);

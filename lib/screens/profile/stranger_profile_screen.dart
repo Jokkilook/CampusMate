@@ -4,7 +4,9 @@ import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class StrangerProfilScreen extends StatelessWidget {
   StrangerProfilScreen({super.key, required this.uid, this.readOnly = false});
@@ -50,19 +52,63 @@ class StrangerProfilScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  readOnly
-                      ? Container()
-                      : Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: BottomButton(
-                            text: "채팅하기",
-                            onPressed: () async {
-                              chat.startChatting(context, auth.getUID(), uid);
-                            },
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          readOnly
+                              ? Container()
+                              : Flexible(
+                                  flex: 2,
+                                  child: BottomButton(
+                                    text: "채팅하기",
+                                    onPressed: () async {
+                                      chat.startChatting(
+                                          context, auth.getUID(), uid);
+                                    },
+                                  ),
+                                ),
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  minimumSize: const Size(1000, 50),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                ),
+                                onPressed: () {},
+                                child: const Icon(Icons.thumb_up),
+                              ),
+                            ),
                           ),
-                        )
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  minimumSize: const Size(1000, 50),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                ),
+                                onPressed: () {},
+                                child: const Icon(Icons.thumb_down),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               );
             }

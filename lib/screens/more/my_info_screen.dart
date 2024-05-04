@@ -33,9 +33,34 @@ class MyInfoScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Text(userData.name ?? ""),
-          Text("이메일 : ${userData.email}"),
-          Text("가입일 : ${timeStampToYYYYMMDD(time: userData.registDate)}"),
+          ListTile(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userData.name ?? "",
+                  style: const TextStyle(fontSize: 30),
+                ),
+                Text(
+                  userData.school ?? "",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  userData.dept ?? "",
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  "이메일 : ${userData.email}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  "가입일 : ${timeStampToYYYYMMDD(time: userData.registDate)}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
           ListTile(
             onTap: () {
               Navigator.push(

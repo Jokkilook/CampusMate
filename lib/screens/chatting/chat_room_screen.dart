@@ -547,7 +547,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       ),
                                       Icon(
                                         prepareMedia ? Icons.close : Icons.add,
-                                        color: Colors.white,
+                                        //color: Colors.white,
                                       )
                                     ],
                                   ),
@@ -586,7 +586,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                                   const OutlineInputBorder(
                                                       borderSide:
                                                           BorderSide.none),
-                                              fillColor: Colors.white,
                                               border: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -694,7 +693,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       const Icon(
                                         Icons.send,
                                         size: 18,
-                                        color: Colors.white,
+                                        //color: Colors.white,
                                       )
                                     ],
                                   ),

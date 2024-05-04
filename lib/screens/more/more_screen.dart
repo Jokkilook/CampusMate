@@ -64,48 +64,48 @@ class _MoreScreenState extends State<MoreScreen> {
               await AuthService().signOut(context);
             },
           ),
-          ElevatedButton(
-            onPressed: () {
-              UserGenerator().addDummyUser(10);
-            },
-            child: const Text("더미유저생성"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              UserGenerator().deleteDummyUser(10);
-            },
-            child: const Text("더미유저삭제"),
-          ),
-          ToggleButtons(
-            children: const [Text("일반"), Text("익명")],
-            isSelected: list,
-            onPressed: (index) {
-              switch (index) {
-                case 0:
-                  isGeneral = true;
-                  break;
-                case 1:
-                  isGeneral = false;
-                  break;
-              }
-              setState(() {
-                list = [isGeneral, !isGeneral];
-              });
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              PostGenerator().addDummyPost(context, 10, isGeneral: isGeneral);
-            },
-            child: const Text("더미포스트생성"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              PostGenerator()
-                  .deleteDummyPost(context, 10, isGeneral: isGeneral);
-            },
-            child: const Text("더미포스트삭제"),
-          ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     UserGenerator().addDummyUser(10);
+          //   },
+          //   child: const Text("더미유저생성"),
+          // ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     UserGenerator().deleteDummyUser(10);
+          //   },
+          //   child: const Text("더미유저삭제"),
+          // ),
+          // ToggleButtons(
+          //   children: const [Text("일반"), Text("익명")],
+          //   isSelected: list,
+          //   onPressed: (index) {
+          //     switch (index) {
+          //       case 0:
+          //         isGeneral = true;
+          //         break;
+          //       case 1:
+          //         isGeneral = false;
+          //         break;
+          //     }
+          //     setState(() {
+          //       list = [isGeneral, !isGeneral];
+          //     });
+          //   },
+          // ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     PostGenerator().addDummyPost(context, 10, isGeneral: isGeneral);
+          //   },
+          //   child: const Text("더미포스트생성"),
+          // ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     PostGenerator()
+          //         .deleteDummyPost(context, 10, isGeneral: isGeneral);
+          //   },
+          //   child: const Text("더미포스트삭제"),
+          // ),
         ],
       ),
     );
