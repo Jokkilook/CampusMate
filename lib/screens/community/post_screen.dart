@@ -232,7 +232,7 @@ class _PostScreenState extends State<PostScreen> {
                   : 'anonymousPosts'))
           .doc(widget.postData.postId)
           .collection('comments')
-          .orderBy('timestamp', descending: false) // 댓글 작성 시간 기준으로 오름차순 정렬
+          .orderBy('timestamp', descending: false)
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -246,17 +246,28 @@ class _PostScreenState extends State<PostScreen> {
               .map((doc) =>
                   PostCommentData.fromJson(doc.data() as Map<String, dynamic>))
               .toList();
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: comments.length,
-            itemBuilder: (context, index) {
-              return CommentItem(
-                postCommentData: comments[index],
-                school: widget.school,
-                firestore: FirebaseFirestore.instance,
-              );
-            },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '댓글 ${comments.length}',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: comments.length,
+                itemBuilder: (context, index) {
+                  return CommentItem(
+                    postCommentData: comments[index],
+                    school: widget.school,
+                    firestore: FirebaseFirestore.instance,
+                  );
+                },
+              ),
+            ],
           );
         }
       },
@@ -434,14 +445,6 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        // 댓글 수 가져와서 넣어야 함
-                        ' 댓글 0',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
                       // 댓글
                       _buildComments(),
                     ],
