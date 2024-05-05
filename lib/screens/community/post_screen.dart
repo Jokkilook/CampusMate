@@ -189,6 +189,91 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  // 닉네임 가져오기
+  FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorName() {
+    return FutureBuilder<DocumentSnapshot>(
+      future: widget.firestore
+          .collection('schools/${widget.school}/users')
+          .doc(widget.postData.authorUid)
+          .get(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Text(
+            'name',
+            style: TextStyle(
+              fontSize: 12,
+            ),
+          );
+        }
+
+        // 문서에서 사용자 이름 가져오기
+        String authorName = snapshot.data!['name'];
+
+        return Text(
+          widget.postData.boardType == 'General' ? authorName : '익명',
+          style: const TextStyle(
+            fontSize: 12,
+          ),
+        );
+      },
+    );
+  }
+
+  // 댓글 가져오기 및 출력
+  Widget _buildComments() {
+    return FutureBuilder<QuerySnapshot>(
+      future: FirebaseFirestore.instance
+          .collection("schools/${widget.school}/" +
+              (widget.postData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
+          .doc(widget.postData.postId)
+          .collection('comments')
+          .orderBy('timestamp', descending: false)
+          .get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data == null) {
+          return const Text('댓글이 없습니다.');
+        } else {
+          List<PostCommentData> comments = snapshot.data!.docs
+              .map((doc) =>
+                  PostCommentData.fromJson(doc.data() as Map<String, dynamic>))
+              .toList();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '댓글 ${comments.length}',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: comments.length,
+                itemBuilder: (context, index) {
+                  return CommentItem(
+                    postCommentData: comments[index],
+                    school: widget.school,
+                    firestore: FirebaseFirestore.instance,
+                  );
+                },
+              ),
+            ],
+          );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
@@ -274,37 +359,7 @@ class _PostScreenState extends State<PostScreen> {
                           ),
                           const SizedBox(width: 10),
                           // 작성자 닉네임 가져오기
-                          FutureBuilder<DocumentSnapshot>(
-                            future: widget.firestore
-                                .collection('schools/${widget.school}/users')
-                                .doc(widget.postData.authorUid)
-                                .get(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              }
-                              if (!snapshot.hasData || snapshot.data == null) {
-                                return const Text(
-                                  'name',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                );
-                              }
-
-                              // 문서에서 사용자 이름 가져오기
-                              String authorName = snapshot.data!['name'];
-
-                              return Text(
-                                widget.postData.boardType == 'General'
-                                    ? authorName
-                                    : '익명',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                              );
-                            },
-                          ),
+                          _buildAuthorName(),
                           const SizedBox(width: 10),
                           Text(
                             formattedTime,
@@ -390,45 +445,8 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        // 댓글 수 가져와서 넣어야 함
-                        ' 댓글 0',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
                       // 댓글
-                      FutureBuilder<QuerySnapshot>(
-                        future: FirebaseFirestore.instance
-                            .collection(
-                                "schools/${widget.school}/${widget.postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}/${widget.postData.postId}/comments")
-                            .orderBy('timestamp', descending: true)
-                            .get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            final List<DocumentSnapshot> comments =
-                                snapshot.data!.docs;
-                            return ListView.builder(
-                              itemCount: comments.length,
-                              itemBuilder: (context, index) {
-                                var postCommentData = PostCommentData.fromJson(
-                                    comments[index].data()
-                                        as Map<String, dynamic>);
-                                return CommentItem(
-                                  postCommentData: postCommentData,
-                                );
-                              },
-                            );
-                          }
-                        },
-                      ),
+                      _buildComments(),
                     ],
                   ),
                 ),
@@ -471,6 +489,7 @@ class _PostScreenState extends State<PostScreen> {
                       content: commentContent,
                       timestamp: Timestamp.now(),
                       authorUid: currentUserUid,
+                      boardType: widget.postData.boardType,
                     );
 
                     try {

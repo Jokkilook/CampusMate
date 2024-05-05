@@ -6,6 +6,7 @@ class PostCommentData {
   String? content;
   Timestamp? timestamp;
   String? authorUid;
+  String? boardType;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
 
@@ -17,6 +18,7 @@ class PostCommentData {
     this.content,
     this.timestamp,
     this.authorUid,
+    this.boardType,
     this.likers = const [],
     this.dislikers = const [],
   }) {
@@ -29,6 +31,7 @@ class PostCommentData {
     content = json['content'];
     timestamp = json['timestamp'];
     authorUid = json['authorUid'];
+    boardType = json['boardType'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
 
@@ -42,6 +45,7 @@ class PostCommentData {
       'content': content,
       'timestamp': timestamp,
       'authorUid': authorUid,
+      'boardType': boardType,
       'likers': likers,
       'dislikers': dislikers,
     };
