@@ -128,7 +128,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                 //변경시퀀스 실행
                 await AuthService()
                     .changePassword(userData.uid!, email, originPw, checkPw);
-                userData.password = checkPw;
+                context.read<UserDataProvider>().userData.password = checkPw;
                 Navigator.pop(context);
                 message = "비밀번호가 변경되었습니다.";
                 showSnackBar(context, message);

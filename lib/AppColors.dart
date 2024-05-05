@@ -5,6 +5,14 @@ class AppColors {
   static const Color button = Colors.green;
   static const Color buttonText = Color.fromARGB(255, 10, 50, 10);
   static const Color alertText = Color.fromARGB(255, 230, 50, 50);
+  static const Color likeButton = Colors.green;
+  static const Color likeIcon = Color(0xff56E45C);
+  static final Color inactivelikeButton = Colors.green[400]!;
+  static final Color inactivelikeIcon = Colors.green[300]!;
+  static const Color dislikeButton = Colors.red;
+  static const Color dislikeIcon = Color(0xFFFF6666);
+  static final Color inactivedislikeButton = Colors.red[400]!;
+  static final Color inactivedislikeIcon = Colors.red[300]!;
 
   //라이트모드 컬러
   static const Color lightBackground = Colors.white;

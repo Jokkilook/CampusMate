@@ -1,5 +1,6 @@
 import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/profile_service.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
@@ -14,27 +15,31 @@ class FullProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late final String score;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
-    if (userData.score! >= 95) {
-      score = "A+";
-    } else if (userData.score! >= 90) {
-      score = "A";
-    } else if (userData.score! >= 85) {
-      score = "B+";
-    } else if (userData.score! >= 80) {
-      score = "B";
-    } else if (userData.score! >= 75) {
-      score = "C+";
-    } else if (userData.score! >= 70) {
-      score = "C";
-    } else if (userData.score! >= 65) {
-      score = "D+";
-    } else if (userData.score! >= 60) {
-      score = "D";
+
+    //점수 계산
+    double calculatedScore = ProfileService.getCalculatedScore(userData);
+    String displayScore = "";
+
+    if (calculatedScore > 95) {
+      displayScore = "A+";
+    } else if (calculatedScore >= 90) {
+      displayScore = "A";
+    } else if (calculatedScore >= 85) {
+      displayScore = "B+";
+    } else if (calculatedScore >= 80) {
+      displayScore = "B";
+    } else if (calculatedScore >= 75) {
+      displayScore = "C+";
+    } else if (calculatedScore >= 70) {
+      displayScore = "C";
+    } else if (calculatedScore >= 65) {
+      displayScore = "D+";
+    } else if (calculatedScore > 60) {
+      displayScore = "D";
     } else {
-      score = "F";
+      displayScore = "F";
     }
 
     return SingleChildScrollView(
@@ -279,7 +284,7 @@ class FullProfileCard extends StatelessWidget {
                                         Expanded(
                                           child: Center(
                                             child: Text(
-                                              score,
+                                              displayScore,
                                               style: TextStyle(
                                                 color: isDark
                                                     ? AppColors.darkText

@@ -1,29 +1,40 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/screens/profile/widgets/score_button.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
-class StrangerProfilScreen extends StatelessWidget {
-  StrangerProfilScreen({super.key, required this.uid, this.readOnly = false});
+class StrangerProfilScreen extends StatefulWidget {
+  const StrangerProfilScreen(
+      {super.key, required this.uid, this.readOnly = false});
 
   final String uid;
-  final ChattingService chat = ChattingService();
-  final AuthService auth = AuthService();
   final bool readOnly;
 
   @override
+  State<StrangerProfilScreen> createState() => _StrangerProfilScreenState();
+}
+
+class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
+  final ChattingService chat = ChattingService();
+  final AuthService auth = AuthService();
+
+  @override
   Widget build(BuildContext context) {
+    UserData currenUser = context.read<UserDataProvider>().userData;
     return Scaffold(
       appBar: AppBar(
         title: const Text('프로필'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: AuthService().getUserDocumentSnapshot(uid: uid),
+        future: auth.getUserDocumentSnapshot(uid: widget.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -31,24 +42,51 @@ class StrangerProfilScreen extends StatelessWidget {
             );
           }
           if (snapshot.hasError) {
-            print(">>>>>>>>>>>>>>>>>>>>>>>${snapshot.error}");
-            throw Error();
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("오류가 발생했어요!"),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.refresh))
+                ],
+              ),
+            );
           } else {
             var data = snapshot.data!.data() as Map<String, dynamic>;
             if (data.isEmpty) {
-              return const Center(
-                child: Text("데이터 불러오기에 실패했어요..T0T"),
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("데이터를 불러오지 못했어요!"),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.refresh))
+                  ],
+                ),
               );
             } else {
+              UserData strangerData = UserData.fromJson(data);
+              bool isLike =
+                  strangerData.likers?.contains(currenUser.uid) ?? false;
+              bool isDislike =
+                  strangerData.dislikers?.contains(currenUser.uid) ?? false;
               return Stack(
                 children: [
                   SingleChildScrollView(
                     child: Column(
                       children: [
                         FullProfileCard(
-                            userData: UserData.fromJson(data),
-                            context: context),
-                        readOnly ? Container() : const SizedBox(height: 80)
+                            userData: strangerData, context: context),
+                        widget.readOnly
+                            ? Container()
+                            : const SizedBox(height: 80)
                       ],
                     ),
                   ),
@@ -61,50 +99,26 @@ class StrangerProfilScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          readOnly
+                          widget.readOnly
                               ? Container()
                               : Flexible(
-                                  flex: 2,
+                                  flex: 1,
                                   child: BottomButton(
                                     text: "채팅하기",
                                     onPressed: () async {
                                       chat.startChatting(
-                                          context, auth.getUID(), uid);
+                                          context, auth.getUID(), widget.uid);
                                     },
                                   ),
                                 ),
                           Flexible(
-                            flex: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
-                                  minimumSize: const Size(1000, 50),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                ),
-                                onPressed: () {},
-                                child: const Icon(Icons.thumb_up),
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  minimumSize: const Size(1000, 50),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                ),
-                                onPressed: () {},
-                                child: const Icon(Icons.thumb_down),
-                              ),
-                            ),
-                          )
+                              flex: 1,
+                              child: ScoreButton(
+                                assessUID: currenUser.uid!,
+                                targetUID: widget.uid,
+                                isLike: isLike,
+                                isDislike: isDislike,
+                              )),
                         ],
                       ),
                     ),

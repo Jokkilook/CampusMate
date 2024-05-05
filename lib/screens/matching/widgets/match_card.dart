@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/AppColors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/matching/widgets/score_shower.dart';
@@ -201,26 +202,29 @@ class _MatchCardState extends State<MatchCard> {
         cardBuilder: (context, index, horizontalOffsetPercentage,
             verticalOffsetPercentage) {
           final UserData doc = finalData.values.elementAt(index);
-          late final String score;
 
-          if (doc.score! >= 95) {
-            score = "A+";
-          } else if (doc.score! >= 90) {
-            score = "A";
-          } else if (doc.score! >= 85) {
-            score = "B+";
-          } else if (doc.score! >= 80) {
-            score = "B";
-          } else if (doc.score! >= 75) {
-            score = "C+";
-          } else if (doc.score! >= 70) {
-            score = "C";
-          } else if (doc.score! >= 65) {
-            score = "D+";
-          } else if (doc.score! >= 60) {
-            score = "D";
+          //점수 계산
+          double calculatedScore = ProfileService.getCalculatedScore(doc);
+          String displayScore = "";
+
+          if (calculatedScore > 95) {
+            displayScore = "A+";
+          } else if (calculatedScore >= 90) {
+            displayScore = "A";
+          } else if (calculatedScore >= 85) {
+            displayScore = "B+";
+          } else if (calculatedScore >= 80) {
+            displayScore = "B";
+          } else if (calculatedScore >= 75) {
+            displayScore = "C+";
+          } else if (calculatedScore >= 70) {
+            displayScore = "C";
+          } else if (calculatedScore >= 65) {
+            displayScore = "D+";
+          } else if (calculatedScore > 60) {
+            displayScore = "D";
           } else {
-            score = "F";
+            displayScore = "F";
           }
 
           return GestureDetector(
@@ -345,7 +349,7 @@ class _MatchCardState extends State<MatchCard> {
                                 padding: const EdgeInsets.all(20),
                                 child: Center(
                                   child: ScoreShower(
-                                    score: score,
+                                    score: displayScore,
                                     percentage: finalData.keys.elementAt(index),
                                   ),
                                 ),

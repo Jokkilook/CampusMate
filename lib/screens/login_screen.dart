@@ -173,8 +173,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 15),
                     ElevatedButton(
+                      child: const Text(
+                        "로그인",
+                        style: TextStyle(
+                            color: AppColors.buttonText, fontSize: 18),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.button,
+                        minimumSize: const Size(1000, 50),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
                       onPressed: () {
-                        //UserData userData;
                         FocusManager.instance.primaryFocus?.unfocus();
                         login().then((value) async {
                           if (value) {
@@ -195,17 +205,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {}
                         });
                       },
-                      child: const Text(
-                        "로그인",
-                        style: TextStyle(
-                            color: AppColors.buttonText, fontSize: 18),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.button,
-                        minimumSize: const Size(1000, 50),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
                     ),
                     const SizedBox(height: 15),
                     TextButton(

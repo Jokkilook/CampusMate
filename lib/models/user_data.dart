@@ -15,27 +15,30 @@ class UserData {
   double? score;
   String? mbti;
   String? imageUrl;
-  List<dynamic>? tags;
+  List<dynamic>? tags = [];
   ScheduleData schedule = ScheduleData();
   Timestamp? registDate;
+  List<String>? likers = [];
+  List<String>? dislikers = [];
 
-  UserData(
-      {this.uid,
-      this.name,
-      this.school,
-      this.dept,
-      this.email,
-      this.password,
-      this.enterYear,
-      this.birthDate,
-      this.gender,
-      this.introduce,
-      this.score = 80.00,
-      this.mbti,
-      this.imageUrl =
-          "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
-      this.tags,
-      this.registDate});
+  UserData({
+    this.uid,
+    this.name,
+    this.school,
+    this.dept,
+    this.email,
+    this.password,
+    this.enterYear,
+    this.birthDate,
+    this.gender,
+    this.introduce,
+    this.score = 80.00,
+    this.mbti,
+    this.imageUrl =
+        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
+    this.tags,
+    this.registDate,
+  });
 
   UserData.fromJson(Map<String, dynamic> json) {
     uid = json["uid"];
@@ -51,8 +54,11 @@ class UserData {
     mbti = json["mbti"];
     imageUrl = json["imageUrl"];
     tags = json["tags"];
-    score = json["score"];
+    score = json["score"].toDouble();
     registDate = json["registDate"];
+
+    likers = (json["likers"] as List).map((e) => e.toString()).toList();
+    dislikers = (json["dislikers"] as List).map((e) => e.toString()).toList();
 
     //DB에서 가져온 데이터는 List<dynamic>이 되어버려서 다시 List<Map<String, bool>> 타입으로 변환해주어야한다.
     schedule.schedule = (json["schedule"] as List)
@@ -85,7 +91,9 @@ class UserData {
       "imageUrl": imageUrl,
       "tags": tags,
       "schedule": schedule.schedule,
-      "registDate": registDate
+      "registDate": registDate,
+      "likers": likers,
+      "dislikers": dislikers
     };
   }
 }

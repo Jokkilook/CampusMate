@@ -89,7 +89,7 @@ class AuthService {
   Future changePassword(
       String uid, String email, String pw, String newPassword) async {
     String school = await getUserSchoolInfo(uid);
-
+    await auth.signInWithEmailAndPassword(email: email, password: pw);
     await auth.currentUser?.updatePassword(newPassword);
     firesotre
         .collection("schools/$school/users")
