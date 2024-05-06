@@ -104,6 +104,8 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                               : Flexible(
                                   flex: 1,
                                   child: BottomButton(
+                                    padding: EdgeInsets.fromLTRB(
+                                        20, 20, widget.readOnly ? 20 : 0, 20),
                                     text: "채팅하기",
                                     onPressed: () async {
                                       chat.startChatting(

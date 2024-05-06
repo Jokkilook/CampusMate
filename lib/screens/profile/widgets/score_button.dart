@@ -59,12 +59,18 @@ class _ScoreButtonState extends State<ScoreButton> {
               flex: 1,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: (widget.isLike
-                      ? AppColors.inactivelikeButton
-                      : AppColors.likeButton),
+                  backgroundColor: (
+                      // widget.isLike?
+                      // AppColors.inactivelikeButton
+                      //:
+                      AppColors.likeButton),
                   minimumSize: const Size(1000, 50),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                    side: widget.isLike
+                        ? BorderSide(color: Colors.green[900]!, width: 5)
+                        : BorderSide.none,
+                  ),
                 ),
                 onPressed: () {
                   if (widget.isLike) {
@@ -75,11 +81,13 @@ class _ScoreButtonState extends State<ScoreButton> {
                     setState(() {});
                   }
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.thumb_up,
-                  color: (widget.isLike
-                      ? AppColors.inactivelikeIcon
-                      : AppColors.likeIcon),
+                  color: (
+                      //  widget.isLike ?
+                      //  AppColors.inactivelikeIcon
+                      // :
+                      AppColors.likeIcon),
                 ),
               ),
             ),
@@ -89,12 +97,18 @@ class _ScoreButtonState extends State<ScoreButton> {
               flex: 1,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: (widget.isDislike
-                      ? AppColors.inactivedislikeButton
-                      : AppColors.dislikeButton),
+                  backgroundColor: (
+                      //widget.isDislike?
+                      //AppColors.inactivedislikeButton
+                      //:
+                      AppColors.dislikeButton),
                   minimumSize: const Size(1000, 50),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                    side: widget.isDislike
+                        ? BorderSide(color: Colors.red[900]!, width: 5)
+                        : BorderSide.none,
+                  ),
                 ),
                 onPressed: () {
                   if (widget.isDislike) {
@@ -106,10 +120,12 @@ class _ScoreButtonState extends State<ScoreButton> {
                   }
                 },
                 child: Icon(
-                  Icons.thumb_up,
-                  color: (widget.isDislike
-                      ? AppColors.inactivedislikeIcon
-                      : AppColors.dislikeIcon),
+                  Icons.thumb_down,
+                  color: (
+                      //widget.isDislike ?
+                      // AppColors.inactivedislikeIcon
+                      //:
+                      AppColors.dislikeIcon),
                 ),
               ),
             )

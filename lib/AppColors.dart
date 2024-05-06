@@ -10,7 +10,7 @@ class AppColors {
   static final Color inactivelikeButton = Colors.green[400]!;
   static final Color inactivelikeIcon = Colors.green[300]!;
   static const Color dislikeButton = Colors.red;
-  static const Color dislikeIcon = Color(0xFFFF6666);
+  static final Color dislikeIcon = Colors.red[200]!;
   static final Color inactivedislikeButton = Colors.red[400]!;
   static final Color inactivedislikeIcon = Colors.red[300]!;
 
