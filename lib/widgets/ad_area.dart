@@ -16,7 +16,6 @@ class _AdAreaState extends State<AdArea> {
 
   @override
   void initState() {
-    // TODO: implement initState
     BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       request: const AdRequest(),
@@ -28,7 +27,7 @@ class _AdAreaState extends State<AdArea> {
           });
         },
         onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
+          debugPrint('Failed to load a banner ad: ${err.message}');
           ad.dispose();
         },
       ),
@@ -38,7 +37,6 @@ class _AdAreaState extends State<AdArea> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _bannerAd?.dispose();
   }

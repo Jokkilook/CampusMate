@@ -23,7 +23,6 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     originController = TextEditingController();
     updateController = TextEditingController();

@@ -27,7 +27,6 @@ class _ThemeSettingScreenState extends State<ThemeSettingScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initPref();
   }

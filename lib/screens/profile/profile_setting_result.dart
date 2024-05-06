@@ -1,4 +1,4 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:campusmate/models/schoolModel.dart';
+import 'package:campusmate/models/school_model.dart';
 import 'package:excel/excel.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,9 +30,9 @@ class SchoolAPI {
         for (var school in schoolInstance) {
           schoolList.add(school.name);
         }
-        print(response.statusCode);
+        debugPrint(response.statusCode.toString());
       } else {
-        print(response.statusCode);
+        debugPrint(response.statusCode.toString());
       }
     }
     // schoolList = schoolList.toSet().toList();
@@ -47,10 +48,7 @@ class SchoolAPI {
       for (var school in schools) {
         schoolInstance.add(SchoolModel.fromjson(school));
       }
-      print(response.statusCode);
-    } else {
-      print(response.statusCode);
-    }
+    } else {}
     throw Error();
   }
 
@@ -63,11 +61,9 @@ class SchoolAPI {
       for (var school in schools) {
         schoolInstance.add(SchoolModel.fromjson(school));
       }
-      print(response.statusCode);
+
       return schoolInstance;
-    } else {
-      print(response.statusCode);
-    }
+    } else {}
     throw Error();
   }
 

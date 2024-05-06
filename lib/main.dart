@@ -1,4 +1,4 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
@@ -71,7 +71,9 @@ Future<UserData?> initializeFirebaseAndAds() async {
       String? uid = FirebaseAuth.instance.currentUser?.uid;
       return returnUser = await AuthService().getUserData(uid: uid ?? "");
     }
-  } catch (e) {}
+  } catch (e) {
+    //
+  }
   return null;
 }
 
@@ -105,7 +107,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isSignIn ? const ScreenList() : LoginScreen(),
+      home: isSignIn ? const ScreenList() : const LoginScreen(),
       themeMode: Provider.of<ThemeProvider>(context).currentThemeMode,
       theme: ThemeData(
         brightness: Brightness.light,

@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, this.index = 0});
-  final index;
+  final int index;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -24,7 +24,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     index = widget.index;
   }

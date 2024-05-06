@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -62,7 +62,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     chatController = TextEditingController();
     scrollController = ScrollController();
@@ -252,7 +251,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       isCompletelyLeaving = true;
 
                                       Scaffold.of(_).closeEndDrawer();
-                                      chat.leaveRoom(context,
+                                      chat.leaveRoom(null, context,
                                           widget.chatRoomData.roomId!, userUID!,
                                           isGroup: widget.isGroup);
                                     },
@@ -371,23 +370,29 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       try {
                                         participantsCount = widget.chatRoomData
                                             .participantsUid!.length;
-                                      } catch (e) {}
+                                      } catch (e) {
+                                        //
+                                      }
 
                                       //메세지 데이터에서 읽은 사람 수 반환
                                       int readerCount = 0;
                                       try {
                                         readerCount = messageReaderList.length;
-                                      } catch (e) {}
+                                      } catch (e) {
+                                        //
+                                      }
 
                                       //출력할 문자로 계산
                                       String count = "";
+                                      int county =
+                                          (participantsCount - readerCount);
                                       try {
-                                        count =
-                                            (participantsCount - readerCount)
-                                                .toString();
-
-                                        count == "0" ? count = "" : null;
-                                      } catch (e) {}
+                                        count = county <= 0
+                                            ? ""
+                                            : county.toString();
+                                      } catch (e) {
+                                        //
+                                      }
 
                                       try {
                                         //시간출력 여부 결정 (한칸 아래의 메세지가 다른사람이 보낸것 이거나 보낸 시간이 다르면 showTime=true)
@@ -459,6 +464,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         //한칸 위의 메세지가 없으면 보낸 사람 출력
                                         viewSender = true;
                                       }
+                                      String name = "알 수 없음";
+                                      String imageUrl =
+                                          "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/test.png?alt=media&token=43db937e-0bba-4c89-a9f6-dff0387c8d45";
+                                      if ((widget.chatRoomData.participantsUid
+                                              ?.contains(
+                                                  docs[index]["senderUID"]) ??
+                                          false)) {
+                                        name = userInfo[docs[index]
+                                            ["senderUID"]]![0];
+                                        imageUrl = userInfo[docs[index]
+                                            ["senderUID"]]![1];
+                                      }
 
                                       return ChatBubble(
                                         type: stringToEnumMessageType(
@@ -467,10 +484,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         reader: count,
                                         senderUid: docs[index]["senderUID"],
                                         viewSender: viewSender,
-                                        name: userInfo[docs[index]
-                                            ["senderUID"]]![0],
-                                        profileImageUrl: userInfo[docs[index]
-                                            ["senderUID"]]![1],
+                                        name: name,
+                                        profileImageUrl: imageUrl,
                                         showTime: showTime,
                                         showDay: showDay,
                                         messageData: docs[index],
@@ -758,7 +773,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           isSending = false;
                                           widget.media = null;
                                         });
-                                      } catch (e) {}
+                                      } catch (e) {
+                                        //
+                                      }
                                     } else {
                                       //미디어 파일이 아니면 텍스트 전송
                                       content = chatController.value.text;

@@ -1,4 +1,4 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
 import 'package:campusmate/screens/login_screen.dart';
@@ -30,7 +30,7 @@ class RegistScreenB extends StatefulWidget {
       send(message, email);
       return true;
     } on MailerException catch (e) {
-      print(e.message);
+      debugPrint(e.message);
       return false;
     }
   }
@@ -43,7 +43,7 @@ class RegistScreenB extends StatefulWidget {
 
 class _RegistScreenBState extends State<RegistScreenB> {
   late String inputEmail; //이메일 입력받을 변수
-  late var inputCode;
+  late String inputCode;
   bool isCompleted = false;
   bool isSended = false;
   bool isLoading = false;
@@ -52,7 +52,6 @@ class _RegistScreenBState extends State<RegistScreenB> {
   @override
   void initState() {
     super.initState();
-
     inputEmail = "";
     inputCode = "";
     setState(() {});
@@ -77,7 +76,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
+                    builder: (context) => const LoginScreen(),
                   ),
                   (route) => false);
             },

@@ -7,7 +7,6 @@ import 'package:campusmate/screens/screen_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +21,6 @@ class SplashLoadingScreen extends StatefulWidget {
 class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initialize();
   }
@@ -36,11 +34,11 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
 
   void getChattingInitData() async {}
 
-  Future<void> handlBackgroundMessage(RemoteMessage message) async {
-    print(">>>>>>>>>${message.notification?.title}");
-    print(">>>>>>>>>${message.notification?.body}");
-    print(">>>>>>>>>${message.data}");
-  }
+  // Future<void> handlBackgroundMessage(RemoteMessage message) async {
+  //   print(">>>>>>>>>${message.notification?.title}");
+  //   print(">>>>>>>>>${message.notification?.body}");
+  //   print(">>>>>>>>>${message.data}");
+  // }
 
   //로딩 초기 작업
   void initialize() async {
@@ -59,7 +57,7 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
       if (FirebaseAuth.instance.currentUser == null) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
             (route) => false);
         return;
       } else {
@@ -80,7 +78,7 @@ class _SplashLoadingScreenState extends State<SplashLoadingScreen> {
     } catch (e) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false);
     }
     Navigator.pushAndRemoveUntil(

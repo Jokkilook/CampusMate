@@ -42,7 +42,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("LoginScreen", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => LoginScreen()),
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
               ),
             ),
 

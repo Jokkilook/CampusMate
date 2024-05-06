@@ -1,4 +1,4 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -30,7 +30,6 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     titleController = TextEditingController();
     descController = TextEditingController();
@@ -377,6 +376,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                 }
                                 int count = data.length;
                                 return ChatListItem(
+                                  isDark: isDark,
                                   unreadCount: count,
                                   isGroup: true,
                                   groupData: GroupChatRoomData.fromJson(

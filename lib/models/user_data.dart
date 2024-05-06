@@ -35,7 +35,7 @@ class UserData {
     this.score = 80.00,
     this.mbti,
     this.imageUrl =
-        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/images%2Ftest.png?alt=media&token=4a231bcd-04fa-4220-9914-1028783f5f35",
+        "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/test.png?alt=media&token=43db937e-0bba-4c89-a9f6-dff0387c8d45",
     this.tags,
     this.registDate,
   });

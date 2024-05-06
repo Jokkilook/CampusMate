@@ -1,8 +1,6 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/modules/profile_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 // ignore: must_be_immutable
 class ScoreButton extends StatefulWidget {
@@ -25,7 +23,6 @@ class ScoreButton extends StatefulWidget {
 class _ScoreButtonState extends State<ScoreButton> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     widget.origin = [widget.isLike, widget.isDislike];
   }

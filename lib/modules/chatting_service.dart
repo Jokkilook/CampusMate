@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -267,22 +267,29 @@ class ChattingService {
   }
 
   //채팅방 나가기
-  void leaveRoom(BuildContext context, String roomId, String userUID,
+  void leaveRoom(
+      UserData? userData, BuildContext? context, String roomId, String userUID,
       {bool isGroup = false}) async {
-    UserData userData = context.read<UserDataProvider>().userData;
+    UserData inputData = UserData();
+    if (userData != null) {
+      inputData = userData;
+    }
+    if (context != null) {
+      inputData = context.read<UserDataProvider>().userData;
+    }
     //파이어스토어에서 채팅방 데이터 불러오기
     var roomRef = firestore
         .collection(
-            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
+            "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}")
         .doc(roomId);
     var messageRef = firestore.collection(
-        "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages");
+        "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages");
     DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
 
     //방 나간 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
     sendMessage(
       isGroup: isGroup,
-      userData: userData,
+      userData: inputData,
       roomId: roomId,
       data: MessageData(
           type: MessageType.notice,
@@ -300,7 +307,9 @@ class ChattingService {
     if (participantsList.length == (isGroup ? 0 : 1)) {
       roomRef.delete();
       //다 삭제하고 나가면 오래걸리니까 일단 방 데이터만 지워서 채팅방 리스트에 뜨지 않게 한 다음 나머지 데이터 삭제
-      Navigator.pop(context);
+      if (context != null) {
+        Navigator.pop(context);
+      }
 
       //콜렉션 통째로 삭제가 안돼서 하나하나 삭제함
       messageRef.get().then((value) async {
@@ -311,11 +320,11 @@ class ChattingService {
 
       //파이어 스토어의 데이터 삭제 (이것도 한번에 삭제가 안돼서 하나하나 조회하고 삭제함)
       var imageRef = firestorage.ref().child(
-          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/images");
+          "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/images");
       var videoRef = firestorage.ref().child(
-          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/videos");
+          "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/videos");
       var thumbRef = firestorage.ref().child(
-          "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/thumbnails");
+          "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/thumbnails");
 
       ListResult imageResult = await imageRef.listAll();
       ListResult videoResult = await videoRef.listAll();
@@ -334,8 +343,11 @@ class ChattingService {
       }
     } else {
       //나간 후 남은 참여자가 1명 이상이면 참여자 명단에서 내 UID만 쏙 지운 리스트를 파이어스토어에 업데이트 하고 화면 나가기
-      roomRef.update({"participantsUid": participantsList}).whenComplete(
-          () => Navigator.pop(context));
+      roomRef.update({"participantsUid": participantsList}).whenComplete(() {
+        if (context != null) {
+          Navigator.pop(context);
+        }
+      });
     }
   }
 
@@ -348,6 +360,17 @@ class ChattingService {
             "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
         .where("participantsUid", arrayContains: userData.uid)
         .snapshots();
+  }
+
+  //사용자가 참여한 채팅방 데이터 도큐먼트스냅샷 리스트 반환
+  Future<QuerySnapshot<Map<String, dynamic>>> getChattingRoomListQuerySnapshot(
+      UserData userData,
+      {bool isGroup = false}) async {
+    return await firestore
+        .collection(
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
+        .where("participantsUid", arrayContains: userData.uid)
+        .get();
   }
 
   //채팅방 데이터 스트림 반환

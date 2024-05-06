@@ -1,7 +1,6 @@
 import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CommentItem extends StatelessWidget {

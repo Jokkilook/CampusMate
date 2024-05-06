@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
@@ -54,7 +54,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
+                    builder: (context) => const LoginScreen(),
                   ),
                   (route) => false);
             },
@@ -212,10 +212,10 @@ class _RegistScreenCState extends State<RegistScreenC> {
         text: "다음",
         isCompleted: pwController.value.text.isNotEmpty &&
             nickController.value.text.isNotEmpty &&
-            isCorrect,
+            pwController.value.text == pwConfirmController.value.text,
         onPressed: pwController.value.text.isNotEmpty &&
                 nickController.value.text.isNotEmpty &&
-                isCorrect
+                pwController.value.text == pwConfirmController.value.text
             ? () {
                 /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
                 widget.newUserData.name = nickController.value.text;

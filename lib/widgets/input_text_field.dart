@@ -1,4 +1,4 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable

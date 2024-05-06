@@ -1,7 +1,6 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';

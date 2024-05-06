@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:io';
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
@@ -50,7 +50,6 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   bool isLoading = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     image = null;
   }

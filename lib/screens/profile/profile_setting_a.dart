@@ -1,11 +1,10 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProfileSettingA extends StatefulWidget {
   const ProfileSettingA({super.key, required this.userData});
@@ -31,10 +30,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
   bool isCompleted = false;
 
   bool gender = true; //true = 남 ,false = 여
-  bool EI = true; //true = E, false = I
-  bool NS = true; //true = N, false = S
-  bool TF = true; //true = T, false = F
-  bool PJ = true; //true = P, false = J
+  bool ei = true; //true = E, false = I
+  bool ns = true; //true = N, false = S
+  bool tf = true; //true = T, false = F
+  bool pj = true; //true = P, false = J
 
   @override
   void initState() {
@@ -420,14 +419,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  EI = true;
+                                  ei = true;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "E",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: EI
+                                      color: ei
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -440,7 +439,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: EI
+                                  backgroundColor: ei
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -457,14 +456,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  EI = false;
+                                  ei = false;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "I",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !EI
+                                      color: !ei
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -477,7 +476,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: !EI
+                                  backgroundColor: !ei
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -495,14 +494,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  NS = true;
+                                  ns = true;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "N",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: NS
+                                      color: ns
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -515,7 +514,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: NS
+                                  backgroundColor: ns
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -532,14 +531,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  NS = false;
+                                  ns = false;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "S",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !NS
+                                      color: !ns
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -552,7 +551,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: !NS
+                                  backgroundColor: !ns
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -570,14 +569,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  TF = true;
+                                  tf = true;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "T",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: TF
+                                      color: tf
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -590,7 +589,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: TF
+                                  backgroundColor: tf
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -607,14 +606,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  TF = false;
+                                  tf = false;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "F",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !TF
+                                      color: !tf
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -627,7 +626,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: !TF
+                                  backgroundColor: !tf
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -645,14 +644,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  PJ = true;
+                                  pj = true;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "P",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: PJ
+                                      color: pj
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -665,7 +664,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: PJ
+                                  backgroundColor: pj
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -682,14 +681,14 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                               flex: 1,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  PJ = false;
+                                  pj = false;
                                   setState(() {});
                                 },
                                 child: Text(
                                   "J",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !PJ
+                                      color: !pj
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -702,7 +701,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
-                                  backgroundColor: !PJ
+                                  backgroundColor: !pj
                                       ? AppColors.button
                                       : (isDark
                                           ? AppColors.darkUnselectedButton
@@ -734,10 +733,10 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                 widget.userData.gender = gender;
                 widget.userData.introduce = introController.value.text;
                 var mbti = [];
-                EI ? mbti.add("E") : mbti.add("I");
-                NS ? mbti.add("N") : mbti.add("S");
-                TF ? mbti.add("T") : mbti.add("F");
-                PJ ? mbti.add("P") : mbti.add("J");
+                ei ? mbti.add("E") : mbti.add("I");
+                ns ? mbti.add("N") : mbti.add("S");
+                tf ? mbti.add("T") : mbti.add("F");
+                pj ? mbti.add("P") : mbti.add("J");
                 widget.userData.mbti =
                     "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
 

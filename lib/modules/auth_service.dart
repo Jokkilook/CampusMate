@@ -1,15 +1,18 @@
+import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  final FirebaseFirestore firesotre = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   //현재 로그인 된 유저의 UID 반환
   String getUID() {
@@ -26,12 +29,12 @@ class AuthService {
     await auth.signInWithEmailAndPassword(
         email: userData.email!, password: userData.password!);
     userData.uid = auth.currentUser!.uid;
-    firesotre
+    firestore
         .collection("schools/${userData.school}/users")
         .doc(userData.uid)
         .set(userData.toJson())
         .whenComplete(() {
-      firesotre
+      firestore
           .collection("userSchoolInfo")
           .doc(userData.uid)
           .set({"userSchoolData": userData.school});
@@ -40,7 +43,7 @@ class AuthService {
 
   //유저 데이터 수정(덮어쓰기)
   Future setUserData(UserData userData) async {
-    firesotre
+    firestore
         .collection("schools/${userData.school}/users")
         .doc(userData.uid)
         .set(userData.toJson());
@@ -49,15 +52,15 @@ class AuthService {
   //유저 삭제 (영구 삭제)
   Future deleteUser(String uid) async {
     String school = await getUserSchoolInfo(uid);
-    await firesotre.collection("schools/$school/users").doc(uid).delete();
-    await firesotre.collection("userSchoolInfo").doc(uid).delete();
+    await firestore.collection("schools/$school/users").doc(uid).delete();
+    await firestore.collection("userSchoolInfo").doc(uid).delete();
   }
 
   //유저 UID 로 유저키-학교 콜렉션에서 유저의 학교 검색 학교(String) 반환
   Future<String> getUserSchoolInfo(String uid) async {
     String resultSchool = "";
 
-    var data = await firesotre.collection("userSchoolInfo").doc(uid).get();
+    var data = await firestore.collection("userSchoolInfo").doc(uid).get();
     resultSchool =
         (data.data() as Map<String, dynamic>)["userSchoolData"].toString();
 
@@ -68,7 +71,7 @@ class AuthService {
   Future<UserData> getUserData(
       {String uid = "", Source? options = Source.serverAndCache}) async {
     String school = await getUserSchoolInfo(uid);
-    DocumentSnapshot doc = await firesotre
+    DocumentSnapshot doc = await firestore
         .collection("schools/$school/users")
         .doc(uid)
         .get(GetOptions(source: options!));
@@ -79,7 +82,7 @@ class AuthService {
   Future<DocumentSnapshot> getUserDocumentSnapshot(
       {String uid = "", Source? options = Source.serverAndCache}) async {
     String school = await getUserSchoolInfo(uid);
-    return firesotre
+    return firestore
         .collection('schools/$school/users')
         .doc(uid)
         .get(GetOptions(source: options!));
@@ -91,7 +94,7 @@ class AuthService {
     String school = await getUserSchoolInfo(uid);
     await auth.signInWithEmailAndPassword(email: email, password: pw);
     await auth.currentUser?.updatePassword(newPassword);
-    firesotre
+    firestore
         .collection("schools/$school/users")
         .doc(uid)
         .update({"password": newPassword});
@@ -117,5 +120,45 @@ class AuthService {
     });
   }
 
-  void unregister() {}
+  //계정 삭제
+  Future deleteAccount(UserData userData) async {
+    //참여한 단체 채팅방에서 모두 나가기
+    ChattingService chattingService = ChattingService();
+    var querySanpshot = await chattingService
+        .getChattingRoomListQuerySnapshot(userData, isGroup: true);
+    var roomData = querySanpshot.docs;
+    for (var element in roomData) {
+      GroupChatRoomData room =
+          GroupChatRoomData.fromJson(element as Map<String, dynamic>);
+      chattingService.leaveRoom(userData, null, room.roomId!, userData.uid!);
+    }
+    firestore.collection("blockEmailList").doc(userData.email).set({
+      "email": userData.email,
+      "experatDate":
+          Timestamp.fromDate(DateTime.now().add(const Duration(days: 30)))
+    });
+
+    //유저 학교 콜렉션에서 데이터 삭제
+    firestore.collection("userSchoolInfo").doc(userData.uid).delete();
+
+    //유저 콜렉션에서 데이터 삭제
+    firestore
+        .collection("schools/${userData.school}/users")
+        .doc(userData.uid)
+        .delete();
+
+    //파이어스토어에서 프로필 이미지 삭제
+    try {
+      FirebaseStorage.instance
+          .ref("schools/${userData.school}/profileImages/${userData.uid}.png")
+          .delete();
+    } catch (e) {
+      //
+    }
+
+    //Authentication에서 삭제한 다음 로그아웃 후 로그인 페이지로 이동
+    auth.currentUser?.delete().whenComplete(() {
+      signOut;
+    });
+  }
 }

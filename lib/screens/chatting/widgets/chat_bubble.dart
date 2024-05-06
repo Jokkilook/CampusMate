@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/chatting/video_player_screen.dart';
@@ -158,13 +158,15 @@ class ChatBubble extends StatelessWidget {
                                   );
                                 },
                                 child: Container(
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    width: 50,
-                                    height: 50,
-                                    child: cachedProfileImage),
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  width: 50,
+                                  height: 50,
+                                  child:
+                                      // Container()
+                                      cachedProfileImage,
+                                ),
                               )
                             : Container(
                                 width: 50,

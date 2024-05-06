@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
@@ -101,7 +101,7 @@ class ChatListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              //프로필 사진
+              //채팅방 사진
               Stack(
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
@@ -109,39 +109,44 @@ class ChatListItem extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: isGroup
-                        ? Container(
+                        ?
+                        //단체 채팅방 사진
+                        Container(
                             padding: const EdgeInsets.all(1),
                             color: Colors.grey,
                             width: 60,
                             height: 60,
                             child: Center(
-                              child: ExtendedWrap(
-                                spacing: 2,
-                                runSpacing: 2,
-                                maxLines: 2,
-                                children: [
-                                  for (var info in infoList)
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(5),
-                                      child: CachedNetworkImage(
-                                        width: 28,
-                                        height: 28,
-                                        imageUrl: info[1],
-                                        errorWidget: (context, url, error) {
-                                          return Image.asset(
-                                              "assets/images/default_image.png");
-                                        },
-                                        placeholder: (context, url) {
-                                          return Image.asset(
-                                              "assets/images/default_image.png");
-                                        },
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                ],
-                              ),
+                              child: Container(),
+                              // ExtendedWrap(
+                              //   spacing: 2,
+                              //   runSpacing: 2,
+                              //   maxLines: 2,
+                              //   children: [
+                              //     for (var info in infoList)
+                              //       ClipRRect(
+                              //         borderRadius: BorderRadius.circular(5),
+                              //         child: CachedNetworkImage(
+                              //           width: 28,
+                              //           height: 28,
+                              //           imageUrl: info[1],
+                              //           errorWidget: (context, url, error) {
+                              //             return Image.asset(
+                              //                 "assets/images/default_image.png");
+                              //           },
+                              //           placeholder: (context, url) {
+                              //             return Image.asset(
+                              //                 "assets/images/default_image.png");
+                              //           },
+                              //           fit: BoxFit.cover,
+                              //         ),
+                              //       )
+                              //   ],
+                              // ),
                             ))
-                        : CachedNetworkImage(
+                        :
+                        //1:1 채팅방 사진
+                        CachedNetworkImage(
                             width: 60,
                             height: 60,
                             imageUrl: imageUrl,
@@ -165,7 +170,7 @@ class ChatListItem extends StatelessWidget {
                 ],
               ),
               const SizedBox(width: 14),
-              //상대방 닉네임 + 내용
+              //채팅방 이름 + 마지막 메세지 내용
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

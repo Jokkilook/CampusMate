@@ -1,4 +1,4 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
@@ -24,7 +24,6 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

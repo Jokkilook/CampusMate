@@ -6,9 +6,7 @@ import 'package:campusmate/screens/profile/widgets/score_button.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class StrangerProfilScreen extends StatefulWidget {
@@ -39,6 +37,21 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
+            );
+          }
+          if (!snapshot.hasData) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("존재하지 않는 사용자입니다."),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.cancel))
+                ],
+              ),
             );
           }
           if (snapshot.hasError) {

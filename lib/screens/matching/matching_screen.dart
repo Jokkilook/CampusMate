@@ -1,4 +1,4 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
@@ -67,7 +67,6 @@ class _FilterDialogState extends State<FilterDialog> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     widget.pref.getBool("containTags") ?? true
@@ -90,7 +89,9 @@ class _FilterDialogState extends State<FilterDialog> {
       setState(() {
         showWarning = false;
       });
-    } catch (e) {}
+    } catch (e) {
+      //
+    }
   }
 
   void setConditions() {
@@ -110,7 +111,7 @@ class _FilterDialogState extends State<FilterDialog> {
       child: Dialog(
         shape:
             ContinuousRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.all(20),
           child: IntrinsicHeight(
             child: Column(

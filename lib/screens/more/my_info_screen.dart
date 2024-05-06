@@ -1,6 +1,7 @@
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/screens/more/delete_account_screen.dart';
 import 'package:campusmate/screens/more/password_update_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,10 @@ class MyInfoScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 18),
                 ),
                 Text(
+                  "생일 : ${userData.birthDate}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
                   "가입일 : ${timeStampToYYYYMMDD(time: userData.registDate)}",
                   style: const TextStyle(fontSize: 18),
                 ),
@@ -72,7 +77,14 @@ class MyInfoScreen extends StatelessWidget {
             title: const Text("비밀번호 변경"),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const DeleteAccountScreen(),
+                ),
+              );
+            },
             title: const Text(
               "회원 탈퇴",
               style: TextStyle(color: AppColors.alertText),

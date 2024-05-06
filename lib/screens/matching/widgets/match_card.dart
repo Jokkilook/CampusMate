@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:campusmate/AppColors.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -41,7 +41,6 @@ class _MatchCardState extends State<MatchCard> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getPref();
   }
