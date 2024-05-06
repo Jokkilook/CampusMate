@@ -29,7 +29,8 @@ class _MatchCardState extends State<MatchCard> {
   Future getPref() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     widget.containTags = pref.getBool("containTags") ?? true;
-    widget.containMBTI = pref.getBool("containMBTI") ?? true;
+    widget.containMBTI = true;
+    // pref.getBool("containMBTI") ?? true;
     widget.containSchedule = pref.getBool("containSchedule") ?? true;
   }
 
@@ -136,6 +137,7 @@ class _MatchCardState extends State<MatchCard> {
         }
         if (snapshot.hasData) {
           List<QueryDocumentSnapshot> data = snapshot.data?.docs ?? [];
+
           if (data.length < 2) {
             return Center(
                 child: IconButton.filled(
@@ -147,8 +149,20 @@ class _MatchCardState extends State<MatchCard> {
               iconSize: MediaQuery.of(context).size.width * 0.1,
             ));
           }
-
-          return Center(child: swipableCard(data, context));
+          try {
+            return Center(child: swipableCard(data, context));
+          } catch (e) {
+            return Center(
+              child: IconButton.filled(
+                onPressed: () {
+                  setState(() {});
+                },
+                icon: const Icon(Icons.refresh),
+                color: Colors.green,
+                iconSize: MediaQuery.of(context).size.width * 0.1,
+              ),
+            );
+          }
         } else {
           return const Center(
             child: CircularProgressIndicator(),
@@ -349,7 +363,9 @@ class _MatchCardState extends State<MatchCard> {
                                 padding: const EdgeInsets.all(20),
                                 child: Center(
                                   child: ScoreShower(
-                                    score: displayScore,
+                                    score:
+                                        //calculatedScore.toString(),
+                                        displayScore,
                                     percentage: finalData.keys.elementAt(index),
                                   ),
                                 ),

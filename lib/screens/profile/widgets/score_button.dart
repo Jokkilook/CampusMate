@@ -50,13 +50,13 @@ class _ScoreButtonState extends State<ScoreButton> {
           }
         }
       },
-      child: Row(
-        children: [
-          //좋아요 버튼
-          Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            //좋아요 버튼
+            Flexible(
+              flex: 1,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: (widget.isLike
@@ -83,12 +83,10 @@ class _ScoreButtonState extends State<ScoreButton> {
                 ),
               ),
             ),
-          ),
-          //안좋아요 버튼
-          Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+            const SizedBox(width: 20),
+            //안좋아요 버튼
+            Flexible(
+              flex: 1,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: (widget.isDislike
@@ -114,9 +112,9 @@ class _ScoreButtonState extends State<ScoreButton> {
                       : AppColors.dislikeIcon),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

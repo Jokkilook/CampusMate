@@ -37,9 +37,21 @@ class ProfileService {
   }
 
   static double getCalculatedScore(UserData userData) {
+    //기본 점수 85점 (B+)
     double result = 85;
     int likers = userData.likers?.length ?? 0;
-    int dislikers = userData.likers?.length ?? 0;
+    int dislikers = userData.dislikers?.length ?? 0;
+    double likeRatio = likers / (likers + dislikers);
+    double dislikeRatio = dislikers / (likers + dislikers);
+
+    //평가자가 10명 미만이면 각 유저의 평가에 따라 +-
+    if (likers + dislikers < 10) {
+      result = 85 + ((likers * 2) + (dislikers * -2));
+    }
+    //평가자가 10명 이상이면 좋아요 싫어요 비율에 따라 +-
+    else {
+      result = 85 + ((likeRatio * 25) + (dislikeRatio * -25));
+    }
 
     return result;
   }
