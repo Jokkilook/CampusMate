@@ -65,7 +65,7 @@ class MyInfoScreen extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(),
+          const Divider(height: 0),
           ListTile(
             onTap: () {
               Navigator.push(

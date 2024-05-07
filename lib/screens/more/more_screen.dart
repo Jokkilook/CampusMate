@@ -1,8 +1,11 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/modules/auth_service.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/more/my_info_screen.dart';
 import 'package:campusmate/screens/more/theme_setting_screen.dart';
+import 'package:campusmate/screens/screen_list.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class MoreScreen extends StatefulWidget {
@@ -62,6 +65,19 @@ class _MoreScreenState extends State<MoreScreen> {
               await AuthService().signOut(context);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.code),
+            title: const Text("개발자 메뉴"),
+            onTap: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ScreenList(),
+                ),
+              );
+            },
+          ),
+          Text("${context.read<UserDataProvider>().userData.uid}")
         ],
       ),
     );

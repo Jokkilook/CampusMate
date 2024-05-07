@@ -24,6 +24,9 @@ class ScreenList extends StatelessWidget {
   Widget build(BuildContext context) {
     UserData userData = context.read<UserDataProvider>().userData;
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("개발자 메뉴"),
+      ),
       body: SafeArea(
         child: ListView(
           children: [
@@ -36,6 +39,7 @@ class ScreenList extends StatelessWidget {
                 (route) => false,
               ),
             ),
+            const Divider(height: 0),
 
             /// LoginScreen
             ListTile(
@@ -45,6 +49,7 @@ class ScreenList extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const LoginScreen()),
               ),
             ),
+            const Divider(height: 0),
 
             /// REGISTA
             ListTile(
@@ -54,6 +59,7 @@ class ScreenList extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const RegistScreenA()),
               ),
             ),
+            const Divider(height: 0),
 
             /// REGISTB
             ListTile(
@@ -66,6 +72,7 @@ class ScreenList extends StatelessWidget {
                         )),
               ),
             ),
+            const Divider(height: 0),
 
             /// REGISTC
             ListTile(
@@ -78,6 +85,7 @@ class ScreenList extends StatelessWidget {
                         )),
               ),
             ),
+            const Divider(height: 0),
 
             /// REGIST RESULT
             ListTile(
@@ -92,6 +100,7 @@ class ScreenList extends StatelessWidget {
                 ),
               ),
             ),
+            const Divider(height: 0),
 
             /// PROFILEA
             ListTile(
@@ -102,6 +111,7 @@ class ScreenList extends StatelessWidget {
                     builder: (_) => ProfileSettingA(userData: UserData())),
               ),
             ),
+            const Divider(height: 0),
 
             /// PROFILEB
             ListTile(
@@ -112,6 +122,7 @@ class ScreenList extends StatelessWidget {
                     builder: (_) => ProfileSettingB(userData: UserData())),
               ),
             ),
+            const Divider(height: 0),
 
             /// PROFILEC
             ListTile(
@@ -122,6 +133,7 @@ class ScreenList extends StatelessWidget {
                     builder: (_) => ProfileSettingC(userData: UserData())),
               ),
             ),
+            const Divider(height: 0),
 
             /// PROFILERESULT
             ListTile(
@@ -133,6 +145,7 @@ class ScreenList extends StatelessWidget {
                     builder: (_) => ProfileSettingResult(userData: userData)),
               ),
             ),
+            const Divider(height: 0),
 
             /// CHATROOM
             ListTile(
@@ -145,6 +158,7 @@ class ScreenList extends StatelessWidget {
                         )),
               ),
             ),
+            const Divider(height: 0),
           ],
         ),
       ),

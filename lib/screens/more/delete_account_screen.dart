@@ -32,9 +32,9 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
             ),
             padding: const EdgeInsets.all(15),
             margin: const EdgeInsets.all(15),
-            child: const Text(
-              "계정을 삭제하면 복구할 수 없습니다.\n계정을 삭제해도 게시한 게시글, 댓글 등은 삭제되지 않습니다.\n탈퇴 후 30일 동안 같은 이메일로 재가입 할 수 없습니다.",
-              style: TextStyle(fontSize: 18),
+            child: Text(
+              "1. 계정을 삭제하면 복구할 수 없습니다.\n2. 계정을 삭제해도 게시한 게시글, 댓글 등은 삭제되지 않습니다.\n3. ${userData.name} 님이 생성한 단체 채팅방은 자동으로 삭제되고 참여하고 계신 모든 채팅방에서 퇴장합니다.\n4. 채팅방에 보내신 메세지는 삭제되지 않습니다.\n5. 탈퇴 후 30일 동안 같은 이메일로 재가입 할 수 없습니다.",
+              style: const TextStyle(fontSize: 18),
             ),
           ),
           CheckboxListTile(
@@ -67,7 +67,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                                     TextButton(
                                         onPressed: (() async {
                                           await AuthService()
-                                              .deleteAccount(userData);
+                                              .deleteAccount(context, userData);
                                         }),
                                         child: const Text(
                                           "삭제하기",

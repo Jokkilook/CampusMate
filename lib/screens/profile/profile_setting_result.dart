@@ -50,8 +50,8 @@ class ProfileSettingResult extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2BB56B),
-                minimumSize: const Size(10000, 60),
+                backgroundColor: AppColors.button,
+                minimumSize: const Size(10000, 50),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),

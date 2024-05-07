@@ -6,7 +6,7 @@ import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/screen_list.dart';
+import 'package:campusmate/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +107,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isSignIn ? const ScreenList() : const LoginScreen(),
+      home: isSignIn ? const MainScreen() : const LoginScreen(),
       themeMode: Provider.of<ThemeProvider>(context).currentThemeMode,
       theme: ThemeData(
         brightness: Brightness.light,

@@ -251,9 +251,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       isCompletelyLeaving = true;
 
                                       Scaffold.of(_).closeEndDrawer();
-                                      chat.leaveRoom(null, context,
-                                          widget.chatRoomData.roomId!, userUID!,
-                                          isGroup: widget.isGroup);
+                                      if (widget.isGroup) {
+                                        chat.leaveGroupChatRoom(
+                                            context: context,
+                                            userData: userData,
+                                            roomId:
+                                                widget.groupRoomData!.roomId!);
+                                      }
+                                      chat.leaveOTOChatRoom(
+                                        context: context,
+                                        userData: userData,
+                                        roomId: widget.chatRoomData.roomId!,
+                                      );
                                     },
                                     child: SizedBox(
                                       height: 40,
@@ -465,8 +474,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         viewSender = true;
                                       }
                                       String name = "알 수 없음";
-                                      String imageUrl =
-                                          "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/test.png?alt=media&token=43db937e-0bba-4c89-a9f6-dff0387c8d45";
+                                      String imageUrl = "";
+                                      //    "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/test.png?alt=media&token=43db937e-0bba-4c89-a9f6-dff0387c8d45";
                                       if ((widget.chatRoomData.participantsUid
                                               ?.contains(
                                                   docs[index]["senderUID"]) ??

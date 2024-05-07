@@ -120,6 +120,11 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                         }
                         if (snapshot.hasData) {
                           var rooms = snapshot.data!.docs;
+                          if (rooms.isEmpty) {
+                            return const Center(
+                              child: Text("생성된 단체 채팅방이 존재하지 않아요 ToT"),
+                            );
+                          }
                           return ListView.builder(
                             itemCount: rooms.length,
                             itemBuilder: (context, index) {

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
@@ -266,81 +267,154 @@ class ChattingService {
     }, SetOptions(merge: true));
   }
 
-  //채팅방 나가기
-  void leaveRoom(
-      UserData? userData, BuildContext? context, String roomId, String userUID,
-      {bool isGroup = false}) async {
-    UserData inputData = UserData();
-    if (userData != null) {
-      inputData = userData;
-    }
-    if (context != null) {
-      inputData = context.read<UserDataProvider>().userData;
-    }
+  //채팅방 삭제
+  Future deleteChatRoom(
+      {required UserData userData,
+      required String roomId,
+      bool isGroup = false}) async {
     //파이어스토어에서 채팅방 데이터 불러오기
+    //roomId 방 도큐먼트 참조
     var roomRef = firestore
         .collection(
-            "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}")
+            "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}")
         .doc(roomId);
+    //메세지 데이터 콜렉션 참조
     var messageRef = firestore.collection(
-        "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages");
+        "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/messages");
+
+    //roomId 방 도큐먼트 삭제
+    await roomRef.delete();
+
+    //콜렉션 통째로 삭제가 안돼서 메세지 데이터 하나하나 삭제함
+    messageRef.get().then((value) async {
+      for (var doc in value.docs) {
+        await doc.reference.delete();
+      }
+    });
+
+    //파이어 스토어의 데이터 삭제 (이것도 한번에 삭제가 안돼서 하나하나 조회하고 삭제함)
+    var imageRef = firestorage.ref().child(
+        "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/images");
+    var videoRef = firestorage.ref().child(
+        "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/videos");
+    var thumbRef = firestorage.ref().child(
+        "schools/${userData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/thumbnails");
+
+    ListResult imageResult = await imageRef.listAll();
+    ListResult videoResult = await videoRef.listAll();
+    ListResult thumbResult = await thumbRef.listAll();
+
+    for (Reference ref in imageResult.items) {
+      ref.delete();
+    }
+
+    for (Reference ref in videoResult.items) {
+      ref.delete();
+    }
+
+    for (Reference ref in thumbResult.items) {
+      ref.delete();
+    }
+  }
+
+  //그룹 채팅방 나가기
+  void leaveGroupChatRoom({
+    BuildContext? context,
+    required UserData userData,
+    required String roomId,
+  }) async {
+    //파이어스토어에서 채팅방 데이터 불러오기
+    var roomRef = firestore
+        .collection("schools/${userData.school}/groupChats")
+        .doc(roomId);
+
+    //방 나간 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
+    sendMessage(
+      isGroup: true,
+      userData: userData,
+      roomId: roomId,
+      data: MessageData(
+          type: MessageType.notice,
+          senderUID: userData.uid,
+          content: "left",
+          readers: [],
+          time: Timestamp.now()),
+    );
+
+    //채팅방 참여자 목록에서 UID 제거하고 조건에 따라 파이어베이스에 업데이트
+    //그룹채팅방 데이터 반환
+    DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
+    GroupChatRoomData roomData =
+        GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+    //참여자 리스트 반환
+    List participantsList = roomData.participantsUid ?? [];
+    //참여자 리스트에서 UID 삭제
+    participantsList.remove(userData.uid);
+
+    //남아있는 참여자가 없으면 채팅방 화면 나간 후 방 데이터 삭제
+    if (participantsList.isEmpty) {
+      //context가 입력되면 화면 나가기
+      if (context != null) {
+        Navigator.pop(context);
+      }
+      deleteChatRoom(userData: userData, roomId: roomId, isGroup: true);
+    }
+    //남아있으면 방장이 나가는 경우 랜덤으로 다른 사람에게 방장을 넘기고 나가기 아니면 그냥 나가기
+    else {
+      //방장 넘기고 방장 데이터 파이어베이스 업데이트
+      if (roomData.creatorUid == userData.uid) {
+        roomRef.update({
+          "creatorUid":
+              participantsList[Random().nextInt(participantsList.length)]
+        });
+      }
+
+      //참여자 데이터 파이어베이스 업데이트
+      roomRef.update({"participantsUid": participantsList}).whenComplete(() {
+        if (context != null) {
+          Navigator.pop(context);
+        }
+      });
+    }
+  }
+
+  //채팅방 나가기
+  void leaveOTOChatRoom({
+    BuildContext? context,
+    required UserData userData,
+    required String roomId,
+  }) async {
+    //파이어스토어에서 채팅방 데이터 불러오기
+    var roomRef =
+        firestore.collection("schools/${userData.school}/chats").doc(roomId);
+
     DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
 
     //방 나간 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
     sendMessage(
-      isGroup: isGroup,
-      userData: inputData,
+      isGroup: false,
+      userData: userData,
       roomId: roomId,
       data: MessageData(
           type: MessageType.notice,
-          senderUID: userUID,
+          senderUID: userData.uid,
           content: "left",
           readers: [],
           time: Timestamp.now()),
     );
 
     //채팅방 참여자 목록에서 UID 제거하기
-    List participantsList = data.data()!["participantsUid"];
-    participantsList.remove(userUID);
+    List participantsList = data.data()?["participantsUid"] ?? [];
+    participantsList.remove(userData.uid);
 
     //나간 후 남은 참여자가 1명이면 방 데이터 모두 삭제 후 화면 나가기
-    if (participantsList.length == (isGroup ? 0 : 1)) {
-      roomRef.delete();
-      //다 삭제하고 나가면 오래걸리니까 일단 방 데이터만 지워서 채팅방 리스트에 뜨지 않게 한 다음 나머지 데이터 삭제
+    if (participantsList.length == 1) {
+      //context가 입력되면 화면 나가기
       if (context != null) {
         Navigator.pop(context);
       }
-
-      //콜렉션 통째로 삭제가 안돼서 하나하나 삭제함
-      messageRef.get().then((value) async {
-        for (var doc in value.docs) {
-          await doc.reference.delete();
-        }
-      });
-
-      //파이어 스토어의 데이터 삭제 (이것도 한번에 삭제가 안돼서 하나하나 조회하고 삭제함)
-      var imageRef = firestorage.ref().child(
-          "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/images");
-      var videoRef = firestorage.ref().child(
-          "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/videos");
-      var thumbRef = firestorage.ref().child(
-          "schools/${inputData.school}/${isGroup ? "groupChats" : "chats"}/$roomId/thumbnails");
-
-      ListResult imageResult = await imageRef.listAll();
-      ListResult videoResult = await videoRef.listAll();
-      ListResult thumbResult = await thumbRef.listAll();
-
-      for (Reference ref in imageResult.items) {
-        ref.delete();
-      }
-
-      for (Reference ref in videoResult.items) {
-        ref.delete();
-      }
-
-      for (Reference ref in thumbResult.items) {
-        ref.delete();
-      }
+      //방 데이터 삭제
+      deleteChatRoom(userData: userData, roomId: roomId, isGroup: false);
     } else {
       //나간 후 남은 참여자가 1명 이상이면 참여자 명단에서 내 UID만 쏙 지운 리스트를 파이어스토어에 업데이트 하고 화면 나가기
       roomRef.update({"participantsUid": participantsList}).whenComplete(() {
@@ -362,7 +436,7 @@ class ChattingService {
         .snapshots();
   }
 
-  //사용자가 참여한 채팅방 데이터 도큐먼트스냅샷 리스트 반환
+  //사용자가 참여한 채팅방 데이터 쿼리스냅샷 리스트 반환
   Future<QuerySnapshot<Map<String, dynamic>>> getChattingRoomListQuerySnapshot(
       UserData userData,
       {bool isGroup = false}) async {

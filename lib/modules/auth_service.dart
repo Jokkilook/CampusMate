@@ -121,44 +121,55 @@ class AuthService {
   }
 
   //계정 삭제
-  Future deleteAccount(UserData userData) async {
+  Future deleteAccount(BuildContext context, UserData userData) async {
     //참여한 단체 채팅방에서 모두 나가기
     ChattingService chattingService = ChattingService();
     var querySanpshot = await chattingService
         .getChattingRoomListQuerySnapshot(userData, isGroup: true);
     var roomData = querySanpshot.docs;
+
     for (var element in roomData) {
-      GroupChatRoomData room =
-          GroupChatRoomData.fromJson(element as Map<String, dynamic>);
-      chattingService.leaveRoom(userData, null, room.roomId!, userData.uid!);
+      GroupChatRoomData room = GroupChatRoomData.fromJson(element.data());
+      print(room);
+      chattingService.leaveGroupChatRoom(
+          userData: userData, roomId: room.roomId ?? "");
     }
-    firestore.collection("blockEmailList").doc(userData.email).set({
+
+    await firestore.collection("blockEmailList").doc(userData.email).set({
       "email": userData.email,
       "experatDate":
           Timestamp.fromDate(DateTime.now().add(const Duration(days: 30)))
     });
+    print("블록 리스트 추가");
 
     //유저 학교 콜렉션에서 데이터 삭제
-    firestore.collection("userSchoolInfo").doc(userData.uid).delete();
+    await firestore.collection("userSchoolInfo").doc(userData.uid).delete();
+    print("키 콜렉션 삭제");
 
     //유저 콜렉션에서 데이터 삭제
-    firestore
+    await firestore
         .collection("schools/${userData.school}/users")
         .doc(userData.uid)
         .delete();
+    print("유저 콜렉션 삭제");
 
     //파이어스토어에서 프로필 이미지 삭제
-    try {
-      FirebaseStorage.instance
-          .ref("schools/${userData.school}/profileImages/${userData.uid}.png")
-          .delete();
-    } catch (e) {
-      //
-    }
+
+    await FirebaseStorage.instance
+        .ref("schools/${userData.school}/profileImages/${userData.uid}.png")
+        .delete()
+        .onError((error, stackTrace) =>
+            debugPrint(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$error: $stackTrace"));
+    print("프로필 이미지 삭제");
 
     //Authentication에서 삭제한 다음 로그아웃 후 로그인 페이지로 이동
-    auth.currentUser?.delete().whenComplete(() {
-      signOut;
+    await auth.currentUser?.delete().whenComplete(() {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+          (route) => false);
     });
   }
 }

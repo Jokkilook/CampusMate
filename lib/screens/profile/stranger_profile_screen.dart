@@ -68,8 +68,27 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                 ],
               ),
             );
-          } else {
-            var data = snapshot.data!.data() as Map<String, dynamic>;
+          }
+          if (snapshot.hasData) {
+            Map<String, dynamic> data;
+            try {
+              data = snapshot.data?.data() as Map<String, dynamic>;
+            } catch (e) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("존재하지 않는 사용자입니다."),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.cancel))
+                  ],
+                ),
+              );
+            }
+
             if (data.isEmpty) {
               return Center(
                 child: Column(
@@ -126,14 +145,17 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                                     },
                                   ),
                                 ),
-                          Flexible(
-                              flex: 1,
-                              child: ScoreButton(
-                                assessUID: currenUser.uid!,
-                                targetUID: widget.uid,
-                                isLike: isLike,
-                                isDislike: isDislike,
-                              )),
+                          widget.uid != currenUser.uid
+                              ? Flexible(
+                                  flex: 1,
+                                  child: ScoreButton(
+                                    assessUID: currenUser.uid!,
+                                    targetUID: widget.uid,
+                                    isLike: isLike,
+                                    isDislike: isDislike,
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
                     ),
@@ -142,6 +164,19 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
               );
             }
           }
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("존재하지 않는 사용자입니다."),
+                IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.cancel))
+              ],
+            ),
+          );
         },
       ),
     );
