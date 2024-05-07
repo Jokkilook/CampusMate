@@ -21,6 +21,8 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
+  int currentIndex = 0;
+
   Future<void> _refreshScreen() async {
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {});
@@ -32,7 +34,6 @@ class _CommunityScreenState extends State<CommunityScreen>
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
-    int currentIndex = 0;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -226,7 +227,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                         userData: userData,
                       )),
             ).then((_) {
-              // AddPostScreen이 닫힌 후에 CommunityScreen을 새로고침
               _refreshScreen();
             });
           },

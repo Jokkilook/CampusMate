@@ -282,13 +282,6 @@ class _PostScreenState extends State<PostScreen> {
     bool userLiked = widget.postData.likers!.contains(currentUserUid);
     bool userDisliked = widget.postData.dislikers!.contains(currentUserUid);
 
-    debugPrint("경로: schools/${widget.school}/" +
-        (widget.postData.boardType == 'General'
-            ? 'generalPosts'
-            : 'anonymousPosts') +
-        '${widget.postData.postId}' +
-        'comments');
-
     return Scaffold(
       appBar: AppBar(
         elevation: 2,

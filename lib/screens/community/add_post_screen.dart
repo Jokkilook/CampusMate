@@ -19,8 +19,11 @@ class AddPostScreen extends StatelessWidget {
   final UserData userData;
   final int currentIndex;
 
-  AddPostScreen(
-      {super.key, required this.currentIndex, required this.userData});
+  AddPostScreen({
+    super.key,
+    required this.currentIndex,
+    required this.userData,
+  });
 
   Future<void> _addPost(BuildContext context) async {
     try {
@@ -69,6 +72,7 @@ class AddPostScreen extends StatelessWidget {
                 onChanged: (value) {
                   // 선택된 게시판 처리
                   _selectedBoard = value.toString();
+                  debugPrint(_selectedBoard);
                   postData.boardType = _selectedBoard;
                 },
                 decoration: const InputDecoration(labelText: '게시판 선택'),

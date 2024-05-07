@@ -45,9 +45,10 @@ class _PostControllerState extends State<PostController> {
   Future<void> _deletePost(BuildContext context) async {
     try {
       await FirebaseFirestore.instance
-          .collection(widget.postData.boardType == 'General'
-              ? 'generalPosts'
-              : 'anonymousPosts')
+          .collection("schools/${widget.school}/" +
+              (widget.postData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
           .doc(widget.postData.postId)
           .delete();
       Navigator.pop(context);

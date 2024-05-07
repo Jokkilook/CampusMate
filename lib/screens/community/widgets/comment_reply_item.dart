@@ -1,13 +1,59 @@
+import 'package:campusmate/screens/community/models/post_reply_data.dart';
+import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CommentReplyItem extends StatelessWidget {
-  const CommentReplyItem({
+  PostReplyData postReplyData;
+  final FirebaseFirestore firestore;
+  final String school;
+
+  CommentReplyItem({
+    required this.postReplyData,
+    required this.firestore,
+    required this.school,
     super.key,
   });
 
+  // 닉네임 가져오기
+  FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorName() {
+    return FutureBuilder<DocumentSnapshot>(
+      future: firestore
+          .collection('schools/$school/users')
+          .doc(postReplyData.authorUid)
+          .get(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Text(
+            'name',
+            style: TextStyle(
+              fontSize: 12,
+            ),
+          );
+        }
+
+        // 문서에서 사용자 이름 가져오기
+        String authorName = snapshot.data!['name'];
+
+        return Text(
+          postReplyData.boardType == 'General' ? authorName : '익명',
+          style: const TextStyle(
+            fontSize: 12,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedTime = formatTimeStamp(postReplyData.timestamp!, now);
+
     return Container(
       padding: const EdgeInsets.only(left: 46),
       child: Column(
@@ -18,10 +64,7 @@ class CommentReplyItem extends StatelessWidget {
                 radius: 18,
               ),
               const SizedBox(width: 10),
-              const Text(
-                '닉네임',
-                style: TextStyle(fontSize: 12),
-              ),
+              _buildAuthorName(),
               const Spacer(),
               IconButton(
                 onPressed: () {},
@@ -36,48 +79,67 @@ class CommentReplyItem extends StatelessWidget {
           // 댓글 내용
           Container(
             padding: const EdgeInsets.only(left: 46, right: 10),
-            child: const Text(
-                'initState() 메서드는 StatefulWidget의 상태가 생성될 때 호출되는 메서드입니다. 이 메서드는 상태가 처음 생성될 때 한 번만 호출되며, 주로 초기화 작업을 수행하는 데 사용됩니다.'),
+            child: Text(
+              postReplyData.content.toString(),
+            ),
           ),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.only(left: 46, right: 10),
-            child: const Row(
+            child: Row(
               children: [
                 // 좋아요
-                Icon(
-                  Icons.thumb_up_alt_outlined,
-                  color: Colors.grey,
-                  size: 16,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  '0',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                GestureDetector(
+                  onTap: () {
+                    debugPrint('눌림: 좋아요');
+                  },
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.thumb_up_alt_outlined,
+                        color: Colors.grey,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        postReplyData.likers.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 14),
+                const SizedBox(width: 14),
                 // 싫어요
-                Icon(
-                  Icons.thumb_down_alt_outlined,
-                  color: Colors.grey,
-                  size: 16,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  '0',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                GestureDetector(
+                  onTap: () {
+                    debugPrint('눌림: 싫어요');
+                  },
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.thumb_down_alt_outlined,
+                        color: Colors.grey,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        postReplyData.dislikers.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 // 작성시간
                 Text(
-                  '방금',
-                  style: TextStyle(
+                  formattedTime,
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
                   ),
