@@ -23,7 +23,7 @@ class AppColors {
   static final Color lightHeadText = Colors.grey[600]!;
   static const Color lightHint = Colors.grey;
   static const Color lightCard = Colors.white;
-  static final Color lightInnerSection = Colors.grey[50]!;
+  static final Color lightInnerSection = Colors.grey[100]!;
   static final Color lightHeaderCell = Colors.grey[200]!;
   static final Color lightRowCell = Colors.grey[100]!;
   static final Color lightCell = Colors.grey[50]!;

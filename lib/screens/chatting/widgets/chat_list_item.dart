@@ -117,32 +117,31 @@ class ChatListItem extends StatelessWidget {
                             width: 60,
                             height: 60,
                             child: Center(
-                              child: Container(),
-                              // ExtendedWrap(
-                              //   spacing: 2,
-                              //   runSpacing: 2,
-                              //   maxLines: 2,
-                              //   children: [
-                              //     for (var info in infoList)
-                              //       ClipRRect(
-                              //         borderRadius: BorderRadius.circular(5),
-                              //         child: CachedNetworkImage(
-                              //           width: 28,
-                              //           height: 28,
-                              //           imageUrl: info[1],
-                              //           errorWidget: (context, url, error) {
-                              //             return Image.asset(
-                              //                 "assets/images/default_image.png");
-                              //           },
-                              //           placeholder: (context, url) {
-                              //             return Image.asset(
-                              //                 "assets/images/default_image.png");
-                              //           },
-                              //           fit: BoxFit.cover,
-                              //         ),
-                              //       )
-                              //   ],
-                              // ),
+                              child: ExtendedWrap(
+                                spacing: 2,
+                                runSpacing: 2,
+                                maxLines: 2,
+                                children: [
+                                  for (var info in infoList)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: CachedNetworkImage(
+                                        width: 28,
+                                        height: 28,
+                                        imageUrl: info[1],
+                                        errorWidget: (context, url, error) {
+                                          return Image.asset(
+                                              "assets/images/default_image.png");
+                                        },
+                                        placeholder: (context, url) {
+                                          return Image.asset(
+                                              "assets/images/default_image.png");
+                                        },
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                ],
+                              ),
                             ))
                         :
                         //1:1 채팅방 사진
