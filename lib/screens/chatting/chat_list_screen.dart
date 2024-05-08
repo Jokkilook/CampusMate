@@ -83,7 +83,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "단체 채팅방 만들기",
+                        "그룹 채팅방 만들기",
                         style: TextStyle(
                             color: isDark
                                 ? AppColors.darkTitle
@@ -182,7 +182,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                     child: Text("1:1 채팅"),
                   ),
                   Tab(
-                    child: Text("단체 채팅"),
+                    child: Text("그룹 채팅"),
                   )
                 ],
               ),
@@ -211,12 +211,6 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                         var rooms = snapshot.data!.docs;
 
                         if (rooms.isEmpty) {
-                          return const Center(
-                            child: Text("아직 채팅방이 없어요!"),
-                          );
-                        }
-
-                        if (rooms[0]["lastMessage"] == "") {
                           return const Center(
                             child: Text("아직 채팅방이 없어요!"),
                           );
@@ -282,17 +276,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                   isDark: isDark,
                                   unreadCount: count,
                                   isGroup: false,
-                                  data: ChatRoomData(
-                                      roomName: rooms[index]["roomName"],
-                                      roomId: rooms[index]["roomId"],
-                                      participantsUid: (rooms[index]
-                                              ["participantsUid"] as List)
-                                          .map((e) => e.toString())
-                                          .toList(),
-                                      participantsInfo: participantsInfo,
-                                      lastMessage: rooms[index]["lastMessage"],
-                                      lastMessageTime: rooms[index]
-                                          ["lastMessageTime"]),
+                                  data: ChatRoomData.fromJson(rooms[index]
+                                      .data() as Map<String, dynamic>),
                                 );
                               },
                             );
@@ -382,17 +367,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                   groupData: GroupChatRoomData.fromJson(
                                       rooms[index].data()
                                           as Map<String, dynamic>),
-                                  data: ChatRoomData(
-                                      roomName: rooms[index]["roomName"],
-                                      roomId: rooms[index]["roomId"],
-                                      participantsUid: (rooms[index]
-                                              ["participantsUid"] as List)
-                                          .map((e) => e.toString())
-                                          .toList(),
-                                      participantsInfo: participantsInfo,
-                                      lastMessage: rooms[index]["lastMessage"],
-                                      lastMessageTime: rooms[index]
-                                          ["lastMessageTime"]),
+                                  data: ChatRoomData.fromJson(rooms[index]
+                                      .data() as Map<String, dynamic>),
                                 );
                               },
                             );

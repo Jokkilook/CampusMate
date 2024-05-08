@@ -351,6 +351,13 @@ class ChattingService {
     //참여자 리스트에서 UID 삭제
     participantsList.remove(userData.uid);
 
+    //참여자 유저 정보 map에서 삭제
+    roomData.participantsInfo?.remove(userData.uid);
+    firestore
+        .collection("schools/${userData.school}/groupChats")
+        .doc(roomId)
+        .update({"participantsInfo": roomData.participantsInfo});
+
     //남아있는 참여자가 없으면 채팅방 화면 나간 후 방 데이터 삭제
     if (participantsList.isEmpty) {
       //context가 입력되면 화면 나가기
@@ -389,6 +396,8 @@ class ChattingService {
         firestore.collection("schools/${userData.school}/chats").doc(roomId);
 
     DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
+    ChatRoomData roomData =
+        ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
 
     //방 나간 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
     sendMessage(
@@ -404,7 +413,7 @@ class ChattingService {
     );
 
     //채팅방 참여자 목록에서 UID 제거하기
-    List participantsList = data.data()?["participantsUid"] ?? [];
+    List participantsList = roomData.participantsUid ?? [];
     participantsList.remove(userData.uid);
 
     //나간 후 남은 참여자가 1명이면 방 데이터 모두 삭제 후 화면 나가기

@@ -2,12 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
+import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class ChatListItem extends StatelessWidget {
@@ -55,7 +60,13 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String userUID = AuthService().getUID();
+    //마지막 메세지가 없는 (채팅 내용이 없는) 채팅방은 표시 안함
+    if (data.lastMessageTime == null) {
+      return Container();
+    }
+
+    UserData userData = context.read<UserDataProvider>().userData;
+    String userUID = userData.uid!;
     String name = "";
     String imageUrl = "";
     Map<String, List<String>> userInfo = {};
@@ -63,6 +74,7 @@ class ChatListItem extends StatelessWidget {
 
     List<String> list;
     data.participantsInfo!.forEach((key, value) {
+      //닉네임, 이미지URL 순으로 정렬
       value.sort(
         (a, b) => a.length.compareTo(b.length),
       );
@@ -80,8 +92,11 @@ class ChatListItem extends StatelessWidget {
       });
     }
 
-    if (data.lastMessageTime == null) {
-      return Container();
+    int userCount = data.participantsUid?.length ?? 0;
+    double profileSize = 60;
+
+    if (userCount - 1 >= 2) {
+      profileSize = 28;
     }
 
     return InkWell(
@@ -113,21 +128,23 @@ class ChatListItem extends StatelessWidget {
                         //단체 채팅방 사진
                         Container(
                             padding: const EdgeInsets.all(1),
-                            color: Colors.grey,
+                            //color: Colors.grey,
                             width: 60,
                             height: 60,
                             child: Center(
                               child: ExtendedWrap(
+                                alignment: WrapAlignment.center,
                                 spacing: 2,
                                 runSpacing: 2,
                                 maxLines: 2,
                                 children: [
                                   for (var info in infoList)
+                                    //if (info[0] != userData.name)
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(5),
                                       child: CachedNetworkImage(
-                                        width: 28,
-                                        height: 28,
+                                        width: profileSize,
+                                        height: profileSize,
                                         imageUrl: info[1],
                                         errorWidget: (context, url, error) {
                                           return Image.asset(
@@ -175,13 +192,42 @@ class ChatListItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      !isGroup ? name : data.roomName!,
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: isDark
-                              ? AppColors.darkTitle
-                              : AppColors.lightTitle),
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: 8,
+                          child: Text(
+                            !isGroup ? name : data.roomName!,
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: isDark
+                                    ? AppColors.darkTitle
+                                    : AppColors.lightTitle),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              Icon(Icons.person,
+                                  size: 18,
+                                  color: isDark
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint),
+                              Text(
+                                "$userCount",
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkHint
+                                      : AppColors.lightHint,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -191,14 +237,15 @@ class ChatListItem extends StatelessWidget {
                           color: isDark
                               ? AppColors.darkText
                               : AppColors.lightText),
-                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     )
                   ],
                 ),
               ),
               //시간+알림설정 버튼
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 5),
                   Text(
@@ -212,6 +259,7 @@ class ChatListItem extends StatelessWidget {
                   Expanded(
                     child: Center(
                       child: IconButton(
+                          padding: const EdgeInsets.all(0),
                           onPressed: () {},
                           icon: Icon(Icons.notifications,
                               size: 20,

@@ -81,6 +81,7 @@ class _MatchCardState extends State<MatchCard> {
     int matchPercent = 0;
     int index = 0;
     int count = 0;
+
     for (var day in myData.schedule.schedule) {
       day.forEach((key, value) {
         if (value == otherData.schedule.schedule[index][key]) {

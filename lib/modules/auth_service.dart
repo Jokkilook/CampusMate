@@ -130,7 +130,6 @@ class AuthService {
 
     for (var element in roomData) {
       GroupChatRoomData room = GroupChatRoomData.fromJson(element.data());
-      print(room);
       chattingService.leaveGroupChatRoom(
           userData: userData, roomId: room.roomId ?? "");
     }
@@ -140,18 +139,15 @@ class AuthService {
       "experatDate":
           Timestamp.fromDate(DateTime.now().add(const Duration(days: 30)))
     });
-    print("블록 리스트 추가");
 
     //유저 학교 콜렉션에서 데이터 삭제
     await firestore.collection("userSchoolInfo").doc(userData.uid).delete();
-    print("키 콜렉션 삭제");
 
     //유저 콜렉션에서 데이터 삭제
     await firestore
         .collection("schools/${userData.school}/users")
         .doc(userData.uid)
         .delete();
-    print("유저 콜렉션 삭제");
 
     //파이어스토어에서 프로필 이미지 삭제
 
@@ -160,7 +156,6 @@ class AuthService {
         .delete()
         .onError((error, stackTrace) =>
             debugPrint(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$error: $stackTrace"));
-    print("프로필 이미지 삭제");
 
     //Authentication에서 삭제한 다음 로그아웃 후 로그인 페이지로 이동
     await auth.currentUser?.delete().whenComplete(() {

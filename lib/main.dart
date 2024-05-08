@@ -28,17 +28,15 @@ void main() async {
   );
 
   UserData? userData = await initializeFirebaseAndAds();
-  bool isSignIn = userData != null;
+  bool isSignIn = (userData != null);
   ThemeMode currentThemeMode = await loadThemeMode();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) =>
-                UserDataProvider(userData: userData ?? UserData())),
-        ChangeNotifierProvider(
-          create: (context) => ChattingDataProvider(),
+          create: (context) =>
+              UserDataProvider(userData: userData ?? UserData()),
         ),
         ChangeNotifierProvider(
           create: (context) =>
@@ -78,7 +76,7 @@ Future<UserData?> initializeFirebaseAndAds() async {
 }
 
 Future<ThemeMode> loadThemeMode() async {
-  ThemeMode? returnTheme;
+  ThemeMode returnTheme = ThemeMode.system;
   SharedPreferences pref = await SharedPreferences.getInstance();
 
   switch (pref.getString("theme")) {

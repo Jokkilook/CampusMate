@@ -56,11 +56,7 @@ class _ScoreButtonState extends State<ScoreButton> {
               flex: 1,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: (
-                      // widget.isLike?
-                      // AppColors.inactivelikeButton
-                      //:
-                      AppColors.likeButton),
+                  backgroundColor: (AppColors.likeButton),
                   minimumSize: const Size(1000, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -80,11 +76,7 @@ class _ScoreButtonState extends State<ScoreButton> {
                 },
                 child: const Icon(
                   Icons.thumb_up,
-                  color: (
-                      //  widget.isLike ?
-                      //  AppColors.inactivelikeIcon
-                      // :
-                      AppColors.likeIcon),
+                  color: (AppColors.likeIcon),
                 ),
               ),
             ),
@@ -94,11 +86,7 @@ class _ScoreButtonState extends State<ScoreButton> {
               flex: 1,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: (
-                      //widget.isDislike?
-                      //AppColors.inactivedislikeButton
-                      //:
-                      AppColors.dislikeButton),
+                  backgroundColor: (AppColors.dislikeButton),
                   minimumSize: const Size(1000, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -118,11 +106,7 @@ class _ScoreButtonState extends State<ScoreButton> {
                 },
                 child: Icon(
                   Icons.thumb_down,
-                  color: (
-                      //widget.isDislike ?
-                      // AppColors.inactivedislikeIcon
-                      //:
-                      AppColors.dislikeIcon),
+                  color: (AppColors.dislikeIcon),
                 ),
               ),
             )
