@@ -2,7 +2,6 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
-import 'package:campusmate/provider/chatting_data_provider.dart';
 import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
