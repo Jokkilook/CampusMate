@@ -1,12 +1,15 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/auth_service.dart';
 import 'package:campusmate/modules/chatting_service.dart';
+import 'package:campusmate/modules/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/widgets/score_button.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class StrangerProfilScreen extends StatefulWidget {
@@ -23,14 +26,100 @@ class StrangerProfilScreen extends StatefulWidget {
 class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
   final ChattingService chat = ChattingService();
   final AuthService auth = AuthService();
+  final ProfileService profile = ProfileService();
+  late String targetUID;
+  late String name;
 
   @override
   Widget build(BuildContext context) {
-    UserData currenUser = context.read<UserDataProvider>().userData;
+    UserData currentUser = context.read<UserDataProvider>().userData;
     return Scaffold(
       appBar: AppBar(
         title: const Text('프로필'),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.block))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    return Dialog(
+                      clipBehavior: Clip.hardEdge,
+                      shape: ContinuousRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      insetPadding: const EdgeInsets.all(20),
+                      child: SizedBox(
+                        width: MediaQuery.of(_).size.width * 0.8,
+                        child: IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Text(
+                                  "$name 님을 차단하시겠어요?",
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              //const Divider(height: 0),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        profile.banUser(
+                                            targetUID: targetUID,
+                                            currentUser: currentUser);
+                                        context
+                                                .read<UserDataProvider>()
+                                                .userData =
+                                            await auth.getUserData(
+                                                uid: currentUser.uid ?? "");
+
+                                        Navigator.pop(_);
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(15),
+                                        child: Text(
+                                          "네",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pop(_);
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(15),
+                                        child: Text(
+                                          "아니요",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.block))
+        ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: auth.getUserDocumentSnapshot(uid: widget.uid),
@@ -106,10 +195,13 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
               );
             } else {
               UserData strangerData = UserData.fromJson(data);
+              targetUID = strangerData.uid ?? "";
+              name = strangerData.name ?? "";
               bool isLike =
-                  strangerData.likers?.contains(currenUser.uid) ?? false;
+                  strangerData.likers?.contains(currentUser.uid) ?? false;
               bool isDislike =
-                  strangerData.dislikers?.contains(currenUser.uid) ?? false;
+                  strangerData.dislikers?.contains(currentUser.uid) ?? false;
+
               return Stack(
                 children: [
                   SingleChildScrollView(
@@ -146,11 +238,11 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                                     },
                                   ),
                                 ),
-                          widget.uid != currenUser.uid
+                          widget.uid != currentUser.uid
                               ? Flexible(
                                   flex: 1,
                                   child: ScoreButton(
-                                    assessUID: currenUser.uid!,
+                                    assessUID: currentUser.uid!,
                                     targetUID: widget.uid,
                                     isLike: isLike,
                                     isDislike: isDislike,

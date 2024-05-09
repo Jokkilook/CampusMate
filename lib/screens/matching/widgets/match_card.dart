@@ -122,7 +122,6 @@ class _MatchCardState extends State<MatchCard> {
     return FutureBuilder<QuerySnapshot>(
       future: FirebaseFirestore.instance
           .collection('schools/${userData.school}/users')
-          .where("school", isEqualTo: userData.school)
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -173,19 +172,16 @@ class _MatchCardState extends State<MatchCard> {
   }
 
   CardSwiper swipableCard(
-      List<QueryDocumentSnapshot> data, BuildContext context) {
+      List<QueryDocumentSnapshot> datas, BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.height;
     final UserData userData = context.read<UserDataProvider>().userData;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
+    List<QueryDocumentSnapshot> data = datas;
+
     for (var info in data) {
       var doc = UserData.fromJson(info.data() as Map<String, dynamic>);
-      //불러온 유저 데이터에서 내 데이터 삭제
-      if (doc.uid == userData.uid) {
-        data.remove(info);
-        break;
-      }
       //불러온 유저 데이터에서 밴한 유저 삭제
       if (userData.banUsers?.contains(doc.uid) ?? false) {
         data.remove(info);
@@ -196,9 +192,14 @@ class _MatchCardState extends State<MatchCard> {
         data.remove(info);
         break;
       }
+      //불러온 유저 데이터에서 내 데이터 삭제
+      if (doc.uid == userData.uid) {
+        data.remove(info);
+        break;
+      }
     }
 
-    //Map<점수(int), 유저데이처(UserData)> 를 생성한다.
+    //Map<점수(int), 유저데이터(UserData)> 를 생성한다.
     Map<int, UserData> totalData = {};
 
     for (var element in data) {
