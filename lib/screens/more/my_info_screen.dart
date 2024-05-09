@@ -1,6 +1,7 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/screens/more/ban_user_management_screen.dart';
 import 'package:campusmate/screens/more/delete_account_screen.dart';
 import 'package:campusmate/screens/more/password_update_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -66,6 +67,16 @@ class MyInfoScreen extends StatelessWidget {
             ),
           ),
           const Divider(height: 0),
+          ListTile(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BanUserManagementScreen(),
+                  ));
+            },
+            title: const Text("차단한 유저 관리"),
+          ),
           ListTile(
             onTap: () {
               Navigator.push(

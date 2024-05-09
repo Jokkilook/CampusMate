@@ -102,7 +102,56 @@ class ChatListItem extends StatelessWidget {
             ? chat.enterGroupRoom(context, groupData!)
             : chat.enterRoom(context, data);
       },
-      onLongPress: () {},
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              clipBehavior: Clip.hardEdge,
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              insetPadding: const EdgeInsets.all(20),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Text(
+                          isGroup ? data.roomName ?? "" : name,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      //const Divider(height: 0),
+                      InkWell(
+                        onTap: () {
+                          if (isGroup) {
+                            chat.leaveGroupChatRoom(
+                                userData: userData, roomId: data.roomId ?? "");
+                          } else {
+                            chat.leaveOTOChatRoom(
+                                userData: userData, roomId: data.roomId ?? "");
+                          }
+                          Navigator.pop(context);
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Text("나가기"),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
       child: Container(
         clipBehavior: Clip.none,
         color: Colors.transparent,
@@ -244,7 +293,6 @@ class ChatListItem extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 5),
                   Text(
                     timeStampToHourMinutes(data.lastMessageTime!),
                     style: TextStyle(

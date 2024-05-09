@@ -19,6 +19,7 @@ class _MatchingScreenState extends State<MatchingScreen> {
   Widget build(BuildContext context) {
     final UserData userData = context.read<UserDataProvider>().userData;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(userData.school!),
         actions: [

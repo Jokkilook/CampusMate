@@ -181,7 +181,18 @@ class _MatchCardState extends State<MatchCard> {
 
     for (var info in data) {
       var doc = UserData.fromJson(info.data() as Map<String, dynamic>);
+      //불러온 유저 데이터에서 내 데이터 삭제
       if (doc.uid == userData.uid) {
+        data.remove(info);
+        break;
+      }
+      //불러온 유저 데이터에서 밴한 유저 삭제
+      if (userData.banUsers?.contains(doc.uid) ?? false) {
+        data.remove(info);
+        break;
+      }
+      //불러온 유저 데이터에서 나를 밴한 유저 데이터 삭제
+      if (userData.blockers?.contains(doc.uid) ?? false) {
         data.remove(info);
         break;
       }
@@ -290,8 +301,9 @@ class _MatchCardState extends State<MatchCard> {
                       clipBehavior: Clip.none,
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
+                            Expanded(
                               flex: 8,
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -300,7 +312,8 @@ class _MatchCardState extends State<MatchCard> {
                                   left: 20,
                                 ),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     //이름, 나이
                                     SizedBox(

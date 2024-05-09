@@ -36,6 +36,49 @@ class ProfileService {
     });
   }
 
+  //유저 밴
+  Future banUser(
+      {required String targetUID, required UserData currentUser}) async {
+    var ref = firestore
+        .collection("schools/${currentUser.school}/users")
+        .doc(currentUser.uid);
+    var targetRef = firestore
+        .collection("schools/${currentUser.school}/users")
+        .doc(targetUID);
+    //밴 리스트에 있나 확인 후 없으면 밴리스트에 추가하고 상대의 "나를 차단한 사람 리스트"에 추가
+    if (!(currentUser.banUsers?.contains(targetUID) ?? false)) {
+      await ref.update({
+        "banUsers": FieldValue.arrayUnion([targetUID])
+      });
+
+      await targetRef.update({
+        "blockers": FieldValue.arrayUnion([currentUser.uid])
+      });
+    }
+  }
+
+  //유저 밴 해제
+  Future unbanUser(
+      {required String targetUID, required UserData currentUser}) async {
+    var ref = firestore
+        .collection("schools/${currentUser.school}/users")
+        .doc(currentUser.uid);
+    var targetRef = firestore
+        .collection("schools/${currentUser.school}/users")
+        .doc(targetUID);
+    //밴 리스트에 있나 확인 후 있으면 밴리스트에서 삭제하고 상대의 "나를 차단한 사람 리스트"에서 삭제
+    if (currentUser.banUsers?.contains(targetUID) ?? false) {
+      await ref.update({
+        "banUsers": FieldValue.arrayRemove([targetUID])
+      });
+
+      await targetRef.update({
+        "blockers": FieldValue.arrayRemove([currentUser.uid])
+      });
+    }
+  }
+
+  //좋아요, 싫어요 수에 따라 매너학점 산출
   static double getCalculatedScore(UserData userData) {
     //기본 점수 85점 (B+)
     double result = 85;

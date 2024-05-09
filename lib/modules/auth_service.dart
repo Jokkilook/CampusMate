@@ -49,13 +49,6 @@ class AuthService {
         .set(userData.toJson());
   }
 
-  //유저 삭제 (영구 삭제)
-  Future deleteUser(String uid) async {
-    String school = await getUserSchoolInfo(uid);
-    await firestore.collection("schools/$school/users").doc(uid).delete();
-    await firestore.collection("userSchoolInfo").doc(uid).delete();
-  }
-
   //유저 UID 로 유저키-학교 콜렉션에서 유저의 학교 검색 학교(String) 반환
   Future<String> getUserSchoolInfo(String uid) async {
     String resultSchool = "";
@@ -120,6 +113,13 @@ class AuthService {
     });
   }
 
+  //유저 삭제 (영구 삭제) (테스트코드)
+  Future deleteUser(String uid) async {
+    String school = await getUserSchoolInfo(uid);
+    await firestore.collection("schools/$school/users").doc(uid).delete();
+    await firestore.collection("userSchoolInfo").doc(uid).delete();
+  }
+
   //계정 삭제
   Future deleteAccount(BuildContext context, UserData userData) async {
     //참여한 단체 채팅방에서 모두 나가기
@@ -150,7 +150,6 @@ class AuthService {
         .delete();
 
     //파이어스토어에서 프로필 이미지 삭제
-
     await FirebaseStorage.instance
         .ref("schools/${userData.school}/profileImages/${userData.uid}.png")
         .delete()

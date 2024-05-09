@@ -20,6 +20,8 @@ class UserData {
   Timestamp? registDate;
   List<String>? likers = [];
   List<String>? dislikers = [];
+  List<String>? banUsers = [];
+  List<String>? blockers = [];
 
   UserData({
     this.uid,
@@ -38,6 +40,8 @@ class UserData {
         "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/test.png?alt=media&token=43db937e-0bba-4c89-a9f6-dff0387c8d45",
     this.tags,
     this.registDate,
+    this.banUsers,
+    this.blockers,
   });
 
   UserData.fromJson(Map<String, dynamic> json) {
@@ -59,6 +63,8 @@ class UserData {
 
     likers = (json["likers"] as List).map((e) => e.toString()).toList();
     dislikers = (json["dislikers"] as List).map((e) => e.toString()).toList();
+    banUsers = (json["banUsers"] as List).map((e) => e.toString()).toList();
+    blockers = (json["blockers"] as List).map((e) => e.toString()).toList();
 
     //DB에서 가져온 데이터는 List<dynamic>이 되어버려서 다시 List<Map<String, bool>> 타입으로 변환해주어야한다.
     schedule.schedule = (json["schedule"] as List)
@@ -93,7 +99,9 @@ class UserData {
       "schedule": schedule.schedule,
       "registDate": registDate,
       "likers": likers,
-      "dislikers": dislikers
+      "dislikers": dislikers,
+      "banUsers": banUsers,
+      "blockers": blockers
     };
   }
 }

@@ -30,6 +30,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('프로필'),
+        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.block))],
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: auth.getUserDocumentSnapshot(uid: widget.uid),
