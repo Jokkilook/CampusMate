@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/auth_service.dart';
+import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';

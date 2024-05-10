@@ -1,6 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/auth_service.dart';
-import 'package:campusmate/modules/profile_service.dart';
+import 'package:campusmate/services/auth_service.dart';
+import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/auth_service.dart';
+import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/input_text_field.dart';

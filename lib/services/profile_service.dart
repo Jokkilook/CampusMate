@@ -1,5 +1,5 @@
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/auth_service.dart';
+import 'package:campusmate/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 

@@ -1,6 +1,6 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/profile_service.dart';
+import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';

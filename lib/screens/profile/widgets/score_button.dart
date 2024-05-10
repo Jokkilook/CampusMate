@@ -1,5 +1,5 @@
 import 'package:campusmate/app_colors.dart';
-import 'package:campusmate/modules/profile_service.dart';
+import 'package:campusmate/services/profile_service.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable

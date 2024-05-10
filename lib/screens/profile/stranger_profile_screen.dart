@@ -1,7 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/auth_service.dart';
-import 'package:campusmate/modules/chatting_service.dart';
-import 'package:campusmate/modules/profile_service.dart';
+import 'package:campusmate/services/auth_service.dart';
+import 'package:campusmate/services/chatting_service.dart';
+import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/widgets/score_button.dart';
 import 'package:campusmate/widgets/bottom_button.dart';

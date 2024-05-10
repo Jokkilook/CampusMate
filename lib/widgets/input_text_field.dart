@@ -35,7 +35,7 @@ class InputTextField extends StatefulWidget {
   final bool checkWithOther;
   bool obscureText;
   final bool obscrueSee;
-  Function? onChanged;
+  Function()? onChanged;
 
   @override
   State<InputTextField> createState() => _InputTextFieldState();
@@ -46,7 +46,9 @@ class _InputTextFieldState extends State<InputTextField> {
   Widget build(BuildContext context) {
     return TextField(
       onChanged: (value) {
-        widget.onChanged;
+        if (widget.onChanged != null) {
+          widget.onChanged!();
+        }
         setState(() {});
       },
       obscureText: widget.obscureText,

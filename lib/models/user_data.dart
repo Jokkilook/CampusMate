@@ -42,7 +42,11 @@ class UserData {
     this.registDate,
     this.banUsers,
     this.blockers,
-  });
+  }) {
+    tags = tags ?? [];
+    banUsers = banUsers ?? [];
+    blockers = blockers ?? [];
+  }
 
   UserData.fromJson(Map<String, dynamic> json) {
     uid = json["uid"];

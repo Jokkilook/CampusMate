@@ -1,13 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/profile_service.dart';
+import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/matching/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,6 +116,24 @@ class _MatchCardState extends State<MatchCard> {
     return matchPercent;
   }
 
+  Center refreshMessage(String message) {
+    return Center(
+      child: Column(
+        children: [
+          Text(message),
+          IconButton.filled(
+            onPressed: () {
+              setState(() {});
+            },
+            icon: const Icon(Icons.refresh),
+            color: Colors.green,
+            iconSize: MediaQuery.of(context).size.width * 0.1,
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     refresh();
@@ -124,48 +143,36 @@ class _MatchCardState extends State<MatchCard> {
           .collection('schools/${userData.school}/users')
           .get(),
       builder: (context, snapshot) {
+        //로딩 중
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
+        //유저 데이터가 없으면
         if (!snapshot.hasData) {
-          return const Center(child: Text("아직 사용자가 없어요 o_o"));
+          return refreshMessage("아직 사용자가 없어요 o_o");
         }
+        //에러가 발생했으면
         if (snapshot.hasError) {
-          return const Center(child: Text("오류가 발생했어요!"));
+          return refreshMessage("오류가 발생했어요!");
         }
+        //데이터가 있을 때
         if (snapshot.hasData) {
           List<QueryDocumentSnapshot> data = snapshot.data?.docs ?? [];
 
+          //데이터가 있는데 2개 미만일때,
           if (data.length < 2) {
-            return Center(
-                child: IconButton.filled(
-              onPressed: () {
-                setState(() {});
-              },
-              icon: const Icon(Icons.refresh),
-              color: Colors.green,
-              iconSize: MediaQuery.of(context).size.width * 0.1,
-            ));
+            return refreshMessage("아직 사용자가 없어요 o_o");
           }
+          //2개 이상 데이터가 들어왔을 때 스와이프 카드 출력 시도
           try {
             return Center(child: swipableCard(data, context));
           } catch (e) {
-            return Center(
-              child: IconButton.filled(
-                onPressed: () {
-                  setState(() {});
-                },
-                icon: const Icon(Icons.refresh),
-                color: Colors.green,
-                iconSize: MediaQuery.of(context).size.width * 0.1,
-              ),
-            );
+            return refreshMessage(e.toString());
           }
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+        }
+        //그 이 외의 상황
+        else {
+          return refreshMessage("오류가 발생했어요!");
         }
       },
     );
@@ -279,7 +286,7 @@ class _MatchCardState extends State<MatchCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //사진부분
-                  Flexible(
+                  Expanded(
                     child: Container(
                       width: double.infinity,
                       color: Colors.grey,
@@ -294,99 +301,92 @@ class _MatchCardState extends State<MatchCard> {
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).cardTheme.color,
+                      color: isDark ? AppColors.darkCard : AppColors.lightCard,
                       borderRadius: const BorderRadius.vertical(
                           bottom: Radius.circular(10)),
                     ),
-                    child: Stack(
-                      clipBehavior: Clip.none,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              flex: 8,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 15,
-                                  bottom: 20,
-                                  left: 20,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    //이름, 나이
-                                    SizedBox(
-                                      width: 220,
-                                      child: AutoSizeText(
-                                        "${doc.name!}, ${DateTime.now().year - int.parse(doc.birthDate!.split(".")[0])}",
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge!
-                                                .color,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    //MBTI
-                                    Text(
-                                      '${doc.mbti}',
-                                      style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.w500,
-                                          color: isDark
-                                              ? AppColors.darkHint
-                                              : AppColors.lightHint),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    ExtendedWrap(
-                                      maxLines: 2,
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        for (var tag in doc.tags!)
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                color: isDark
-                                                    ? AppColors.darkTag
-                                                    : AppColors.lightTag,
-                                                borderRadius:
-                                                    BorderRadius.circular(15)),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 15, vertical: 5),
-                                            child: Text(
-                                              tag.toString(),
-                                              style: TextStyle(
-                                                  color: isDark
-                                                      ? AppColors.darkText
-                                                      : AppColors.lightText),
-                                            ),
-                                          )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
+                        //이름,나이 / MBTI / 태그 표시
+                        Expanded(
+                          flex: 8,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 15,
+                              bottom: 20,
+                              left: 20,
                             ),
-                            Flexible(
-                              flex: 4,
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Center(
-                                  child: ScoreShower(
-                                    score:
-                                        //calculatedScore.toString(),
-                                        displayScore,
-                                    percentage: finalData.keys.elementAt(index),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                //이름, 나이
+                                SizedBox(
+                                  width: 220,
+                                  child: AutoSizeText(
+                                    "${doc.name!}, ${DateTime.now().year - int.parse(doc.birthDate!.split(".")[0])}",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        color: isDark
+                                            ? AppColors.darkTitle
+                                            : AppColors.lightTitle,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
+                                //MBTI
+                                Text(
+                                  '${doc.mbti}',
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w500,
+                                      color: isDark
+                                          ? AppColors.darkHint
+                                          : AppColors.lightHint),
+                                ),
+                                const SizedBox(height: 10),
+                                //태그
+                                ExtendedWrap(
+                                  maxLines: 2,
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    for (var tag in doc.tags!)
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: isDark
+                                                ? AppColors.darkTag
+                                                : AppColors.lightTag,
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        child: Text(
+                                          tag.toString(),
+                                          style: TextStyle(
+                                              color: isDark
+                                                  ? AppColors.darkText
+                                                  : AppColors.lightText),
+                                        ),
+                                      )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
                         ),
+                        Flexible(
+                          flex: 4,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Center(
+                              child: ScoreShower(
+                                score: displayScore,
+                                percentage: finalData.keys.elementAt(index),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),

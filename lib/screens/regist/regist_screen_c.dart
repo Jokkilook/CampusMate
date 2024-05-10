@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/auth_service.dart';
+import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
@@ -38,7 +38,6 @@ class _RegistScreenCState extends State<RegistScreenC> {
   void initState() {
     super.initState();
     //유저 데이터에 저장된 이메일 가져오기
-
     setState(() {});
   }
 
@@ -195,14 +194,6 @@ class _RegistScreenCState extends State<RegistScreenC> {
                               )),
                           const SizedBox(height: 5),
                           InputTextField(
-                              onChanged: () {
-                                print(pwController.value.text.isNotEmpty);
-                                print(nickController.value.text.isNotEmpty);
-                                print(pwController.value.text.isNotEmpty);
-                                print(
-                                    pwConfirmController.value.text.isNotEmpty);
-                                setState(() {});
-                              },
                               maxLength: 20,
                               hintText: "사용할 닉네임을 입력하세요.",
                               isDark: isDark,

@@ -54,6 +54,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
   Widget build(BuildContext context) {
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
+    print(newUserData.banUsers);
     return Scaffold(
       appBar: AppBar(
         actions: [

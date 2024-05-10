@@ -3,7 +3,7 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/chatting_service.dart';
+import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
@@ -103,6 +103,7 @@ class ChatListItem extends StatelessWidget {
             : chat.enterRoom(context, data);
       },
       onLongPress: () {
+        //길게 눌렀을 때 나가기 메뉴
         showDialog(
           context: context,
           builder: (context) {
@@ -168,7 +169,7 @@ class ChatListItem extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(isGroup ? 0 : 15),
                     child: isGroup
                         ?
                         //단체 채팅방 사진
@@ -185,24 +186,25 @@ class ChatListItem extends StatelessWidget {
                                 maxLines: 2,
                                 children: [
                                   for (var info in infoList)
-                                    //if (info[0] != userData.name)
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(5),
-                                      child: CachedNetworkImage(
-                                        width: profileSize,
-                                        height: profileSize,
-                                        imageUrl: info[1],
-                                        errorWidget: (context, url, error) {
-                                          return Image.asset(
-                                              "assets/images/default_image.png");
-                                        },
-                                        placeholder: (context, url) {
-                                          return Image.asset(
-                                              "assets/images/default_image.png");
-                                        },
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
+                                    //나 제외 참여자 최대 4명까지 이미지 출력
+                                    if (info[0] != userData.name)
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: CachedNetworkImage(
+                                          width: profileSize,
+                                          height: profileSize,
+                                          imageUrl: info[1],
+                                          errorWidget: (context, url, error) {
+                                            return Image.asset(
+                                                "assets/images/default_image.png");
+                                          },
+                                          placeholder: (context, url) {
+                                            return Image.asset(
+                                                "assets/images/default_image.png");
+                                          },
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
                                 ],
                               ),
                             ))
