@@ -68,6 +68,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             onTap: (value) {
               currentIndex = value;
             },
+            overlayColor: const MaterialStatePropertyAll(Colors.transparent),
             isScrollable: false,
             indicatorColor: primaryColor,
             indicatorWeight: 4,

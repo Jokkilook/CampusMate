@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
@@ -28,7 +27,7 @@ class ChattingService {
     return roomId;
   }
 
-  //단체채팅방 ID 생성
+  //그룹 채팅방 ID 생성
   String makeGroupRoomId(String ownerUID) {
     String roomId =
         [ownerUID, Timestamp.now().millisecondsSinceEpoch].join("_");
@@ -131,7 +130,7 @@ class ChattingService {
         ));
   }
 
-  //단체 채팅방 생성
+  //그룹 채팅방 생성
   Future createGroupRoom(
       {BuildContext? context,
       String? roomName,
@@ -166,7 +165,7 @@ class ChattingService {
     enterGroupRoom(context, roomData);
   }
 
-  //단체 채팅방 입장
+  //그룹 채팅방 입장
   void enterGroupRoom(BuildContext context, GroupChatRoomData data) async {
     UserData userData = context.read<UserDataProvider>().userData;
 
@@ -318,70 +317,91 @@ class ChattingService {
   }
 
   //그룹 채팅방 나가기
-  void leaveGroupChatRoom({
-    BuildContext? context,
-    required UserData userData,
-    required String roomId,
-  }) async {
+  void leaveGroupChatRoom(
+      {BuildContext? context,
+      required UserData userData,
+      required String roomId,
+      bool onList = false}) async {
     //파이어스토어에서 채팅방 데이터 불러오기
     var roomRef = firestore
         .collection("schools/${userData.school}/groupChats")
         .doc(roomId);
-
-    //방 나간 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
-    sendMessage(
-      isGroup: true,
-      userData: userData,
-      roomId: roomId,
-      data: MessageData(
-          type: MessageType.notice,
-          senderUID: userData.uid,
-          content: "left",
-          readers: [],
-          time: Timestamp.now()),
-    );
-
-    //채팅방 참여자 목록에서 UID 제거하고 조건에 따라 파이어베이스에 업데이트
     //그룹채팅방 데이터 반환
     DocumentSnapshot<Map<String, dynamic>> data = await roomRef.get();
     GroupChatRoomData roomData =
         GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
-    //참여자 리스트 반환
-    List participantsList = roomData.participantsUid ?? [];
-    //참여자 리스트에서 UID 삭제
-    participantsList.remove(userData.uid);
 
-    //참여자 유저 정보 map에서 삭제
-    roomData.participantsInfo?.remove(userData.uid);
-    firestore
-        .collection("schools/${userData.school}/groupChats")
-        .doc(roomId)
-        .update({"participantsInfo": roomData.participantsInfo});
+    //방장이 나가는 경우 context가 있을 시 다이얼로그 보여주고 방 삭제
+    if (roomData.creatorUid == userData.uid) {
+      if (context != null) {
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              actionsPadding: const EdgeInsets.symmetric(horizontal: 10),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      onList ? null : Navigator.pop(context);
+                      Navigator.pop(_);
+                      deleteChatRoom(
+                          userData: userData, roomId: roomId, isGroup: true);
+                    },
+                    child: const Text("확인")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(_);
+                    },
+                    child: const Text("취소")),
+              ],
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              content: const Text("방장으로 있는 채팅방을 나가면 모든 참여자를 내보내고 채팅방을 삭제합니다."),
+            );
+          },
+        );
+      } else {
+        deleteChatRoom(userData: userData, roomId: roomId, isGroup: true);
+      }
+    } else {
+      //방 나간 정보 기록 (메세지에 기록해서 채팅방에 뜨도록)
+      sendMessage(
+        isGroup: true,
+        userData: userData,
+        roomId: roomId,
+        data: MessageData(
+            type: MessageType.notice,
+            senderUID: userData.uid,
+            content: "left",
+            readers: [],
+            time: Timestamp.now()),
+      );
 
-    //남아있는 참여자가 없으면 채팅방 화면 나간 후 방 데이터 삭제
-    if (participantsList.isEmpty) {
+      //채팅방 참여자 목록에서 UID 제거하고 조건에 따라 파이어베이스에 업데이트
+
+      //참여자 리스트 반환
+      List participantsList = roomData.participantsUid ?? [];
+
+      //참여자 리스트에서 UID 삭제
+      participantsList.remove(userData.uid);
+
+      //파이어베이스 참여자 리스트 업데이트
+      firestore
+          .collection("schools/${userData.school}/groupChats")
+          .doc(roomId)
+          .update({"participantsUid": participantsList});
+
+      //참여자 유저 정보 map에서 삭제
+      roomData.participantsInfo?.remove(userData.uid);
+      firestore
+          .collection("schools/${userData.school}/groupChats")
+          .doc(roomId)
+          .update({"participantsInfo": roomData.participantsInfo});
+
       //context가 입력되면 화면 나가기
       if (context != null) {
         Navigator.pop(context);
       }
-      deleteChatRoom(userData: userData, roomId: roomId, isGroup: true);
-    }
-    //남아있으면 방장이 나가는 경우 랜덤으로 다른 사람에게 방장을 넘기고 나가기 아니면 그냥 나가기
-    else {
-      //방장 넘기고 방장 데이터 파이어베이스 업데이트
-      if (roomData.creatorUid == userData.uid) {
-        roomRef.update({
-          "creatorUid":
-              participantsList[Random().nextInt(participantsList.length)]
-        });
-      }
-
-      //참여자 데이터 파이어베이스 업데이트
-      roomRef.update({"participantsUid": participantsList}).whenComplete(() {
-        if (context != null) {
-          Navigator.pop(context);
-        }
-      });
     }
   }
 

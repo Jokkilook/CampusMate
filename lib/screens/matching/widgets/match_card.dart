@@ -266,7 +266,7 @@ class _MatchCardState extends State<MatchCard> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => StrangerProfilScreen(uid: doc.uid!),
-                  ));
+                  )).then((value) => value ? setState(() {}) : null);
             },
             child: Container(
               clipBehavior: Clip.hardEdge,

@@ -33,7 +33,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
             padding: const EdgeInsets.all(15),
             margin: const EdgeInsets.all(15),
             child: Text(
-              "1. 계정을 삭제하면 복구할 수 없습니다.\n2. 계정을 삭제해도 게시한 게시글, 댓글 등은 삭제되지 않습니다.\n3. ${userData.name} 님이 생성한 단체 채팅방은 자동으로 삭제되고 참여하고 계신 모든 채팅방에서 퇴장합니다.\n4. 채팅방에 보내신 메세지는 삭제되지 않습니다.\n5. 탈퇴 후 30일 동안 같은 이메일로 재가입 할 수 없습니다.",
+              "1. 계정을 삭제하면 복구할 수 없습니다.\n2. 계정을 삭제해도 게시한 게시글, 댓글 등은 삭제되지 않습니다.\n3. 참여 중인 모든 채팅방에서 퇴장합니다.\n4. ${userData.name} 님이 생성한 그룹 채팅방은 모든 참여자를 내보내고 삭제합니다. \n5. 채팅방에 보낸 메세지는 삭제되지 않습니다.\n6. 탈퇴 후 30일 동안 같은 이메일로 재가입 할 수 없습니다.",
               style: const TextStyle(fontSize: 18),
             ),
           ),

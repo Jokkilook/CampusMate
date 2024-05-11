@@ -3,6 +3,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/matching/widgets/match_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,16 +25,17 @@ class _MatchingScreenState extends State<MatchingScreen> {
         title: Text(userData.school!),
         actions: [
           IconButton(
-              onPressed: () async {
-                var pref = await SharedPreferences.getInstance();
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    return FilterDialog(pref: pref);
-                  },
-                ).whenComplete(() => setState(() {}));
-              },
-              icon: const Icon(Icons.tune))
+            onPressed: () async {
+              var pref = await SharedPreferences.getInstance();
+              showDialog(
+                context: context,
+                builder: (_) {
+                  return FilterDialog(pref: pref);
+                },
+              ).then((value) => value ? null : setState(() {}));
+            },
+            icon: const Icon(Icons.tune),
+          )
         ],
       ),
       body: Padding(
@@ -65,6 +67,7 @@ class _FilterDialogState extends State<FilterDialog> {
   late bool containMBTI;
   late bool containSchedule;
   bool showWarning = false;
+  List<bool> initSetting = [];
 
   @override
   void initState() {
@@ -79,6 +82,8 @@ class _FilterDialogState extends State<FilterDialog> {
     widget.pref.getBool("containSchedule") ?? true
         ? containSchedule = true
         : containSchedule = false;
+
+    initSetting = [containTags, containMBTI, containSchedule];
   }
 
   void showWaring() async {
@@ -107,6 +112,11 @@ class _FilterDialogState extends State<FilterDialog> {
 
     return PopScope(
       onPopInvoked: (didPop) {
+        if (const ListEquality()
+            .equals(initSetting, [containTags, containMBTI, containSchedule])) {
+          return;
+        }
+
         setConditions();
       },
       child: Dialog(
@@ -198,7 +208,12 @@ class _FilterDialogState extends State<FilterDialog> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      bool result = false;
+                      if (const ListEquality().equals(initSetting,
+                          [containTags, containMBTI, containSchedule])) {
+                        result = true;
+                      }
+                      Navigator.pop(context, result);
                     },
                     child: const Text("확인"))
               ],

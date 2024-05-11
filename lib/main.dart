@@ -121,12 +121,14 @@ class MyApp extends StatelessWidget {
         ),
         appBarTheme: AppBarTheme(
             scrolledUnderElevation: 0,
-            color: Colors.white,
-            shape: Border(bottom: BorderSide(color: Colors.grey[400]!))),
+            color: AppColors.lightAppbar,
+            surfaceTintColor: Colors.transparent,
+            shape:
+                Border(bottom: BorderSide(width: 1, color: Colors.grey[400]!))),
         cardTheme: const CardTheme(color: Colors.white),
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: AppColors.lightBackground,
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.lightBottomNavBar,
         ),
         badgeTheme: const BadgeThemeData(
           backgroundColor: Color.fromARGB(255, 230, 50, 50),
@@ -145,10 +147,11 @@ class MyApp extends StatelessWidget {
           scrimColor: Colors.black.withOpacity(0.4),
         ),
         appBarTheme: AppBarTheme(
-            elevation: 0,
             scrolledUnderElevation: 0,
             color: AppColors.darkAppbar,
-            shape: Border(bottom: BorderSide(color: Colors.grey[800]!))),
+            surfaceTintColor: Colors.transparent,
+            shape:
+                Border(bottom: BorderSide(width: 1, color: Colors.grey[800]!))),
         cardTheme: CardTheme(color: AppColors.darkCard),
         cardColor: Colors.grey[700],
         canvasColor: Colors.grey[600],

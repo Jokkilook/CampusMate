@@ -15,14 +15,14 @@ import 'package:provider/provider.dart';
 class ChatListItem extends StatelessWidget {
   ChatListItem(
       {super.key,
-      required this.data,
-      this.groupData,
+      required this.roomData,
+      this.groupRoomData,
       this.isGroup = false,
       this.unreadCount = 0,
       this.isDark = false});
 
-  final ChatRoomData data;
-  final GroupChatRoomData? groupData;
+  final ChatRoomData roomData;
+  final GroupChatRoomData? groupRoomData;
   final bool isGroup;
   final ChattingService chat = ChattingService();
   int unreadCount;
@@ -58,7 +58,7 @@ class ChatListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //마지막 메세지가 없는 (채팅 내용이 없는) 채팅방은 표시 안함
-    if (data.lastMessageTime == null) {
+    if (roomData.lastMessageTime == null) {
       return Container();
     }
 
@@ -70,7 +70,7 @@ class ChatListItem extends StatelessWidget {
     List<List<String>> infoList = [];
 
     List<String> list;
-    data.participantsInfo!.forEach((key, value) {
+    roomData.participantsInfo!.forEach((key, value) {
       //닉네임, 이미지URL 순으로 정렬
       value.sort(
         (a, b) => a.length.compareTo(b.length),
@@ -89,8 +89,9 @@ class ChatListItem extends StatelessWidget {
       });
     }
 
-    int userCount = data.participantsUid?.length ?? 0;
+    int userCount = roomData.participantsUid?.length ?? 0;
     double profileSize = 60;
+    print(userCount);
 
     if (userCount - 1 >= 2) {
       profileSize = 28;
@@ -99,8 +100,8 @@ class ChatListItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         isGroup
-            ? chat.enterGroupRoom(context, groupData!)
-            : chat.enterRoom(context, data);
+            ? chat.enterGroupRoom(context, groupRoomData!)
+            : chat.enterRoom(context, roomData);
       },
       onLongPress: () {
         //길게 눌렀을 때 나가기 메뉴
@@ -121,22 +122,25 @@ class ChatListItem extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(15),
                         child: Text(
-                          isGroup ? data.roomName ?? "" : name,
+                          isGroup ? roomData.roomName ?? "" : name,
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      //const Divider(height: 0),
                       InkWell(
                         onTap: () {
                           if (isGroup) {
                             chat.leaveGroupChatRoom(
-                                userData: userData, roomId: data.roomId ?? "");
+                                onList: true,
+                                context: context,
+                                userData: userData,
+                                roomId: roomData.roomId ?? "");
                           } else {
                             chat.leaveOTOChatRoom(
-                                userData: userData, roomId: data.roomId ?? "");
+                                userData: userData,
+                                roomId: roomData.roomId ?? "");
                           }
                           Navigator.pop(context);
                         },
@@ -175,39 +179,58 @@ class ChatListItem extends StatelessWidget {
                         //단체 채팅방 사진
                         Container(
                             padding: const EdgeInsets.all(1),
-                            //color: Colors.grey,
                             width: 60,
                             height: 60,
-                            child: Center(
-                              child: ExtendedWrap(
-                                alignment: WrapAlignment.center,
-                                spacing: 2,
-                                runSpacing: 2,
-                                maxLines: 2,
-                                children: [
-                                  for (var info in infoList)
-                                    //나 제외 참여자 최대 4명까지 이미지 출력
-                                    if (info[0] != userData.name)
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: CachedNetworkImage(
-                                          width: profileSize,
-                                          height: profileSize,
-                                          imageUrl: info[1],
-                                          errorWidget: (context, url, error) {
-                                            return Image.asset(
-                                                "assets/images/default_image.png");
-                                          },
-                                          placeholder: (context, url) {
-                                            return Image.asset(
-                                                "assets/images/default_image.png");
-                                          },
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                ],
-                              ),
-                            ))
+                            child: ((userCount <= 2)
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      width: 60,
+                                      height: 60,
+                                      imageUrl: userData.imageUrl ?? "",
+                                      errorWidget: (context, url, error) {
+                                        return Image.asset(
+                                            "assets/images/default_image.png");
+                                      },
+                                      placeholder: (context, url) {
+                                        return Image.asset(
+                                            "assets/images/default_image.png");
+                                      },
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Center(
+                                    child: ExtendedWrap(
+                                      alignment: WrapAlignment.center,
+                                      spacing: 2,
+                                      runSpacing: 2,
+                                      maxLines: 2,
+                                      children: [
+                                        for (var info in infoList)
+                                          //나 제외 참여자 최대 4명까지 이미지 출력
+                                          if (info[0] != userData.name)
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              child: CachedNetworkImage(
+                                                width: profileSize,
+                                                height: profileSize,
+                                                imageUrl: info[1],
+                                                errorWidget:
+                                                    (context, url, error) {
+                                                  return Image.asset(
+                                                      "assets/images/default_image.png");
+                                                },
+                                                placeholder: (context, url) {
+                                                  return Image.asset(
+                                                      "assets/images/default_image.png");
+                                                },
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                      ],
+                                    ),
+                                  )))
                         :
                         //1:1 채팅방 사진
                         CachedNetworkImage(
@@ -245,7 +268,7 @@ class ChatListItem extends StatelessWidget {
                         Flexible(
                           flex: 8,
                           child: Text(
-                            !isGroup ? name : data.roomName!,
+                            !isGroup ? name : roomData.roomName!,
                             style: TextStyle(
                                 fontSize: 17,
                                 color: isDark
@@ -279,7 +302,7 @@ class ChatListItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      data.lastMessage!,
+                      roomData.lastMessage!,
                       style: TextStyle(
                           fontSize: 14,
                           color: isDark
@@ -296,7 +319,7 @@ class ChatListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    timeStampToHourMinutes(data.lastMessageTime!),
+                    timeStampToHourMinutes(roomData.lastMessageTime!),
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,

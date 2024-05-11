@@ -13,9 +13,11 @@ import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
 class RegistScreenC extends StatefulWidget {
-  const RegistScreenC({super.key, required this.newUserData});
+  RegistScreenC({super.key, required this.newUserData});
 
   final UserData newUserData;
+  bool pwObsecure = true;
+  bool chObsecure = true;
 
   @override
   State<RegistScreenC> createState() => _RegistScreenCState();
@@ -159,12 +161,64 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                     : AppColors.lightHeadText,
                               )),
                           const SizedBox(height: 5),
-                          InputTextField(
-                              obscrueSee: true,
-                              obscureText: true,
-                              hintText: "사용할 비밀번호를 입력하세요.",
-                              isDark: isDark,
-                              controller: pwController),
+                          TextField(
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            obscureText: widget.pwObsecure,
+                            controller: pwController,
+                            onTapOutside: (event) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                                suffixIcon: (pwController.value.text != "")
+                                    ? IconButton(
+                                        onPressed: () {
+                                          widget.pwObsecure =
+                                              !widget.pwObsecure;
+                                          setState(() {});
+                                        },
+                                        icon: Icon(
+                                          widget.pwObsecure
+                                              ? Icons.remove_red_eye
+                                              : Icons.remove_red_eye_outlined,
+                                          color: isDark
+                                              ? AppColors.darkHint
+                                              : AppColors.lightHint,
+                                        ),
+                                      )
+                                    : const SizedBox(
+                                        height: 1,
+                                        width: 1,
+                                      ),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: isDark
+                                          ? AppColors.darkLine
+                                          : AppColors.lightLine,
+                                      width: 1.5,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: isDark
+                                          ? AppColors.darkLine
+                                          : AppColors.lightLine,
+                                      width: 1.5,
+                                    )),
+                                filled: true,
+                                fillColor: isDark
+                                    ? AppColors.darkInput
+                                    : AppColors.lightInput,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                hintText: "사용할 비밀번호를 입력하세요.",
+                                hintStyle: const TextStyle(fontSize: 14),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10)),
+                          ),
                           const SizedBox(height: 10),
                           Text("   비밀번호 확인",
                               style: TextStyle(
@@ -175,14 +229,75 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                     : AppColors.lightHeadText,
                               )),
                           const SizedBox(height: 5),
-                          InputTextField(
-                              hintText: "사용할 비밀번호를 다시 한번 입력하세요.",
-                              isDark: isDark,
-                              checkWithOther: true,
-                              checkongController: pwController,
-                              obscrueSee: true,
-                              obscureText: true,
-                              controller: pwConfirmController),
+                          TextField(
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            obscureText: widget.chObsecure,
+                            controller: pwConfirmController,
+                            onTapOutside: (event) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                                suffixIcon: (pwConfirmController.value.text !=
+                                        "")
+                                    ? IconButton(
+                                        onPressed: () {
+                                          widget.chObsecure =
+                                              !widget.chObsecure;
+                                          setState(() {});
+                                        },
+                                        icon: Icon(
+                                          widget.chObsecure
+                                              ? Icons.remove_red_eye
+                                              : Icons.remove_red_eye_outlined,
+                                          color: isDark
+                                              ? AppColors.darkHint
+                                              : AppColors.lightHint,
+                                        ),
+                                      )
+                                    : const SizedBox(
+                                        height: 1,
+                                        width: 1,
+                                      ),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: (pwController.value.text !=
+                                                  pwConfirmController
+                                                      .value.text &&
+                                              pwController.value.text != "")
+                                          ? AppColors.alertText
+                                          : isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
+                                      width: 1.5,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: (pwController.value.text !=
+                                                  pwConfirmController
+                                                      .value.text &&
+                                              pwController.value.text != "")
+                                          ? AppColors.alertText
+                                          : isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
+                                      width: 1.5,
+                                    )),
+                                filled: true,
+                                fillColor: isDark
+                                    ? AppColors.darkInput
+                                    : AppColors.lightInput,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                hintText: "사용할 비밀번호를 다시 한번 입력하세요.",
+                                hintStyle: const TextStyle(fontSize: 14),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 10)),
+                          ),
                           const SizedBox(height: 10),
                           Text("   닉네임",
                               style: TextStyle(
@@ -194,6 +309,9 @@ class _RegistScreenCState extends State<RegistScreenC> {
                               )),
                           const SizedBox(height: 5),
                           InputTextField(
+                              onChanged: () {
+                                setState(() {});
+                              },
                               maxLength: 20,
                               hintText: "사용할 닉네임을 입력하세요.",
                               isDark: isDark,

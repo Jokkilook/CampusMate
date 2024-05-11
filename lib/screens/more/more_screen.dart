@@ -1,11 +1,9 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/services/auth_service.dart';
-import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/more/my_info_screen.dart';
 import 'package:campusmate/screens/more/theme_setting_screen.dart';
 import 'package:campusmate/screens/screen_list.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class MoreScreen extends StatefulWidget {

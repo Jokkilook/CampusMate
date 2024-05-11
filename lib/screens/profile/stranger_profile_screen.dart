@@ -27,6 +27,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
   final ChattingService chat = ChattingService();
   final AuthService auth = AuthService();
   final ProfileService profile = ProfileService();
+  bool canBan = false;
   late String targetUID;
   late String name;
 
@@ -35,90 +36,98 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
     UserData currentUser = context.read<UserDataProvider>().userData;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('프로필'),
+        title: Text('${widget.uid == currentUser.uid ? "내 " : ""}프로필'),
         actions: [
-          IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    return Dialog(
-                      clipBehavior: Clip.hardEdge,
-                      shape: ContinuousRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      insetPadding: const EdgeInsets.all(20),
-                      child: SizedBox(
-                        width: MediaQuery.of(_).size.width * 0.8,
-                        child: IntrinsicHeight(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(15),
-                                child: Text(
-                                  "$name 님을 차단하시겠어요?",
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+          widget.uid == currentUser.uid
+              ? Container()
+              : IconButton(
+                  onPressed: () {
+                    canBan
+                        ? showDialog(
+                            context: context,
+                            builder: (_) {
+                              return Dialog(
+                                clipBehavior: Clip.hardEdge,
+                                shape: ContinuousRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                insetPadding: const EdgeInsets.all(20),
+                                child: SizedBox(
+                                  width: MediaQuery.of(_).size.width * 0.8,
+                                  child: IntrinsicHeight(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: Text(
+                                            "$name 님을 차단하시겠어요?",
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        //const Divider(height: 0),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: InkWell(
+                                                onTap: () async {
+                                                  profile.banUser(
+                                                      targetUID: targetUID,
+                                                      currentUser: currentUser);
+                                                  context
+                                                          .read<UserDataProvider>()
+                                                          .userData =
+                                                      await auth.getUserData(
+                                                          uid:
+                                                              currentUser.uid ??
+                                                                  "");
+
+                                                  Navigator.pop(_);
+                                                  Navigator.pop(context, true);
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(15),
+                                                  child: Text(
+                                                    "네",
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.pop(_);
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(15),
+                                                  child: Text(
+                                                    "아니요",
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              //const Divider(height: 0),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: InkWell(
-                                      onTap: () async {
-                                        profile.banUser(
-                                            targetUID: targetUID,
-                                            currentUser: currentUser);
-                                        context
-                                                .read<UserDataProvider>()
-                                                .userData =
-                                            await auth.getUserData(
-                                                uid: currentUser.uid ?? "");
-
-                                        Navigator.pop(_);
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(15),
-                                        child: Text(
-                                          "네",
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.pop(_);
-                                      },
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(15),
-                                        child: Text(
-                                          "아니요",
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
+                              );
+                            },
+                          )
+                        : null;
                   },
-                );
-              },
-              icon: const Icon(Icons.block))
+                  icon: const Icon(Icons.block))
         ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
@@ -194,6 +203,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                 ),
               );
             } else {
+              canBan = true;
               UserData strangerData = UserData.fromJson(data);
               targetUID = strangerData.uid ?? "";
               name = strangerData.name ?? "";

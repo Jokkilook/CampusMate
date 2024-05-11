@@ -2,6 +2,7 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/chatting/group_chat_room_generation_screen.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -70,89 +71,11 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
           borderRadius: BorderRadius.circular(100),
         ),
         onPressed: () async {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return Dialog(
-                shape: ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "그룹 채팅방 만들기",
-                        style: TextStyle(
-                            color: isDark
-                                ? AppColors.darkTitle
-                                : AppColors.lightTitle,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "방 이름",
-                            style: TextStyle(
-                                color: isDark
-                                    ? AppColors.darkHeadText
-                                    : AppColors.lightHeadText,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          TextField(
-                            onTapOutside: (event) {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            maxLength: 20,
-                            controller: titleController,
-                          ),
-                          Text(
-                            "방 설명",
-                            style: TextStyle(
-                                color: isDark
-                                    ? AppColors.darkHeadText
-                                    : AppColors.lightHeadText,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          TextField(
-                            onTapOutside: (event) {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            maxLength: 100,
-                            maxLines: 2,
-                            minLines: 1,
-                            controller: descController,
-                            keyboardType: TextInputType.multiline,
-                          ),
-                        ],
-                      ),
-                      TextButton(
-                          onPressed: () async {
-                            if (!widget.onCreating) {
-                              widget.onCreating = true;
-                              setState(() {});
-                              Navigator.pop(context);
-                              await ChattingService().createGroupRoom(
-                                  context: context,
-                                  roomName: titleController.value.text,
-                                  desc: descController.value.text,
-                                  limit: 30);
-                              widget.onCreating = false;
-                              setState(() {});
-                            }
-                          },
-                          child: const Text("방 만들기"))
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const GroupChatRoomGenerationScreen(),
+              ));
         },
       ),
       body: DefaultTabController(
@@ -163,6 +86,8 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             SizedBox(
               width: double.infinity,
               child: TabBar(
+                overlayColor:
+                    const MaterialStatePropertyAll(Colors.transparent),
                 labelColor: isDark ? AppColors.darkTitle : AppColors.lightTitle,
                 indicatorColor: Colors.transparent,
                 splashFactory: NoSplash.splashFactory,
@@ -276,7 +201,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                   isDark: isDark,
                                   unreadCount: count,
                                   isGroup: false,
-                                  data: ChatRoomData.fromJson(rooms[index]
+                                  roomData: ChatRoomData.fromJson(rooms[index]
                                       .data() as Map<String, dynamic>),
                                 );
                               },
@@ -364,10 +289,10 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                                   isDark: isDark,
                                   unreadCount: count,
                                   isGroup: true,
-                                  groupData: GroupChatRoomData.fromJson(
+                                  groupRoomData: GroupChatRoomData.fromJson(
                                       rooms[index].data()
                                           as Map<String, dynamic>),
-                                  data: ChatRoomData.fromJson(rooms[index]
+                                  roomData: ChatRoomData.fromJson(rooms[index]
                                       .data() as Map<String, dynamic>),
                                 );
                               },

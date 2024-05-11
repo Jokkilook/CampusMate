@@ -81,9 +81,12 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: Container(
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-              border: Border(
-                  top: BorderSide(
-                      color: isDark ? Colors.grey[800]! : Colors.grey[400]!))),
+            border: Border(
+              top: BorderSide(
+                  width: 1,
+                  color: isDark ? Colors.grey[800]! : Colors.grey[400]!),
+            ),
+          ),
           height: 70,
           child: BottomNavigationBar(
             selectedItemColor: Colors.green,
@@ -94,7 +97,6 @@ class _MainScreenState extends State<MainScreen> {
               index = value;
               setState(() {});
             },
-            elevation: 10,
             items: const [
               BottomNavigationBarItem(
                   icon: Icon(Icons.search_outlined), label: "친구찾기"),

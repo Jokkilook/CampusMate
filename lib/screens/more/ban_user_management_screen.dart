@@ -21,6 +21,7 @@ class _BanUserManagementScreenState extends State<BanUserManagementScreen> {
     UserData userData = context.read<UserDataProvider>().userData;
     AuthService auth = AuthService();
     ProfileService profile = ProfileService();
+    UserData? targetData;
 
     return Scaffold(
       appBar: AppBar(
@@ -53,11 +54,11 @@ class _BanUserManagementScreenState extends State<BanUserManagementScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(15),
+                                  Padding(
+                                    padding: const EdgeInsets.all(15),
                                     child: Text(
-                                      "유저 이름",
-                                      style: TextStyle(
+                                      targetData?.name ?? "알 수 없음",
+                                      style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -115,9 +116,9 @@ class _BanUserManagementScreenState extends State<BanUserManagementScreen> {
                         );
                       }
                       var data = snapshot.data;
-                      UserData targetData = UserData.fromJson(
+                      targetData = UserData.fromJson(
                           data?.data() as Map<String, dynamic>);
-                      return Text(targetData.name ?? "알 수 없음");
+                      return Text(targetData?.name ?? "알 수 없음");
                     },
                   ),
                 );

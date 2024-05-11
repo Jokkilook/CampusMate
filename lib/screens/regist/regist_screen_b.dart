@@ -346,8 +346,8 @@ class _RegistScreenBState extends State<RegistScreenB> {
       ),
       bottomNavigationBar: BottomButton(
         text: "다음",
-        isCompleted: true,
-        onPressed: true
+        isCompleted: isCompleted,
+        onPressed: isCompleted
             ? () {
                 /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
                 widget.newUserData.email = widget.emailController.value.text;
