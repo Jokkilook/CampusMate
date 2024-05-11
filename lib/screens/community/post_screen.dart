@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,8 @@ class _PostScreenState extends State<PostScreen> {
   bool _isLoading = false;
   bool _userAlreadyViewed = false;
   late TextEditingController _commentController;
+  bool _isReplying = false;
+  String? _selectedCommentId;
 
   @override
   void initState() {
@@ -179,11 +182,13 @@ class _PostScreenState extends State<PostScreen> {
         widget.postData =
             PostData.fromJson(postSnapshot.data() as Map<String, dynamic>);
         _isLoading = false;
+        _isReplying = false;
       });
     } catch (error) {
       debugPrint('데이터 가져오기 에러: $error');
       setState(() {
         _isLoading = false;
+        _isReplying = false;
       });
     }
   }
@@ -263,6 +268,13 @@ class _PostScreenState extends State<PostScreen> {
                     postCommentData: comments[index],
                     school: widget.school,
                     firestore: FirebaseFirestore.instance,
+                    onReplyPressed: (commentId) {
+                      setState(() {
+                        // 선택된 댓글의 내용을 저장하고 댓글 입력 창을 업데이트
+                        _selectedCommentId = commentId;
+                        _isReplying = true;
+                      });
+                    },
                   );
                 },
               ),
@@ -458,7 +470,7 @@ class _PostScreenState extends State<PostScreen> {
                   style: const TextStyle(fontSize: 12),
                   maxLines: null,
                   decoration: InputDecoration(
-                    hintText: '댓글을 입력하세요',
+                    hintText: _isReplying ? '답글을 입력하세요' : '댓글을 입력하세요',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -472,38 +484,80 @@ class _PostScreenState extends State<PostScreen> {
               // 작성 버튼
               TextButton(
                 onPressed: () async {
-                  String currentUserUid =
-                      context.read<UserDataProvider>().userData.uid ?? '';
-                  String commentContent = _commentController.text.trim();
-                  if (commentContent.isNotEmpty) {
-                    PostCommentData newComment = PostCommentData(
-                      postId: widget.postData.postId,
-                      content: commentContent,
-                      timestamp: Timestamp.now(),
-                      authorUid: currentUserUid,
-                      boardType: widget.postData.boardType,
-                    );
+                  if (_isReplying) {
+                    // 답글 작성 중
+                    if (_selectedCommentId != null) {
+                      String currentUserUid =
+                          context.read<UserDataProvider>().userData.uid ?? '';
+                      String replyContent = _commentController.text.trim();
+                      if (replyContent.isNotEmpty) {
+                        PostReplyData newReply = PostReplyData(
+                          postId: widget.postData.postId,
+                          commentId: _selectedCommentId,
+                          content: replyContent,
+                          timestamp: Timestamp.now(),
+                          authorUid: currentUserUid,
+                          boardType: widget.postData.boardType,
+                        );
 
-                    try {
-                      // 댓글 Firestore에 추가
-                      DocumentReference docRef = await FirebaseFirestore
-                          .instance
-                          .collection("schools/${widget.school}/" +
-                              (widget.postData.boardType == 'General'
-                                  ? 'generalPosts'
-                                  : 'anonymousPosts'))
-                          .doc(widget.postData.postId)
-                          .collection('comments')
-                          .add(newComment.data!);
-                      await docRef.update({'commentId': docRef.id});
+                        try {
+                          // 답글 Firestore에 추가
+                          DocumentReference docRef = await FirebaseFirestore
+                              .instance
+                              .collection("schools/${widget.school}/" +
+                                  (widget.postData.boardType == 'General'
+                                      ? 'generalPosts'
+                                      : 'anonymousPosts'))
+                              .doc(widget.postData.postId)
+                              .collection('comments')
+                              .doc(_selectedCommentId)
+                              .collection('replies')
+                              .add(newReply.data!);
+                          await docRef.update({'replyId': docRef.id});
 
-                      // 텍스트 필드 내용 지우기
-                      _commentController.clear();
+                          // 텍스트 필드 내용 지우기
+                          _commentController.clear();
+                          _isReplying = false;
 
-                      // 화면 새로고침
-                      _refreshScreen();
-                    } catch (error) {
-                      debugPrint('Error adding comment: $error');
+                          // 화면 새로고침
+                          _refreshScreen();
+                        } catch (error) {
+                          debugPrint('Error adding reply: $error');
+                        }
+                      }
+                    }
+                  } else {
+                    // 댓글 작성 중
+                    String currentUserUid =
+                        context.read<UserDataProvider>().userData.uid ?? '';
+                    String commentContent = _commentController.text.trim();
+                    if (commentContent.isNotEmpty) {
+                      PostCommentData newComment = PostCommentData(
+                        postId: widget.postData.postId,
+                        content: commentContent,
+                        timestamp: Timestamp.now(),
+                        authorUid: currentUserUid,
+                        boardType: widget.postData.boardType,
+                      );
+
+                      try {
+                        DocumentReference docRef = await FirebaseFirestore
+                            .instance
+                            .collection("schools/${widget.school}/" +
+                                (widget.postData.boardType == 'General'
+                                    ? 'generalPosts'
+                                    : 'anonymousPosts'))
+                            .doc(widget.postData.postId)
+                            .collection('comments')
+                            .add(newComment.data!);
+                        await docRef.update({'commentId': docRef.id});
+
+                        _commentController.clear();
+
+                        _refreshScreen();
+                      } catch (error) {
+                        debugPrint('Error adding comment: $error');
+                      }
                     }
                   }
                 },

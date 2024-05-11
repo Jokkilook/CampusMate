@@ -5,26 +5,31 @@ import 'package:campusmate/screens/community/widgets/comment_reply_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../comment_screen.dart';
-
-class CommentItem extends StatelessWidget {
+class CommentItem extends StatefulWidget {
   final PostCommentData postCommentData;
   final FirebaseFirestore firestore;
   final String school;
+  final Function(String) onReplyPressed;
 
   const CommentItem({
     Key? key,
     required this.postCommentData,
     required this.firestore,
     required this.school,
+    required this.onReplyPressed,
   }) : super(key: key);
 
+  @override
+  State<CommentItem> createState() => _CommentItemState();
+}
+
+class _CommentItemState extends State<CommentItem> {
   // 닉네임 가져오기
   FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorName() {
     return FutureBuilder<DocumentSnapshot>(
-      future: firestore
-          .collection('schools/$school/users')
-          .doc(postCommentData.authorUid)
+      future: widget.firestore
+          .collection('schools/${widget.school}/users')
+          .doc(widget.postCommentData.authorUid)
           .get(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -43,7 +48,7 @@ class CommentItem extends StatelessWidget {
         String authorName = snapshot.data!['name'];
 
         return Text(
-          postCommentData.boardType == 'General' ? authorName : '익명',
+          widget.postCommentData.boardType == 'General' ? authorName : '익명',
           style: const TextStyle(
             fontSize: 12,
           ),
@@ -56,13 +61,13 @@ class CommentItem extends StatelessWidget {
   Widget _buildCommentReplies() {
     return FutureBuilder<QuerySnapshot>(
       future: FirebaseFirestore.instance
-          .collection("schools/$school/" +
-              (postCommentData.boardType == 'General'
+          .collection("schools/${widget.school}/" +
+              (widget.postCommentData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
-          .doc(postCommentData.postId)
+          .doc(widget.postCommentData.postId)
           .collection('comments')
-          .doc(postCommentData.commentId)
+          .doc(widget.postCommentData.commentId)
           .collection('replies')
           .orderBy('timestamp', descending: false)
           .get(),
@@ -83,8 +88,8 @@ class CommentItem extends StatelessWidget {
             children: replies.map((reply) {
               return CommentReplyItem(
                 postReplyData: reply,
-                firestore: firestore,
-                school: school,
+                firestore: widget.firestore,
+                school: widget.school,
               );
             }).toList(),
           );
@@ -96,133 +101,116 @@ class CommentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    String formattedTime = formatTimeStamp(postCommentData.timestamp!, now);
+    String formattedTime =
+        formatTimeStamp(widget.postCommentData.timestamp!, now);
 
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CommentScreen(
-              postCommentData: postCommentData,
+    return SizedBox(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const CircleAvatar(
+                radius: 18,
+              ),
+              const SizedBox(width: 10),
+              _buildAuthorName(),
+              const Spacer(),
+              // 답글 작성 버튼
+              IconButton(
+                onPressed: () {
+                  widget.onReplyPressed(
+                      widget.postCommentData.commentId.toString());
+                },
+                icon: const Icon(
+                  Icons.mode_comment_outlined,
+                  color: Colors.grey,
+                  size: 16,
+                ),
+              ),
+              // 삭제 or 신고 버튼
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.more_horiz,
+                  color: Colors.grey,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+          // 댓글 내용
+          Container(
+            padding: const EdgeInsets.only(left: 46, right: 10),
+            width: double.infinity,
+            child: Text(
+              widget.postCommentData.content.toString(),
             ),
           ),
-        );
-      },
-      child: SizedBox(
-        child: Column(
-          children: [
-            Row(
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.only(left: 46, right: 10),
+            child: Row(
               children: [
-                const CircleAvatar(
-                  radius: 18,
-                ),
-                const SizedBox(width: 10),
-                _buildAuthorName(),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.more_horiz,
-                    color: Colors.grey,
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-            // 댓글 내용
-            Container(
-              padding: const EdgeInsets.only(left: 46, right: 10),
-              width: double.infinity,
-              child: Text(
-                postCommentData.content.toString(),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.only(left: 46, right: 10),
-              child: Row(
-                children: [
-                  // 답글
-                  const Row(
+                // 좋아요
+                GestureDetector(
+                  onTap: () {
+                    debugPrint('눌림: 좋아요');
+                  },
+                  child: Row(
                     children: [
-                      Icon(
-                        Icons.mode_comment_outlined,
+                      const Icon(
+                        Icons.thumb_up_alt_outlined,
                         color: Colors.grey,
                         size: 16,
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
-                        '0',
-                        style: TextStyle(
+                        widget.postCommentData.likers!.length.toString(),
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(width: 14),
-                  // 좋아요
-                  GestureDetector(
-                    onTap: () {
-                      debugPrint('눌림: 좋아요');
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.thumb_up_alt_outlined,
+                ),
+                const SizedBox(width: 14),
+                // 싫어요
+                GestureDetector(
+                  onTap: () {
+                    debugPrint('눌림: 싫어요');
+                  },
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.thumb_down_alt_outlined,
+                        color: Colors.grey,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.postCommentData.dislikers!.length.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
                           color: Colors.grey,
-                          size: 16,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          postCommentData.likers!.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 14),
-                  // 싫어요
-                  GestureDetector(
-                    onTap: () {
-                      debugPrint('눌림: 싫어요');
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.thumb_down_alt_outlined,
-                          color: Colors.grey,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          postCommentData.dislikers!.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+                ),
+                const Spacer(),
+                Text(
+                  formattedTime,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
                   ),
-                  const Spacer(),
-                  Text(
-                    formattedTime,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            _buildCommentReplies(),
-          ],
-        ),
+          ),
+          _buildCommentReplies(),
+        ],
       ),
     );
   }

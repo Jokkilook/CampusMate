@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+//ignore: must_be_immutable
 class CommentReplyItem extends StatelessWidget {
   PostReplyData postReplyData;
   final FirebaseFirestore firestore;
@@ -79,11 +80,13 @@ class CommentReplyItem extends StatelessWidget {
           // 댓글 내용
           Container(
             padding: const EdgeInsets.only(left: 46, right: 10),
+            width: double.infinity,
             child: Text(
               postReplyData.content.toString(),
+              textAlign: TextAlign.start,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.only(left: 46, right: 10),
             child: Row(
@@ -102,7 +105,7 @@ class CommentReplyItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        postReplyData.likers.toString(),
+                        postReplyData.likers!.length.toString(),
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -126,7 +129,7 @@ class CommentReplyItem extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        postReplyData.dislikers.toString(),
+                        postReplyData.dislikers!.length.toString(),
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
