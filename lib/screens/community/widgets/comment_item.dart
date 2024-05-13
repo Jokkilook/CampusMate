@@ -1,9 +1,11 @@
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/screens/community/widgets/comment_reply_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CommentItem extends StatefulWidget {
   final PostCommentData postCommentData;
@@ -98,11 +100,85 @@ class _CommentItemState extends State<CommentItem> {
     );
   }
 
+  // 좋아요, 싫어요
+  Future<void> voteLikeDislike(bool isLike) async {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+    bool userLiked = widget.postCommentData.likers!.contains(currentUserUid);
+    bool userDisliked =
+        widget.postCommentData.dislikers!.contains(currentUserUid);
+
+    if (userLiked) {
+      // 이미 좋아요를 누른 경우
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('알림'),
+          content: const Text('이미 좋아요를 눌렀습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    } else if (userDisliked) {
+      // 이미 싫어요를 누른 경우
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('알림'),
+          content: const Text('이미 싫어요를 눌렀습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      if (isLike) {
+        await FirebaseFirestore.instance
+            .collection("schools/${widget.school}/" +
+                (widget.postCommentData.boardType == 'General'
+                    ? 'generalPosts'
+                    : 'anonymousPosts'))
+            .doc(widget.postCommentData.postId)
+            .update({
+          'likers': FieldValue.arrayUnion([currentUserUid]),
+        });
+        setState(() {
+          widget.postCommentData.likers!.add(currentUserUid);
+        });
+      }
+      if (!isLike) {
+        await FirebaseFirestore.instance
+            .collection("schools/${widget.school}/" +
+                (widget.postCommentData.boardType == 'General'
+                    ? 'generalPosts'
+                    : 'anonymousPosts'))
+            .doc(widget.postCommentData.postId)
+            .update({
+          'dislikers': FieldValue.arrayUnion([currentUserUid]),
+        });
+        setState(() {
+          widget.postCommentData.dislikers!.add(currentUserUid);
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedTime =
         formatTimeStamp(widget.postCommentData.timestamp!, now);
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+
+    bool userLiked = widget.postCommentData.likers!.contains(currentUserUid);
+    bool userDisliked =
+        widget.postCommentData.dislikers!.contains(currentUserUid);
 
     return SizedBox(
       child: Column(
@@ -154,14 +230,16 @@ class _CommentItemState extends State<CommentItem> {
                 // 좋아요
                 GestureDetector(
                   onTap: () {
-                    debugPrint('눌림: 좋아요');
+                    voteLikeDislike(true);
                   },
                   child: Row(
                     children: [
-                      const Icon(
-                        Icons.thumb_up_alt_outlined,
-                        color: Colors.grey,
+                      Icon(
+                        userLiked
+                            ? Icons.thumb_up
+                            : Icons.thumb_up_alt_outlined,
                         size: 16,
+                        color: Colors.grey,
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -178,14 +256,16 @@ class _CommentItemState extends State<CommentItem> {
                 // 싫어요
                 GestureDetector(
                   onTap: () {
-                    debugPrint('눌림: 싫어요');
+                    voteLikeDislike(false);
                   },
                   child: Row(
                     children: [
-                      const Icon(
-                        Icons.thumb_down_alt_outlined,
-                        color: Colors.grey,
+                      Icon(
+                        userDisliked
+                            ? Icons.thumb_down
+                            : Icons.thumb_down_outlined,
                         size: 16,
+                        color: Colors.grey,
                       ),
                       const SizedBox(width: 4),
                       Text(
