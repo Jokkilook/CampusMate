@@ -100,7 +100,7 @@ class AnonymousBoardItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          postData.likers!.length.toString(),
+                          postData.dislikers!.length.toString(),
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
