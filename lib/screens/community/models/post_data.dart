@@ -7,6 +7,7 @@ class PostData {
   Timestamp? timestamp;
   String? authorUid;
   String? postId;
+  int? commentCount;
   List<dynamic>? viewers;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
@@ -20,6 +21,7 @@ class PostData {
     this.timestamp,
     this.authorUid,
     this.postId,
+    this.commentCount,
     this.viewers = const [],
     this.likers = const [],
     this.dislikers = const [],
@@ -34,6 +36,7 @@ class PostData {
     timestamp = json['timestamp'];
     authorUid = json['authorUid'];
     postId = json['postId'];
+    commentCount = json['commentCount'] ?? 0;
     viewers = json['viewers'] ?? [];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
@@ -49,6 +52,7 @@ class PostData {
       'timestamp': timestamp,
       'authorUid': authorUid,
       'postId': postId,
+      'commentCount': commentCount,
       'viewers': viewers,
       'likers': likers,
       'dislikers': dislikers,

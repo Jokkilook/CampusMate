@@ -250,35 +250,24 @@ class _PostScreenState extends State<PostScreen> {
               .map((doc) =>
                   PostCommentData.fromJson(doc.data() as Map<String, dynamic>))
               .toList();
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '댓글 ${comments.length}',
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: comments.length,
-                itemBuilder: (context, index) {
-                  return CommentItem(
-                    postCommentData: comments[index],
-                    school: widget.school,
-                    firestore: FirebaseFirestore.instance,
-                    onReplyPressed: (commentId) {
-                      setState(() {
-                        // 선택된 댓글의 내용을 저장하고 댓글 입력 창을 업데이트
-                        _selectedCommentId = commentId;
-                        _isReplying = true;
-                      });
-                    },
-                  );
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: comments.length,
+            itemBuilder: (context, index) {
+              return CommentItem(
+                postCommentData: comments[index],
+                school: widget.school,
+                firestore: FirebaseFirestore.instance,
+                onReplyPressed: (commentId) {
+                  setState(() {
+                    // 선택된 댓글의 내용을 저장하고 댓글 입력 창을 업데이트
+                    _selectedCommentId = commentId;
+                    _isReplying = true;
+                  });
                 },
-              ),
-            ],
+              );
+            },
           );
         }
       },
@@ -449,6 +438,12 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
+                      Text(
+                        '댓글 ${widget.postData.commentCount}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
                       // 댓글
                       _buildComments(),
                     ],
@@ -515,6 +510,21 @@ class _PostScreenState extends State<PostScreen> {
                               .add(newReply.data!);
                           await docRef.update({'replyId': docRef.id});
 
+                          // 총 댓글 수 업데이트
+                          DocumentReference postDocRef = FirebaseFirestore
+                              .instance
+                              .collection("schools/${widget.school}/" +
+                                  (widget.postData.boardType == 'General'
+                                      ? 'generalPosts'
+                                      : 'anonymousPosts'))
+                              .doc(widget.postData.postId);
+                          DocumentSnapshot postDoc = await postDocRef.get();
+                          int currentCommentCount = (postDoc.data()
+                                  as Map<String, dynamic>)['commentCount'] ??
+                              0;
+                          await postDocRef.update(
+                              {'commentCount': currentCommentCount + 1});
+
                           // 텍스트 필드 내용 지우기
                           _commentController.clear();
                           _isReplying = false;
@@ -551,6 +561,21 @@ class _PostScreenState extends State<PostScreen> {
                             .collection('comments')
                             .add(newComment.data!);
                         await docRef.update({'commentId': docRef.id});
+
+                        // 총 댓글 수 업데이트
+                        DocumentReference postDocRef = FirebaseFirestore
+                            .instance
+                            .collection("schools/${widget.school}/" +
+                                (widget.postData.boardType == 'General'
+                                    ? 'generalPosts'
+                                    : 'anonymousPosts'))
+                            .doc(widget.postData.postId);
+                        DocumentSnapshot postDoc = await postDocRef.get();
+                        int currentCommentCount = (postDoc.data()
+                                as Map<String, dynamic>)['commentCount'] ??
+                            0;
+                        await postDocRef
+                            .update({'commentCount': currentCommentCount + 1});
 
                         _commentController.clear();
 

@@ -67,6 +67,7 @@ class CommentReplyItem extends StatelessWidget {
               const SizedBox(width: 10),
               _buildAuthorName(),
               const Spacer(),
+              // 삭제 or 신고 버튼
               IconButton(
                 onPressed: () {},
                 icon: const Icon(
