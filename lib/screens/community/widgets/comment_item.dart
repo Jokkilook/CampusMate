@@ -145,6 +145,8 @@ class _CommentItemState extends State<CommentItem> {
                     ? 'generalPosts'
                     : 'anonymousPosts'))
             .doc(widget.postCommentData.postId)
+            .collection('comments')
+            .doc(widget.postCommentData.commentId)
             .update({
           'likers': FieldValue.arrayUnion([currentUserUid]),
         });
@@ -159,6 +161,8 @@ class _CommentItemState extends State<CommentItem> {
                     ? 'generalPosts'
                     : 'anonymousPosts'))
             .doc(widget.postCommentData.postId)
+            .collection('comments')
+            .doc(widget.postCommentData.commentId)
             .update({
           'dislikers': FieldValue.arrayUnion([currentUserUid]),
         });
@@ -166,6 +170,45 @@ class _CommentItemState extends State<CommentItem> {
           widget.postCommentData.dislikers!.add(currentUserUid);
         });
       }
+    }
+  }
+
+  void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+            message,
+            style: const TextStyle(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _deleteComment(context);
+              },
+              child: const Text("확인"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteComment(BuildContext context) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("schools/${widget.school}/" +
+              (widget.postCommentData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
+          .doc(widget.postCommentData.postId)
+          .delete();
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pop(context);
+    } catch (e) {
+      debugPrint('삭제 실패: $e');
     }
   }
 
