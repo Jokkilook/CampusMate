@@ -11,11 +11,13 @@ class CommentReplyItem extends StatefulWidget {
   PostReplyData postReplyData;
   final FirebaseFirestore firestore;
   final String school;
+  final VoidCallback refreshCallback;
 
   CommentReplyItem({
     required this.postReplyData,
     required this.firestore,
     required this.school,
+    required this.refreshCallback,
     super.key,
   });
 
@@ -134,6 +136,91 @@ class _CommentReplyItemState extends State<CommentReplyItem> {
     }
   }
 
+  // 삭제 or 신고
+  void _showAlertDialog(BuildContext context) {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+    String authorUid = widget.postReplyData.authorUid.toString();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+            currentUserUid == authorUid ? '정말 삭제하시겠습니까?' : '정말 신고하시겠습니까?',
+            style: const TextStyle(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "취소",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                currentUserUid == authorUid
+                    ? _deleteReply(context)
+                    : Navigator.pop(context);
+              },
+              child: const Text("확인"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteReply(BuildContext context) async {
+    try {
+      // Firestore batch 초기화
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      // 댓글 컬렉션 참조
+      CollectionReference commentsCollection = FirebaseFirestore.instance
+          .collection("schools/${widget.school}/" +
+              (widget.postReplyData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
+          .doc(widget.postReplyData.postId)
+          .collection('comments');
+
+      // 답글 문서 참조
+      DocumentReference replyDocRef = commentsCollection
+          .doc(widget.postReplyData.commentId)
+          .collection('replies')
+          .doc(widget.postReplyData.replyId);
+
+      // 답글 삭제를 배치에 추가
+      batch.delete(replyDocRef);
+
+      // 게시글의 commentCount 감소를 배치에 추가
+      DocumentReference postDocRef = FirebaseFirestore.instance
+          .collection("schools/${widget.school}/" +
+              (widget.postReplyData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
+          .doc(widget.postReplyData.postId);
+
+      batch.update(postDocRef, {
+        'commentCount': FieldValue.increment(-1),
+      });
+
+      // 배치 커밋
+      await batch.commit();
+
+      // 다이얼로그 닫기
+      Navigator.pop(context);
+
+      // 화면 새로 고침 콜백 호출
+      widget.refreshCallback();
+    } catch (e) {
+      debugPrint('삭제 실패: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
@@ -159,7 +246,9 @@ class _CommentReplyItemState extends State<CommentReplyItem> {
               const Spacer(),
               // 삭제 or 신고 버튼
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  _showAlertDialog(context);
+                },
                 icon: const Icon(
                   Icons.more_horiz,
                   color: Colors.grey,

@@ -12,6 +12,7 @@ class CommentItem extends StatefulWidget {
   final FirebaseFirestore firestore;
   final String school;
   final Function(String) onReplyPressed;
+  final VoidCallback refreshCallback;
 
   const CommentItem({
     Key? key,
@@ -19,6 +20,7 @@ class CommentItem extends StatefulWidget {
     required this.firestore,
     required this.school,
     required this.onReplyPressed,
+    required this.refreshCallback,
   }) : super(key: key);
 
   @override
@@ -92,6 +94,7 @@ class _CommentItemState extends State<CommentItem> {
                 postReplyData: reply,
                 firestore: widget.firestore,
                 school: widget.school,
+                refreshCallback: widget.refreshCallback,
               );
             }).toList(),
           );
@@ -173,19 +176,34 @@ class _CommentItemState extends State<CommentItem> {
     }
   }
 
-  void _showAlertDialog(BuildContext context, String message) {
+  // 삭제 or 신고
+  void _showAlertDialog(BuildContext context) {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+    String authorUid = widget.postCommentData.authorUid.toString();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           content: Text(
-            message,
+            currentUserUid == authorUid ? '정말 삭제하시겠습니까?' : '정말 신고하시겠습니까?',
             style: const TextStyle(fontSize: 14),
           ),
           actions: [
             TextButton(
               onPressed: () {
-                _deleteComment(context);
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "취소",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                currentUserUid == authorUid
+                    ? _deleteComment(context)
+                    : Navigator.pop(context);
               },
               child: const Text("확인"),
             ),
@@ -197,16 +215,53 @@ class _CommentItemState extends State<CommentItem> {
 
   Future<void> _deleteComment(BuildContext context) async {
     try {
-      await FirebaseFirestore.instance
+      // 댓글의 하위 답글 가져오기
+      QuerySnapshot replySnapshot = await FirebaseFirestore.instance
           .collection("schools/${widget.school}/" +
               (widget.postCommentData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
           .doc(widget.postCommentData.postId)
-          .delete();
+          .collection('comments')
+          .doc(widget.postCommentData.commentId)
+          .collection('replies')
+          .get();
+
+      // 댓글과 답글 삭제
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.delete(FirebaseFirestore.instance
+          .collection("schools/${widget.school}/" +
+              (widget.postCommentData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
+          .doc(widget.postCommentData.postId)
+          .collection('comments')
+          .doc(widget.postCommentData.commentId));
+
+      for (var doc in replySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // commentCount 업데이트
+      int repliesCount = replySnapshot.docs.length;
+      DocumentReference postRef = FirebaseFirestore.instance
+          .collection("schools/${widget.school}/" +
+              (widget.postCommentData.boardType == 'General'
+                  ? 'generalPosts'
+                  : 'anonymousPosts'))
+          .doc(widget.postCommentData.postId);
+
+      batch.update(postRef, {
+        'commentCount': FieldValue.increment(-(1 + repliesCount)),
+      });
+
+      await batch.commit();
+
+      // 다이얼로그 닫기
       Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.pop(context);
+
+      // 화면 새로 고침 콜백 호출
+      widget.refreshCallback();
     } catch (e) {
       debugPrint('삭제 실패: $e');
     }
@@ -248,7 +303,9 @@ class _CommentItemState extends State<CommentItem> {
               ),
               // 삭제 or 신고 버튼
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  _showAlertDialog(context);
+                },
                 icon: const Icon(
                   Icons.more_horiz,
                   color: Colors.grey,

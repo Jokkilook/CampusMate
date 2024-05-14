@@ -55,7 +55,6 @@ class _PostScreenState extends State<PostScreen> {
 
   Future<void> checkUserViewedPost() async {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
-    debugPrint('currentUserUid: $currentUserUid');
     setState(() {
       _userAlreadyViewed =
           widget.postData.viewers?.contains(currentUserUid) ?? false;
@@ -259,6 +258,7 @@ class _PostScreenState extends State<PostScreen> {
                 postCommentData: comments[index],
                 school: widget.school,
                 firestore: FirebaseFirestore.instance,
+                refreshCallback: _refreshScreen,
                 onReplyPressed: (commentId) {
                   setState(() {
                     // 선택된 댓글의 내용을 저장하고 댓글 입력 창을 업데이트
