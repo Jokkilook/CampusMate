@@ -1,12 +1,10 @@
 import 'package:campusmate/app_colors.dart';
-import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
 class ProfileSettingResult extends StatelessWidget {
-  ProfileSettingResult({super.key, required this.userData});
-  UserData userData;
+  const ProfileSettingResult({super.key});
 
   @override
   Widget build(BuildContext context) {

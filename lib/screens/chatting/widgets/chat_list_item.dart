@@ -91,7 +91,6 @@ class ChatListItem extends StatelessWidget {
 
     int userCount = roomData.participantsUid?.length ?? 0;
     double profileSize = 60;
-    print(userCount);
 
     if (userCount - 1 >= 2) {
       profileSize = 28;

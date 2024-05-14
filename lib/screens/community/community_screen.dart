@@ -4,6 +4,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -98,7 +99,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircleLoading(),
                     );
                   }
                   if (snapshot.hasError) {
@@ -162,7 +163,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircleLoading(),
                     );
                   }
                   if (snapshot.hasError) {

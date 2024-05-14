@@ -38,7 +38,7 @@ class RegistResult extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileSettingA(userData: userData),
+                      builder: (context) => const ProfileSettingA(),
                     ));
               },
               child: const Text(

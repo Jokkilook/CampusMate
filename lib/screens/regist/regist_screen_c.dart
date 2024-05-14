@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/login_screen.dart';
@@ -10,12 +11,12 @@ import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class RegistScreenC extends StatefulWidget {
-  RegistScreenC({super.key, required this.newUserData});
+  RegistScreenC({super.key});
 
-  final UserData newUserData;
   bool pwObsecure = true;
   bool chObsecure = true;
 
@@ -47,6 +48,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
   Widget build(BuildContext context) {
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
+    final UserData newUserData = context.read<UserDataProvider>().userData;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -144,7 +146,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
-                                    hintText: widget.newUserData.email,
+                                    hintText: newUserData.email,
                                     labelStyle: const TextStyle(fontSize: 14),
                                     contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10)),
@@ -335,19 +337,18 @@ class _RegistScreenCState extends State<RegistScreenC> {
                 pwController.value.text == pwConfirmController.value.text
             ? () {
                 /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
-                widget.newUserData.name = nickController.value.text;
+                newUserData.name = nickController.value.text;
                 // 비밀번호 암호화 후 삽입
-                widget.newUserData.password = sha256
+                newUserData.password = sha256
                     .convert(utf8.encode(pwConfirmController.value.text))
                     .toString();
 
-                registAndLogin();
+                registAndLogin(userData: newUserData);
 
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          RegistResult(userData: widget.newUserData),
+                      builder: (context) => RegistResult(userData: newUserData),
                     ));
               }
             : null,
@@ -355,13 +356,13 @@ class _RegistScreenCState extends State<RegistScreenC> {
     );
   }
 
-  void registAndLogin() async {
-    await AuthService().registUser(widget.newUserData);
+  void registAndLogin({required UserData userData}) async {
+    await AuthService().registUser(userData);
     try {
       await auth.signInWithEmailAndPassword(
-          email: widget.newUserData.email.toString(),
-          password: widget.newUserData.password.toString());
-      widget.newUserData.uid = auth.currentUser!.uid;
+          email: userData.email.toString(),
+          password: userData.password.toString());
+      userData.uid = auth.currentUser!.uid;
     } catch (e) {
       throw Error();
     }

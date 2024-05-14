@@ -7,6 +7,7 @@ import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -69,7 +70,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 .getUserDocumentSnapshot(uid: uid, options: Source.server),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircleLoading());
               }
               if (snapshot.hasError) {
                 throw Error();
@@ -103,7 +104,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                   context: context,
                   builder: (context) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircleLoading(),
                     );
                   },
                 );

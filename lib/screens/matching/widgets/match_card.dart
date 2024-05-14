@@ -5,8 +5,10 @@ import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/matching/widgets/score_shower.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -119,15 +121,22 @@ class _MatchCardState extends State<MatchCard> {
   Center refreshMessage(String message) {
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(message),
+          Text(
+            message,
+            style: const TextStyle(fontSize: 20),
+          ),
+          const SizedBox(height: 20),
           IconButton.filled(
             onPressed: () {
               setState(() {});
             },
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(
+              Icons.refresh,
+            ),
             color: Colors.green,
-            iconSize: MediaQuery.of(context).size.width * 0.1,
+            iconSize: MediaQuery.of(context).size.width * 0.08,
           )
         ],
       ),
@@ -145,11 +154,11 @@ class _MatchCardState extends State<MatchCard> {
       builder: (context, snapshot) {
         //로딩 중
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const CircleLoading();
         }
         //유저 데이터가 없으면
         if (!snapshot.hasData) {
-          return refreshMessage("아직 사용자가 없어요 o_o");
+          return refreshMessage("아직 사용자가 없어요 😳");
         }
         //에러가 발생했으면
         if (snapshot.hasError) {
@@ -161,13 +170,13 @@ class _MatchCardState extends State<MatchCard> {
 
           //데이터가 있는데 2개 미만일때,
           if (data.length < 2) {
-            return refreshMessage("아직 사용자가 없어요 o_o");
+            return refreshMessage("아직 사용자가 없어요 😳");
           }
           //2개 이상 데이터가 들어왔을 때 스와이프 카드 출력 시도
           try {
             return Center(child: swipableCard(data, context));
           } catch (e) {
-            return refreshMessage(e.toString());
+            return refreshMessage("추천할 유저가 없어요 😢");
           }
         }
         //그 이 외의 상황
@@ -186,25 +195,28 @@ class _MatchCardState extends State<MatchCard> {
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
     List<QueryDocumentSnapshot> data = datas;
+    List<QueryDocumentSnapshot> removeItems = [];
 
-    for (var info in data) {
+    for (var info in datas) {
       var doc = UserData.fromJson(info.data() as Map<String, dynamic>);
       //불러온 유저 데이터에서 밴한 유저 삭제
       if (userData.banUsers?.contains(doc.uid) ?? false) {
-        data.remove(info);
-        break;
+        removeItems.add(info);
+        continue;
       }
       //불러온 유저 데이터에서 나를 밴한 유저 데이터 삭제
       if (userData.blockers?.contains(doc.uid) ?? false) {
-        data.remove(info);
-        break;
+        removeItems.add(info);
+        continue;
       }
       //불러온 유저 데이터에서 내 데이터 삭제
       if (doc.uid == userData.uid) {
-        data.remove(info);
-        break;
+        removeItems.add(info);
+        continue;
       }
     }
+
+    data.removeWhere((element) => removeItems.contains(element));
 
     //Map<점수(int), 유저데이터(UserData)> 를 생성한다.
     Map<int, UserData> totalData = {};
@@ -227,11 +239,15 @@ class _MatchCardState extends State<MatchCard> {
     finalData = Map.fromEntries(
         totalData.entries.toList()..sort((a, b) => b.key.compareTo(a.key)));
 
+    print(finalData.length);
+
     //점수별로 정렬된 카드를 순서대로 출력
     return CardSwiper(
         padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
         threshold: 100,
         cardsCount: finalData.length,
+        numberOfCardsDisplayed: finalData.length <= 1 ? finalData.length : 2,
+        isLoop: true,
         cardBuilder: (context, index, horizontalOffsetPercentage,
             verticalOffsetPercentage) {
           final UserData doc = finalData.values.elementAt(index);
@@ -306,6 +322,7 @@ class _MatchCardState extends State<MatchCard> {
                           bottom: Radius.circular(10)),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         //이름,나이 / MBTI / 태그 표시
@@ -313,7 +330,7 @@ class _MatchCardState extends State<MatchCard> {
                           flex: 8,
                           child: Padding(
                             padding: const EdgeInsets.only(
-                              top: 15,
+                              top: 20,
                               bottom: 20,
                               left: 20,
                             ),

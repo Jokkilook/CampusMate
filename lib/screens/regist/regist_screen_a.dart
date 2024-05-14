@@ -1,12 +1,14 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/school_api.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RegistScreenA extends StatefulWidget {
   const RegistScreenA({super.key});
@@ -54,7 +56,6 @@ class _RegistScreenAState extends State<RegistScreenA> {
   Widget build(BuildContext context) {
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
-    print(newUserData.banUsers);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -319,12 +320,12 @@ class _RegistScreenAState extends State<RegistScreenA> {
                 newUserData.enterYear = selectedYear;
                 newUserData.school = selectedSchool;
                 newUserData.dept = selectedDept;
+                context.read<UserDataProvider>().userData = newUserData;
+
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RegistScreenB(
-                        newUserData: newUserData,
-                      ),
+                      builder: (context) => RegistScreenB(),
                     ));
               }
             : null,
