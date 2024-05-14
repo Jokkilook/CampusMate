@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -32,8 +34,7 @@ class _MatchCardState extends State<MatchCard> {
   Future getPref() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     widget.containTags = pref.getBool("containTags") ?? true;
-    widget.containMBTI = true;
-    // pref.getBool("containMBTI") ?? true;
+    widget.containMBTI = pref.getBool("containMBTI") ?? true;
     widget.containSchedule = pref.getBool("containSchedule") ?? true;
   }
 
@@ -115,6 +116,7 @@ class _MatchCardState extends State<MatchCard> {
 
     matchPercent =
         (count * 2 / (myTags.length + otherTags.length) * 100).toInt();
+
     return matchPercent;
   }
 
@@ -219,27 +221,27 @@ class _MatchCardState extends State<MatchCard> {
     data.removeWhere((element) => removeItems.contains(element));
 
     //Map<점수(int), 유저데이터(UserData)> 를 생성한다.
-    Map<int, UserData> totalData = {};
+    Map<double, UserData> totalData = {};
 
     for (var element in data) {
       UserData strangerData =
           UserData.fromJson(element.data() as Map<String, dynamic>);
+
+      //점수가 같으면 데이터가 덮어씌워져 랜덤더블값을 더해 중복 확률 제거
       totalData[matchFilter(
-        myData: userData,
-        otherData: strangerData,
-        containTags: widget.containTags,
-        containMBTI: widget.containMBTI,
-        containSchedule: widget.containSchedule,
-      )] = strangerData;
+            myData: userData,
+            otherData: strangerData,
+            containTags: widget.containTags,
+            containMBTI: widget.containMBTI,
+            containSchedule: widget.containSchedule,
+          ) +
+          Random().nextDouble()] = strangerData;
     }
 
     //위에 점수를 도출한 맵을 Key(점수)가 높은 순으로 정렬해서 할당한다.
-    Map<int, UserData> finalData = {};
-
+    Map<double, UserData> finalData = {};
     finalData = Map.fromEntries(
         totalData.entries.toList()..sort((a, b) => b.key.compareTo(a.key)));
-
-    print(finalData.length);
 
     //점수별로 정렬된 카드를 순서대로 출력
     return CardSwiper(
@@ -298,7 +300,6 @@ class _MatchCardState extends State<MatchCard> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //사진부분
@@ -326,7 +327,7 @@ class _MatchCardState extends State<MatchCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         //이름,나이 / MBTI / 태그 표시
-                        Expanded(
+                        Flexible(
                           flex: 8,
                           child: Padding(
                             padding: const EdgeInsets.only(
@@ -399,7 +400,8 @@ class _MatchCardState extends State<MatchCard> {
                             child: Center(
                               child: ScoreShower(
                                 score: displayScore,
-                                percentage: finalData.keys.elementAt(index),
+                                percentage:
+                                    finalData.keys.elementAt(index).toInt(),
                               ),
                             ),
                           ),
