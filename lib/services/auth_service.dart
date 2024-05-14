@@ -20,6 +20,16 @@ class AuthService {
     return uid;
   }
 
+  //중복 계정 체크
+  Future<bool> checkDuplicatedEmail(
+      {required String school, required String email}) async {
+    var data = await firestore
+        .collection("schools/$school/users")
+        .where("email", isEqualTo: email)
+        .get();
+    return data.docs.isEmpty;
+  }
+
   //유저 가입 (유저 콜렉션에 유저 데이터와 유저키-학교 콜렉션에 추가)
   //파이어베이스 등록 > 로그인 > 파이어스토어에 데이터 추가
   Future registUser(UserData userData) async {

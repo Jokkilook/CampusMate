@@ -1,6 +1,5 @@
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/main_screen.dart';
@@ -13,7 +12,6 @@ import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
 import 'package:campusmate/screens/regist/regist_screen_c.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ScreenList extends StatelessWidget {
   const ScreenList({
@@ -22,7 +20,6 @@ class ScreenList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserData userData = context.read<UserDataProvider>().userData;
     return Scaffold(
       appBar: AppBar(
         title: const Text("개발자 메뉴"),
@@ -66,10 +63,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("REGISTB", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => RegistScreenB(
-                          newUserData: UserData(),
-                        )),
+                MaterialPageRoute(builder: (_) => RegistScreenB()),
               ),
             ),
             const Divider(height: 0),
@@ -79,10 +73,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("REGISTC", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => RegistScreenC(
-                          newUserData: UserData(),
-                        )),
+                MaterialPageRoute(builder: (_) => RegistScreenC()),
               ),
             ),
             const Divider(height: 0),
@@ -107,8 +98,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("PROFILEA", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => ProfileSettingA(userData: UserData())),
+                MaterialPageRoute(builder: (_) => const ProfileSettingA()),
               ),
             ),
             const Divider(height: 0),
@@ -118,8 +108,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("PROFILEB", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => ProfileSettingB(userData: UserData())),
+                MaterialPageRoute(builder: (_) => const ProfileSettingB()),
               ),
             ),
             const Divider(height: 0),
@@ -129,8 +118,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("PROFILEC", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => ProfileSettingC(userData: UserData())),
+                MaterialPageRoute(builder: (_) => const ProfileSettingC()),
               ),
             ),
             const Divider(height: 0),
@@ -141,8 +129,7 @@ class ScreenList extends StatelessWidget {
                   const Text("PROFILE RESULT", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => ProfileSettingResult(userData: userData)),
+                MaterialPageRoute(builder: (_) => const ProfileSettingResult()),
               ),
             ),
             const Divider(height: 0),

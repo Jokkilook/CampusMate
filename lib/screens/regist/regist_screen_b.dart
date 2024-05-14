@@ -1,17 +1,20 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_c.dart';
+import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:mailer/smtp_server/gmail.dart';
+import 'package:provider/provider.dart';
 
 class RegistScreenB extends StatefulWidget {
-  RegistScreenB({super.key, required this.newUserData});
-  final UserData newUserData;
+  RegistScreenB({super.key});
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
@@ -48,6 +51,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
   bool isSended = false;
   bool isLoading = false;
   bool isCorrect = true;
+  String message = "";
 
   @override
   void initState() {
@@ -61,11 +65,12 @@ class _RegistScreenBState extends State<RegistScreenB> {
     if (email.contains(".ac.kr")) {
       return true;
     }
-    return true;
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final UserData newUserData = context.read<UserDataProvider>().userData;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
@@ -123,14 +128,27 @@ class _RegistScreenBState extends State<RegistScreenB> {
                         // 이메일 인증번호 섹션 , 다음 버튼 미포함
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("   학교 이메일 인증",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: isDark
-                                    ? AppColors.darkHeadText
-                                    : AppColors.lightHeadText,
-                              )),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "   학교 이메일 인증",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? AppColors.darkHeadText
+                                      : AppColors.lightHeadText,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                message,
+                                style: const TextStyle(
+                                    fontSize: 12, color: AppColors.alertText),
+                              )
+                            ],
+                          ),
                           const SizedBox(height: 5),
                           FractionallySizedBox(
                             widthFactor: 1,
@@ -143,6 +161,9 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                 readOnly: isCompleted,
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (value) {
+                                  if (widget.emailController.value.text == "") {
+                                    message = "";
+                                  }
                                   setState(() {});
                                 },
                                 controller: widget.emailController,
@@ -188,12 +209,24 @@ class _RegistScreenBState extends State<RegistScreenB> {
                           ),
                           const SizedBox(height: 10),
                           ElevatedButton(
-                            onPressed: widget.emailController.value.text
-                                        .contains(" ") ||
-                                    !emailCheck(
+                            onPressed: widget.emailController.value.text !=
+                                        "" &&
+                                    emailCheck(
                                         widget.emailController.value.text)
-                                ? null
-                                : () {
+                                ? () async {
+                                    //이미 가입된 아이디가 있나 확인
+                                    if (!(await AuthService()
+                                        .checkDuplicatedEmail(
+                                            email: widget
+                                                .emailController.value.text,
+                                            school:
+                                                newUserData.school ?? ""))) {
+                                      message = "이미 존재하는 이메일입니다!";
+                                      setState(() {});
+                                      return;
+                                    }
+                                    message = "";
+
                                     /* 인증번호 발송 버튼을 누르면 메일로 발송하는 코드 */
                                     setState(() {
                                       isLoading = true;
@@ -205,9 +238,10 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                     setState(() {
                                       isLoading = false;
                                     });
-                                  },
+                                  }
+                                : null,
                             child: isLoading
-                                ? const CircularProgressIndicator()
+                                ? const CircleLoading()
                                 : Text(
                                     isSended ? "재발송" : "인증번호 발송 ",
                                     style: TextStyle(
@@ -346,16 +380,18 @@ class _RegistScreenBState extends State<RegistScreenB> {
       ),
       bottomNavigationBar: BottomButton(
         text: "다음",
+        //아무 이메일로나 가입하려면 isCompleted: 와 onPressed: 를 true 로 수정, 배포할땐 isCompleted 변수로 설정
         isCompleted: isCompleted,
         onPressed: isCompleted
             ? () {
                 /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
-                widget.newUserData.email = widget.emailController.value.text;
+                newUserData.email = widget.emailController.value.text;
+                context.read<UserDataProvider>().userData = newUserData;
+
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          RegistScreenC(newUserData: widget.newUserData),
+                      builder: (context) => RegistScreenC(),
                     ));
               }
             : null,

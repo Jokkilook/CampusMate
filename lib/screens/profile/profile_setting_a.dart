@@ -1,14 +1,15 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileSettingA extends StatefulWidget {
-  const ProfileSettingA({super.key, required this.userData});
-  final UserData userData;
+  const ProfileSettingA({super.key});
 
   @override
   State<ProfileSettingA> createState() => _ProfileSettingAState();
@@ -49,6 +50,7 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
 
   @override
   Widget build(BuildContext context) {
+    final UserData userData = context.read<UserDataProvider>().userData;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
@@ -729,24 +731,21 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
         onPressed: introController.value.text.isNotEmpty
             ? () {
                 /* 나이 성별 소개 MBTI 데이터베이스에 삽입 */
-                widget.userData.birthDate = "$year.$month.$day";
-                widget.userData.gender = gender;
-                widget.userData.introduce = introController.value.text;
+                userData.birthDate = "$year.$month.$day";
+                userData.gender = gender;
+                userData.introduce = introController.value.text;
                 var mbti = [];
                 ei ? mbti.add("E") : mbti.add("I");
                 ns ? mbti.add("N") : mbti.add("S");
                 tf ? mbti.add("T") : mbti.add("F");
                 pj ? mbti.add("P") : mbti.add("J");
-                widget.userData.mbti =
-                    "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
+                userData.mbti = "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
 
-                AuthService().setUserData(widget.userData);
-                //db.addUser(widget.userData);
+                AuthService().setUserData(userData);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileSettingB(userData: widget.userData),
+                      builder: (context) => const ProfileSettingB(),
                     ));
               }
             : null,

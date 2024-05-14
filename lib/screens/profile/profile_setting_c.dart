@@ -10,8 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProfileSettingC extends StatefulWidget {
-  const ProfileSettingC({super.key, required this.userData});
-  final UserData userData;
+  const ProfileSettingC({super.key});
 
   @override
   State<ProfileSettingC> createState() => _ProfileSettingCState();
@@ -31,12 +30,13 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
 
   @override
   Widget build(BuildContext context) {
+    final UserData userData = context.read<UserDataProvider>().userData;
     totalSchedule = [
-      widget.userData.schedule.mon,
-      widget.userData.schedule.tue,
-      widget.userData.schedule.wed,
-      widget.userData.schedule.thu,
-      widget.userData.schedule.fri,
+      userData.schedule.mon,
+      userData.schedule.tue,
+      userData.schedule.wed,
+      userData.schedule.thu,
+      userData.schedule.fri,
     ];
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
@@ -102,7 +102,7 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
                       ),
                       const SizedBox(height: 5),
                       ScheduleTable(
-                        scheduleData: widget.userData.schedule,
+                        scheduleData: userData.schedule,
                       )
                     ]),
               ],
@@ -115,14 +115,13 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
         isCompleted: true,
         onPressed: () {
           /* 태그 리스트 데이터베이스에 삽입 */
-          widget.userData.schedule.schedule = totalSchedule;
-          AuthService().setUserData(widget.userData);
-          context.read<UserDataProvider>().userData = widget.userData;
+          userData.schedule.schedule = totalSchedule;
+          AuthService().setUserData(userData);
+          context.read<UserDataProvider>().userData = userData;
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    ProfileSettingResult(userData: widget.userData),
+                builder: (context) => const ProfileSettingResult(),
               ),
               (route) => false);
         },

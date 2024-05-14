@@ -1,14 +1,15 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileSettingB extends StatefulWidget {
-  const ProfileSettingB({super.key, required this.userData});
-  final UserData userData;
+  const ProfileSettingB({super.key});
 
   @override
   State<ProfileSettingB> createState() => _ProfileSettingBState();
@@ -58,6 +59,7 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
 
   @override
   Widget build(BuildContext context) {
+    final UserData userData = context.read<UserDataProvider>().userData;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
@@ -187,14 +189,13 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                 //선택된 태그가 없으면 아무 것도 안함(혹시 모를 유저의 이상행동 방지)
                 if (userTag.isEmpty) return;
                 /* 태그 리스트 데이터베이스에 삽입 */
-                widget.userData.tags = userTag;
-                AuthService().setUserData(widget.userData);
+                userData.tags = userTag;
+                AuthService().setUserData(userData);
                 //db.addUser(widget.userData);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileSettingC(userData: widget.userData),
+                      builder: (context) => const ProfileSettingC(),
                     ));
               }
             : null,
