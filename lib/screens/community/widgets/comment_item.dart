@@ -57,8 +57,17 @@ class _CommentItemState extends State<CommentItem> {
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
-              child: imageUrl == null ? const Icon(Icons.person) : null,
+              backgroundImage: widget.postCommentData.boardType == 'General' &&
+                      imageUrl != null
+                  ? NetworkImage(imageUrl)
+                  : null,
+              child: widget.postCommentData.boardType != 'General' ||
+                      imageUrl == null
+                  ? const Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    )
+                  : null,
             ),
             const SizedBox(width: 10),
             Text(
