@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 .toString());
         return true;
       } catch (e) {
+        print("에러 메세지 : $e");
         return false;
       }
     }
@@ -184,13 +185,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
-                      onPressed: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        login().then((value) async {
-                          if (value) {
-                            await AuthService()
-                                .getUserData(uid: firebaseAuth.currentUser!.uid)
-                                .then((value) {
+                      onPressed: () async {
+                        try {
+                          await firebaseAuth.signInWithEmailAndPassword(
+                              email: idController.value.text,
+                              password: sha256
+                                  .convert(
+                                      utf8.encode(pwContorlloer.value.text))
+                                  .toString());
+                          await AuthService()
+                              .getUserData(uid: firebaseAuth.currentUser!.uid)
+                              .then(
+                            (value) {
                               UserData userData = value;
                               context.read<UserDataProvider>().userData =
                                   userData;
@@ -201,9 +207,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 (route) => false,
                               );
-                            });
-                          } else {}
-                        });
+                            },
+                          );
+                        } catch (e) {
+                          print("에러 메세지 : $e");
+                        }
+
+                        // login().then((value) async {
+                        //   if (value) {
+                        //     await AuthService()
+                        //         .getUserData(uid: firebaseAuth.currentUser!.uid)
+                        //         .then((value) {
+                        //       UserData userData = value;
+                        //       context.read<UserDataProvider>().userData =
+                        //           userData;
+                        //       Navigator.pushAndRemoveUntil(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //           builder: (context) => const MainScreen(),
+                        //         ),
+                        //         (route) => false,
+                        //       );
+                        //     });
+                        //   } else {}
+                        // });
                       },
                     ),
                     const SizedBox(height: 15),
