@@ -193,8 +193,8 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
-  // 닉네임 가져오기
-  FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorName() {
+  // 닉네임과 프로필 이미지 가져오기
+  FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorInforms() {
     return FutureBuilder<DocumentSnapshot>(
       future: widget.firestore
           .collection('schools/${widget.school}/users')
@@ -213,14 +213,25 @@ class _PostScreenState extends State<PostScreen> {
           );
         }
 
-        // 문서에서 사용자 이름 가져오기
+        // 문서에서 사용자 이름과 이미지 URL 가져오기
         String authorName = snapshot.data!['name'];
+        String? imageUrl = snapshot.data!['imageUrl'];
 
-        return Text(
-          widget.postData.boardType == 'General' ? authorName : '익명',
-          style: const TextStyle(
-            fontSize: 12,
-          ),
+        return Row(
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
+              child: imageUrl == null ? const Icon(Icons.person) : null,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              widget.postData.boardType == 'General' ? authorName : '익명',
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          ],
         );
       },
     );
@@ -348,12 +359,7 @@ class _PostScreenState extends State<PostScreen> {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          const CircleAvatar(
-                            radius: 18,
-                          ),
-                          const SizedBox(width: 10),
-                          // 작성자 닉네임 가져오기
-                          _buildAuthorName(),
+                          _buildAuthorInforms(),
                           const SizedBox(width: 10),
                           Text(
                             formattedTime,
