@@ -3,6 +3,7 @@ import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -112,7 +113,7 @@ class _BanUserManagementScreenState extends State<BanUserManagementScreen> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: CircleLoading(),
                         );
                       }
                       var data = snapshot.data;

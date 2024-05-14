@@ -1,5 +1,6 @@
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/provider/theme_provider.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,7 +36,7 @@ class _ThemeSettingScreenState extends State<ThemeSettingScreen> {
   Widget build(BuildContext context) {
     return widget.isLoading
         ? const Center(
-            child: CircularProgressIndicator(),
+            child: CircleLoading(),
           )
         : Scaffold(
             appBar: AppBar(

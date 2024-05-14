@@ -3,6 +3,7 @@ import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/profile_revise_screen.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircleLoading(),
             );
           }
           if (snapshot.hasError) {

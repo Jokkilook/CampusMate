@@ -6,6 +6,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/widgets/score_button.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +136,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircleLoading(),
             );
           }
           if (!snapshot.hasData) {

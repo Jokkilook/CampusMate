@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -171,7 +172,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                         aspectRatio: widget.controller!.value.aspectRatio,
                         child: VideoPlayer(widget.controller!),
                       )
-                    : const Center(child: CircularProgressIndicator()),
+                    : const Center(child: CircleLoading()),
                 //상단 뒤로가기 바
                 // Positioned(
                 //     left: 0,

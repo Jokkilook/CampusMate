@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -240,7 +241,7 @@ class _PostScreenState extends State<PostScreen> {
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const CircleLoading();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData || snapshot.data == null) {
@@ -327,7 +328,7 @@ class _PostScreenState extends State<PostScreen> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: CircleLoading(),
             )
           : RefreshIndicator(
               onRefresh: _refreshScreen,

@@ -12,6 +12,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/chatting/video_player_screen.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_bubble.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -119,7 +120,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               isGroup: widget.isGroup),
           builder: (context, roomSnapshot) {
             if (roomSnapshot.hasError) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircleLoading());
             }
 
             if (roomSnapshot.hasData) {
@@ -507,8 +508,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               );
                             }
                           }
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return const Center(child: CircleLoading());
                         },
                       ),
                     ),
@@ -533,7 +533,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     height: 30,
                                     child: Padding(
                                       padding: EdgeInsets.all(5),
-                                      child: CircularProgressIndicator(),
+                                      child: CircleLoading(),
                                     ))
                               ],
                             ),
@@ -1002,7 +1002,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 ),
               );
             }
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircleLoading());
           },
         ),
       ),

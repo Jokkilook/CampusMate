@@ -3,6 +3,7 @@ import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/screens/community/widgets/comment_reply_item.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -75,7 +76,7 @@ class _CommentItemState extends State<CommentItem> {
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const CircleLoading();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData || snapshot.data == null) {

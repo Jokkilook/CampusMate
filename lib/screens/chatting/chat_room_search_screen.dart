@@ -5,6 +5,7 @@ import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_search_item.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -113,7 +114,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
+                          return const CircleLoading();
                         }
                         if (!snapshot.hasData) {
                           return const Text("일치하는 방이 없어요.");

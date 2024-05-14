@@ -9,6 +9,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_list_item.dart';
 import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +63,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
       floatingActionButton: FloatingActionButton(
         heroTag: "createRoom",
         child: widget.onCreating
-            ? const CircularProgressIndicator()
+            ? const CircleLoading()
             : const Icon(Icons.add, size: 30),
         backgroundColor: AppColors.button,
         foregroundColor: const Color(0xFF0A351E),
@@ -124,7 +125,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                         ChattingService().getChattingRoomListStream(context),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(child: CircleLoading());
                       } else if (snapshot.hasError) {
                         return const Center(child: Text("오류가 발생했어요..ToT"));
                       }
@@ -209,7 +210,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                           },
                         );
                       }
-                      return const CircularProgressIndicator();
+                      return const CircleLoading();
                     },
                   ),
                 ),
@@ -220,7 +221,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                         .getChattingRoomListStream(context, isGroup: true),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(child: CircleLoading());
                       }
                       if (snapshot.hasError) {
                         return Center(
@@ -300,7 +301,7 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
                           },
                         );
                       }
-                      return const CircularProgressIndicator();
+                      return const CircleLoading();
                     },
                   ),
                 ),
