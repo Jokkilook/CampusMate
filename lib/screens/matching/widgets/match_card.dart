@@ -8,6 +8,7 @@ import 'package:campusmate/screens/matching/widgets/score_shower.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -321,6 +322,7 @@ class _MatchCardState extends State<MatchCard> {
                           bottom: Radius.circular(10)),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         //이름,나이 / MBTI / 태그 표시
@@ -328,7 +330,7 @@ class _MatchCardState extends State<MatchCard> {
                           flex: 8,
                           child: Padding(
                             padding: const EdgeInsets.only(
-                              top: 15,
+                              top: 20,
                               bottom: 20,
                               left: 20,
                             ),

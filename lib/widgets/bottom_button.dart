@@ -1,4 +1,5 @@
 import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:flutter/material.dart';
 
 class BottomButton extends StatelessWidget {
@@ -24,8 +25,7 @@ class BottomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isCompleted ? onPressed : null,
         child: isLoading
-            ? const SizedBox(
-                width: 20, height: 20, child: CircularProgressIndicator())
+            ? const SizedBox(width: 20, height: 20, child: CircleLoading())
             : Text(
                 text,
                 style: TextStyle(

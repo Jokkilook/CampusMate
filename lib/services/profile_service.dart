@@ -7,6 +7,7 @@ class ProfileService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseStorage firestorage = FirebaseStorage.instance;
 
+  //유저 좋아요 평가
   Future userLike({required String targetUID, required String likerUID}) async {
     String school = await AuthService().getUserSchoolInfo(targetUID);
     var ref = firestore.collection("schools/$school/users").doc(targetUID);
@@ -21,6 +22,7 @@ class ProfileService {
     });
   }
 
+  //유저 싫어요 평가
   Future userDislike(
       {required String targetUID, required String likerUID}) async {
     String school = await AuthService().getUserSchoolInfo(targetUID);
@@ -34,6 +36,22 @@ class ProfileService {
     ref.update({
       "dislikers": FieldValue.arrayUnion([likerUID])
     });
+  }
+
+  //유저 UID로 닉네임 반환하기
+  Future<List<UserData>> getUserDataByUIDList(List<String> uidList) async {
+    List<UserData> retrunNameList = [];
+    String school = await AuthService().getUserSchoolInfo(uidList[0]);
+    for (var element in uidList) {
+      var data = await firestore
+          .collection("schools/$school/users")
+          .doc(element)
+          .get();
+      var userData = UserData.fromJson(data.data() as Map<String, dynamic>);
+      retrunNameList.add(userData);
+    }
+
+    return retrunNameList;
   }
 
   //유저 밴
