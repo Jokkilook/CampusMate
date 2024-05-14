@@ -102,6 +102,10 @@ class _CommentReplyItemState extends State<CommentReplyItem> {
                     ? 'generalPosts'
                     : 'anonymousPosts'))
             .doc(widget.postReplyData.postId)
+            .collection('comments')
+            .doc(widget.postReplyData.commentId)
+            .collection('replies')
+            .doc(widget.postReplyData.replyId)
             .update({
           'likers': FieldValue.arrayUnion([currentUserUid]),
         });
@@ -116,6 +120,10 @@ class _CommentReplyItemState extends State<CommentReplyItem> {
                     ? 'generalPosts'
                     : 'anonymousPosts'))
             .doc(widget.postReplyData.postId)
+            .collection('comments')
+            .doc(widget.postReplyData.commentId)
+            .collection('replies')
+            .doc(widget.postReplyData.replyId)
             .update({
           'dislikers': FieldValue.arrayUnion([currentUserUid]),
         });
