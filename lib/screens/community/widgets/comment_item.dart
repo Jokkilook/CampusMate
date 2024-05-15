@@ -3,7 +3,6 @@ import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/screens/community/widgets/comment_reply_item.dart';
-import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
