@@ -235,7 +235,7 @@ class _PostScreenState extends State<PostScreen> {
             Text(
               widget.postData.boardType == 'General' ? authorName : '익명',
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 16,
               ),
             ),
           ],
@@ -356,6 +356,7 @@ class _PostScreenState extends State<PostScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // 제목
                       Text(
                         widget.postData.title ?? '',
                         style: const TextStyle(
@@ -363,18 +364,21 @@ class _PostScreenState extends State<PostScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 14),
                       Row(
                         children: [
                           _buildAuthorInforms(),
-                          const SizedBox(width: 10),
+                          const Spacer(),
+                          // 작성일시
                           Text(
                             formattedTime,
                             style: const TextStyle(
                               fontSize: 12,
+                              color: Colors.grey,
                             ),
                           ),
                           const SizedBox(width: 10),
+                          // 조회수
                           const Icon(
                             Icons.account_circle_outlined,
                             color: Colors.grey,
@@ -408,6 +412,14 @@ class _PostScreenState extends State<PostScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(width: 14),
+                              Text(
+                                widget.postData.likers!.length.toString(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
                               IconButton(
                                 icon: Icon(
                                   userLiked
@@ -420,14 +432,6 @@ class _PostScreenState extends State<PostScreen> {
                                   voteLikeDislike(true);
                                 },
                               ),
-                              Text(
-                                widget.postData.likers!.length.toString(),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              const SizedBox(width: 14),
                               IconButton(
                                 icon: Icon(
                                   userDisliked
@@ -447,6 +451,7 @@ class _PostScreenState extends State<PostScreen> {
                                   color: Colors.grey,
                                 ),
                               ),
+                              const SizedBox(width: 14),
                             ],
                           ),
                         ),
