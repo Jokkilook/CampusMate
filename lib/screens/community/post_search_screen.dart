@@ -1,3 +1,4 @@
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
@@ -20,8 +21,7 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<DocumentSnapshot> _searchResults = [];
 
-  void _searchPosts() async {
-    String query = _searchController.text;
+  void _searchPosts(String query) async {
     final UserData userData = context.read<UserDataProvider>().userData;
 
     if (query.isNotEmpty) {
@@ -77,87 +77,95 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final UserData userData = context.read<UserDataProvider>().userData;
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('게시글 검색'),
+        title: Container(
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color:
+                isDark ? AppColors.darkSearchInput : AppColors.lightSearchInput,
+          ),
+          child: TextField(
+            onTapOutside: (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            decoration: const InputDecoration(
+                hintText: "검색어를 입력하세요",
+                suffixIcon: Icon(Icons.search),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                border: OutlineInputBorder(borderSide: BorderSide.none)),
+            controller: _searchController,
+            onChanged: (value) {
+              _searchPosts(_searchController.text);
+            },
+          ),
+        ),
       ),
       body: Container(
         padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: '검색어를 입력하세요',
-                suffixIcon: IconButton(
-                  onPressed: _searchPosts,
-                  icon: const Icon(Icons.search),
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                itemCount: _searchResults.length,
-                itemBuilder: (context, index) {
-                  var postData = PostData.fromJson(
-                      _searchResults[index].data() as Map<String, dynamic>);
-                  if (_searchResults[index].reference.parent.id ==
-                      'generalPosts') {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PostScreen(
-                              postData: postData,
-                              firestore: FirebaseFirestore.instance,
-                              school: userData.school!,
-                              userData: userData,
-                            ),
-                          ),
-                        );
-                      },
-                      child: GeneralBoardItem(
-                        postData: postData,
-                        firestore: FirebaseFirestore.instance,
-                        school: userData.school!,
+        child: Expanded(
+          child: ListView.separated(
+            itemCount: _searchResults.length,
+            itemBuilder: (context, index) {
+              var postData = PostData.fromJson(
+                  _searchResults[index].data() as Map<String, dynamic>);
+              if (_searchResults[index].reference.parent.id == 'generalPosts') {
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PostScreen(
+                          postData: postData,
+                          firestore: FirebaseFirestore.instance,
+                          school: userData.school!,
+                          userData: userData,
+                        ),
                       ),
                     );
-                  } else if (_searchResults[index].reference.parent.id ==
-                      'anonymousPosts') {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PostScreen(
-                              postData: postData,
-                              firestore: FirebaseFirestore.instance,
-                              school: userData.school!,
-                              userData: userData,
-                            ),
-                          ),
-                        );
-                      },
-                      child: AnonymousBoardItem(
-                        postData: postData,
-                        school: userData.school!,
+                  },
+                  child: GeneralBoardItem(
+                    postData: postData,
+                    firestore: FirebaseFirestore.instance,
+                    school: userData.school!,
+                  ),
+                );
+              } else if (_searchResults[index].reference.parent.id ==
+                  'anonymousPosts') {
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PostScreen(
+                          postData: postData,
+                          firestore: FirebaseFirestore.instance,
+                          school: userData.school!,
+                          userData: userData,
+                        ),
                       ),
                     );
-                  } else {
-                    return Container();
-                  }
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider(
-                    height: 0,
-                  );
-                },
-              ),
-            ),
-          ],
+                  },
+                  child: AnonymousBoardItem(
+                    postData: postData,
+                    school: userData.school!,
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+            separatorBuilder: (context, index) {
+              return const Divider(
+                height: 0,
+              );
+            },
+          ),
         ),
       ),
     );
