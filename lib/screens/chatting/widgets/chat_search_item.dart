@@ -35,12 +35,17 @@ class ChatSearchItem extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                data.roomName ?? "방 제목",
-                style: TextStyle(
-                    color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Text(
+                  data.roomName ?? "방 제목",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color:
+                          isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
               const SizedBox(height: 5),
               Text(
