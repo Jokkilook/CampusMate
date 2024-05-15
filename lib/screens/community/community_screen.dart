@@ -1,7 +1,9 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/screens/community/my_posts_screen.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
+import 'package:campusmate/screens/community/post_search_screen.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
@@ -52,14 +54,32 @@ class _CommunityScreenState extends State<CommunityScreen>
           actions: [
             // 검색
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PostSearchScreen(),
+                  ),
+                ).then((_) {
+                  _refreshScreen();
+                });
+              },
               icon: const Icon(
                 Icons.search,
               ),
             ),
             // 내가 쓴 글 조회
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyPostsScreen(),
+                  ),
+                ).then((_) {
+                  _refreshScreen();
+                });
+              },
               icon: const Icon(
                 Icons.person_outlined,
               ),

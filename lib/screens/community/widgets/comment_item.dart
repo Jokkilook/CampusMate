@@ -98,7 +98,7 @@ class _CommentItemState extends State<CommentItem> {
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircleLoading();
+          return const SizedBox();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData || snapshot.data == null) {
