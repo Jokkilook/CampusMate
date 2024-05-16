@@ -1,11 +1,11 @@
 import 'package:campusmate/app_colors.dart';
-import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:flutter/material.dart';
 
+///회원가입 결과 화면<br>
+///프로필 설정으로 넘어가기 전 화면
 class RegistResult extends StatelessWidget {
-  const RegistResult({super.key, required this.userData});
-  final UserData userData;
+  const RegistResult({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,6 @@ class RegistResult extends StatelessWidget {
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
-                /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
                 Navigator.push(
                     context,
                     MaterialPageRoute(

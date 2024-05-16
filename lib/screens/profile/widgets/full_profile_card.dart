@@ -7,11 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:provider/provider.dart';
 
+///프로필 화면에서 정보를 출력하는 위젯<br>
+///required [userData] : 정보를 출력할 유저 데이터
 class FullProfileCard extends StatelessWidget {
-  const FullProfileCard(
-      {super.key, required this.userData, required this.context});
   final UserData userData;
-  final BuildContext context;
+
+  const FullProfileCard({
+    super.key,
+    required this.userData,
+  });
 
   @override
   Widget build(BuildContext context) {

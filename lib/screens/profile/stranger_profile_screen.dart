@@ -14,7 +14,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 ///프로필을 표시하는 스크린<br>
-///[uid] : 표시할 유저의 uid, 로그인한 유저의 uid면 자동으로 내 프로필로 표시<br>
+///required [uid] : 표시할 유저의 uid, 로그인한 유저의 uid면 자동으로 내 프로필로 표시<br>
 ///[readOnly] : true면 채팅하기 버튼은 표시 안 함. 좋아요 싫어요 버튼은 표시
 class StrangerProfilScreen extends StatefulWidget {
   const StrangerProfilScreen(
@@ -222,7 +222,8 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                     child: Column(
                       children: [
                         FullProfileCard(
-                            userData: strangerData, context: context),
+                          userData: strangerData,
+                        ),
                         widget.readOnly
                             ? Container()
                             : const SizedBox(height: 80)

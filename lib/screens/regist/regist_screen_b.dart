@@ -13,6 +13,7 @@ import 'package:mailer/smtp_server.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 import 'package:provider/provider.dart';
 
+///회원 가입 B : 이메일 입력 & 인증
 class RegistScreenB extends StatefulWidget {
   RegistScreenB({super.key});
 

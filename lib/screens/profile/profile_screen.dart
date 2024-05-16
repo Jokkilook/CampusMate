@@ -1,5 +1,4 @@
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/profile_revise_screen.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
@@ -9,11 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///내 정보 화면
 //ignore: must_be_immutable
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
-  final db = DataBase();
   final uid = FirebaseAuth.instance.currentUser?.uid;
   late UserData userData;
 
@@ -57,7 +56,8 @@ class ProfileScreen extends StatelessWidget {
           if (snapshot.hasData) {
             var data = snapshot.data?.data() as Map<String, dynamic>;
             return FullProfileCard(
-                userData: UserData.fromJson(data), context: context);
+              userData: UserData.fromJson(data),
+            );
           }
 
           return const Center(child: Text("데이터를 불러오지 못했어요 T0T"));

@@ -3,7 +3,10 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/schedule_data.dart';
 import 'package:flutter/material.dart';
 
-//시간표 출력하는 위젯. 매개변수로 유저의 시간표 데이터를 넣어줘야한다.
+///시간표 출력하는 위젯<br>
+///매개변수로 유저의 시간표 데이터를 넣어줘야한다.<br>
+///required [scheduleData] : 유저의 시간표 데이터<br>
+///[readOnly] : false면 수정가능
 class ScheduleTable extends StatefulWidget {
   final ScheduleData scheduleData;
   final bool readOnly;

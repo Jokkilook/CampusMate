@@ -1,7 +1,6 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/services/auth_service.dart';
-import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/profile_setting_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
@@ -9,6 +8,7 @@ import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///프로필 설정 C : 시간표 설정
 class ProfileSettingC extends StatefulWidget {
   const ProfileSettingC({super.key});
 
@@ -20,7 +20,6 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
   bool isCompleted = false;
 
   late List<Map<String, bool>> totalSchedule;
-  final db = DataBase();
 
   @override
   void initState() {

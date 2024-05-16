@@ -1,5 +1,4 @@
 import 'package:campusmate/models/chat_room_data.dart';
-import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/main_screen.dart';
@@ -85,9 +84,7 @@ class ScreenList extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => RegistResult(
-                    userData: UserData(),
-                  ),
+                  builder: (_) => const RegistResult(),
                 ),
               ),
             ),

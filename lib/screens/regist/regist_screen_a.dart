@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///회원 가입 A : 입학년도, 학교, 학과 선택
 class RegistScreenA extends StatefulWidget {
   const RegistScreenA({super.key});
 

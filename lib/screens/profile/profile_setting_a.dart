@@ -8,6 +8,7 @@ import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///프로필 설정 A : 생일, 성별, 자기소개, MBTI 설정
 class ProfileSettingA extends StatefulWidget {
   const ProfileSettingA({super.key});
 

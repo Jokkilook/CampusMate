@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/services/auth_service.dart';
-import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_result.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
@@ -13,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///회원 가입 C : 비밀번호, 닉네임 입력
 //ignore: must_be_immutable
 class RegistScreenC extends StatefulWidget {
   RegistScreenC({super.key});
@@ -35,14 +34,6 @@ class _RegistScreenCState extends State<RegistScreenC> {
   bool checkStart = false;
 
   final auth = FirebaseAuth.instance;
-  final db = DataBase();
-
-  @override
-  void initState() {
-    super.initState();
-    //유저 데이터에 저장된 이메일 가져오기
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -336,35 +327,20 @@ class _RegistScreenCState extends State<RegistScreenC> {
                 nickController.value.text.isNotEmpty &&
                 pwController.value.text == pwConfirmController.value.text
             ? () {
-                /* 회원가입 데이터에 나머지 저장 후 데이터베이스에 삽입 */
                 newUserData.name = nickController.value.text;
                 // 비밀번호 암호화 후 삽입
                 newUserData.password = sha256
                     .convert(utf8.encode(pwConfirmController.value.text))
                     .toString();
 
-                registAndLogin(userData: newUserData);
-
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RegistResult(userData: newUserData),
+                      builder: (context) => const RegistResult(),
                     ));
               }
             : null,
       ),
     );
-  }
-
-  void registAndLogin({required UserData userData}) async {
-    await AuthService().registUser(userData);
-    try {
-      await auth.signInWithEmailAndPassword(
-          email: userData.email.toString(),
-          password: userData.password.toString());
-      userData.uid = auth.currentUser!.uid;
-    } catch (e) {
-      throw Error();
-    }
   }
 }

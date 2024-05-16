@@ -2,12 +2,12 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/services/auth_service.dart';
-import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///프로필 설정 B : 태그 설정
 class ProfileSettingB extends StatefulWidget {
   const ProfileSettingB({super.key});
 
@@ -19,8 +19,6 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
   late int age;
   late String introduce;
   late List<String> userTag = [];
-
-  final db = DataBase();
 
   //테스트 태그 리스트
   var tagList = [
@@ -173,7 +171,6 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                               ),
                           ],
                         ),
-                        //Text("디버그용 출력 리스트 / $userTag / ${userTag.length}")
                       ]),
                 ],
               ),
@@ -191,7 +188,6 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                 /* 태그 리스트 데이터베이스에 삽입 */
                 userData.tags = userTag;
                 AuthService().setUserData(userData);
-                //db.addUser(widget.userData);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
