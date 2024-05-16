@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:campusmate/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ScoreShower extends StatelessWidget {
@@ -9,6 +10,8 @@ class ScoreShower extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Column(
       children: [
         SizedBox(
@@ -19,7 +22,7 @@ class ScoreShower extends StatelessWidget {
             style: TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.titleLarge!.color,
+              color: isDark ? AppColors.darkText : AppColors.lightText,
             ),
             textAlign: TextAlign.center,
           ),
@@ -32,7 +35,7 @@ class ScoreShower extends StatelessWidget {
             style: TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.titleLarge!.color,
+              color: isDark ? AppColors.darkText : AppColors.lightText,
             ),
             textAlign: TextAlign.center,
           ),
@@ -40,35 +43,27 @@ class ScoreShower extends StatelessWidget {
         const SizedBox(height: 10),
         AspectRatio(
           aspectRatio: 1.0,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                constraints: const BoxConstraints(
-                    minHeight: 10, minWidth: 10, maxHeight: 100, maxWidth: 100),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardTheme.color,
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                        color: Theme.of(context).textTheme.titleLarge!.color!,
-                        width: 5)),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isDark ? AppColors.darkText : AppColors.lightText,
+                width: 6,
               ),
-              Container(
-                constraints: const BoxConstraints(
-                    minHeight: 10, minWidth: 10, maxHeight: 100, maxWidth: 100),
-                child: Center(
-                  child: AutoSizeText(
-                    score,
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.titleLarge!.color,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+            ),
+            constraints: const BoxConstraints(
+                minHeight: 10, minWidth: 10, maxHeight: 100, maxWidth: 100),
+            child: Center(
+              child: AutoSizeText(
+                score,
+                style: TextStyle(
+                  fontSize: 50,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? AppColors.darkText : AppColors.lightText,
                 ),
+                textAlign: TextAlign.center,
               ),
-            ],
+            ),
           ),
         ),
       ],
