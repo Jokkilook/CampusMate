@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
@@ -14,6 +16,7 @@ import 'package:mailer/smtp_server/gmail.dart';
 import 'package:provider/provider.dart';
 
 ///회원 가입 B : 이메일 입력 & 인증
+//ignore: must_be_immutable
 class RegistScreenB extends StatefulWidget {
   RegistScreenB({super.key});
 
@@ -31,7 +34,7 @@ class RegistScreenB extends StatefulWidget {
       ..text = "캠퍼스 메이트 인증코드 : [ $otp ]\n3분 이내에 입력해주세요.";
 
     try {
-      send(message, email);
+      await send(message, email);
       return true;
     } on MailerException catch (e) {
       debugPrint(e.message);
@@ -40,6 +43,7 @@ class RegistScreenB extends StatefulWidget {
   }
 
   final otp = OTP();
+  int time = 180;
 
   @override
   State<RegistScreenB> createState() => _RegistScreenBState();
@@ -53,6 +57,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
   bool isLoading = false;
   bool isCorrect = true;
   String message = "";
+  late Timer timer;
 
   @override
   void initState() {
@@ -67,6 +72,26 @@ class _RegistScreenBState extends State<RegistScreenB> {
       return true;
     }
     return false;
+  }
+
+  void startTimer() {
+    timer.cancel();
+    widget.time = 180;
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (widget.time > 0) {
+        widget.time--;
+        setState(() {});
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  String secondToString(int time) {
+    int minute = time ~/ 60;
+    int second = time % 60;
+
+    return "${minute < 10 ? ("0$minute") : minute}:${second < 10 ? ("0$second") : second}";
   }
 
   @override
@@ -215,6 +240,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                     emailCheck(
                                         widget.emailController.value.text)
                                 ? () async {
+                                    startTimer();
                                     //이미 가입된 아이디가 있나 확인
                                     if (!(await AuthService()
                                         .checkDuplicatedEmail(
@@ -233,8 +259,10 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                       isLoading = true;
                                     });
 
-                                    widget.sending(widget.otp.createOTP(6));
+                                    await widget
+                                        .sending(widget.otp.createOTP(6));
                                     isSended = true;
+                                    widget.otp.timerActivate();
 
                                     setState(() {
                                       isLoading = false;
@@ -323,7 +351,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("   03:00",
+                                    Text("   ${secondToString(widget.time)}",
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: isDark

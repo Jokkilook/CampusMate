@@ -30,6 +30,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
 
   bool isCompleted = false;
   bool isSended = false;
+  bool isValid = true;
   bool isCorrect = false;
   bool checkStart = false;
 
@@ -156,6 +157,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                           const SizedBox(height: 5),
                           TextField(
                             onChanged: (value) {
+                              isValid ? null : isValid = !isValid;
                               setState(() {});
                             },
                             obscureText: widget.pwObsecure,
@@ -188,17 +190,21 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: isDark
-                                          ? AppColors.darkLine
-                                          : AppColors.lightLine,
+                                      color: (!isValid)
+                                          ? AppColors.alertText
+                                          : isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                       width: 1.5,
                                     )),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
-                                      color: isDark
-                                          ? AppColors.darkLine
-                                          : AppColors.lightLine,
+                                      color: (!isValid)
+                                          ? AppColors.alertText
+                                          : isDark
+                                              ? AppColors.darkLine
+                                              : AppColors.lightLine,
                                       width: 1.5,
                                     )),
                                 filled: true,
@@ -211,6 +217,14 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                 hintStyle: const TextStyle(fontSize: 14),
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 10)),
+                          ),
+                          Text(
+                            "  8자리 이상 영문, 숫자, 특수 문자를 포함해야 합니다.",
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: isDark
+                                    ? AppColors.darkText
+                                    : AppColors.lightText),
                           ),
                           const SizedBox(height: 10),
                           Text("   비밀번호 확인",
@@ -260,7 +274,8 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                       color: (pwController.value.text !=
                                                   pwConfirmController
                                                       .value.text &&
-                                              pwController.value.text != "")
+                                              pwConfirmController.value.text !=
+                                                  "")
                                           ? AppColors.alertText
                                           : isDark
                                               ? AppColors.darkLine
@@ -273,7 +288,8 @@ class _RegistScreenCState extends State<RegistScreenC> {
                                       color: (pwController.value.text !=
                                                   pwConfirmController
                                                       .value.text &&
-                                              pwController.value.text != "")
+                                              pwConfirmController.value.text !=
+                                                  "")
                                           ? AppColors.alertText
                                           : isDark
                                               ? AppColors.darkLine
@@ -327,6 +343,12 @@ class _RegistScreenCState extends State<RegistScreenC> {
                 nickController.value.text.isNotEmpty &&
                 pwController.value.text == pwConfirmController.value.text
             ? () {
+                //8자리 이상, 영문 숫자 특수문자 포함이 아니면
+                if (!checkValidPassword(pwConfirmController.value.text)) {
+                  isValid = false;
+                  setState(() {});
+                  return;
+                }
                 newUserData.name = nickController.value.text;
                 // 비밀번호 암호화 후 삽입
                 newUserData.password = sha256
@@ -342,5 +364,16 @@ class _RegistScreenCState extends State<RegistScreenC> {
             : null,
       ),
     );
+  }
+
+  bool checkValidPassword(String password) {
+    String pattern =
+        r'^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,}$';
+
+    RegExp regExp = RegExp(pattern);
+
+    if (!regExp.hasMatch(password)) return false;
+
+    return true;
   }
 }
