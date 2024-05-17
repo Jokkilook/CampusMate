@@ -7,7 +7,7 @@ class ProfileService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseStorage firestorage = FirebaseStorage.instance;
 
-  //유저 좋아요 평가
+  ///유저 좋아요 평가
   Future userLike({required String targetUID, required String likerUID}) async {
     String school = await AuthService().getUserSchoolInfo(targetUID);
     var ref = firestore.collection("schools/$school/users").doc(targetUID);
@@ -22,7 +22,7 @@ class ProfileService {
     });
   }
 
-  //유저 싫어요 평가
+  ///유저 싫어요 평가
   Future userDislike(
       {required String targetUID, required String likerUID}) async {
     String school = await AuthService().getUserSchoolInfo(targetUID);
@@ -38,7 +38,7 @@ class ProfileService {
     });
   }
 
-  //유저 UID로 닉네임 반환하기
+  ///유저 UID로 닉네임 반환하기
   Future<List<UserData>> getUserDataByUIDList(List<String> uidList) async {
     List<UserData> retrunNameList = [];
     String school = await AuthService().getUserSchoolInfo(uidList[0]);
@@ -54,7 +54,7 @@ class ProfileService {
     return retrunNameList;
   }
 
-  //유저 밴
+  ///유저 밴
   Future banUser(
       {required String targetUID, required UserData currentUser}) async {
     var ref = firestore
@@ -75,7 +75,7 @@ class ProfileService {
     }
   }
 
-  //유저 밴 해제
+  ///유저 밴 해제
   Future unbanUser(
       {required String targetUID, required UserData currentUser}) async {
     var ref = firestore
@@ -96,7 +96,7 @@ class ProfileService {
     }
   }
 
-  //좋아요, 싫어요 수에 따라 매너학점 산출
+  ///좋아요, 싫어요 수에 따라 매너학점 산출
   static double getCalculatedScore(UserData userData) {
     //기본 점수 85점 (B+)
     double result = 85;

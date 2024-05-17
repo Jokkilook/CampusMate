@@ -1,4 +1,5 @@
 import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/services/school_service.dart';
 import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/main_screen.dart';
@@ -142,6 +143,17 @@ class ScreenList extends StatelessWidget {
                         )),
               ),
             ),
+            const Divider(height: 0),
+
+            /// CHATROOM
+            ListTile(
+                title:
+                    const Text("학교 이름 로딩 테스트", style: TextStyle(fontSize: 24)),
+                onTap: () {
+                  SchoolAPI().loadSchoolName();
+                  //함부로 쓰면 안됌 파이어스토어 쓰기 작업 388번 수행하는 무시무시한 놈
+                  //SchoolAPI().uploadSchoolInfo();
+                }),
             const Divider(height: 0),
           ],
         ),

@@ -18,7 +18,7 @@ class ChattingService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseStorage firestorage = FirebaseStorage.instance;
 
-  //1:1채팅방 ID 생성
+  ///1:1채팅방 ID 생성
   String makeOTORoomId(String ownerUID, String targetUID) {
     //문자열 순서에 따라 정렬한 후 '_'로 연결 (누가 먼저 시작해도 정렬 후 생성하기 때문에 중복되지 않음)
     List<String> list = [ownerUID, targetUID];
@@ -27,14 +27,14 @@ class ChattingService {
     return roomId;
   }
 
-  //그룹 채팅방 ID 생성
+  ///그룹 채팅방 ID 생성
   String makeGroupRoomId(String ownerUID) {
     String roomId =
         [ownerUID, Timestamp.now().millisecondsSinceEpoch].join("_");
     return roomId;
   }
 
-  //1:1 채팅시작
+  ///1:1 채팅시작
   void startChatting(
       BuildContext context, String ownerUID, String targetUID) async {
     UserData userData = context.read<UserDataProvider>().userData;
@@ -84,7 +84,7 @@ class ChattingService {
     });
   }
 
-  //1:1 채팅방 생성
+  ///1:1 채팅방 생성
   void createOTORoom(BuildContext context, String targetUID) async {
     UserData userData = context.read<UserDataProvider>().userData;
     //1:1 채팅방ID 구하기
@@ -121,7 +121,7 @@ class ChattingService {
     enterRoom(context, roomData);
   }
 
-  //1:1 채팅방 입장
+  ///1:1 채팅방 입장
   void enterRoom(BuildContext context, ChatRoomData data) {
     Navigator.push(
         context,
@@ -130,7 +130,7 @@ class ChattingService {
         ));
   }
 
-  //그룹 채팅방 생성
+  ///그룹 채팅방 생성
   Future createGroupRoom(
       {BuildContext? context,
       String? roomName,
@@ -165,7 +165,7 @@ class ChattingService {
     enterGroupRoom(context, roomData);
   }
 
-  //그룹 채팅방 입장
+  ///그룹 채팅방 입장
   void enterGroupRoom(BuildContext context, GroupChatRoomData data) async {
     UserData userData = context.read<UserDataProvider>().userData;
 
@@ -254,7 +254,7 @@ class ChattingService {
         ));
   }
 
-  //채팅방 화면 나갔을 때 시간 기록
+  ///채팅방 화면 나갔을 때 시간 기록
   Future recordLeavingTime(UserData userData, String roomId,
       {bool isGroup = false}) async {
     await firestore
@@ -266,7 +266,7 @@ class ChattingService {
     }, SetOptions(merge: true));
   }
 
-  //채팅방 삭제
+  ///채팅방 삭제
   Future deleteChatRoom(
       {required UserData userData,
       required String roomId,
@@ -316,7 +316,7 @@ class ChattingService {
     }
   }
 
-  //그룹 채팅방 나가기
+  ///그룹 채팅방 나가기
   void leaveGroupChatRoom(
       {BuildContext? context,
       required UserData userData,
@@ -405,7 +405,7 @@ class ChattingService {
     }
   }
 
-  //채팅방 나가기
+  ///채팅방 나가기
   void leaveOTOChatRoom({
     BuildContext? context,
     required UserData userData,
@@ -454,7 +454,7 @@ class ChattingService {
     }
   }
 
-  //사용자가 참여한 채팅방 데이터 스트림 리스트 반환
+  ///사용자가 참여한 채팅방 데이터 스트림 리스트 반환
   Stream<QuerySnapshot<Object>> getChattingRoomListStream(BuildContext context,
       {bool isGroup = false}) {
     UserData userData = context.read<UserDataProvider>().userData;
@@ -465,7 +465,7 @@ class ChattingService {
         .snapshots();
   }
 
-  //사용자가 참여한 채팅방 데이터 쿼리스냅샷 리스트 반환
+  ///사용자가 참여한 채팅방 데이터 쿼리스냅샷 리스트 반환
   Future<QuerySnapshot<Map<String, dynamic>>> getChattingRoomListQuerySnapshot(
       UserData userData,
       {bool isGroup = false}) async {
@@ -476,7 +476,7 @@ class ChattingService {
         .get();
   }
 
-  //채팅방 데이터 스트림 반환
+  ///채팅방 데이터 스트림 반환
   Stream<DocumentSnapshot<Object>> getChatRoomDataStream(
       UserData userData, String roomId,
       {bool isGroup = false}) {
@@ -487,7 +487,7 @@ class ChattingService {
         .snapshots();
   }
 
-  //채팅방의 메세지 데이터 스트림 반환
+  ///채팅방의 메세지 데이터 스트림 반환
   Stream<QuerySnapshot<Object>> getChattingMessagesStream(BuildContext context,
       {String roomId = "", bool isGroup = false}) {
     UserData userData = context.read<UserDataProvider>().userData;
@@ -498,7 +498,7 @@ class ChattingService {
         .snapshots();
   }
 
-  //메세지 데이터 읽은 사람 갱신
+  ///메세지 데이터 읽은 사람 갱신
   void updateReader(BuildContext context, String roomId, String messageId,
       List<String> readerList,
       {bool isGroup = false}) async {
@@ -510,7 +510,7 @@ class ChattingService {
         .update({"readers": readerList});
   }
 
-  //사용자 정보 반환
+  ///사용자 정보 반환
   Future<DocumentSnapshot<Object>> getUserProfile(
       BuildContext context, String uid) async {
     UserData userData = context.read<UserDataProvider>().userData;
@@ -520,7 +520,7 @@ class ChattingService {
         .get();
   }
 
-  //메세지 보내기
+  ///메세지 보내기
   Future<void> sendMessage(
       {required UserData userData,
       required String roomId,
@@ -560,7 +560,7 @@ class ChattingService {
     });
   }
 
-  //미디어파일 보내기
+  ///미디어파일 보내기
   Future<void> sendMedia(
       {required UserData userData,
       required ChatRoomData roomData,

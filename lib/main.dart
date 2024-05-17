@@ -69,9 +69,9 @@ Future<UserData?> initializeFirebaseAndAds() async {
       return returnUser = await AuthService().getUserData(uid: uid ?? "");
     }
   } catch (e) {
-    //
+    debugPrint(e.toString());
+    return returnUser;
   }
-  return null;
 }
 
 Future<ThemeMode> loadThemeMode() async {

@@ -2,7 +2,6 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/services/auth_service.dart';
-import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +26,8 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
 
   final TextEditingController ageController = TextEditingController();
   final TextEditingController introController = TextEditingController();
-  final db = DataBase();
 
   bool isCompleted = false;
-
   bool gender = true; //true = 남 ,false = 여
   bool ei = true; //true = E, false = I
   bool ns = true; //true = N, false = S

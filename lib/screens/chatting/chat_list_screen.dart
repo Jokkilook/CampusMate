@@ -4,7 +4,6 @@ import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/chatting/group_chat_room_generation_screen.dart';
 import 'package:campusmate/services/chatting_service.dart';
-import 'package:campusmate/modules/database.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_list_item.dart';
@@ -17,8 +16,6 @@ import 'package:provider/provider.dart';
 //ignore: must_be_immutable
 class ChatListScreen extends StatefulWidget {
   ChatListScreen({super.key});
-
-  DataBase db = DataBase();
   bool onCreating = false;
 
   @override

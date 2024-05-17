@@ -1,9 +1,9 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/modules/school_api.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/regist/regist_screen_b.dart';
+import 'package:campusmate/services/school_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,8 +23,8 @@ class _RegistScreenAState extends State<RegistScreenA> {
     for (int i = DateTime.now().year; i > DateTime.now().year - 10; i--) i
   ];
 
-  late List<String> schoolList;
-  late List<String> deptList;
+  List<String> schoolList = [];
+  List<String> deptList = [];
 
   late int selectedYear;
   late String selectedSchool;
@@ -33,23 +33,22 @@ class _RegistScreenAState extends State<RegistScreenA> {
   bool isCompleted = false;
 
   UserData newUserData = UserData();
-
-  final schools = SchoolAPI();
+  SchoolAPI school = SchoolAPI();
 
   @override
   void initState() {
     super.initState();
     selectedYear = DateTime.now().year;
     selectedSchool = "";
-    //schoolList = schools.schoolList;
-    //deptList = schools.deptList;
-    //schools.getNameFromExcel();
-
-    schoolList = ["테스트대학교"];
-    deptList = ["테스트학과"];
+    initLoading();
 
     FirebaseAuth.instance.signOut();
 
+    setState(() {});
+  }
+
+  Future initLoading() async {
+    schoolList = await school.loadSchoolName(isTest: true);
     setState(() {});
   }
 
@@ -222,7 +221,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
                           onChanged: (value) {
                             //학교가 선택되면 학과 선택이 활성화됨.
                             selectedSchool = value!;
-                            //schools.getDeptFromExcel(selectedSchool);
+                            deptList = school.deptList[selectedSchool] ?? [];
                             selectedSchool.isEmpty
                                 ? isReady = false
                                 : isReady = true;
