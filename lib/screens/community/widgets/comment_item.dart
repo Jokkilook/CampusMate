@@ -2,10 +2,13 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
-import 'package:campusmate/screens/community/widgets/comment_reply_item.dart';
+import 'package:campusmate/screens/community/widgets/reply_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../profile/profile_screen.dart';
+import '../../profile/stranger_profile_screen.dart';
 
 class CommentItem extends StatefulWidget {
   final PostCommentData postCommentData;
@@ -30,6 +33,7 @@ class CommentItem extends StatefulWidget {
 class _CommentItemState extends State<CommentItem> {
   // 닉네임과 프로필 이미지 가져오기
   FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorInforms() {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     return FutureBuilder<DocumentSnapshot>(
       future: widget.firestore
           .collection('schools/${widget.school}/users')
@@ -52,30 +56,57 @@ class _CommentItemState extends State<CommentItem> {
         String authorName = snapshot.data!['name'];
         String? imageUrl = snapshot.data!['imageUrl'];
 
-        return Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundImage: widget.postCommentData.boardType == 'General' &&
-                      imageUrl != null
-                  ? NetworkImage(imageUrl)
-                  : null,
-              child: widget.postCommentData.boardType != 'General' ||
-                      imageUrl == null
-                  ? const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              widget.postCommentData.boardType == 'General' ? authorName : '익명',
-              style: const TextStyle(
-                fontSize: 12,
+        return GestureDetector(
+          onTap: () {
+            // boardType이 General일 때만 프로필 조회 가능
+            if (widget.postCommentData.boardType == 'General') {
+              // 작성자가 현재 유저일 때
+              if (widget.postCommentData.authorUid == currentUserUid) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ));
+              }
+              // 작성자가 다른 유저일 때
+              else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StrangerProfilScreen(
+                          uid: widget.postCommentData.authorUid.toString()),
+                    ));
+              }
+            }
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage:
+                    widget.postCommentData.boardType == 'General' &&
+                            imageUrl != null
+                        ? NetworkImage(imageUrl)
+                        : null,
+                child: widget.postCommentData.boardType != 'General' ||
+                        imageUrl == null
+                    ? const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      )
+                    : null,
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Text(
+                widget.postCommentData.boardType == 'General'
+                    ? authorName
+                    : '익명',
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -110,7 +141,7 @@ class _CommentItemState extends State<CommentItem> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: replies.map((reply) {
-              return CommentReplyItem(
+              return ReplyItem(
                 postReplyData: reply,
                 firestore: widget.firestore,
                 school: widget.school,

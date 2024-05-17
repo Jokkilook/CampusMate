@@ -9,6 +9,8 @@ import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/widgets/comment_item.dart';
 
 import '../../provider/user_data_provider.dart';
+import '../profile/profile_screen.dart';
+import '../profile/stranger_profile_screen.dart';
 import 'models/post_data.dart';
 import 'modules/format_time_stamp.dart';
 import 'widgets/post_controller.dart';
@@ -194,6 +196,7 @@ class _PostScreenState extends State<PostScreen> {
 
   // 닉네임과 프로필 이미지 가져오기
   FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorInforms() {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     return FutureBuilder<DocumentSnapshot>(
       future: widget.firestore
           .collection('schools/${widget.school}/users')
@@ -216,29 +219,54 @@ class _PostScreenState extends State<PostScreen> {
         String authorName = snapshot.data!['name'];
         String? imageUrl = snapshot.data!['imageUrl'];
 
-        return Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundImage:
-                  widget.postData.boardType == 'General' && imageUrl != null
-                      ? NetworkImage(imageUrl)
-                      : null,
-              child: widget.postData.boardType != 'General' || imageUrl == null
-                  ? const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              widget.postData.boardType == 'General' ? authorName : '익명',
-              style: const TextStyle(
-                fontSize: 16,
+        return GestureDetector(
+          onTap: () {
+            // boardType이 General일 때만 프로필 조회 가능
+            if (widget.postData.boardType == 'General') {
+              // 작성자가 현재 유저일 때
+              if (widget.postData.authorUid == currentUserUid) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ));
+              }
+              // 작성자가 다른 유저일 때
+              else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StrangerProfilScreen(
+                          uid: widget.postData.authorUid.toString()),
+                    ));
+              }
+            }
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage:
+                    widget.postData.boardType == 'General' && imageUrl != null
+                        ? NetworkImage(imageUrl)
+                        : null,
+                child:
+                    widget.postData.boardType != 'General' || imageUrl == null
+                        ? const Icon(
+                            Icons.person,
+                            color: Colors.white,
+                          )
+                        : null,
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Text(
+                widget.postData.boardType == 'General' ? authorName : '익명',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

@@ -6,14 +6,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../profile/profile_screen.dart';
+import '../../profile/stranger_profile_screen.dart';
+
 //ignore: must_be_immutable
-class CommentReplyItem extends StatefulWidget {
+class ReplyItem extends StatefulWidget {
   PostReplyData postReplyData;
   final FirebaseFirestore firestore;
   final String school;
   final VoidCallback refreshCallback;
 
-  CommentReplyItem({
+  ReplyItem({
     required this.postReplyData,
     required this.firestore,
     required this.school,
@@ -22,12 +25,13 @@ class CommentReplyItem extends StatefulWidget {
   });
 
   @override
-  State<CommentReplyItem> createState() => _CommentReplyItemState();
+  State<ReplyItem> createState() => _ReplyItemState();
 }
 
-class _CommentReplyItemState extends State<CommentReplyItem> {
+class _ReplyItemState extends State<ReplyItem> {
   // 닉네임과 프로필 이미지 가져오기
   FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorInforms() {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     return FutureBuilder<DocumentSnapshot>(
       future: widget.firestore
           .collection('schools/${widget.school}/users')
@@ -50,30 +54,54 @@ class _CommentReplyItemState extends State<CommentReplyItem> {
         String authorName = snapshot.data!['name'];
         String? imageUrl = snapshot.data!['imageUrl'];
 
-        return Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundImage: widget.postReplyData.boardType == 'General' &&
-                      imageUrl != null
-                  ? NetworkImage(imageUrl)
-                  : null,
-              child: widget.postReplyData.boardType != 'General' ||
-                      imageUrl == null
-                  ? const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              widget.postReplyData.boardType == 'General' ? authorName : '익명',
-              style: const TextStyle(
-                fontSize: 12,
+        return GestureDetector(
+          onTap: () {
+            // boardType이 General일 때만 프로필 조회 가능
+            if (widget.postReplyData.boardType == 'General') {
+              // 작성자가 현재 유저일 때
+              if (widget.postReplyData.authorUid == currentUserUid) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ));
+              }
+              // 작성자가 다른 유저일 때
+              else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StrangerProfilScreen(
+                          uid: widget.postReplyData.authorUid.toString()),
+                    ));
+              }
+            }
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: widget.postReplyData.boardType == 'General' &&
+                        imageUrl != null
+                    ? NetworkImage(imageUrl)
+                    : null,
+                child: widget.postReplyData.boardType != 'General' ||
+                        imageUrl == null
+                    ? const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      )
+                    : null,
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Text(
+                widget.postReplyData.boardType == 'General' ? authorName : '익명',
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
