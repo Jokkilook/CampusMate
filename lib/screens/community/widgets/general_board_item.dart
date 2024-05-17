@@ -187,14 +187,25 @@ class GeneralBoardItem extends StatelessWidget {
               ],
             ),
             //이미지 썸네일
-            AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(5),
-                ),
+            Container(
+              clipBehavior: Clip.hardEdge,
+              width: MediaQuery.of(context).size.height * 0.1,
+              height: MediaQuery.of(context).size.height * 0.1,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
               ),
+              child: postData.imageUrl != null
+                  ? Image.network(
+                      postData.imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                        );
+                      },
+                    )
+                  : const SizedBox(),
             ),
           ],
         ),

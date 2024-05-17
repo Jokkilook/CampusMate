@@ -2,6 +2,7 @@ import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:provider/provider.dart';
 
 import 'package:campusmate/models/user_data.dart';
@@ -423,9 +424,24 @@ class _PostScreenState extends State<PostScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Text(
-                        widget.postData.content ?? '',
-                      ),
+                      // 글 내용
+                      Text(widget.postData.content ?? ''),
+                      const SizedBox(height: 10),
+                      // 사진
+                      widget.postData.imageUrl != null
+                          ? InstaImageViewer(
+                              imageUrl: widget.postData.imageUrl.toString(),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                child: Image.network(
+                                  widget.postData.imageUrl.toString(),
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                            )
+                          : const SizedBox(),
                       const SizedBox(height: 20),
                       Center(
                         child: Container(
