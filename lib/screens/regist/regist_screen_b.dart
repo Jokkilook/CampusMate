@@ -57,7 +57,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
   bool isLoading = false;
   bool isCorrect = true;
   String message = "";
-  late Timer timer;
+  Timer? timer;
 
   @override
   void initState() {
@@ -75,7 +75,8 @@ class _RegistScreenBState extends State<RegistScreenB> {
   }
 
   void startTimer() {
-    timer.cancel();
+    timer?.cancel();
+
     widget.time = 180;
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (widget.time > 0) {
@@ -235,42 +236,44 @@ class _RegistScreenBState extends State<RegistScreenB> {
                           ),
                           const SizedBox(height: 10),
                           ElevatedButton(
-                            onPressed: widget.emailController.value.text !=
-                                        "" &&
-                                    emailCheck(
-                                        widget.emailController.value.text)
-                                ? () async {
-                                    startTimer();
-                                    //이미 가입된 아이디가 있나 확인
-                                    if (!(await AuthService()
-                                        .checkDuplicatedEmail(
-                                            email: widget
-                                                .emailController.value.text,
-                                            school:
-                                                newUserData.school ?? ""))) {
-                                      message = "이미 존재하는 이메일입니다!";
-                                      setState(() {});
-                                      return;
-                                    }
-                                    message = "";
+                            onPressed: isCompleted
+                                ? null
+                                : (widget.emailController.value.text != "" &&
+                                        emailCheck(
+                                            widget.emailController.value.text)
+                                    ? () async {
+                                        //이미 가입된 아이디가 있나 확인
+                                        if (!(await AuthService()
+                                            .checkDuplicatedEmail(
+                                                email: widget
+                                                    .emailController.value.text,
+                                                school: newUserData.school ??
+                                                    ""))) {
+                                          message = "이미 존재하는 이메일입니다!";
+                                          setState(() {});
+                                          return;
+                                        }
+                                        message = "";
 
-                                    /* 인증번호 발송 버튼을 누르면 메일로 발송하는 코드 */
-                                    setState(() {
-                                      isLoading = true;
-                                    });
+                                        /* 인증번호 발송 버튼을 누르면 메일로 발송하는 코드 */
+                                        setState(() {
+                                          isLoading = true;
+                                        });
 
-                                    await widget
-                                        .sending(widget.otp.createOTP(6));
-                                    isSended = true;
-                                    widget.otp.timerActivate();
+                                        await widget
+                                            .sending(widget.otp.createOTP(6));
+                                        isSended = true;
+                                        widget.otp.timerActivate();
+                                        startTimer();
 
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                  }
-                                : null,
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      }
+                                    : null),
                             child: isLoading
-                                ? const CircleLoading()
+                                ? const CircleLoading(
+                                    color: AppColors.buttonText)
                                 : Text(
                                     isSended ? "재발송" : "인증번호 발송 ",
                                     style: TextStyle(
@@ -371,8 +374,8 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                           /* 인증번호 확인 */
                                           if (widget.otp.verifyOTP(widget
                                               .codeController.value.text)) {
-                                            isCompleted = true;
                                             isCorrect = true;
+                                            isCompleted = true;
                                           } else {
                                             isCorrect = false;
                                           }
@@ -413,6 +416,7 @@ class _RegistScreenBState extends State<RegistScreenB> {
         isCompleted: isCompleted,
         onPressed: isCompleted
             ? () {
+                timer?.cancel();
                 /* 회원가입 데이터에 이메일 저장 후 다음 거로 */
                 newUserData.email = widget.emailController.value.text;
                 context.read<UserDataProvider>().userData = newUserData;

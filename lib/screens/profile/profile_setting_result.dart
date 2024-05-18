@@ -3,6 +3,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/services/auth_service.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,8 @@ class ProfileSettingResult extends StatefulWidget {
 }
 
 class _ProfileSettingResultState extends State<ProfileSettingResult> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     bool isDark =
@@ -45,6 +48,9 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () async {
+                isLoading = true;
+                setState(() {});
+
                 await AuthService().registUser(userData).then((value) {
                   //가입 성공 시
                   if (value) {
@@ -80,13 +86,15 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
                   }
                 });
               },
-              child: const Text(
-                "캠퍼스 메이트 시작",
-                style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
+              child: isLoading
+                  ? const CircleLoading(color: AppColors.buttonText)
+                  : const Text(
+                      "캠퍼스 메이트 시작",
+                      style: TextStyle(
+                          color: AppColors.buttonText,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.button,
                 minimumSize: const Size(10000, 50),

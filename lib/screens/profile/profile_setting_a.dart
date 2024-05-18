@@ -1,7 +1,6 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
@@ -739,7 +738,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                 pj ? mbti.add("P") : mbti.add("J");
                 userData.mbti = "${mbti[0]}${mbti[1]}${mbti[2]}${mbti[3]}";
 
-                AuthService().setUserData(userData);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
