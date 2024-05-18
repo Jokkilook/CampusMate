@@ -1,6 +1,7 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/modules/noti_test.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -29,6 +30,15 @@ void main() async {
   UserData? userData = await initializeFirebaseAndAds();
   bool isSignIn = (userData != null);
   ThemeMode currentThemeMode = await loadThemeMode();
+
+  NotiTest.init();
+  Future.delayed(
+    const Duration(seconds: 3),
+    () {
+      print("requested!!!!!!!!!!!!!!!!!!");
+      NotiTest.requestNotiPermission();
+    },
+  );
 
   runApp(
     MultiProvider(

@@ -1,6 +1,5 @@
-import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/screens/notification_test_screen.dart';
 import 'package:campusmate/services/school_service.dart';
-import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
@@ -132,20 +131,7 @@ class ScreenList extends StatelessWidget {
             ),
             const Divider(height: 0),
 
-            /// CHATROOM
-            ListTile(
-              title: const Text("CHATROOM", style: TextStyle(fontSize: 24)),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ChatRoomScreen(
-                          chatRoomData: ChatRoomData(),
-                        )),
-              ),
-            ),
-            const Divider(height: 0),
-
-            /// CHATROOM
+            /// School Data Loading
             ListTile(
                 title:
                     const Text("학교 이름 로딩 테스트", style: TextStyle(fontSize: 24)),
@@ -153,6 +139,18 @@ class ScreenList extends StatelessWidget {
                   SchoolAPI().loadSchoolName();
                   //함부로 쓰면 안됌 파이어스토어 쓰기 작업 388번 수행하는 무시무시한 놈
                   //SchoolAPI().uploadSchoolInfo();
+                }),
+            const Divider(height: 0),
+
+            /// Noti Test
+            ListTile(
+                title: const Text("알림 테스트 페이지", style: TextStyle(fontSize: 24)),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationTestScreen(),
+                      ));
                 }),
             const Divider(height: 0),
           ],
