@@ -1,4 +1,5 @@
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/profile/widgets/loading_profile_card.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/services/profile_service.dart';
@@ -6,7 +7,6 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/widgets/score_button.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
-import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +72,6 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                                             ),
                                           ),
                                         ),
-                                        //const Divider(height: 0),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -138,9 +137,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
         future: auth.getUserDocumentSnapshot(uid: widget.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircleLoading(),
-            );
+            return const LoadingProfileCard();
           }
           if (!snapshot.hasData) {
             return Center(
@@ -163,11 +160,17 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("오류가 발생했어요!"),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.refresh))
+                  const SizedBox(height: 20),
+                  IconButton.filled(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    icon: const Icon(
+                      Icons.refresh,
+                    ),
+                    color: Colors.green,
+                    iconSize: MediaQuery.of(context).size.width * 0.08,
+                  )
                 ],
               ),
             );
@@ -198,11 +201,17 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("데이터를 불러오지 못했어요!"),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.refresh))
+                    const SizedBox(height: 20),
+                    IconButton.filled(
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      icon: const Icon(
+                        Icons.refresh,
+                      ),
+                      color: Colors.green,
+                      iconSize: MediaQuery.of(context).size.width * 0.08,
+                    )
                   ],
                 ),
               );

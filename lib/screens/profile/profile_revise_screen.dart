@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/profile/widgets/loading_profile_card.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/main_screen.dart';
@@ -69,10 +70,28 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                 .getUserDocumentSnapshot(uid: uid, options: Source.server),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircleLoading());
+                return const LoadingProfileCard(canAd: false);
               }
               if (snapshot.hasError) {
-                throw Error();
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("오류가 발생했어요!"),
+                      const SizedBox(height: 20),
+                      IconButton.filled(
+                        onPressed: () {
+                          setState(() {});
+                        },
+                        icon: const Icon(
+                          Icons.refresh,
+                        ),
+                        color: Colors.green,
+                        iconSize: MediaQuery.of(context).size.width * 0.08,
+                      )
+                    ],
+                  ),
+                );
               } else {
                 var data = snapshot.data!.data() as Map<String, dynamic>;
                 widget.modifiedData = UserData.fromJson(data);
@@ -100,6 +119,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
 
                 //로딩 오버레이 표시
                 showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (context) {
                     return const Center(

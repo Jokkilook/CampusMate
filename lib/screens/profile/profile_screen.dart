@@ -2,7 +2,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/profile_revise_screen.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
-import 'package:campusmate/widgets/circle_loading.dart';
+import 'package:campusmate/screens/profile/widgets/loading_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +10,16 @@ import 'package:provider/provider.dart';
 
 ///내 정보 화면
 //ignore: must_be_immutable
-class ProfileScreen extends StatelessWidget {
-  ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final uid = FirebaseAuth.instance.currentUser?.uid;
+
   late UserData userData;
 
   @override
@@ -45,22 +51,54 @@ class ProfileScreen extends StatelessWidget {
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircleLoading(),
-            );
+            return const LoadingProfileCard();
           }
           if (snapshot.hasError) {
-            throw Error();
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("오류가 발생했어요!"),
+                  const SizedBox(height: 20),
+                  IconButton.filled(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    icon: const Icon(
+                      Icons.refresh,
+                    ),
+                    color: Colors.green,
+                    iconSize: MediaQuery.of(context).size.width * 0.08,
+                  )
+                ],
+              ),
+            );
           }
 
           if (snapshot.hasData) {
             var data = snapshot.data?.data() as Map<String, dynamic>;
-            return FullProfileCard(
-              userData: UserData.fromJson(data),
-            );
+            return FullProfileCard(userData: UserData.fromJson(data));
           }
 
-          return const Center(child: Text("데이터를 불러오지 못했어요 T0T"));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("오류가 발생했어요!"),
+                const SizedBox(height: 20),
+                IconButton.filled(
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  icon: const Icon(
+                    Icons.refresh,
+                  ),
+                  color: Colors.green,
+                  iconSize: MediaQuery.of(context).size.width * 0.08,
+                )
+              ],
+            ),
+          );
         },
       ),
       bottomNavigationBar: const SizedBox(

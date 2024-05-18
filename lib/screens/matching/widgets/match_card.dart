@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -7,7 +6,6 @@ import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/matching/widgets/score_shower.dart';
-import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/cupertino.dart';
@@ -149,6 +147,8 @@ class _MatchCardState extends State<MatchCard> {
   Widget build(BuildContext context) {
     refresh();
     UserData userData = context.read<UserDataProvider>().userData;
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return FutureBuilder<QuerySnapshot>(
       future: FirebaseFirestore.instance
           .collection('schools/${userData.school}/users')
@@ -156,7 +156,9 @@ class _MatchCardState extends State<MatchCard> {
       builder: (context, snapshot) {
         //로딩 중
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircleLoading();
+          return Center(
+            child: loadingCard(context, isDark),
+          );
         }
         //유저 데이터가 없으면
         if (!snapshot.hasData) {
@@ -176,7 +178,9 @@ class _MatchCardState extends State<MatchCard> {
           }
           //2개 이상 데이터가 들어왔을 때 스와이프 카드 출력 시도
           try {
-            return Center(child: swipableCard(data, context));
+            return Center(
+              child: swipableCard(context, data, isDark),
+            );
           } catch (e) {
             return refreshMessage("추천할 유저가 없어요 😢");
           }
@@ -189,12 +193,159 @@ class _MatchCardState extends State<MatchCard> {
     );
   }
 
-  CardSwiper swipableCard(
-      List<QueryDocumentSnapshot> datas, BuildContext context) {
+  //로딩 카드
+  Widget loadingCard(BuildContext context, bool isDark) {
+    final screenWidth = MediaQuery.of(context).size.height;
+    return CardSwiper(
+      isDisabled: true,
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
+      cardsCount: 2,
+      cardBuilder: (context, index, horizontalOffsetPercentage,
+          verticalOffsetPercentage) {
+        return Container(
+          clipBehavior: Clip.hardEdge,
+          height: screenWidth * 0.7,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  offset: const Offset(0, 0),
+                  blurRadius: 2)
+            ],
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //사진부분
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  color: isDark ? AppColors.darkTag : AppColors.lightTag,
+                ),
+              ),
+              //정보부분
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkCard : AppColors.lightCard,
+                  borderRadius:
+                      const BorderRadius.vertical(bottom: Radius.circular(10)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    //이름,나이 / MBTI / 태그 표시
+                    Flexible(
+                      flex: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 20,
+                          bottom: 20,
+                          left: 20,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            //이름, 나이
+                            Container(
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.darkTag
+                                    : AppColors.lightTag,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: AutoSizeText(
+                                "                              ",
+                                maxLines: 1,
+                                style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkTitle
+                                        : AppColors.lightTitle,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            //MBTI
+                            Container(
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.darkTag
+                                    : AppColors.lightTag,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '             ',
+                                style: TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w500,
+                                    color: isDark
+                                        ? AppColors.darkHint
+                                        : AppColors.lightHint),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            //태그
+                            ExtendedWrap(
+                              maxLines: 2,
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: [
+                                for (var i = 0; i < 7; i++)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: isDark
+                                            ? AppColors.darkTag
+                                            : AppColors.lightTag,
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 5),
+                                    child: Text(
+                                      "    ",
+                                      style: TextStyle(
+                                          color: isDark
+                                              ? AppColors.darkText
+                                              : AppColors.lightText),
+                                    ),
+                                  )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Flexible(
+                      flex: 4,
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Center(
+                          child: ScoreShower(
+                            score: "0",
+                            percentage: 0,
+                            isLoading: true,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  //출력 카드
+  Widget swipableCard(
+      BuildContext context, List<QueryDocumentSnapshot> datas, bool isDark) {
     final screenWidth = MediaQuery.of(context).size.height;
     final UserData userData = context.read<UserDataProvider>().userData;
-    bool isDark =
-        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     List<QueryDocumentSnapshot> data = datas;
     List<QueryDocumentSnapshot> removeItems = [];
@@ -284,7 +435,7 @@ class _MatchCardState extends State<MatchCard> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => StrangerProfilScreen(uid: doc.uid!),
-                  )).then((value) => value ? setState(() {}) : null);
+                  )).then((value) => (value ?? false) ? setState(() {}) : null);
             },
             child: Container(
               clipBehavior: Clip.hardEdge,
