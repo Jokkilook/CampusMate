@@ -357,8 +357,12 @@ class _PostScreenState extends State<PostScreen> {
                                               .toString())
                                           : null,
                                   child: widget.postData.boardType != 'General'
-                                      ? Image.asset(
-                                          '../../../assets/images/default_image.png')
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(25),
+                                          child: Image.asset(
+                                              'assets/images/default_image.png'),
+                                        )
                                       : null,
                                 ),
                                 const SizedBox(width: 10),

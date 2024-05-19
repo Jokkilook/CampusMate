@@ -242,8 +242,11 @@ class _ReplyItemState extends State<ReplyItem> {
                               widget.postReplyData.profileImageUrl.toString())
                           : null,
                       child: widget.postReplyData.boardType != 'General'
-                          ? Image.asset(
-                              '../../../assets/images/default_image.png')
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(25),
+                              child: Image.asset(
+                                  'assets/images/default_image.png'),
+                            )
                           : null,
                     ),
                     const SizedBox(width: 10),
