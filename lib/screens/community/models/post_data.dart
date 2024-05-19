@@ -6,8 +6,10 @@ class PostData {
   String? content;
   Timestamp? timestamp;
   String? authorUid;
+  String? authorName;
   String? postId;
   String? imageUrl;
+  String? profileImageUrl;
   int? commentCount;
   List<dynamic>? viewers;
   List<dynamic>? likers;
@@ -21,8 +23,10 @@ class PostData {
     this.content,
     this.timestamp,
     this.authorUid,
+    this.authorName,
     this.postId,
     this.imageUrl,
+    this.profileImageUrl,
     this.commentCount,
     this.viewers = const [],
     this.likers = const [],
@@ -37,8 +41,10 @@ class PostData {
     content = json['content'];
     timestamp = json['timestamp'];
     authorUid = json['authorUid'];
+    authorName = json['authorName'];
     postId = json['postId'];
     imageUrl = json['imageUrl'];
+    profileImageUrl = json['profileImageUrl'];
     commentCount = json['commentCount'] ?? 0;
     viewers = json['viewers'] ?? [];
     likers = json['likers'] ?? [];
@@ -54,8 +60,10 @@ class PostData {
       'content': content,
       'timestamp': timestamp,
       'authorUid': authorUid,
+      'authorName': authorName,
       'postId': postId,
       'imageUrl': imageUrl,
+      'profileImageUrl': profileImageUrl,
       'commentCount': commentCount,
       'viewers': viewers,
       'likers': likers,

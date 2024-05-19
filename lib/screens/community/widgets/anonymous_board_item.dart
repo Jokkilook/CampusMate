@@ -63,17 +63,12 @@ class AnonymousBoardItem extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        // 작성 시간
-                        Text(
-                          '익명 | $formattedTime',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      '익명 | $formattedTime',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
                     ),
                     Row(
                       children: [

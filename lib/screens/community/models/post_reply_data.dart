@@ -7,6 +7,8 @@ class PostReplyData {
   String? content;
   Timestamp? timestamp;
   String? authorUid;
+  String? authorName;
+  String? profileImageUrl;
   String? boardType;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
@@ -20,6 +22,8 @@ class PostReplyData {
     this.content,
     this.timestamp,
     this.authorUid,
+    this.authorName,
+    this.profileImageUrl,
     this.boardType,
     this.likers = const [],
     this.dislikers = const [],
@@ -34,6 +38,8 @@ class PostReplyData {
     content = json['content'];
     timestamp = json['timestamp'];
     authorUid = json['authorUid'];
+    authorName = json['authorName'];
+    profileImageUrl = json['profileImageUrl'];
     boardType = json['boardType'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
@@ -48,6 +54,8 @@ class PostReplyData {
       'content': content,
       'timestamp': timestamp,
       'authorUid': authorUid,
+      'authorName': authorName,
+      'profileImageUrl': profileImageUrl,
       'boardType': boardType,
       'likers': likers,
       'dislikers': dislikers,

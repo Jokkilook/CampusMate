@@ -31,87 +31,6 @@ class CommentItem extends StatefulWidget {
 }
 
 class _CommentItemState extends State<CommentItem> {
-  // 닉네임과 프로필 이미지 가져오기
-  FutureBuilder<DocumentSnapshot<Object?>> _buildAuthorInforms() {
-    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
-    return FutureBuilder<DocumentSnapshot>(
-      future: widget.firestore
-          .collection('schools/${widget.school}/users')
-          .doc(widget.postCommentData.authorUid)
-          .get(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Text(
-            'name',
-            style: TextStyle(
-              fontSize: 12,
-            ),
-          );
-        }
-
-        // 문서에서 사용자 이름과 이미지 URL 가져오기
-        String authorName = snapshot.data!['name'];
-        String? imageUrl = snapshot.data!['imageUrl'];
-
-        return GestureDetector(
-          onTap: () {
-            // boardType이 General일 때만 프로필 조회 가능
-            if (widget.postCommentData.boardType == 'General') {
-              // 작성자가 현재 유저일 때
-              if (widget.postCommentData.authorUid == currentUserUid) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileScreen(),
-                    ));
-              }
-              // 작성자가 다른 유저일 때
-              else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StrangerProfilScreen(
-                          uid: widget.postCommentData.authorUid.toString()),
-                    ));
-              }
-            }
-          },
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundImage:
-                    widget.postCommentData.boardType == 'General' &&
-                            imageUrl != null
-                        ? NetworkImage(imageUrl)
-                        : null,
-                child: widget.postCommentData.boardType != 'General' ||
-                        imageUrl == null
-                    ? const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                      )
-                    : null,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                widget.postCommentData.boardType == 'General'
-                    ? authorName
-                    : '익명',
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   // 답글 리스트
   Widget _buildCommentReplies() {
     return FutureBuilder<QuerySnapshot>(
@@ -334,7 +253,57 @@ class _CommentItemState extends State<CommentItem> {
         children: [
           Row(
             children: [
-              _buildAuthorInforms(),
+              // 작성자 프로필
+              GestureDetector(
+                onTap: () {
+                  // boardType이 General일 때만 프로필 조회 가능
+                  if (widget.postCommentData.boardType == 'General') {
+                    // 작성자가 현재 유저일 때
+                    if (widget.postCommentData.authorUid == currentUserUid) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileScreen(),
+                          ));
+                    }
+                    // 작성자가 다른 유저일 때
+                    else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StrangerProfilScreen(
+                                uid: widget.postCommentData.authorUid
+                                    .toString()),
+                          ));
+                    }
+                  }
+                },
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundImage: widget.postCommentData.boardType ==
+                              'General'
+                          ? NetworkImage(
+                              widget.postCommentData.profileImageUrl.toString())
+                          : null,
+                      child: widget.postCommentData.boardType != 'General'
+                          ? Image.asset(
+                              '../../../assets/images/default_image.png')
+                          : null,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      widget.postCommentData.boardType == 'General'
+                          ? widget.postCommentData.authorName.toString()
+                          : '익명',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const Spacer(),
               // 답글 작성 버튼
               IconButton(

@@ -12,27 +12,41 @@ class MyPostsScreen extends StatelessWidget {
   const MyPostsScreen({super.key});
 
   Future<List<DocumentSnapshot>> _fetchUserPosts(BuildContext context) async {
-    final UserData userData = context.read<UserDataProvider>().userData;
-    String currentUserUid = userData.uid!;
+    try {
+      // 사용자 데이터 가져오기
+      final UserData userData = context.read<UserDataProvider>().userData;
+      String currentUserUid = userData.uid!;
+      String school = userData.school!;
 
-    // generalPosts와 anonymousPosts에서 사용자가 작성한 글을 가져오기
-    QuerySnapshot generalPostsSnapshot = await FirebaseFirestore.instance
-        .collection("schools/${userData.school!}/generalPosts")
-        .where('authorUid', isEqualTo: currentUserUid)
-        .get();
+      // Firestore 인스턴스 가져오기
+      final firestore = FirebaseFirestore.instance;
 
-    QuerySnapshot anonymousPostsSnapshot = await FirebaseFirestore.instance
-        .collection("schools/${userData.school!}/anonymousPosts")
-        .where('authorUid', isEqualTo: currentUserUid)
-        .get();
+      // 일반 게시물과 익명 게시물 쿼리
+      var generalPostsQuery = firestore
+          .collection("schools/$school/generalPosts")
+          .where('authorUid', isEqualTo: currentUserUid);
+      var anonymousPostsQuery = firestore
+          .collection("schools/$school/anonymousPosts")
+          .where('authorUid', isEqualTo: currentUserUid);
 
-    // 결과 병합
-    List<DocumentSnapshot> allResults = [
-      ...generalPostsSnapshot.docs,
-      ...anonymousPostsSnapshot.docs,
-    ];
+      // 쿼리 실행
+      List<QuerySnapshot> querySnapshots = await Future.wait([
+        generalPostsQuery.get(),
+        anonymousPostsQuery.get(),
+      ]);
 
-    return allResults;
+      // 결과 병합
+      List<DocumentSnapshot> allResults = [
+        ...querySnapshots[0].docs,
+        ...querySnapshots[1].docs,
+      ];
+
+      return allResults;
+    } catch (e) {
+      // 에러 처리
+      debugPrint('Error fetching user posts: $e');
+      return [];
+    }
   }
 
   @override

@@ -55,6 +55,80 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
     image = null;
   }
 
+  // 커뮤니티 프로필 업데이트
+  Future<void> updateCommunityProfile(
+      BuildContext context, String name, String profileImageUrl) async {
+    try {
+      // 사용자 데이터 가져오기
+      final UserData userData = context.read<UserDataProvider>().userData;
+      String currentUserUid = userData.uid.toString();
+      String school = userData.school.toString();
+      String newAuthorName = name;
+      String newProfileImageUrl = profileImageUrl;
+
+      // Firestore 인스턴스 가져오기
+      final firestore = FirebaseFirestore.instance;
+
+      // 특정 경로의 게시글 쿼리
+      var generalPostsQuery = firestore
+          .collection('schools')
+          .doc(school)
+          .collection('generalPosts')
+          .where('authorUid', isEqualTo: currentUserUid);
+      var anonymousPostsQuery = firestore
+          .collection('schools')
+          .doc(school)
+          .collection('anonymousPosts')
+          .where('authorUid', isEqualTo: currentUserUid);
+
+      // 쿼리 실행
+      List<QuerySnapshot> postSnapshots = await Future.wait([
+        generalPostsQuery.get(),
+        anonymousPostsQuery.get(),
+      ]);
+
+      // 게시글 업데이트 및 하위 컬렉션인 comments, replies 업데이트
+      for (var postSnapshot in postSnapshots) {
+        for (var postDoc in postSnapshot.docs) {
+          // 게시글 업데이트
+          await postDoc.reference.update({
+            'authorName': newAuthorName,
+            'profileImageUrl': newProfileImageUrl,
+          });
+
+          // 댓글 쿼리 및 업데이트
+          var commentsQuery = postDoc.reference
+              .collection('comments')
+              .where('authorUid', isEqualTo: currentUserUid);
+          var commentsSnapshot = await commentsQuery.get();
+          for (var commentDoc in commentsSnapshot.docs) {
+            await commentDoc.reference.update({
+              'authorName': newAuthorName,
+              'profileImageUrl': newProfileImageUrl,
+            });
+
+            // 답글 쿼리 및 업데이트
+            var repliesQuery = commentDoc.reference
+                .collection('replies')
+                .where('authorUid', isEqualTo: currentUserUid);
+            var repliesSnapshot = await repliesQuery.get();
+            for (var replyDoc in repliesSnapshot.docs) {
+              await replyDoc.reference.update({
+                'authorName': newAuthorName,
+                'profileImageUrl': newProfileImageUrl,
+              });
+            }
+          }
+        }
+      }
+
+      debugPrint('User posts and comments updated successfully');
+    } catch (e) {
+      // 에러 처리
+      debugPrint('Error updating user posts and comments: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +202,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                   },
                 );
 
-                widget.modifiedData.name = nameController.value.text;
+                String name = nameController.value.text;
+                widget.modifiedData.name = name;
                 widget.modifiedData.introduce = introController.value.text;
                 widget.modifiedData.mbti =
                     "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
@@ -149,7 +224,11 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                   await ref.putFile(File(compMedia!.path));
 
                   //변경할 데이터에 변경된 url 저장
-                  widget.modifiedData.imageUrl = await ref.getDownloadURL();
+                  String imageUrl = await ref.getDownloadURL();
+                  widget.modifiedData.imageUrl = imageUrl;
+
+                  // 커뮤니티 프로필 업데이트
+                  updateCommunityProfile(context, name, imageUrl);
 
                   //채팅방 프로필 url 업데이트
                   await FirebaseFirestore.instance

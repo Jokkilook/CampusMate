@@ -206,7 +206,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
           text: '작성',
           isCompleted: true,
           onPressed: () async {
-            postData.authorUid = context.read<UserDataProvider>().userData.uid;
+            final userData = context.read<UserDataProvider>().userData;
+            postData.authorUid = userData.uid;
+            postData.authorName = userData.name;
+            postData.profileImageUrl = userData.imageUrl;
             postData.timestamp = Timestamp.fromDate(DateTime.now());
             // 제목, 내용을 입력해야 작성됨
             if (_titleController.value.text == "") {

@@ -69,52 +69,24 @@ class GeneralBoardItem extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //닉네임, 게시시간
+                    // 닉네임, 작성시간
                     Row(
                       children: [
-                        // 작성자 닉네임 가져오기
-                        FutureBuilder<DocumentSnapshot>(
-                          future: firestore
-                              .collection('schools/$school/users')
-                              .doc(postData.authorUid)
-                              .get(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            if (!snapshot.hasData || snapshot.data == null) {
-                              return const Text(
-                                '닉네임',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              );
-                            }
-                            // 문서에서 사용자 이름 가져오기
-                            String authorName = snapshot.data!['name'];
-                            //작성자, 게시시간
-                            return Row(
-                              children: [
-                                Text(
-                                  authorName,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                // 작성 시간
-                                Text(
-                                  '| $formattedTime',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                        // 닉네임
+                        Text(
+                          postData.authorName.toString(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        // 작성 시간
+                        Text(
+                          ' | $formattedTime',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),

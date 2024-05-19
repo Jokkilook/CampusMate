@@ -58,7 +58,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PostSearchScreen(),
+                    builder: (context) => const PostSearchScreen(),
                   ),
                 ).then((_) {
                   _refreshScreen();
