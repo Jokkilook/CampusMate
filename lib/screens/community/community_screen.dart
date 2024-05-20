@@ -25,11 +25,17 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _refreshing = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        _refreshScreen().then((value) => _refreshing = false);
+      });
+    });
   }
 
   @override
@@ -39,8 +45,9 @@ class _CommunityScreenState extends State<CommunityScreen>
   }
 
   Future<void> _refreshScreen() async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    setState(() {});
+    setState(() {
+      _refreshing = true;
+    });
   }
 
   @override
@@ -248,18 +255,24 @@ class _CommunityScreenState extends State<CommunityScreen>
           heroTag: "addpost",
           onPressed: () {
             debugPrint('index: ${_tabController.index}');
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => AddPostScreen(
-                        currentIndex: _tabController.index,
-                        userData: userData,
-                      )),
-            ).then((_) {
-              _refreshScreen();
-            });
+            if (!_refreshing) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => AddPostScreen(
+                          currentIndex: _tabController.index,
+                          userData: userData,
+                        )),
+              ).then((_) {
+                _refreshScreen();
+              });
+            }
           },
-          child: const Icon(Icons.add, size: 30),
+          child: const Icon(
+            Icons.add,
+            size: 30,
+            color: Colors.white,
+          ),
           backgroundColor: AppColors.button,
           foregroundColor: const Color(0xFF0A351E),
           elevation: 5,
