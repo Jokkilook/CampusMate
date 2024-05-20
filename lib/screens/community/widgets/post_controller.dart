@@ -8,12 +8,10 @@ class PostController extends StatefulWidget {
     Key? key,
     required this.currentUserUid,
     required this.postData,
-    required this.school,
   }) : super(key: key);
 
   final String currentUserUid;
   final PostData postData;
-  final String school;
 
   @override
   State<PostController> createState() => _PostControllerState();
@@ -58,7 +56,7 @@ class _PostControllerState extends State<PostController> {
 
       // 게시글 컬렉션 참조
       CollectionReference postsCollection = FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postData.school}/" +
               (widget.postData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'));
@@ -129,7 +127,7 @@ class _PostControllerState extends State<PostController> {
                   MaterialPageRoute(
                     builder: (context) => EditPostScreen(
                       postData: widget.postData,
-                      school: widget.school,
+                      school: widget.postData.school.toString(),
                     ),
                   ),
                 ).then((_) {

@@ -8,6 +8,7 @@ class PostData {
   String? authorUid;
   String? authorName;
   String? postId;
+  String? school;
   String? imageUrl;
   String? profileImageUrl;
   int? commentCount;
@@ -25,6 +26,7 @@ class PostData {
     this.authorUid,
     this.authorName,
     this.postId,
+    this.school,
     this.imageUrl,
     this.profileImageUrl,
     this.commentCount,
@@ -43,6 +45,7 @@ class PostData {
     authorUid = json['authorUid'];
     authorName = json['authorName'];
     postId = json['postId'];
+    school = json['school'];
     imageUrl = json['imageUrl'];
     profileImageUrl = json['profileImageUrl'];
     commentCount = json['commentCount'] ?? 0;
@@ -62,6 +65,7 @@ class PostData {
       'authorUid': authorUid,
       'authorName': authorName,
       'postId': postId,
+      'school': school,
       'imageUrl': imageUrl,
       'profileImageUrl': profileImageUrl,
       'commentCount': commentCount,

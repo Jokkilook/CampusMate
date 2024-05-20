@@ -221,6 +221,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
             }
             postData.title = _titleController.value.text;
             postData.content = _contentController.value.text;
+            postData.school = userData.school;
 
             if (image != null) {
               // 이미지 압축

@@ -84,7 +84,6 @@ class MyPostsScreen extends StatelessWidget {
                         builder: (context) => PostScreen(
                           postData: postData,
                           firestore: FirebaseFirestore.instance,
-                          school: userData.school!,
                           userData: userData,
                         ),
                       ),
@@ -93,7 +92,6 @@ class MyPostsScreen extends StatelessWidget {
                   child: GeneralBoardItem(
                     postData: postData,
                     firestore: FirebaseFirestore.instance,
-                    school: userData.school!,
                   ),
                 );
               } else if (userPosts[index].reference.parent.id ==
@@ -106,7 +104,6 @@ class MyPostsScreen extends StatelessWidget {
                         builder: (context) => PostScreen(
                           postData: postData,
                           firestore: FirebaseFirestore.instance,
-                          school: userData.school!,
                           userData: userData,
                         ),
                       ),
@@ -114,7 +111,6 @@ class MyPostsScreen extends StatelessWidget {
                   },
                   child: AnonymousBoardItem(
                     postData: postData,
-                    school: userData.school!,
                   ),
                 );
               } else {

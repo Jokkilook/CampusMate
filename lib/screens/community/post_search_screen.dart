@@ -123,7 +123,6 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                         builder: (context) => PostScreen(
                           postData: postData,
                           firestore: FirebaseFirestore.instance,
-                          school: userData.school!,
                           userData: userData,
                         ),
                       ),
@@ -132,7 +131,6 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                   child: GeneralBoardItem(
                     postData: postData,
                     firestore: FirebaseFirestore.instance,
-                    school: userData.school!,
                   ),
                 );
               } else if (_searchResults[index].reference.parent.id ==
@@ -145,7 +143,6 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                         builder: (context) => PostScreen(
                           postData: postData,
                           firestore: FirebaseFirestore.instance,
-                          school: userData.school!,
                           userData: userData,
                         ),
                       ),
@@ -153,7 +150,6 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                   },
                   child: AnonymousBoardItem(
                     postData: postData,
-                    school: userData.school!,
                   ),
                 );
               } else {

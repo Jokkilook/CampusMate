@@ -9,13 +9,11 @@ import '../modules/format_time_stamp.dart';
 class GeneralBoardItem extends StatelessWidget {
   final PostData postData;
   final FirebaseFirestore firestore;
-  final String school;
 
   const GeneralBoardItem({
     super.key,
     required this.postData,
     required this.firestore,
-    required this.school,
   });
 
   @override

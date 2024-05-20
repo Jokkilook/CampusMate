@@ -13,7 +13,6 @@ import '../../profile/stranger_profile_screen.dart';
 class CommentItem extends StatefulWidget {
   final PostCommentData postCommentData;
   final FirebaseFirestore firestore;
-  final String school;
   final Function(String) onReplyPressed;
   final VoidCallback refreshCallback;
 
@@ -21,7 +20,6 @@ class CommentItem extends StatefulWidget {
     Key? key,
     required this.postCommentData,
     required this.firestore,
-    required this.school,
     required this.onReplyPressed,
     required this.refreshCallback,
   }) : super(key: key);
@@ -35,7 +33,7 @@ class _CommentItemState extends State<CommentItem> {
   Widget _buildCommentReplies() {
     return FutureBuilder<QuerySnapshot>(
       future: FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postCommentData.school}/" +
               (widget.postCommentData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
@@ -63,7 +61,6 @@ class _CommentItemState extends State<CommentItem> {
               return ReplyItem(
                 postReplyData: reply,
                 firestore: widget.firestore,
-                school: widget.school,
                 refreshCallback: widget.refreshCallback,
               );
             }).toList(),
@@ -113,7 +110,7 @@ class _CommentItemState extends State<CommentItem> {
     } else {
       if (isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}/" +
+            .collection("schools/${widget.postCommentData.school}/" +
                 (widget.postCommentData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
@@ -129,7 +126,7 @@ class _CommentItemState extends State<CommentItem> {
       }
       if (!isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}/" +
+            .collection("schools/${widget.postCommentData.school}/" +
                 (widget.postCommentData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
@@ -187,7 +184,7 @@ class _CommentItemState extends State<CommentItem> {
     try {
       // 댓글의 하위 답글 가져오기
       QuerySnapshot replySnapshot = await FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postCommentData.school}/" +
               (widget.postCommentData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
@@ -200,7 +197,7 @@ class _CommentItemState extends State<CommentItem> {
       // 댓글과 답글 삭제
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.delete(FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postCommentData.school}/" +
               (widget.postCommentData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
@@ -215,7 +212,7 @@ class _CommentItemState extends State<CommentItem> {
       // commentCount 업데이트
       int repliesCount = replySnapshot.docs.length;
       DocumentReference postRef = FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postCommentData.school}/" +
               (widget.postCommentData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))

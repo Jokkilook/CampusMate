@@ -13,13 +13,11 @@ import '../../profile/stranger_profile_screen.dart';
 class ReplyItem extends StatefulWidget {
   PostReplyData postReplyData;
   final FirebaseFirestore firestore;
-  final String school;
   final VoidCallback refreshCallback;
 
   ReplyItem({
     required this.postReplyData,
     required this.firestore,
-    required this.school,
     required this.refreshCallback,
     super.key,
   });
@@ -69,7 +67,7 @@ class _ReplyItemState extends State<ReplyItem> {
     } else {
       if (isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}/" +
+            .collection("schools/${widget.postReplyData.school}/" +
                 (widget.postReplyData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
@@ -87,7 +85,7 @@ class _ReplyItemState extends State<ReplyItem> {
       }
       if (!isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}/" +
+            .collection("schools/${widget.postReplyData.school}/" +
                 (widget.postReplyData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
@@ -150,7 +148,7 @@ class _ReplyItemState extends State<ReplyItem> {
 
       // 댓글 컬렉션 참조
       CollectionReference commentsCollection = FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postReplyData.school}/" +
               (widget.postReplyData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
@@ -168,7 +166,7 @@ class _ReplyItemState extends State<ReplyItem> {
 
       // 게시글의 commentCount 감소를 배치에 추가
       DocumentReference postDocRef = FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postReplyData.school}/" +
               (widget.postReplyData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))

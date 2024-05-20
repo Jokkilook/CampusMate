@@ -20,14 +20,12 @@ import 'widgets/post_controller.dart';
 class PostScreen extends StatefulWidget {
   PostData postData;
   final FirebaseFirestore firestore;
-  final String school;
   final UserData userData;
 
   PostScreen({
     Key? key,
     required this.postData,
     required this.firestore,
-    required this.school,
     required this.userData,
   }) : super(key: key);
 
@@ -73,7 +71,7 @@ class _PostScreenState extends State<PostScreen> {
       if (widget.postData.viewers == null ||
           !widget.postData.viewers!.contains(currentUserUid)) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}/" +
+            .collection("schools/${widget.postData.school}/" +
                 (widget.postData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
@@ -134,7 +132,7 @@ class _PostScreenState extends State<PostScreen> {
     } else {
       if (isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}/" +
+            .collection("schools/${widget.postData.school}/" +
                 (widget.postData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
@@ -148,7 +146,7 @@ class _PostScreenState extends State<PostScreen> {
       }
       if (!isLike) {
         await FirebaseFirestore.instance
-            .collection("schools/${widget.school}/" +
+            .collection("schools/${widget.postData.school}/" +
                 (widget.postData.boardType == 'General'
                     ? 'generalPosts'
                     : 'anonymousPosts'))
@@ -172,7 +170,7 @@ class _PostScreenState extends State<PostScreen> {
     try {
       // 데이터 다시 가져오기
       DocumentSnapshot postSnapshot = await FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postData.school}/" +
               (widget.postData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
@@ -199,7 +197,7 @@ class _PostScreenState extends State<PostScreen> {
   Widget _buildComments() {
     return FutureBuilder<QuerySnapshot>(
       future: FirebaseFirestore.instance
-          .collection("schools/${widget.school}/" +
+          .collection("schools/${widget.postData.school}/" +
               (widget.postData.boardType == 'General'
                   ? 'generalPosts'
                   : 'anonymousPosts'))
@@ -226,7 +224,6 @@ class _PostScreenState extends State<PostScreen> {
             itemBuilder: (context, index) {
               return CommentItem(
                 postCommentData: comments[index],
-                school: widget.school,
                 firestore: FirebaseFirestore.instance,
                 refreshCallback: _refreshScreen,
                 onReplyPressed: (commentId) {
@@ -284,7 +281,6 @@ class _PostScreenState extends State<PostScreen> {
                   return PostController(
                     currentUserUid: currentUserUid,
                     postData: widget.postData,
-                    school: widget.school,
                   );
                 },
               ).then((_) {
@@ -534,6 +530,7 @@ class _PostScreenState extends State<PostScreen> {
                           timestamp: Timestamp.now(),
                           authorUid: currentUserUid,
                           authorName: widget.userData.name,
+                          school: widget.postData.school,
                           profileImageUrl: widget.userData.imageUrl,
                           boardType: widget.postData.boardType,
                         );
@@ -542,7 +539,7 @@ class _PostScreenState extends State<PostScreen> {
                           // 답글 Firestore에 추가
                           DocumentReference docRef = await FirebaseFirestore
                               .instance
-                              .collection("schools/${widget.school}/" +
+                              .collection("schools/${widget.postData.school}/" +
                                   (widget.postData.boardType == 'General'
                                       ? 'generalPosts'
                                       : 'anonymousPosts'))
@@ -556,7 +553,7 @@ class _PostScreenState extends State<PostScreen> {
                           // 총 댓글 수 업데이트
                           DocumentReference postDocRef = FirebaseFirestore
                               .instance
-                              .collection("schools/${widget.school}/" +
+                              .collection("schools/${widget.postData.school}/" +
                                   (widget.postData.boardType == 'General'
                                       ? 'generalPosts'
                                       : 'anonymousPosts'))
@@ -589,6 +586,7 @@ class _PostScreenState extends State<PostScreen> {
                         timestamp: Timestamp.now(),
                         authorUid: currentUserUid,
                         authorName: widget.userData.name,
+                        school: widget.postData.school,
                         profileImageUrl: widget.userData.imageUrl,
                         boardType: widget.postData.boardType,
                       );
@@ -596,7 +594,7 @@ class _PostScreenState extends State<PostScreen> {
                       try {
                         DocumentReference docRef = await FirebaseFirestore
                             .instance
-                            .collection("schools/${widget.school}/" +
+                            .collection("schools/${widget.postData.school}/" +
                                 (widget.postData.boardType == 'General'
                                     ? 'generalPosts'
                                     : 'anonymousPosts'))
@@ -608,7 +606,7 @@ class _PostScreenState extends State<PostScreen> {
                         // 총 댓글 수 업데이트
                         DocumentReference postDocRef = FirebaseFirestore
                             .instance
-                            .collection("schools/${widget.school}/" +
+                            .collection("schools/${widget.postData.school}/" +
                                 (widget.postData.boardType == 'General'
                                     ? 'generalPosts'
                                     : 'anonymousPosts'))

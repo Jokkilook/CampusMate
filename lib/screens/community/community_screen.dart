@@ -163,7 +163,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                               builder: (context) => PostScreen(
                                 postData: postData,
                                 firestore: FirebaseFirestore.instance,
-                                school: userData.school!,
                                 userData: userData,
                               ),
                             ),
@@ -174,7 +173,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                         child: GeneralBoardItem(
                           postData: postData,
                           firestore: FirebaseFirestore.instance,
-                          school: userData.school!,
                         ),
                       );
                     },
@@ -228,7 +226,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                               builder: (context) => PostScreen(
                                 postData: postData,
                                 firestore: FirebaseFirestore.instance,
-                                school: userData.school!,
                                 userData: userData,
                               ),
                             ),
@@ -238,7 +235,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                         },
                         child: AnonymousBoardItem(
                           postData: postData,
-                          school: userData.school!,
                         ),
                       );
                     },
