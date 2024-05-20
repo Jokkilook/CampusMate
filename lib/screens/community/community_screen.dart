@@ -25,16 +25,13 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _refreshing = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
-      setState(() {
-        _refreshScreen();
-      });
+      _refreshScreen();
     });
   }
 
@@ -45,13 +42,7 @@ class _CommunityScreenState extends State<CommunityScreen>
   }
 
   Future<void> _refreshScreen() async {
-    setState(() {
-      _refreshing = true;
-    });
-    await Future.delayed(const Duration(milliseconds: 100));
-    setState(() {
-      _refreshing = false;
-    });
+    setState(() {});
   }
 
   @override
@@ -258,19 +249,16 @@ class _CommunityScreenState extends State<CommunityScreen>
         floatingActionButton: FloatingActionButton(
           heroTag: "addpost",
           onPressed: () {
-            debugPrint('index: ${_tabController.index}');
-            if (_refreshing) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => AddPostScreen(
-                          currentIndex: _tabController.index,
-                          userData: userData,
-                        )),
-              ).then((_) {
-                _refreshScreen();
-              });
-            }
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => AddPostScreen(
+                        currentIndex: _tabController.index,
+                        userData: userData,
+                      )),
+            ).then((_) {
+              _refreshScreen();
+            });
           },
           child: const Icon(
             Icons.add,
