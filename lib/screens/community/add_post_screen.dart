@@ -33,10 +33,8 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   final TextEditingController _titleController = TextEditingController();
-
   final TextEditingController _contentController = TextEditingController();
-
-  String _selectedBoard = 'General';
+  late String _selectedBoard;
 
   final PostData postData = PostData();
 
@@ -46,6 +44,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
   void initState() {
     super.initState();
     image = null;
+    _selectedBoard = widget.currentIndex == 0 ? 'General' : 'Anonymous';
+    postData.boardType = _selectedBoard;
   }
 
   Future<void> _addPost(BuildContext context) async {
@@ -73,7 +73,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.currentIndex != 0) _selectedBoard = 'Anonymous';
     return Hero(
       tag: "addpost",
       child: Scaffold(
@@ -94,10 +93,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   DropdownMenuItem(child: Text('익명'), value: 'Anonymous'),
                 ],
                 onChanged: (value) {
-                  // 선택된 게시판 처리
-                  _selectedBoard = value.toString();
-                  debugPrint(_selectedBoard);
-                  postData.boardType = _selectedBoard;
+                  setState(() {
+                    _selectedBoard = value.toString();
+                    postData.boardType = _selectedBoard;
+                  });
                 },
                 decoration: const InputDecoration(labelText: '게시판 선택'),
               ),

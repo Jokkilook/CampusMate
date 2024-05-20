@@ -16,7 +16,7 @@ import 'add_post_screen.dart';
 Color primaryColor = const Color(0xFF2BB56B);
 
 class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({super.key});
+  const CommunityScreen({Key? key}) : super(key: key);
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -24,7 +24,19 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
-  int currentIndex = 0;
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   Future<void> _refreshScreen() async {
     await Future.delayed(const Duration(milliseconds: 100));
@@ -34,8 +46,7 @@ class _CommunityScreenState extends State<CommunityScreen>
   @override
   Widget build(BuildContext context) {
     final UserData userData = context.read<UserDataProvider>().userData;
-    bool isDark =
-        Theme.of(context).brightness == Brightness.dark ? true : false;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return DefaultTabController(
       length: 2,
@@ -86,9 +97,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             ),
           ],
           bottom: TabBar(
-            onTap: (value) {
-              currentIndex = value;
-            },
+            controller: _tabController,
             overlayColor: const MaterialStatePropertyAll(Colors.transparent),
             isScrollable: false,
             indicatorColor: primaryColor,
@@ -107,6 +116,7 @@ class _CommunityScreenState extends State<CommunityScreen>
           ),
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [
             // 일반 게시판
             RefreshIndicator(
@@ -241,11 +251,12 @@ class _CommunityScreenState extends State<CommunityScreen>
         floatingActionButton: FloatingActionButton(
           heroTag: "addpost",
           onPressed: () {
+            debugPrint('index: ${_tabController.index}');
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (_) => AddPostScreen(
-                        currentIndex: currentIndex,
+                        currentIndex: _tabController.index,
                         userData: userData,
                       )),
             ).then((_) {
