@@ -33,7 +33,7 @@ class _CommunityScreenState extends State<CommunityScreen>
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       setState(() {
-        _refreshScreen().then((value) => _refreshing = false);
+        _refreshScreen();
       });
     });
   }
@@ -47,6 +47,10 @@ class _CommunityScreenState extends State<CommunityScreen>
   Future<void> _refreshScreen() async {
     setState(() {
       _refreshing = true;
+    });
+    await Future.delayed(const Duration(milliseconds: 100));
+    setState(() {
+      _refreshing = false;
     });
   }
 
@@ -255,7 +259,7 @@ class _CommunityScreenState extends State<CommunityScreen>
           heroTag: "addpost",
           onPressed: () {
             debugPrint('index: ${_tabController.index}');
-            if (!_refreshing) {
+            if (_refreshing) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
