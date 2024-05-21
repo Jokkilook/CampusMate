@@ -233,7 +233,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                         FullProfileCard(
                           userData: strangerData,
                         ),
-                        widget.readOnly
+                        widget.readOnly || widget.uid == currentUser.uid
                             ? Container()
                             : const SizedBox(height: 80)
                       ],
@@ -248,7 +248,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          widget.readOnly
+                          widget.readOnly || widget.uid == currentUser.uid
                               ? Container()
                               : Flexible(
                                   flex: 1,
