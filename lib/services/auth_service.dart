@@ -67,6 +67,16 @@ class AuthService {
     return data.docs.isEmpty;
   }
 
+  ///가입 제한 이메일 체크<br>
+  ///required [email] : 체크할 이메일
+  Future<bool> checkBlockedEmail({required String email}) async {
+    var data = await firestore
+        .collection("blockEmailList")
+        .where("email", isEqualTo: email)
+        .get();
+    return data.docs.isEmpty;
+  }
+
   ///유저 데이터 수정(덮어쓰기)<br>
   ///[userData] : 설정할 유저 데이터
   Future setUserData(UserData userData) async {

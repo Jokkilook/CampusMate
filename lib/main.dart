@@ -35,10 +35,7 @@ void main() async {
   Future.delayed(
     const Duration(seconds: 3),
     () {
-      //어렵다~ 어려워~
-      print("requested!!!!!!!!!!!!!!!!!!");
       NotiTest.requestNotiPermission();
-      //
     },
   );
 

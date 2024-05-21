@@ -21,7 +21,16 @@
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
-              />
+              />    
+
+            <!-- 파이어베이스 메세지 애널리틱스 수집과 FCM 자동 초기화 중지 -->
+            <meta-data
+              android:name="firebase_messaging_auto_init_enabled"
+              android:value="false" />
+            <meta-data
+              android:name="firebase_analytics_collection_enabled"
+              android:value="false" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

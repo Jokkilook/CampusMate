@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotiTest {
@@ -22,6 +23,9 @@ class NotiTest {
         android: androidInitializationSettings, iOS: iosInitializationSettings);
 
     await notiPlugin.initialize(initializationSettings);
+
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    print("FCM-TOKEN : $fcmToken");
   }
 
   static requestNotiPermission() {

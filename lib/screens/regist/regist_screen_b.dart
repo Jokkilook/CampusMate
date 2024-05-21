@@ -253,6 +253,17 @@ class _RegistScreenBState extends State<RegistScreenB> {
                                           setState(() {});
                                           return;
                                         }
+
+                                        //가입 제한된 이메일인지 확인
+                                        if (!(await AuthService()
+                                            .checkBlockedEmail(
+                                                email: widget.emailController
+                                                    .value.text))) {
+                                          message = "가입이 제한된 이메일입니다!";
+                                          setState(() {});
+                                          return;
+                                        }
+
                                         message = "";
 
                                         /* 인증번호 발송 버튼을 누르면 메일로 발송하는 코드 */
