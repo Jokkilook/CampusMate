@@ -571,7 +571,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       ),
                                       Icon(
                                         prepareMedia ? Icons.close : Icons.add,
-                                        //color: Colors.white,
+                                        color: AppColors.buttonText,
                                       )
                                     ],
                                   ),
@@ -717,7 +717,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       const Icon(
                                         Icons.send,
                                         size: 18,
-                                        //color: Colors.white,
+                                        color: AppColors.buttonText,
                                       )
                                     ],
                                   ),

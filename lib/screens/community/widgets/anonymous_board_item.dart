@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../models/post_data.dart';
 import '../modules/format_time_stamp.dart';
 
@@ -58,103 +59,102 @@ class AnonymousBoardItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                Text(
+                  '익명 | $formattedTime',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                Row(
                   children: [
+                    // 좋아요
+                    const Icon(
+                      Icons.thumb_up_alt_outlined,
+                      color: Colors.grey,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
                     Text(
-                      '익명 | $formattedTime',
+                      postData.likers!.length.toString(),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
                     ),
-                    Row(
-                      children: [
-                        // 좋아요
-                        const Icon(
-                          Icons.thumb_up_alt_outlined,
-                          color: Colors.grey,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          postData.likers!.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        // 싫어요
-                        const Icon(
-                          Icons.thumb_down_alt_outlined,
-                          color: Colors.grey,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          postData.dislikers!.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        // 댓글
-                        const Icon(
-                          Icons.mode_comment_outlined,
-                          color: Colors.grey,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          postData.commentCount.toString(),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        // 조회수
-                        const Icon(
-                          Icons.account_circle_outlined,
-                          color: Colors.grey,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          postData.viewers!.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(width: 10),
+                    // 싫어요
+                    const Icon(
+                      Icons.thumb_down_alt_outlined,
+                      color: Colors.grey,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      postData.dislikers!.length.toString(),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    // 댓글
+                    const Icon(
+                      Icons.mode_comment_outlined,
+                      color: Colors.grey,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      postData.commentCount.toString(),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    // 조회수
+                    const Icon(
+                      Icons.account_circle_outlined,
+                      color: Colors.grey,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      postData.viewers!.length.toString(),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
             //이미지 썸네일
-            Container(
-              clipBehavior: Clip.hardEdge,
-              width: MediaQuery.of(context).size.height * 0.1,
-              height: MediaQuery.of(context).size.height * 0.1,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
+            AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: postData.imageUrl != null
+                    ? Image.network(
+                        postData.imageUrl!,
+                        fit: BoxFit.cover,
+                        height: 0,
+                        width: 0,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          );
+                        },
+                      )
+                    : const SizedBox(),
               ),
-              child: postData.imageUrl != null
-                  ? Image.network(
-                      postData.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.broken_image,
-                          color: Colors.grey,
-                        );
-                      },
-                    )
-                  : const SizedBox(),
             ),
           ],
         ),

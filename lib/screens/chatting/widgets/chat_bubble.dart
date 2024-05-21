@@ -245,7 +245,7 @@ class ChatBubble extends StatelessWidget {
                                   if (type == MessageType.text)
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 10),
+                                          horizontal: 12, vertical: 10),
                                       child: Text(
                                         messageData["content"],
                                         style: TextStyle(
