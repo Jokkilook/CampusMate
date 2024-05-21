@@ -82,7 +82,10 @@ class _CommentItemState extends State<CommentItem> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('알림'),
+          elevation: 0,
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+          shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(10)),
           content: const Text('이미 좋아요를 눌렀습니다.'),
           actions: [
             TextButton(
@@ -97,7 +100,10 @@ class _CommentItemState extends State<CommentItem> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('알림'),
+          elevation: 0,
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+          shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(10)),
           content: const Text('이미 싫어요를 눌렀습니다.'),
           actions: [
             TextButton(
@@ -152,6 +158,10 @@ class _CommentItemState extends State<CommentItem> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          elevation: 0,
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+          shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(10)),
           content: Text(
             currentUserUid == authorUid ? '정말 삭제하시겠습니까?' : '정말 신고하시겠습니까?',
             style: const TextStyle(fontSize: 14),

@@ -263,7 +263,7 @@ class _CommunityScreenState extends State<CommunityScreen>
           child: const Icon(
             Icons.add,
             size: 30,
-            color: Colors.white,
+            color: AppColors.buttonText,
           ),
           backgroundColor: AppColors.button,
           foregroundColor: const Color(0xFF0A351E),

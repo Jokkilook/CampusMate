@@ -1,3 +1,4 @@
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -254,8 +255,10 @@ class _PostScreenState extends State<PostScreen> {
 
     bool userLiked = widget.postData.likers!.contains(currentUserUid);
     bool userDisliked = widget.postData.dislikers!.contains(currentUserUid);
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,20 +402,30 @@ class _PostScreenState extends State<PostScreen> {
                       Text(widget.postData.content ?? ''),
                       const SizedBox(height: 10),
                       // 사진
-                      widget.postData.imageUrl != null
-                          ? InstaImageViewer(
-                              imageUrl: widget.postData.imageUrl.toString(),
-                              child: SizedBox(
-                                width: double.infinity,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
-                                child: Image.network(
-                                  widget.postData.imageUrl.toString(),
-                                  fit: BoxFit.fitHeight,
-                                ),
-                              ),
-                            )
-                          : const SizedBox(),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            widget.postData.imageUrl != null
+                                ? InstaImageViewer(
+                                    imageUrl:
+                                        widget.postData.imageUrl.toString(),
+                                    child: SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.2,
+                                      child: Image.network(
+                                        widget.postData.imageUrl.toString(),
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(),
+                          ],
+                        ),
+                      ),
+
                       const SizedBox(height: 20),
                       Center(
                         child: Container(
@@ -489,29 +502,38 @@ class _PostScreenState extends State<PostScreen> {
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
-          color: Colors.grey[200],
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          color: isDark ? AppColors.darkInput : AppColors.lightInput,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(_isReplying ? "답글" : "댓글"),
+              ),
               Expanded(
                 child: TextField(
+                  onTapOutside: (event) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
                   controller: _commentController,
                   style: const TextStyle(fontSize: 12),
-                  maxLines: null,
+                  minLines: 1,
+                  maxLines: 4,
                   decoration: InputDecoration(
-                    hintText: _isReplying ? '답글을 입력하세요' : '댓글을 입력하세요',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                  ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                      hintText: _isReplying ? '답글을 입력하세요' : '댓글을 입력하세요',
+                      border: InputBorder.none),
                 ),
               ),
               // 작성 버튼
               TextButton(
+                child: const Text(
+                  '작성',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 onPressed: () async {
                   if (_isReplying) {
                     // 답글 작성 중
@@ -622,13 +644,6 @@ class _PostScreenState extends State<PostScreen> {
                     }
                   }
                 },
-                child: const Text(
-                  '작성',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
             ],
           ),
