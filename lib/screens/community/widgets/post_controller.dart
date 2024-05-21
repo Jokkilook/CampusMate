@@ -1,3 +1,4 @@
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/screens/community/edit_post_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +24,7 @@ class _PostControllerState extends State<PostController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          elevation: 0,
           actionsPadding: const EdgeInsets.symmetric(horizontal: 9),
           shape: ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(10)),
@@ -114,8 +116,8 @@ class _PostControllerState extends State<PostController> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
       child: ListView(
+        shrinkWrap: true,
         children: [
           if (widget.currentUserUid == widget.postData.authorUid)
             ListTile(
@@ -142,6 +144,7 @@ class _PostControllerState extends State<PostController> {
               title: const Text(
                 '삭제하기',
                 textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.alertText),
               ),
               onTap: () {
                 _showAlertDialog(context, '정말 삭제하겠습니까?');
@@ -160,6 +163,7 @@ class _PostControllerState extends State<PostController> {
               title: const Text(
                 '차단하기',
                 textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.alertText),
               ),
               onTap: () {},
             ),

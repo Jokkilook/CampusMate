@@ -218,6 +218,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
+                        elevation: 0,
                         actionsPadding:
                             const EdgeInsets.symmetric(horizontal: 8),
                         shape: ContinuousRectangleBorder(
@@ -237,6 +238,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
+                        elevation: 0,
                         actionsPadding:
                             const EdgeInsets.symmetric(horizontal: 8),
                         shape: ContinuousRectangleBorder(

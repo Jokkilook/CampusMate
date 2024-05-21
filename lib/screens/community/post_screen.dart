@@ -103,6 +103,7 @@ class _PostScreenState extends State<PostScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          elevation: 0,
           actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
           shape: ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(10)),
@@ -120,6 +121,7 @@ class _PostScreenState extends State<PostScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          elevation: 0,
           actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
           shape: ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(10)),
@@ -278,6 +280,10 @@ class _PostScreenState extends State<PostScreen> {
             onPressed: () {
               showModalBottomSheet(
                 clipBehavior: Clip.hardEdge,
+                elevation: 0,
+                shape: const ContinuousRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20))),
                 context: context,
                 builder: (context) {
                   return PostController(

@@ -28,6 +28,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   XFile? image;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -76,11 +77,17 @@ class _EditPostScreenState extends State<EditPostScreen> {
           children: [
             TextField(
               controller: _titleController,
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
               decoration: const InputDecoration(labelText: '제목'),
             ),
             const SizedBox(height: 20),
             TextFormField(
               controller: _contentController,
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
               keyboardType: TextInputType.multiline,
               maxLines: 10,
               decoration: const InputDecoration(
@@ -173,7 +180,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
         ),
       ),
       bottomNavigationBar: BottomButton(
-        text: '작성',
+        isLoading: isLoading,
+        text: '수정',
         isCompleted: true,
         onPressed: () async {
           // 제목, 내용을 입력해야 작성됨
@@ -185,6 +193,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
             showAlertDialog(context, "내용을 입력해주세요.");
             return;
           }
+
+          setState(() {
+            isLoading = true;
+          });
+
           if (image != null) {
             // 이미지 압축
             XFile? compMedia = await FlutterImageCompress.compressAndGetFile(
@@ -206,7 +219,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
             // 변경할 데이터에 변경된 URL 저장
             widget.postData.imageUrl = await ref.getDownloadURL();
           }
-          _updatePost(context, widget.postData.imageUrl.toString());
+          await _updatePost(context, widget.postData.imageUrl.toString());
+
+          setState(() {
+            isLoading = false;
+          });
         },
       ),
     );
