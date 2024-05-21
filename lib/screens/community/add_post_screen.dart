@@ -10,9 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/models/user_data.dart';
-
 import '../../widgets/bottom_button.dart';
-import 'widgets/show_alert_dialog.dart';
 
 Color primaryColor = const Color(0xFF2BB56B);
 
@@ -35,6 +33,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   late String _selectedBoard;
+  bool isLoading = false;
 
   final PostData postData = PostData();
 
@@ -73,179 +72,229 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: "addpost",
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: const Text('게시글 작성'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DropdownButtonFormField(
-                // 게시판 선택
-                value: _selectedBoard,
-                items: const [
-                  DropdownMenuItem(child: Text('일반'), value: 'General'),
-                  DropdownMenuItem(child: Text('익명'), value: 'Anonymous'),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    _selectedBoard = value.toString();
-                    postData.boardType = _selectedBoard;
-                  });
-                },
-                decoration: const InputDecoration(labelText: '게시판 선택'),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: const Text('게시글 작성'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButtonFormField(
+              // 게시판 선택
+              value: _selectedBoard,
+              items: const [
+                DropdownMenuItem(child: Text('일반'), value: 'General'),
+                DropdownMenuItem(child: Text('익명'), value: 'Anonymous'),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedBoard = value.toString();
+                  postData.boardType = _selectedBoard;
+                });
+              },
+              decoration: const InputDecoration(labelText: '게시판 선택'),
+            ),
+            TextField(
+              // 제목 입력
+              controller: _titleController,
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              decoration: const InputDecoration(
+                labelText: '제목',
               ),
-              TextField(
-                // 제목 입력
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: '제목',
-                ),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              // 내용 입력
+              controller: _contentController,
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              keyboardType: TextInputType.multiline,
+              maxLines: 8,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                // 내용 입력
-                controller: _contentController,
-                keyboardType: TextInputType.multiline,
-                maxLines: 8,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // 사진 추가
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    barrierColor: Colors.black.withOpacity(0.4),
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        clipBehavior: Clip.hardEdge,
-                        shape: ContinuousRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: IntrinsicHeight(
-                          child: SizedBox(
-                            width: 100,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    Navigator.pop(context);
-                                    image = await ImagePicker()
-                                        .pickImage(source: ImageSource.gallery);
-                                    if (image != null) {
-                                      setState(() {});
-                                    }
-                                  },
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(15),
-                                    child: Text(
-                                      "갤러리",
-                                      textAlign: TextAlign.start,
-                                    ),
+            ),
+            const SizedBox(height: 12),
+            // 사진 추가
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  barrierColor: Colors.black.withOpacity(0.4),
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      clipBehavior: Clip.hardEdge,
+                      shape: ContinuousRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: IntrinsicHeight(
+                        child: SizedBox(
+                          width: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  Navigator.pop(context);
+                                  image = await ImagePicker()
+                                      .pickImage(source: ImageSource.gallery);
+                                  if (image != null) {
+                                    setState(() {});
+                                  }
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(15),
+                                  child: Text(
+                                    "갤러리",
+                                    textAlign: TextAlign.start,
                                   ),
                                 ),
-                                const Divider(height: 0),
-                                InkWell(
-                                  onTap: () async {
-                                    Navigator.pop(context);
-                                    image = await ImagePicker()
-                                        .pickImage(source: ImageSource.camera);
-                                    if (image != null) {
-                                      setState(() {});
-                                    }
-                                  },
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(15),
-                                    child: Text(
-                                      "카메라",
-                                      textAlign: TextAlign.start,
-                                    ),
+                              ),
+                              const Divider(height: 0),
+                              InkWell(
+                                onTap: () async {
+                                  Navigator.pop(context);
+                                  image = await ImagePicker()
+                                      .pickImage(source: ImageSource.camera);
+                                  if (image != null) {
+                                    setState(() {});
+                                  }
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(15),
+                                  child: Text(
+                                    "카메라",
+                                    textAlign: TextAlign.start,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  );
-                },
-                child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  width: MediaQuery.of(context).size.height * 0.1,
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey,
-                  ),
-                  child: image == null
-                      ? const Icon(
-                          Icons.camera_alt_outlined,
-                          color: Colors.white,
-                        )
-                      : Image.file(
-                          File(image!.path),
-                          fit: BoxFit.cover,
-                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                width: MediaQuery.of(context).size.height * 0.1,
+                height: MediaQuery.of(context).size.height * 0.1,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey,
                 ),
+                child: image == null
+                    ? const Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.white,
+                      )
+                    : Image.file(
+                        File(image!.path),
+                        fit: BoxFit.cover,
+                      ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        bottomNavigationBar: BottomButton(
+      ),
+      bottomNavigationBar: Hero(
+        tag: "addPost",
+        child: BottomButton(
           text: '작성',
+          isLoading: isLoading,
           isCompleted: true,
-          onPressed: () async {
-            final userData = context.read<UserDataProvider>().userData;
-            postData.authorUid = userData.uid;
-            postData.authorName = userData.name;
-            postData.profileImageUrl = userData.imageUrl;
-            postData.timestamp = Timestamp.fromDate(DateTime.now());
-            // 제목, 내용을 입력해야 작성됨
-            if (_titleController.value.text == "") {
-              showAlertDialog(context, "제목을 입력해주세요.");
-              return;
-            }
-            if (_contentController.value.text == "") {
-              showAlertDialog(context, "내용을 입력해주세요.");
-              return;
-            }
-            postData.title = _titleController.value.text;
-            postData.content = _contentController.value.text;
-            postData.school = userData.school;
+          onPressed: isLoading
+              ? () {}
+              : () async {
+                  // 제목, 내용을 입력해야 작성됨
+                  if (_titleController.value.text == "") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        actionsPadding:
+                            const EdgeInsets.symmetric(horizontal: 8),
+                        shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        content: const Text('제목을 입력해주세요.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('확인'),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+                  if (_contentController.value.text == "") {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        actionsPadding:
+                            const EdgeInsets.symmetric(horizontal: 8),
+                        shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        content: const Text('내용을 입력해주세요.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('확인'),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
 
-            if (image != null) {
-              // 이미지 압축
-              XFile? compMedia = await FlutterImageCompress.compressAndGetFile(
-                image!.path,
-                "${image!.path}.jpg",
-              );
+                  //게시글 업로드 시퀀스
+                  setState(() {
+                    isLoading = true;
+                  });
 
-              // 원본 이미지 파일 이름 추출
-              String fileName = path.basename(image!.path);
+                  final userData = context.read<UserDataProvider>().userData;
+                  postData.authorUid = userData.uid;
+                  postData.authorName = userData.name;
+                  postData.profileImageUrl = userData.imageUrl;
+                  postData.timestamp = Timestamp.fromDate(DateTime.now());
+                  postData.title = _titleController.value.text;
+                  postData.content = _contentController.value.text;
+                  postData.school = userData.school;
 
-              // 프로필 이미지 파일 레퍼런스
-              var ref = FirebaseStorage.instance.ref().child(
-                  "schools/${widget.userData.school}/postImages/$fileName");
+                  if (image != null) {
+                    // 이미지 압축
+                    XFile? compMedia =
+                        await FlutterImageCompress.compressAndGetFile(
+                      image!.path,
+                      "${image!.path}.jpg",
+                    );
 
-              // 파이어스토어에 이미지 파일 업로드
-              await ref.putFile(File(compMedia!.path));
+                    // 원본 이미지 파일 이름 추출
+                    String fileName = path.basename(image!.path);
 
-              // 변경할 데이터에 변경된 URL 저장
-              postData.imageUrl = await ref.getDownloadURL();
-            }
+                    // 프로필 이미지 파일 레퍼런스
+                    var ref = FirebaseStorage.instance.ref().child(
+                        "schools/${widget.userData.school}/postImages/$fileName");
 
-            _addPost(context);
-          },
+                    // 파이어스토어에 이미지 파일 업로드
+                    await ref.putFile(File(compMedia!.path));
+
+                    // 변경할 데이터에 변경된 URL 저장
+                    postData.imageUrl = await ref.getDownloadURL();
+                  }
+
+                  await _addPost(context);
+
+                  setState(() {
+                    isLoading = false;
+                  });
+                },
         ),
       ),
     );

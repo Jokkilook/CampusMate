@@ -247,7 +247,7 @@ class _CommunityScreenState extends State<CommunityScreen>
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          heroTag: "addpost",
+          heroTag: "addPost",
           onPressed: () {
             Navigator.push(
               context,

@@ -25,7 +25,10 @@ class BottomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isCompleted ? onPressed : null,
         child: isLoading
-            ? const SizedBox(width: 20, height: 20, child: CircleLoading())
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircleLoading(color: AppColors.buttonText))
             : Text(
                 text,
                 style: TextStyle(

@@ -103,7 +103,9 @@ class _PostScreenState extends State<PostScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('알림'),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+          shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(10)),
           content: const Text('이미 좋아요를 눌렀습니다.'),
           actions: [
             TextButton(
@@ -118,7 +120,9 @@ class _PostScreenState extends State<PostScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('알림'),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+          shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(10)),
           content: const Text('이미 싫어요를 눌렀습니다.'),
           actions: [
             TextButton(
@@ -251,8 +255,6 @@ class _PostScreenState extends State<PostScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -275,6 +277,7 @@ class _PostScreenState extends State<PostScreen> {
           IconButton(
             onPressed: () {
               showModalBottomSheet(
+                clipBehavior: Clip.hardEdge,
                 context: context,
                 builder: (context) {
                   return PostController(

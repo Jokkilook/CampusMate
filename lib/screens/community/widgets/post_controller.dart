@@ -23,6 +23,9 @@ class _PostControllerState extends State<PostController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 9),
+          shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(10)),
           content: Text(
             message,
             style: const TextStyle(fontSize: 14),
@@ -110,9 +113,8 @@ class _PostControllerState extends State<PostController> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 200,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView(
         children: [
           if (widget.currentUserUid == widget.postData.authorUid)
