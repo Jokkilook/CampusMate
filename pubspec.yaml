@@ -43,6 +43,7 @@ dependencies:
     video_compress: ^3.1.2
     shared_preferences: ^2.2.3
     flutter_local_notifications: ^17.1.2
+    googleapis_auth: ^1.4.1
 
 dev_dependencies:
     flutter_test:
@@ -52,5 +53,6 @@ dev_dependencies:
 flutter:
     assets:
         - assets/images/default_image.png
+        - assets/data/
         - assets/ # assets 폴더의 모든 이미지를 불러옴
     uses-material-design: true

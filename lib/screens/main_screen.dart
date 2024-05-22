@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
                 const MatchingScreen(),
                 ChatListScreen(),
                 const CommunityScreen(),
-                ProfileScreen(),
+                const ProfileScreen(),
                 const MoreScreen()
               ],
             );
