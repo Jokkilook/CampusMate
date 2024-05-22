@@ -39,6 +39,10 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
             ElevatedButton(
               child: const Text("API로 알림 보내기"),
               onPressed: () async {
+                String pToken =
+                    "cofzPQd7S0CZF-5vGTpTpG:APA91bH2KN92TURDzujE6I-zQ3wAt5scGH-znizr2NGB2Va6WRSei3AuczwNIXlwWXsEsMuFUXSobkAAfGd_-4Tf__bq2YH1wH9naC2-CCsBWPh_0wD6HvD9zRn34S_8qKhR0IIS1hsB";
+                String aToken =
+                    "fhjTH1obR1-_1-uRI4Hyuh:APA91bE5losYNp3-yinSwczdKn38VBp68GmvrZ5LqmJJIYnbN3UuJbWTA6pikcK7KC1RTKwZJWdkHQYxK4LyLjpq_r1kesIuIZTBXaybZUtzQY8JYX-qs2GI79VLrldPhJGMHaTVhD6N";
                 print("API 눌렀다.");
                 var respone = await http.post(
                     Uri.parse(
@@ -50,8 +54,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                     },
                     body: json.encode({
                       "message": {
-                        "token":
-                            "fhjTH1obR1-_1-uRI4Hyuh:APA91bE5losYNp3-yinSwczdKn38VBp68GmvrZ5LqmJJIYnbN3UuJbWTA6pikcK7KC1RTKwZJWdkHQYxK4LyLjpq_r1kesIuIZTBXaybZUtzQY8JYX-qs2GI79VLrldPhJGMHaTVhD6N",
+                        "token": pToken,
                         "notification": {
                           "title": "FCM Test Title",
                           "body": "FCM Test Body",
