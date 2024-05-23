@@ -126,6 +126,7 @@ class AuthService {
         .get(GetOptions(source: options!));
   }
 
+  ///FCM 토큰 업데이트
   Future updateNotiToken(UserData userData) async {
     String? token = await FirebaseMessaging.instance.getToken();
 

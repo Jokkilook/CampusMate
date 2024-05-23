@@ -232,6 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 UserData userData = value;
                                 context.read<UserDataProvider>().userData =
                                     userData;
+
                                 //알림 토큰 최신화
                                 AuthService().updateNotiToken(userData);
 

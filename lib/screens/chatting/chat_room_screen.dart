@@ -826,8 +826,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           isGroup: widget.isGroup);
                                     }
 
-                                    print(chatUser?.notiToken);
-
                                     if (widget.isGroup) {
                                       for (var user in groupChatUsers) {
                                         NotiService.sendNoti(
