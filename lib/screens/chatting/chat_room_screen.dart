@@ -832,7 +832,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           roomId:
                                               widget.chatRoomData.roomId ?? "",
                                           targetToken: user?.notiToken ?? "",
-                                          title: user?.name ?? "",
+                                          title: userData.name ?? "",
                                           content: content,
                                         );
                                       }
@@ -841,7 +841,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         roomId:
                                             widget.chatRoomData.roomId ?? "",
                                         targetToken: chatUser?.notiToken ?? "",
-                                        title: chatUser?.name ?? "",
+                                        title: userData.name ?? "",
                                         content: content,
                                       );
                                     }
