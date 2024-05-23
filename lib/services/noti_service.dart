@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -30,9 +29,6 @@ class NotiService {
         android: androidInitializationSettings, iOS: iosInitializationSettings);
 
     await notiPlugin.initialize(initializationSettings);
-
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    print("FCM-TOKEN : $fcmToken");
   }
 
   ///알림 권한 요청
@@ -87,6 +83,7 @@ class NotiService {
         //받을 사람 기기토큰
         'token': targetToken,
         'data': {'via': 'ABCDEFG'},
+
         'notification': {
           'title': title,
           'body': content,
@@ -101,6 +98,6 @@ class NotiService {
       body: jsonEncode(notificationData),
     );
 
-    debugPrint("${response.statusCode}: ${response.reasonPhrase}");
+    debugPrint("RESULT: ${response.statusCode}: ${response.reasonPhrase}");
   }
 }

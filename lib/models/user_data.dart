@@ -15,6 +15,7 @@ class UserData {
   double? score;
   String? mbti;
   String? imageUrl;
+  String? notiToken;
   List<dynamic>? tags = [];
   ScheduleData schedule = ScheduleData();
   Timestamp? registDate;
@@ -38,6 +39,7 @@ class UserData {
     this.mbti,
     this.imageUrl =
         "https://firebasestorage.googleapis.com/v0/b/classmate-81447.appspot.com/o/test.png?alt=media&token=43db937e-0bba-4c89-a9f6-dff0387c8d45",
+    this.notiToken,
     this.tags,
     this.registDate,
     this.banUsers,
@@ -61,6 +63,7 @@ class UserData {
     introduce = json["introduce"];
     mbti = json["mbti"];
     imageUrl = json["imageUrl"];
+    notiToken = json["notiToken"];
     tags = json["tags"];
     score = json["score"].toDouble();
     registDate = json["registDate"];
@@ -99,6 +102,7 @@ class UserData {
       "score": score,
       "mbti": mbti,
       "imageUrl": imageUrl,
+      "notiToken": notiToken,
       "tags": tags,
       "schedule": schedule.schedule,
       "registDate": registDate,

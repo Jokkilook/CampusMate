@@ -1,17 +1,10 @@
 import 'package:campusmate/app_colors.dart';
-import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/services/noti_service.dart';
-import 'package:campusmate/services/auth_service.dart';
+import 'package:campusmate/screens/init_loading_screen.dart';
 import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/main_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,60 +20,22 @@ void main() async {
     ],
   );
 
-  UserData? userData = await initializeFirebaseAndAds();
-  bool isSignIn = (userData != null);
   ThemeMode currentThemeMode = await loadThemeMode();
-
-  NotiService.init();
-  Future.delayed(
-    const Duration(seconds: 3),
-    () {
-      NotiService.requestNotiPermission();
-    },
-  );
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) =>
-              UserDataProvider(userData: userData ?? UserData()),
+          create: (context) => UserDataProvider(userData: UserData()),
         ),
         ChangeNotifierProvider(
           create: (context) =>
               ThemeProvider(currentThemeMode: currentThemeMode),
         )
       ],
-      child: MyApp(isSignIn: isSignIn),
+      child: const MyApp(),
     ),
   );
-}
-
-Future<UserData?> initializeFirebaseAndAds() async {
-  UserData? returnUser;
-
-  //광고 로드
-  await MobileAds.instance.initialize();
-
-  try {
-    //파이어베이스 연결
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    //로그인된 유저가 없으면 유저 null 반환
-    if (FirebaseAuth.instance.currentUser == null) {
-      return returnUser;
-    }
-    //로그인 된 유저가 있으면 유저 데이터 반환
-    else {
-      String? uid = FirebaseAuth.instance.currentUser?.uid;
-      return returnUser = await AuthService().getUserData(uid: uid ?? "");
-    }
-  } catch (e) {
-    debugPrint(e.toString());
-    return returnUser;
-  }
 }
 
 Future<ThemeMode> loadThemeMode() async {
@@ -106,14 +61,13 @@ Future<ThemeMode> loadThemeMode() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, this.isSignIn = false});
-  final bool isSignIn;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isSignIn ? const MainScreen() : const LoginScreen(),
+      home: const InitLoadingScreen(),
       themeMode: Provider.of<ThemeProvider>(context).currentThemeMode,
       theme: ThemeData(
         brightness: Brightness.light,

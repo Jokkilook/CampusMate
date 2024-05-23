@@ -5,6 +5,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -123,6 +124,17 @@ class AuthService {
         .collection('schools/$school/users')
         .doc(uid)
         .get(GetOptions(source: options!));
+  }
+
+  Future updateNotiToken(UserData userData) async {
+    String? token = await FirebaseMessaging.instance.getToken();
+
+    if (token == null) return;
+
+    firestore
+        .collection("schools/${userData.school}/users")
+        .doc(userData.uid)
+        .update({"notiToken": token});
   }
 
   ///비밀번호 변경

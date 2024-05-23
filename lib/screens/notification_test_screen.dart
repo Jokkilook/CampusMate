@@ -36,6 +36,8 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                   token =
                       await FirebaseMessaging.instance.getToken() ?? "EMPTY";
                   setState(() {});
+
+                  print(token);
                 },
               ),
               Text(token),
@@ -49,12 +51,13 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 child: const Text("API로 알림 보내기"),
                 onPressed: () async {
                   String pToken =
-                      "cABp2IIhSme5pP7rkoajqr:APA91bH6yhe8qprFBpH9T8Vzw404CL0Xa3bU-MO9fRf9s22rmjTcBF1MxGxF8eATUcSViIChwsXs19IRuBjz9uyRv6_o7-gbxtzK7_X2CKmjPG2cTRCLfSg0Z6nn1QLnW5PaD6qcxPlB";
-                  String eToken =
-                      "dPuUYcSQRcW869GaB8AD7b:APA91bEZylvBCiDmlkkvz1hP1semLOOIfIqnlb7xtSU95hNkp87bKI-o5fxHfCCZhhg8d2hAjVnZ8y53ilK4COrlbWp3H0v8Pi5cwwU5eavNMn3H0HllAKzyBxKR1EiZFLdOm8lc2SQL";
+                      "d1li6JjkT5K_8yzEwlXyXc:APA91bEBqQlz9l4m75V_rfQCLxbEvyv3rVBAjulfazqO-Vcv6AhzkSNnIuY1-Zs4wwBsMscV-XhOX5h1rjsUiUiVPTECaJEqi8Q5MnpH2meZSBN1Wdh0jekf1jPbMNDrR3X0G8Wkkjx5";
 
                   NotiService.sendNoti(
-                      targetToken: pToken, title: "오은영", content: "금쪽이 어딨니~");
+                    targetToken: pToken,
+                    title: "금쪽이",
+                    content: "꺄ㅡ악",
+                  );
                 },
               ),
             ],

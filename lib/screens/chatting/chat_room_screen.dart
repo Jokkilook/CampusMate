@@ -12,6 +12,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/chatting/video_player_screen.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_bubble.dart';
+import 'package:campusmate/services/noti_service.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   late final UserData userData;
 
   String senderUID = "";
-
+  UserData? chatUser;
+  List<UserData?> groupChatUsers = [];
   String? userUID;
   bool prepareMedia = false;
   bool isCompletelyLeaving = false;
@@ -69,6 +71,23 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     chat = ChattingService();
     auth = AuthService();
     userData = context.read<UserDataProvider>().userData;
+
+    getChatUserData();
+  }
+
+  Future getChatUserData() async {
+    //그룹 챗이면 참여자 데이터 모두 반환
+    if (widget.isGroup) {
+      for (var uid in widget.chatRoomData.participantsUid ?? []) {
+        groupChatUsers.add(await auth.getUserData(uid: uid));
+      }
+    }
+    //1:1 챗이면 상대 데이터 하나 반환
+    else {
+      for (var uid in widget.chatRoomData.participantsUid ?? []) {
+        if (!(uid == userData.uid)) chatUser = await auth.getUserData(uid: uid);
+      }
+    }
   }
 
   String timeStampToHourMinutes(Timestamp time) {
@@ -731,7 +750,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
                                     //입력창에 메세지가 있거나 미디어 파일이 있으면 메세지 데이터 준비
                                     MessageData data;
-                                    String content;
+                                    String content = "";
 
                                     //미디어가 비어있지 않으면 확장자 구별 후 메세지 타입 지정
                                     if (widget.media != null && !isSending) {
@@ -805,6 +824,23 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           roomId: widget.chatRoomData.roomId!,
                                           data: data,
                                           isGroup: widget.isGroup);
+                                    }
+
+                                    print(chatUser?.notiToken);
+
+                                    if (widget.isGroup) {
+                                      for (var user in groupChatUsers) {
+                                        NotiService.sendNoti(
+                                            targetToken: user?.notiToken ?? "",
+                                            title: user?.name ?? "",
+                                            content: content);
+                                      }
+                                    } else {
+                                      NotiService.sendNoti(
+                                          targetToken:
+                                              chatUser?.notiToken ?? "",
+                                          title: chatUser?.name ?? "",
+                                          content: content);
                                     }
 
                                     //전송 후 맨 아래로 이동
