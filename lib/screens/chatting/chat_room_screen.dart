@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/app_colors.dart';
@@ -826,11 +827,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           isGroup: widget.isGroup);
                                     }
 
+                                    //알림 보내기
                                     if (widget.isGroup) {
                                       for (var user in groupChatUsers) {
                                         NotiService.sendNoti(
-                                          roomId:
-                                              widget.chatRoomData.roomId ?? "",
+                                          data: {
+                                            "roomId": widget.chatRoomData.roomId
+                                          },
                                           targetToken: user?.notiToken ?? "",
                                           title: userData.name ?? "",
                                           content: content,
@@ -838,8 +841,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       }
                                     } else {
                                       NotiService.sendNoti(
-                                        roomId:
-                                            widget.chatRoomData.roomId ?? "",
+                                        data: {
+                                          "roomId": widget.chatRoomData.roomId
+                                        },
                                         targetToken: chatUser?.notiToken ?? "",
                                         title: userData.name ?? "",
                                         content: content,

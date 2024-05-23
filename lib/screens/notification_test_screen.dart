@@ -54,7 +54,6 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                       "d1li6JjkT5K_8yzEwlXyXc:APA91bEBqQlz9l4m75V_rfQCLxbEvyv3rVBAjulfazqO-Vcv6AhzkSNnIuY1-Zs4wwBsMscV-XhOX5h1rjsUiUiVPTECaJEqi8Q5MnpH2meZSBN1Wdh0jekf1jPbMNDrR3X0G8Wkkjx5";
 
                   NotiService.sendNoti(
-                    roomId: "TEST",
                     targetToken: pToken,
                     title: "금쪽이",
                     content: "꺄ㅡ악",

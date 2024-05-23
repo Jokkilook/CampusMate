@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:campusmate/models/chat_room_data.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -74,7 +75,7 @@ class NotiService {
     required String targetToken,
     required String title,
     required String content,
-    required String roomId,
+    Map<String, dynamic>? data,
   }) async {
     final jsonCredentials =
         await rootBundle.loadString("assets/data/secretKey.json");
@@ -88,7 +89,7 @@ class NotiService {
       'message': {
         //받을 사람 기기토큰
         'token': targetToken,
-        'data': {'roomId': roomId},
+        'data': data,
 
         'notification': {
           'title': title,
@@ -104,6 +105,7 @@ class NotiService {
       body: jsonEncode(notificationData),
     );
 
-    debugPrint("RESULT: ${response.statusCode}: ${response.reasonPhrase}");
+    debugPrint(
+        "RESULT: ${response.statusCode}: ${response.reasonPhrase} ${response.body}");
   }
 }
