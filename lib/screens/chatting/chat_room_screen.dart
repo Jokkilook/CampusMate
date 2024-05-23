@@ -829,16 +829,21 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     if (widget.isGroup) {
                                       for (var user in groupChatUsers) {
                                         NotiService.sendNoti(
-                                            targetToken: user?.notiToken ?? "",
-                                            title: user?.name ?? "",
-                                            content: content);
+                                          roomId:
+                                              widget.chatRoomData.roomId ?? "",
+                                          targetToken: user?.notiToken ?? "",
+                                          title: user?.name ?? "",
+                                          content: content,
+                                        );
                                       }
                                     } else {
                                       NotiService.sendNoti(
-                                          targetToken:
-                                              chatUser?.notiToken ?? "",
-                                          title: chatUser?.name ?? "",
-                                          content: content);
+                                        roomId:
+                                            widget.chatRoomData.roomId ?? "",
+                                        targetToken: chatUser?.notiToken ?? "",
+                                        title: chatUser?.name ?? "",
+                                        content: content,
+                                      );
                                     }
 
                                     //전송 후 맨 아래로 이동

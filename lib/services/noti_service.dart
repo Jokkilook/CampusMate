@@ -16,6 +16,10 @@ class NotiService {
 
   ///알림 서비스 초기화
   static init() async {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint("MESSAGE DATA: ${message.data}");
+    });
+
     AndroidInitializationSettings androidInitializationSettings =
         const AndroidInitializationSettings("mipmap/ic_launcher");
 
@@ -66,10 +70,12 @@ class NotiService {
   ///required [targetToken] : 받을 유저의 기기 토큰<br>
   ///required [title] : 알림의 제목<br>
   ///required [content] : 알림의 내용
-  static Future sendNoti(
-      {required String targetToken,
-      required String title,
-      required String content}) async {
+  static Future sendNoti({
+    required String targetToken,
+    required String title,
+    required String content,
+    required String roomId,
+  }) async {
     final jsonCredentials =
         await rootBundle.loadString("assets/data/secretKey.json");
 
@@ -82,7 +88,7 @@ class NotiService {
       'message': {
         //받을 사람 기기토큰
         'token': targetToken,
-        'data': {'via': 'ABCDEFG'},
+        'data': {'roomId': roomId},
 
         'notification': {
           'title': title,
