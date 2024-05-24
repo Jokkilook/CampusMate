@@ -30,9 +30,6 @@ class _CommunityScreenState extends State<CommunityScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      _refreshScreen();
-    });
   }
 
   @override
@@ -249,6 +246,7 @@ class _CommunityScreenState extends State<CommunityScreen>
         floatingActionButton: FloatingActionButton(
           heroTag: "addPost",
           onPressed: () {
+            debugPrint('index: ${_tabController.index}');
             Navigator.push(
               context,
               MaterialPageRoute(
