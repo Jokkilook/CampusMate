@@ -36,7 +36,6 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   bool _isLoading = false;
-  bool _userAlreadyViewed = false;
   late TextEditingController _commentController;
   bool _isReplying = false;
   String? _selectedCommentId;
@@ -45,7 +44,7 @@ class _PostScreenState extends State<PostScreen> {
   void initState() {
     super.initState();
     _commentController = TextEditingController();
-    checkUserViewedPost();
+    updateViewCount();
     _refreshScreen();
   }
 
@@ -55,22 +54,14 @@ class _PostScreenState extends State<PostScreen> {
     super.dispose();
   }
 
-  Future<void> checkUserViewedPost() async {
-    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
-    setState(() {
-      _userAlreadyViewed =
-          widget.postData.viewers?.contains(currentUserUid) ?? false;
-    });
-    if (!_userAlreadyViewed) {
-      await updateViewCount(currentUserUid);
-    }
-  }
-
   // 조회수
-  Future<void> updateViewCount(String currentUserUid) async {
+  Future<void> updateViewCount() async {
+    String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
+    bool userAlreadyViewed =
+        widget.postData.viewers?.contains(currentUserUid) ?? false;
+
     try {
-      if (widget.postData.viewers == null ||
-          !widget.postData.viewers!.contains(currentUserUid)) {
+      if (!userAlreadyViewed) {
         await FirebaseFirestore.instance
             .collection("schools/${widget.postData.school}/" +
                 (widget.postData.boardType == 'General'
@@ -80,6 +71,7 @@ class _PostScreenState extends State<PostScreen> {
             .update({
           'viewers': FieldValue.arrayUnion([currentUserUid]),
         });
+
         debugPrint('조회수 업데이트 성공');
 
         setState(() {
