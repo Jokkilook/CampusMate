@@ -3,6 +3,7 @@ import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:provider/provider.dart';
 
@@ -506,10 +507,25 @@ class _PostScreenState extends State<PostScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(_isReplying ? "답글" : "댓글"),
-              ),
+              !_isReplying
+                  ? const SizedBox(
+                      // width: MediaQuery.of(context).size.width * 0.08,
+                      )
+                  : InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isReplying = false;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        width: MediaQuery.of(context).size.width * 0.1,
+                        child: const Icon(
+                          Icons.cancel_outlined,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
               Expanded(
                 child: TextField(
                   onTapOutside: (event) {
