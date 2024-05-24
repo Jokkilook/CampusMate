@@ -36,7 +36,6 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   bool _isLoading = false;
-  final bool _userAlreadyViewed = false;
   late TextEditingController _commentController;
   bool _isReplying = false;
   String? _selectedCommentId;
