@@ -10,6 +10,7 @@ class PostCommentData {
   String? school;
   String? profileImageUrl;
   String? boardType;
+  int? writerIndex;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
 
@@ -25,6 +26,7 @@ class PostCommentData {
     this.school,
     this.profileImageUrl,
     this.boardType,
+    this.writerIndex,
     this.likers = const [],
     this.dislikers = const [],
   }) {
@@ -41,6 +43,7 @@ class PostCommentData {
     school = json['school'];
     profileImageUrl = json['profileImageUrl'];
     boardType = json['boardType'];
+    writerIndex = json['writerIndex'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
 
@@ -58,6 +61,7 @@ class PostCommentData {
       'school': school,
       'profileImageUrl': profileImageUrl,
       'boardType': boardType,
+      'writerIndex': writerIndex,
       'likers': likers,
       'dislikers': dislikers,
     };

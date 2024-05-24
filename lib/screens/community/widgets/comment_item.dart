@@ -257,6 +257,7 @@ class _CommentItemState extends State<CommentItem> {
     bool userLiked = widget.postCommentData.likers!.contains(currentUserUid);
     bool userDisliked =
         widget.postCommentData.dislikers!.contains(currentUserUid);
+    final _writerIndex = widget.postCommentData.writerIndex;
 
     return SizedBox(
       child: Column(
@@ -314,23 +315,34 @@ class _CommentItemState extends State<CommentItem> {
                         fontSize: 16,
                       ),
                     ),
-                    // 댓글 작성자가 글 작성자라면 표시, 아니라면 번호 표시
-                    widget.postCommentData.authorUid == widget.postAuthorUid
-                        ? Container(
-                            margin: const EdgeInsets.only(left: 4),
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 1,
-                                color: Colors.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: const Text(
-                              '작성자',
-                              style: TextStyle(fontSize: 8, color: Colors.grey),
-                            ),
-                          )
+                    widget.postCommentData.boardType != 'General'
+                        ?
+                        // 익명 게시판에서 댓글 작성자가 글 작성자라면 표시, 아니라면 번호 표시
+                        widget.postCommentData.authorUid == widget.postAuthorUid
+                            ? Container(
+                                margin: const EdgeInsets.only(left: 4),
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: const Text(
+                                  '작성자',
+                                  style: TextStyle(
+                                      fontSize: 8, color: Colors.grey),
+                                ),
+                              )
+                            : Text(
+                                _writerIndex != null
+                                    ? _writerIndex.toString()
+                                    : '',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              )
                         : const Text(''),
                   ],
                 ),

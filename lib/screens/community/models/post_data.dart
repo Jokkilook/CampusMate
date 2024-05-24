@@ -13,6 +13,7 @@ class PostData {
   String? profileImageUrl;
   int? commentCount;
   List<dynamic>? viewers;
+  List<dynamic>? commentWriters;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
 
@@ -31,6 +32,7 @@ class PostData {
     this.profileImageUrl,
     this.commentCount,
     this.viewers = const [],
+    this.commentWriters = const [],
     this.likers = const [],
     this.dislikers = const [],
   }) {
@@ -50,6 +52,7 @@ class PostData {
     profileImageUrl = json['profileImageUrl'];
     commentCount = json['commentCount'] ?? 0;
     viewers = json['viewers'] ?? [];
+    commentWriters = json['commentWriters'] ?? [];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
 
@@ -70,6 +73,7 @@ class PostData {
       'profileImageUrl': profileImageUrl,
       'commentCount': commentCount,
       'viewers': viewers,
+      'commentWriters': commentWriters,
       'likers': likers,
       'dislikers': dislikers,
     };

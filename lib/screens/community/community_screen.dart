@@ -13,8 +13,6 @@ import 'package:provider/provider.dart';
 import 'models/post_data.dart';
 import 'add_post_screen.dart';
 
-Color primaryColor = const Color(0xFF2BB56B);
-
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({Key? key}) : super(key: key);
 

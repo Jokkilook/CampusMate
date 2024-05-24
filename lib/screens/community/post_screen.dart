@@ -548,6 +548,32 @@ class _PostScreenState extends State<PostScreen> {
                     // 답글 작성 중
                     if (_selectedCommentId != null) {
                       String replyContent = _commentController.text.trim();
+
+                      final postAuthorUid = widget.postData.authorUid;
+                      final commentWriters =
+                          widget.postData.commentWriters ??= [];
+                      int _writerIndex = 0;
+                      // 현재 유저가 게시글 작성자가 아니면
+                      if (currentUserUid != postAuthorUid) {
+                        // 현재 게시글에서 댓글을 작성한 적이 없는 유저라면
+                        if (!commentWriters.contains(currentUserUid)) {
+                          await FirebaseFirestore.instance
+                              .collection("schools/${widget.postData.school}/" +
+                                  (widget.postData.boardType == 'General'
+                                      ? 'generalPosts'
+                                      : 'anonymousPosts'))
+                              .doc(widget.postData.postId)
+                              .update({
+                            'commentWriters':
+                                FieldValue.arrayUnion([currentUserUid]),
+                          });
+                          _writerIndex = commentWriters.length + 1;
+                        } else {
+                          _writerIndex =
+                              commentWriters.indexOf(currentUserUid) + 1;
+                        }
+                      }
+
                       if (replyContent.isNotEmpty) {
                         PostReplyData newReply = PostReplyData(
                           postId: widget.postData.postId,
@@ -559,6 +585,7 @@ class _PostScreenState extends State<PostScreen> {
                           school: widget.postData.school,
                           profileImageUrl: widget.userData.imageUrl,
                           boardType: widget.postData.boardType,
+                          writerIndex: _writerIndex,
                         );
 
                         try {
@@ -606,6 +633,32 @@ class _PostScreenState extends State<PostScreen> {
                   } else {
                     // 댓글 작성 중
                     String commentContent = _commentController.text.trim();
+
+                    final postAuthorUid = widget.postData.authorUid;
+                    final commentWriters =
+                        widget.postData.commentWriters ??= [];
+                    int _writerIndex = 0;
+                    // 현재 유저가 게시글 작성자가 아니면
+                    if (currentUserUid != postAuthorUid) {
+                      // 현재 게시글에서 댓글을 작성한 적이 없는 유저라면
+                      if (!commentWriters.contains(currentUserUid)) {
+                        await FirebaseFirestore.instance
+                            .collection("schools/${widget.postData.school}/" +
+                                (widget.postData.boardType == 'General'
+                                    ? 'generalPosts'
+                                    : 'anonymousPosts'))
+                            .doc(widget.postData.postId)
+                            .update({
+                          'commentWriters':
+                              FieldValue.arrayUnion([currentUserUid]),
+                        });
+                        _writerIndex = commentWriters.length + 1;
+                      } else {
+                        _writerIndex =
+                            commentWriters.indexOf(currentUserUid) + 1;
+                      }
+                    }
+
                     if (commentContent.isNotEmpty) {
                       PostCommentData newComment = PostCommentData(
                         postId: widget.postData.postId,
@@ -616,6 +669,7 @@ class _PostScreenState extends State<PostScreen> {
                         school: widget.postData.school,
                         profileImageUrl: widget.userData.imageUrl,
                         boardType: widget.postData.boardType,
+                        writerIndex: _writerIndex,
                       );
 
                       try {
