@@ -222,6 +222,7 @@ class _PostScreenState extends State<PostScreen> {
             itemCount: comments.length,
             itemBuilder: (context, index) {
               return CommentItem(
+                postAuthorUid: widget.postData.authorUid.toString(),
                 postCommentData: comments[index],
                 firestore: FirebaseFirestore.instance,
                 refreshCallback: _refreshScreen,
@@ -587,8 +588,9 @@ class _PostScreenState extends State<PostScreen> {
                           int currentCommentCount = (postDoc.data()
                                   as Map<String, dynamic>)['commentCount'] ??
                               0;
-                          await postDocRef.update(
-                              {'commentCount': currentCommentCount + 1});
+                          await postDocRef.update({
+                            'commentCount': currentCommentCount + 1,
+                          });
 
                           // 텍스트 필드 내용 지우기
                           _commentController.clear();

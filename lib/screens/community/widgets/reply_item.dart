@@ -14,11 +14,13 @@ class ReplyItem extends StatefulWidget {
   PostReplyData postReplyData;
   final FirebaseFirestore firestore;
   final VoidCallback refreshCallback;
+  final String postAuthorUid;
 
   ReplyItem({
     required this.postReplyData,
     required this.firestore,
     required this.refreshCallback,
+    required this.postAuthorUid,
     super.key,
   });
 
@@ -266,6 +268,24 @@ class _ReplyItemState extends State<ReplyItem> {
                         fontSize: 16,
                       ),
                     ),
+                    // 댓글 작성자가 글 작성자라면 표시, 아니라면 번호 표시
+                    widget.postReplyData.authorUid == widget.postAuthorUid
+                        ? Container(
+                            margin: const EdgeInsets.only(left: 4),
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Colors.grey,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: const Text(
+                              '작성자',
+                              style: TextStyle(fontSize: 8, color: Colors.grey),
+                            ),
+                          )
+                        : const Text(''),
                   ],
                 ),
               ),

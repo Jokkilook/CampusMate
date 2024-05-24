@@ -15,6 +15,7 @@ class CommentItem extends StatefulWidget {
   final FirebaseFirestore firestore;
   final Function(String) onReplyPressed;
   final VoidCallback refreshCallback;
+  final String postAuthorUid;
 
   const CommentItem({
     Key? key,
@@ -22,6 +23,7 @@ class CommentItem extends StatefulWidget {
     required this.firestore,
     required this.onReplyPressed,
     required this.refreshCallback,
+    required this.postAuthorUid,
   }) : super(key: key);
 
   @override
@@ -59,6 +61,7 @@ class _CommentItemState extends State<CommentItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: replies.map((reply) {
               return ReplyItem(
+                postAuthorUid: widget.postAuthorUid,
                 postReplyData: reply,
                 firestore: widget.firestore,
                 refreshCallback: widget.refreshCallback,
@@ -311,6 +314,24 @@ class _CommentItemState extends State<CommentItem> {
                         fontSize: 16,
                       ),
                     ),
+                    // 댓글 작성자가 글 작성자라면 표시, 아니라면 번호 표시
+                    widget.postCommentData.authorUid == widget.postAuthorUid
+                        ? Container(
+                            margin: const EdgeInsets.only(left: 4),
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Colors.grey,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: const Text(
+                              '작성자',
+                              style: TextStyle(fontSize: 8, color: Colors.grey),
+                            ),
+                          )
+                        : const Text(''),
                   ],
                 ),
               ),
