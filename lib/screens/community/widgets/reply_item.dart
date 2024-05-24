@@ -264,14 +264,14 @@ class _ReplyItemState extends State<ReplyItem> {
                     Text(
                       widget.postReplyData.boardType == 'General'
                           ? widget.postReplyData.authorName.toString()
-                          : '익명',
+                          : '익명 ${_writerIndex != 0 ? _writerIndex.toString() : ''}',
                       style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
                     widget.postReplyData.boardType != 'General'
                         ?
-                        // 익명 게시판에서 댓글 작성자가 글 작성자라면 표시, 아니라면 번호 표시
+                        // 익명 게시판에서 댓글 작성자가 글 작성자라면 표시
                         widget.postReplyData.authorUid == widget.postAuthorUid
                             ? Container(
                                 margin: const EdgeInsets.only(left: 4),
@@ -289,15 +289,8 @@ class _ReplyItemState extends State<ReplyItem> {
                                       fontSize: 8, color: Colors.grey),
                                 ),
                               )
-                            : Text(
-                                _writerIndex != null
-                                    ? _writerIndex.toString()
-                                    : '',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
-                              )
-                        : const Text(''),
+                            : const SizedBox()
+                        : const SizedBox(),
                   ],
                 ),
               ),
