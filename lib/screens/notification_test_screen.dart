@@ -44,7 +44,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
               ElevatedButton(
                 child: const Text("로컬 알림 보내기"),
                 onPressed: () {
-                  NotiService.showNoti();
+                  NotiService.showNoti("TEST", "TEST CONTENT");
                 },
               ),
               ElevatedButton(

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/app_colors.dart';
@@ -508,6 +507,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       }
 
                                       return ChatBubble(
+                                        function: () {
+                                          print("CHAT:asdasdsd");
+                                        },
                                         type: stringToEnumMessageType(
                                             docs[index]["type"]),
                                         isOther: isOther,
@@ -832,7 +834,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       for (var user in groupChatUsers) {
                                         NotiService.sendNoti(
                                           data: {
-                                            "roomId": widget.chatRoomData.roomId
+                                            "type": "groupChat",
+                                            "roomId":
+                                                widget.chatRoomData.roomId,
+                                            "school": userData.school ?? ""
                                           },
                                           targetToken: user?.notiToken ?? "",
                                           title: userData.name ?? "",
@@ -842,7 +847,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     } else {
                                       NotiService.sendNoti(
                                         data: {
-                                          "roomId": widget.chatRoomData.roomId
+                                          "type": "chat",
+                                          "roomId": widget.chatRoomData.roomId,
+                                          "school": userData.school ?? ""
                                         },
                                         targetToken: chatUser?.notiToken ?? "",
                                         title: userData.name ?? "",

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
 
+//ignore: must_be_immutable
 class ChatBubble extends StatelessWidget {
   final QueryDocumentSnapshot messageData;
   final int index;
@@ -21,8 +22,9 @@ class ChatBubble extends StatelessWidget {
   final String? profileImageUrl;
   final String reader;
   final bool isDark;
+  Function()? function;
 
-  const ChatBubble(
+  ChatBubble(
       {super.key,
       required this.messageData,
       this.index = 0,
@@ -35,7 +37,8 @@ class ChatBubble extends StatelessWidget {
       this.senderUid,
       this.profileImageUrl,
       this.reader = "",
-      this.isDark = false});
+      this.isDark = false,
+      this.function});
 
   String timeStampToHourMinutes(Timestamp time) {
     var data = time.toDate().toString();
@@ -69,6 +72,15 @@ class ChatBubble extends StatelessWidget {
       },
       fit: BoxFit.cover,
     );
+
+    //최근 온 노티스에 따라 참여자 토큰 업데이트
+    if (type == MessageType.notice &&
+        (messageData["time"] as Timestamp)
+            .toDate()
+            .isAfter(DateTime.now().subtract(const Duration(seconds: 1)))) {
+      function;
+      print(type);
+    }
 
     CachedNetworkImage cachedMediaImage = CachedNetworkImage(
       imageUrl: type == MessageType.video ? thumbUrl : messageData["content"]!,
