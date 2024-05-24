@@ -1,5 +1,6 @@
 import 'package:campusmate/app_theme.dart';
 import 'package:campusmate/firebase_options.dart';
+import 'package:campusmate/global_variable.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/init_loading_screen.dart';
 import 'package:campusmate/provider/theme_provider.dart';
@@ -9,6 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.data}");
+}
 
 void main() async {
   //플러터 코어 엔진 초기화
@@ -29,7 +37,8 @@ void main() async {
 
   //테마 데이터 로드
   ThemeMode currentThemeMode = await loadThemeMode();
-
+  //백그라운드 알림 수신 시
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
     MultiProvider(
       providers: [
@@ -74,6 +83,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: GlobalVariable.navKey,
       debugShowCheckedModeBanner: false,
       home: const InitLoadingScreen(),
       themeMode: Provider.of<ThemeProvider>(context).currentThemeMode,
