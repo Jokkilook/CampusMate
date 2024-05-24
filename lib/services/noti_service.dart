@@ -31,9 +31,10 @@ class NotiService {
           .name;
       debugPrint("MESSAGE DATA: ${message.data}");
       debugPrint(d);
+      showNoti(
+          message.notification?.title ?? "", message.notification?.body ?? "");
     });
 
-    //백그라운드에서 알림 수신 시
     //알림 터치로 어플 실행 시
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       //1:1 채팅 알림일 때,
@@ -97,7 +98,7 @@ class NotiService {
     }
   }
 
-  static Future showNoti() async {
+  static Future showNoti(String title, String content) async {
     const AndroidNotificationDetails androidNotiDetails =
         AndroidNotificationDetails("channel id", "channel name",
             channelDescription: "channel description",
@@ -109,7 +110,7 @@ class NotiService {
         android: androidNotiDetails,
         iOS: DarwinNotificationDetails(badgeNumber: 1));
 
-    await notiPlugin.show(0, "TEST", "TEST NOTI", notiDetails);
+    await notiPlugin.show(0, title, content, notiDetails);
   }
 
   ///푸쉬 알림 보내는 함수<br>
