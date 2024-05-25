@@ -155,6 +155,7 @@ class _PostControllerState extends State<PostController> {
               title: const Text(
                 '신고하기',
                 textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.alertText),
               ),
               onTap: () {
                 showDialog(
@@ -181,15 +182,6 @@ class _PostControllerState extends State<PostController> {
                   },
                 );
               },
-            ),
-          if (widget.currentUserUid != widget.postData.authorUid)
-            ListTile(
-              title: const Text(
-                '차단하기',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.alertText),
-              ),
-              onTap: () {},
             ),
         ],
       ),

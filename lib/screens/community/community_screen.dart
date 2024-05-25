@@ -10,8 +10,9 @@ import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'models/post_data.dart';
+
 import 'add_post_screen.dart';
+import 'models/post_data.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({Key? key}) : super(key: key);
@@ -185,37 +186,32 @@ class _CommunityScreenState extends State<CommunityScreen>
             },
             itemCount: data.length,
             itemBuilder: (context, index) {
-              try {
-                var postData = PostData.fromJson(
-                    data[index].data() as Map<String, dynamic>);
-                if (postData.authorUid == null || postData.authorUid!.isEmpty) {
-                  // 작성자 UID가 없으면 건너뛰기
-                  return const SizedBox.shrink();
-                }
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
-                        ),
-                      ),
-                    ).then((_) {
-                      _refreshScreen();
-                    });
-                  },
-                  child: GeneralBoardItem(
-                    postData: postData,
-                    firestore: FirebaseFirestore.instance,
-                  ),
-                );
-              } catch (e) {
-                // 예외 발생 시 건너뛰기
+              var postData =
+                  PostData.fromJson(data[index].data() as Map<String, dynamic>);
+              if (userData.banUsers?.contains(postData.authorUid) ?? false) {
+                // 차단된 사용자의 글은 건너뛰기
                 return const SizedBox.shrink();
               }
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PostScreen(
+                        postData: postData,
+                        firestore: FirebaseFirestore.instance,
+                        userData: userData,
+                      ),
+                    ),
+                  ).then((_) {
+                    _refreshScreen();
+                  });
+                },
+                child: GeneralBoardItem(
+                  postData: postData,
+                  firestore: FirebaseFirestore.instance,
+                ),
+              );
             },
           );
         },
@@ -257,36 +253,31 @@ class _CommunityScreenState extends State<CommunityScreen>
             },
             itemCount: data.length,
             itemBuilder: (context, index) {
-              try {
-                var postData = PostData.fromJson(
-                    data[index].data() as Map<String, dynamic>);
-                if (postData.authorUid == null || postData.authorUid!.isEmpty) {
-                  // 작성자 UID가 없으면 건너뛰기
-                  return const SizedBox.shrink();
-                }
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
-                        ),
-                      ),
-                    ).then((_) {
-                      _refreshScreen();
-                    });
-                  },
-                  child: AnonymousBoardItem(
-                    postData: postData,
-                  ),
-                );
-              } catch (e) {
-                // 예외 발생 시 건너뛰기
+              var postData =
+                  PostData.fromJson(data[index].data() as Map<String, dynamic>);
+              if (userData.banUsers?.contains(postData.authorUid) ?? false) {
+                // 차단된 사용자의 글은 건너뛰기
                 return const SizedBox.shrink();
               }
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PostScreen(
+                        postData: postData,
+                        firestore: FirebaseFirestore.instance,
+                        userData: userData,
+                      ),
+                    ),
+                  ).then((_) {
+                    _refreshScreen();
+                  });
+                },
+                child: AnonymousBoardItem(
+                  postData: postData,
+                ),
+              );
             },
           );
         },

@@ -216,25 +216,34 @@ class _PostScreenState extends State<PostScreen> {
               .map((doc) =>
                   PostCommentData.fromJson(doc.data() as Map<String, dynamic>))
               .toList();
-          return ListView.builder(
+          List<Widget> visibleComments = [];
+          for (var comment in comments) {
+            // 차단된 사용자의 댓글인지 확인
+            if (!(widget.userData.banUsers?.contains(comment.authorUid) ??
+                false)) {
+              // 차단되지 않은 사용자의 댓글만 출력
+              visibleComments.add(
+                CommentItem(
+                  postAuthorUid: widget.postData.authorUid.toString(),
+                  postCommentData: comment,
+                  firestore: FirebaseFirestore.instance,
+                  refreshCallback: _refreshScreen,
+                  userData: widget.userData,
+                  onReplyPressed: (commentId) {
+                    setState(() {
+                      // 선택된 댓글의 내용을 저장하고 댓글 입력 창을 업데이트
+                      _selectedCommentId = commentId;
+                      _isReplying = true;
+                    });
+                  },
+                ),
+              );
+            }
+          }
+          return ListView(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: comments.length,
-            itemBuilder: (context, index) {
-              return CommentItem(
-                postAuthorUid: widget.postData.authorUid.toString(),
-                postCommentData: comments[index],
-                firestore: FirebaseFirestore.instance,
-                refreshCallback: _refreshScreen,
-                onReplyPressed: (commentId) {
-                  setState(() {
-                    // 선택된 댓글의 내용을 저장하고 댓글 입력 창을 업데이트
-                    _selectedCommentId = commentId;
-                    _isReplying = true;
-                  });
-                },
-              );
-            },
+            children: visibleComments,
           );
         }
       },
