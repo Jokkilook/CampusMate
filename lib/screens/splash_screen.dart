@@ -1,23 +1,23 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/main_screen.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/services/noti_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
-class InitLoadingScreen extends StatefulWidget {
-  const InitLoadingScreen({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<InitLoadingScreen> createState() => _InitLoadingScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _InitLoadingScreenState extends State<InitLoadingScreen> {
+class _SplashScreenState extends State<SplashScreen> {
   Future<UserData?> firebaseLoginInitializeAds() async {
     //광고 로드
     await MobileAds.instance.initialize();
@@ -59,12 +59,7 @@ class _InitLoadingScreenState extends State<InitLoadingScreen> {
       //1. 유저 데이터가 null 이면 (로그인 상태가 아니면)
       if (currentUser == null) {
         //1-1. 로그인 페이지로 이동
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-            (route) => false);
+        context.goNamed(Screen.login);
       }
       //2. 유저 데이터가 반환되면 (로그인 상태이면)
       else {
@@ -80,12 +75,7 @@ class _InitLoadingScreenState extends State<InitLoadingScreen> {
         });
 
         //2-3. 메인 페이지로 이동
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MainScreen(),
-            ),
-            (route) => false);
+        context.goNamed(Screen.main);
       }
     }
 

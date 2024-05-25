@@ -1,9 +1,9 @@
 import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/auth_service.dart';
-import 'package:campusmate/screens/more/my_info_screen.dart';
-import 'package:campusmate/screens/more/theme_setting_screen.dart';
 import 'package:campusmate/screens/screen_list.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 //ignore: must_be_immutable
 class MoreScreen extends StatefulWidget {
@@ -35,22 +35,14 @@ class _MoreScreenState extends State<MoreScreen> {
             leading: const Icon(Icons.person),
             title: const Text("내 정보"),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyInfoScreen(),
-                  ));
+              context.pushNamed(Screen.myInfo);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.settings_brightness),
+            leading: const Icon(Icons.brightness_6_sharp),
             title: const Text("앱 테마"),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ThemeSettingScreen(),
-                  ));
+              context.pushNamed(Screen.themeSetting);
             },
           ),
           ListTile(

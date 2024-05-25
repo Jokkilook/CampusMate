@@ -63,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
         body: Consumer<UserDataProvider>(
           builder: (context, userData, child) {
             return FadeIndexedStack(
-              duration: const Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 500),
               index: index,
               children: [
                 const MatchingScreen(),

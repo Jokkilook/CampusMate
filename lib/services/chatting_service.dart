@@ -6,11 +6,13 @@ import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/chatting/chat_room_screen.dart';
+import 'package:campusmate/router/app_router.dart';
+import 'package:campusmate/widgets/yest_no_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:video_compress/video_compress.dart';
 
@@ -123,11 +125,9 @@ class ChattingService {
 
   ///1:1 채팅방 입장
   void enterRoom(BuildContext context, ChatRoomData data) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatRoomScreen(chatRoomData: data),
-        ));
+    //채팅방 화면으로 이동
+    context.pushNamed(Screen.chatRoom,
+        pathParameters: {"isGroup": "one"}, extra: data);
   }
 
   ///그룹 채팅방 생성
@@ -169,14 +169,15 @@ class ChattingService {
   void enterGroupRoom(BuildContext context, GroupChatRoomData data) async {
     UserData userData = context.read<UserDataProvider>().userData;
 
-    //채팅방 참여자 UID 리스트에 없는지 확인
+    //채팅방 참여자 UID 리스트에 없는지 확인 없으면 입장 조건 확인
     if (!data.participantsUid!.contains(userData.uid!)) {
       List<String> updatedUIDList = data.participantsUid!;
       updatedUIDList.add(userData.uid!);
       Map<String, List<String>> updatedInfo = data.participantsInfo!;
       updatedInfo[userData.uid!] = [userData.name!, userData.imageUrl!];
 
-      //입장 시도 시점에서의 단체 채팅방 데이터 로딩
+      //입장 시도 시점에서의 그룹 채팅방 데이터 로딩
+      //그룹 채팅은 유저가 항상 입/퇴장 하기 때문에 입장 전 데이터 로딩
       var checkData = await firestore
           .collection("schools/${userData.school}/groupChats")
           .doc(data.roomId)
@@ -208,7 +209,7 @@ class ChattingService {
                       ),
                       TextButton(
                           onPressed: () async {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           child: const Text("확인"))
                     ],
@@ -246,12 +247,8 @@ class ChattingService {
     }
 
     //채팅방 화면으로 이동
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatRoomScreen(
-              chatRoomData: data, groupRoomData: data, isGroup: true),
-        ));
+    context.pushNamed(Screen.chatRoom,
+        pathParameters: {"isGroup": "group"}, extra: data);
   }
 
   ///채팅방 화면 나갔을 때 시간 기록
@@ -337,27 +334,14 @@ class ChattingService {
         showDialog(
           context: context,
           builder: (_) {
-            return AlertDialog(
-              actionsPadding: const EdgeInsets.symmetric(horizontal: 10),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      onList ? null : Navigator.pop(context);
-                      Navigator.pop(_);
-                      deleteChatRoom(
-                          userData: userData, roomId: roomId, isGroup: true);
-                    },
-                    child: const Text("확인")),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(_);
-                    },
-                    child: const Text("취소")),
-              ],
-              shape: ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              content: const Text("방장으로 있는 채팅방을 나가면 모든 참여자를 내보내고 채팅방을 삭제합니다."),
-            );
+            return YesNoDialog(
+                content: "방장으로 있는 채팅방을 나가면 모든 참여자를 내보내고 채팅방을 삭제합니다.",
+                onYes: () {
+                  onList ? null : context.pop();
+                  Navigator.pop(_);
+                  deleteChatRoom(
+                      userData: userData, roomId: roomId, isGroup: true);
+                });
           },
         );
       } else {
@@ -400,7 +384,7 @@ class ChattingService {
 
       //context가 입력되면 화면 나가기
       if (context != null) {
-        Navigator.pop(context);
+        context.pop();
       }
     }
   }
@@ -440,7 +424,7 @@ class ChattingService {
     if (participantsList.length == 1) {
       //context가 입력되면 화면 나가기
       if (context != null) {
-        Navigator.pop(context);
+        context.pop();
       }
       //방 데이터 삭제
       deleteChatRoom(userData: userData, roomId: roomId, isGroup: false);
@@ -448,7 +432,7 @@ class ChattingService {
       //나간 후 남은 참여자가 1명 이상이면 참여자 명단에서 내 UID만 쏙 지운 리스트를 파이어스토어에 업데이트 하고 화면 나가기
       roomRef.update({"participantsUid": participantsList}).whenComplete(() {
         if (context != null) {
-          Navigator.pop(context);
+          context.pop();
         }
       });
     }

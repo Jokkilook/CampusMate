@@ -1,9 +1,10 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/profile/profile_setting_c.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 ///프로필 설정 B : 태그 설정
@@ -187,11 +188,7 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                 /* 태그 리스트 데이터베이스에 삽입 */
                 userData.tags = userTag;
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileSettingC(),
-                    ));
+                context.pushNamed(Screen.profileC);
               }
             : null,
       ),

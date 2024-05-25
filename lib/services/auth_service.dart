@@ -1,5 +1,6 @@
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/login_screen.dart';
@@ -8,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -160,12 +162,13 @@ class AuthService {
 
     //파이어베이스 로그아웃 후 로그인 페이지로 이동
     await auth.signOut().whenComplete(() {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-          (route) => false);
+      // Navigator.pushAndRemoveUntil(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) => const LoginScreen(),
+      //     ),
+      //     (route) => false);
+      context.goNamed(Screen.login);
       context.read<UserDataProvider>().userData = UserData();
     });
   }

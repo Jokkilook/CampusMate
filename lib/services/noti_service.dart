@@ -1,16 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:campusmate/global_variable.dart';
 import 'package:campusmate/models/chat_room_data.dart';
-import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/chatting/chat_room_screen.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
-import 'package:provider/provider.dart';
 
 class NotiService {
   NotiService._();
@@ -22,20 +20,49 @@ class NotiService {
 
   ///알림 서비스 초기화
   static init() async {
+    //종료 중 알림 터치 시
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) async {
+      if (message != null) {
+        //1:1 채팅 알림일 때,
+        if (message.data["type"] == "chat") {
+          var data = await FirebaseFirestore.instance
+              .collection("schools/${message.data["school"]}/chats")
+              .doc(message.data["roomId"])
+              .get();
+
+          var roomData =
+              ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+
+          router.pushNamed(Screen.chatRoom,
+              pathParameters: {"isGroup": "one"}, extra: roomData);
+        }
+        //그룹 채팅 알림일 때,
+        if (message.data["type"] == "groupChat") {
+          var data = await FirebaseFirestore.instance
+              .collection("schools/${message.data["school"]}/groupChats")
+              .doc(message.data["roomId"])
+              .get();
+
+          var roomData =
+              GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+
+          //채팅방 화면으로 이동
+          router.pushNamed(Screen.chatRoom,
+              pathParameters: {"isGroup": "group"}, extra: roomData);
+        }
+      }
+    });
+
     //포그라운드에서 알림 수신 시
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      var d = Provider.of<UserDataProvider>(
-              GlobalVariable.navKey.currentContext!,
-              listen: false)
-          .userData
-          .name;
       debugPrint("MESSAGE DATA: ${message.data}");
-      debugPrint(d);
       showNoti(
           message.notification?.title ?? "", message.notification?.body ?? "");
     });
 
-    //알림 터치로 어플 실행 시
+    //백그라운드 알림 터치로 어플 실행 시
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       //1:1 채팅 알림일 때,
       if (message.data["type"] == "chat") {
@@ -47,10 +74,10 @@ class NotiService {
         var roomData =
             ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
 
-        Navigator.of(GlobalVariable.navKey.currentContext!).push(
-            MaterialPageRoute(
-                builder: (context) => ChatRoomScreen(chatRoomData: roomData)));
+        router.pushNamed(Screen.chatRoom,
+            pathParameters: {"isGroup": "one"}, extra: roomData);
       }
+      //그룹 채팅 알림일 때,
       if (message.data["type"] == "groupChat") {
         var data = await FirebaseFirestore.instance
             .collection("schools/${message.data["school"]}/groupChats")
@@ -58,12 +85,11 @@ class NotiService {
             .get();
 
         var roomData =
-            ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+            GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
 
-        Navigator.of(GlobalVariable.navKey.currentContext!).push(
-            MaterialPageRoute(
-                builder: (context) =>
-                    ChatRoomScreen(chatRoomData: roomData, isGroup: true)));
+        //채팅방 화면으로 이동
+        router.pushNamed(Screen.chatRoom,
+            pathParameters: {"isGroup": "group"}, extra: roomData);
       }
     });
 

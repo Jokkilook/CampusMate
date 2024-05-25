@@ -277,12 +277,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                             userData: userData,
                                             roomId:
                                                 widget.groupRoomData!.roomId!);
+                                      } else {
+                                        chat.leaveOTOChatRoom(
+                                          context: context,
+                                          userData: userData,
+                                          roomId: widget.chatRoomData.roomId!,
+                                        );
                                       }
-                                      chat.leaveOTOChatRoom(
-                                        context: context,
-                                        userData: userData,
-                                        roomId: widget.chatRoomData.roomId!,
-                                      );
                                     },
                                     child: SizedBox(
                                       height: 40,
@@ -366,7 +367,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     controller: scrollController,
                                     padding: const EdgeInsets.all(10),
                                     separatorBuilder: (context, index) =>
-                                        const SizedBox(height: 10),
+                                        const SizedBox(height: 5),
                                     reverse: true,
                                     itemCount: docs.length,
                                     itemBuilder: (context, index) {
@@ -507,9 +508,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       }
 
                                       return ChatBubble(
-                                        function: () {
-                                          print("CHAT:asdasdsd");
-                                        },
+                                        function: () {},
                                         type: stringToEnumMessageType(
                                             docs[index]["type"]),
                                         isOther: isOther,
@@ -832,6 +831,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     //알림 보내기
                                     if (widget.isGroup) {
                                       for (var user in groupChatUsers) {
+                                        if (user?.uid == userData.uid) continue;
                                         NotiService.sendNoti(
                                           data: {
                                             "type": "groupChat",

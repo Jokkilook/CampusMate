@@ -1,10 +1,11 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/profile/profile_setting_result.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/screens/profile/widgets/schedule_table.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 ///프로필 설정 C : 시간표 설정
@@ -116,12 +117,8 @@ class _ProfileSettingCState extends State<ProfileSettingC> {
           userData.schedule.schedule = totalSchedule;
 
           context.read<UserDataProvider>().userData = userData;
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ProfileSettingResult(),
-              ),
-              (route) => false);
+
+          context.goNamed(Screen.profileResult);
         },
       ),
     );

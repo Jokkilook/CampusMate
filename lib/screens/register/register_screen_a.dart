@@ -1,24 +1,24 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/regist/regist_screen_b.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/school_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/yest_no_dialog.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 ///회원 가입 A : 입학년도, 학교, 학과 선택
-class RegistScreenA extends StatefulWidget {
-  const RegistScreenA({super.key});
+class RegisterScreenA extends StatefulWidget {
+  const RegisterScreenA({super.key});
 
   @override
-  State<RegistScreenA> createState() => _RegistScreenAState();
+  State<RegisterScreenA> createState() => _RegisterScreenAState();
 }
 
-class _RegistScreenAState extends State<RegistScreenA> {
+class _RegisterScreenAState extends State<RegisterScreenA> {
   final yearList = [
     for (int i = DateTime.now().year; i > DateTime.now().year - 10; i--) i
   ];
@@ -61,12 +61,12 @@ class _RegistScreenAState extends State<RegistScreenA> {
         actions: [
           IconButton(
             onPressed: (/* 로그인 화면으로 돌아가기 */) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                  (route) => false);
+              showDialog(
+                  context: context,
+                  builder: (context) => YesNoDialog(
+                        content: "지금 그만두면 처음부터 다시 해야해요!",
+                        onYes: () => router.goNamed(Screen.login),
+                      ));
             },
             icon: const Icon(Icons.close),
           )
@@ -322,11 +322,7 @@ class _RegistScreenAState extends State<RegistScreenA> {
                 newUserData.dept = selectedDept;
                 context.read<UserDataProvider>().userData = newUserData;
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RegistScreenB(),
-                    ));
+                router.pushNamed(Screen.registerB);
               }
             : null,
       ),

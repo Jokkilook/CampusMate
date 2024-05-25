@@ -6,10 +6,10 @@ import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
 import 'package:campusmate/screens/profile/profile_setting_c.dart';
 import 'package:campusmate/screens/profile/profile_setting_result.dart';
-import 'package:campusmate/screens/regist/regist_result.dart';
-import 'package:campusmate/screens/regist/regist_screen_a.dart';
-import 'package:campusmate/screens/regist/regist_screen_b.dart';
-import 'package:campusmate/screens/regist/regist_screen_c.dart';
+import 'package:campusmate/screens/register/register_result.dart';
+import 'package:campusmate/screens/register/register_screen_a.dart';
+import 'package:campusmate/screens/register/register_screen_b.dart';
+import 'package:campusmate/screens/register/register_screen_c.dart';
 import 'package:flutter/material.dart';
 
 class ScreenList extends StatelessWidget {
@@ -52,7 +52,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("REGISTA", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const RegistScreenA()),
+                MaterialPageRoute(builder: (_) => const RegisterScreenA()),
               ),
             ),
             const Divider(height: 0),
@@ -62,7 +62,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("REGISTB", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => RegistScreenB()),
+                MaterialPageRoute(builder: (_) => RegisterScreenB()),
               ),
             ),
             const Divider(height: 0),
@@ -72,7 +72,7 @@ class ScreenList extends StatelessWidget {
               title: const Text("REGISTC", style: TextStyle(fontSize: 24)),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => RegistScreenC()),
+                MaterialPageRoute(builder: (_) => RegisterScreenC()),
               ),
             ),
             const Divider(height: 0),
@@ -84,7 +84,7 @@ class ScreenList extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const RegistResult(),
+                  builder: (_) => const RegisterResult(),
                 ),
               ),
             ),

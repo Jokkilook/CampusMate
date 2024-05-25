@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/modules/enums.dart';
-import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
-import 'package:campusmate/screens/chatting/video_player_screen.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
 
@@ -79,7 +79,6 @@ class ChatBubble extends StatelessWidget {
             .toDate()
             .isAfter(DateTime.now().subtract(const Duration(seconds: 1)))) {
       function;
-      print(type);
     }
 
     CachedNetworkImage cachedMediaImage = CachedNetworkImage(
@@ -160,13 +159,12 @@ class ChatBubble extends StatelessWidget {
                         (showDay || viewSender) && isOther
                             ? GestureDetector(
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          StrangerProfilScreen(
-                                              uid: senderUid!, readOnly: true),
-                                    ),
+                                  context.pushNamed(
+                                    Screen.otherProfile,
+                                    pathParameters: {
+                                      "uid": senderUid!,
+                                      "readOnly": "true"
+                                    },
                                   );
                                 },
                                 child: Container(
@@ -242,14 +240,26 @@ class ChatBubble extends StatelessWidget {
                                       ? const BorderRadius.all(
                                           Radius.circular(10))
                                       : isOther
-                                          ? const BorderRadius.only(
-                                              bottomLeft: Radius.circular(10),
-                                              bottomRight: Radius.circular(10),
-                                              topRight: Radius.circular(10))
-                                          : const BorderRadius.only(
-                                              bottomLeft: Radius.circular(10),
-                                              bottomRight: Radius.circular(10),
-                                              topLeft: Radius.circular(10))),
+                                          ? BorderRadius.only(
+                                              topLeft: viewSender
+                                                  ? const Radius.circular(0)
+                                                  : const Radius.circular(10),
+                                              bottomLeft:
+                                                  const Radius.circular(10),
+                                              bottomRight:
+                                                  const Radius.circular(10),
+                                              topRight:
+                                                  const Radius.circular(10))
+                                          : BorderRadius.only(
+                                              topRight: viewSender
+                                                  ? const Radius.circular(0)
+                                                  : const Radius.circular(10),
+                                              bottomLeft:
+                                                  const Radius.circular(10),
+                                              bottomRight:
+                                                  const Radius.circular(10),
+                                              topLeft:
+                                                  const Radius.circular(10))),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -276,14 +286,8 @@ class ChatBubble extends StatelessWidget {
                                   if (type == MessageType.video)
                                     InkWell(
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                VideoPlayerScreen(
-                                                    url: videoUrl),
-                                          ),
-                                        );
+                                        context.pushNamed(Screen.videoPlayer,
+                                            pathParameters: {"url": videoUrl});
                                       },
                                       child: Stack(
                                         alignment: Alignment.center,

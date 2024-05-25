@@ -4,11 +4,11 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/regist/regist_screen_c.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
+import 'package:campusmate/widgets/yest_no_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
@@ -17,8 +17,8 @@ import 'package:provider/provider.dart';
 
 ///회원 가입 B : 이메일 입력 & 인증
 //ignore: must_be_immutable
-class RegistScreenB extends StatefulWidget {
-  RegistScreenB({super.key});
+class RegisterScreenB extends StatefulWidget {
+  RegisterScreenB({super.key});
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
@@ -46,10 +46,10 @@ class RegistScreenB extends StatefulWidget {
   int time = 180;
 
   @override
-  State<RegistScreenB> createState() => _RegistScreenBState();
+  State<RegisterScreenB> createState() => _RegisterScreenBState();
 }
 
-class _RegistScreenBState extends State<RegistScreenB> {
+class _RegisterScreenBState extends State<RegisterScreenB> {
   late String inputEmail; //이메일 입력받을 변수
   late String inputCode;
   bool isCompleted = false;
@@ -105,12 +105,12 @@ class _RegistScreenBState extends State<RegistScreenB> {
         actions: [
           IconButton(
             onPressed: (/* 로그인 화면으로 돌아가기 */) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                  (route) => false);
+              showDialog(
+                  context: context,
+                  builder: (context) => YesNoDialog(
+                        content: "지금 그만두면 처음부터 다시 해야해요!",
+                        onYes: () => router.goNamed(Screen.login),
+                      ));
             },
             icon: const Icon(Icons.close),
           )
@@ -432,11 +432,13 @@ class _RegistScreenBState extends State<RegistScreenB> {
                 newUserData.email = widget.emailController.value.text;
                 context.read<UserDataProvider>().userData = newUserData;
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RegistScreenC(),
-                    ));
+                router.pushNamed(Screen.registerC);
+
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => RegisterScreenC(),
+                //     ));
               }
             : null,
       ),

@@ -45,6 +45,7 @@ dependencies:
     flutter_local_notifications: ^17.1.2
     googleapis_auth: ^1.4.1
     firebase_analytics: ^10.10.6
+    go_router: ^14.1.3
 
 dev_dependencies:
     flutter_test:

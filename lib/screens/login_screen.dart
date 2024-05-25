@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/main_screen.dart';
-import 'package:campusmate/screens/regist/regist_screen_a.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -236,13 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 //알림 토큰 최신화
                                 AuthService().updateNotiToken(userData);
 
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MainScreen(),
-                                  ),
-                                  (route) => false,
-                                );
+                                context.goNamed(Screen.main);
                               },
                             );
                           })
@@ -298,11 +292,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               MaterialStatePropertyAll(Colors.transparent)),
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RegistScreenA(),
-                            ));
+
+                        router.push(Screen.registerA);
                       },
                       child: const Text(
                         "회원가입",

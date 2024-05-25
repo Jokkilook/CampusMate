@@ -247,6 +247,7 @@ class ChatListItem extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                   ),
+                  //안읽은 메세지 수 배지
                   unreadCount != 0
                       ? Positioned(
                           top: -5,

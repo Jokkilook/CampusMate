@@ -2,9 +2,9 @@ import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/matching/widgets/score_shower.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -431,11 +432,10 @@ class _MatchCardState extends State<MatchCard> {
 
           return GestureDetector(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StrangerProfilScreen(uid: doc.uid!),
-                  )).then((value) => (value ?? false) ? setState(() {}) : null);
+              context.pushNamed(Screen.otherProfile, pathParameters: {
+                "uid": doc.uid ?? "",
+                "readOnly": "false",
+              });
             },
             child: Container(
               clipBehavior: Clip.hardEdge,

@@ -8,6 +8,7 @@ import 'package:campusmate/screens/chatting/widgets/chat_search_item.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +61,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                     children: [
                       IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           icon: const Icon(Icons.arrow_back)),
                       const Divider(),
@@ -219,7 +220,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                                                   TextButton(
                                                       onPressed: () {
                                                         Navigator.pop(_);
-                                                        Navigator.pop(context);
+                                                        context.pop();
                                                         ChattingService()
                                                             .enterGroupRoom(
                                                                 context,

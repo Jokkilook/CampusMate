@@ -1,6 +1,7 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class GroupChatRoomGenerationScreen extends StatefulWidget {
   const GroupChatRoomGenerationScreen({super.key});
@@ -92,7 +93,7 @@ class _GroupChatRoomGenerationScreenState
                     : () async {
                         if (!onCreating) {
                           onCreating = true;
-                          Navigator.pop(context);
+                          context.pop();
                           await ChattingService().createGroupRoom(
                               context: context,
                               roomName: titleController.value.text,

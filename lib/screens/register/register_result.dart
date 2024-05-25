@@ -1,11 +1,12 @@
 import 'package:campusmate/app_colors.dart';
-import 'package:campusmate/screens/profile/profile_setting_a.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 ///회원가입 결과 화면<br>
 ///프로필 설정으로 넘어가기 전 화면
-class RegistResult extends StatelessWidget {
-  const RegistResult({super.key});
+class RegisterResult extends StatelessWidget {
+  const RegisterResult({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +35,7 @@ class RegistResult extends StatelessWidget {
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileSettingA(),
-                    ));
+                context.goNamed(Screen.profileA);
               },
               child: const Text(
                 "프로필 설정하기",

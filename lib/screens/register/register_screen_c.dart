@@ -2,28 +2,29 @@ import 'dart:convert';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/regist/regist_result.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/yest_no_dialog.dart';
 import 'package:campusmate/widgets/input_text_field.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 ///회원 가입 C : 비밀번호, 닉네임 입력
 //ignore: must_be_immutable
-class RegistScreenC extends StatefulWidget {
-  RegistScreenC({super.key});
+class RegisterScreenC extends StatefulWidget {
+  RegisterScreenC({super.key});
 
   bool pwObsecure = true;
   bool chObsecure = true;
 
   @override
-  State<RegistScreenC> createState() => _RegistScreenCState();
+  State<RegisterScreenC> createState() => _RegisterScreenCState();
 }
 
-class _RegistScreenCState extends State<RegistScreenC> {
+class _RegisterScreenCState extends State<RegisterScreenC> {
   TextEditingController pwController = TextEditingController();
   TextEditingController pwConfirmController = TextEditingController();
   TextEditingController nickController = TextEditingController();
@@ -46,12 +47,12 @@ class _RegistScreenCState extends State<RegistScreenC> {
         actions: [
           IconButton(
             onPressed: (/* 로그인 화면으로 돌아가기 */) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                  (route) => false);
+              showDialog(
+                  context: context,
+                  builder: (context) => YesNoDialog(
+                        content: "지금 그만두면 처음부터 다시 해야해요!",
+                        onYes: () => router.goNamed(Screen.login),
+                      ));
             },
             icon: const Icon(Icons.close),
           )
@@ -355,11 +356,7 @@ class _RegistScreenCState extends State<RegistScreenC> {
                     .convert(utf8.encode(pwConfirmController.value.text))
                     .toString();
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegistResult(),
-                    ));
+                context.goNamed(Screen.registerResult);
               }
             : null,
       ),
