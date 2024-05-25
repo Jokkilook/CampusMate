@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/user_data.dart';
 import '../../profile/profile_screen.dart';
 import '../../profile/stranger_profile_screen.dart';
 
@@ -17,6 +18,7 @@ class CommentItem extends StatefulWidget {
   final Function(String) onReplyPressed;
   final VoidCallback refreshCallback;
   final String postAuthorUid;
+  final UserData userData;
 
   const CommentItem({
     Key? key,
@@ -25,6 +27,7 @@ class CommentItem extends StatefulWidget {
     required this.onReplyPressed,
     required this.refreshCallback,
     required this.postAuthorUid,
+    required this.userData,
   }) : super(key: key);
 
   @override
@@ -58,16 +61,25 @@ class _CommentItemState extends State<CommentItem> {
               .map((doc) =>
                   PostReplyData.fromJson(doc.data() as Map<String, dynamic>))
               .toList();
+          List<Widget> visibleReplies = [];
+          for (var reply in replies) {
+            // 차단된 사용자의 답글인지 확인
+            if (!(widget.userData.banUsers?.contains(reply.authorUid) ??
+                false)) {
+              // 차단되지 않은 사용자의 답글만 출력
+              visibleReplies.add(
+                ReplyItem(
+                  postAuthorUid: widget.postAuthorUid,
+                  postReplyData: reply,
+                  firestore: widget.firestore,
+                  refreshCallback: widget.refreshCallback,
+                ),
+              );
+            }
+          }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: replies.map((reply) {
-              return ReplyItem(
-                postAuthorUid: widget.postAuthorUid,
-                postReplyData: reply,
-                firestore: widget.firestore,
-                refreshCallback: widget.refreshCallback,
-              );
-            }).toList(),
+            children: visibleReplies,
           );
         }
       },
