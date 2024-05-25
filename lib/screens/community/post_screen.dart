@@ -348,8 +348,30 @@ class _PostScreenState extends State<PostScreen> {
                                       ? ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(25),
-                                          child: Image.asset(
-                                              'assets/images/default_image.png'),
+                                          child: Stack(
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/default_image.png',
+                                                fit: BoxFit.cover,
+                                                width: 50,
+                                                height: 50,
+                                              ),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  // 작성자가 본인일 경우 프로필 이미지 색을 변경
+                                                  color: widget.postData
+                                                              .authorUid ==
+                                                          currentUserUid
+                                                      ? AppColors.button
+                                                          .withOpacity(0.2)
+                                                      : Colors.grey
+                                                          .withOpacity(0.0),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         )
                                       : null,
                                 ),

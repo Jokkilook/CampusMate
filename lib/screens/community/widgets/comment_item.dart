@@ -1,3 +1,4 @@
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
@@ -301,8 +302,26 @@ class _CommentItemState extends State<CommentItem> {
                       child: widget.postCommentData.boardType != 'General'
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(25),
-                              child: Image.asset(
-                                  'assets/images/default_image.png'),
+                              child: Stack(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/default_image.png',
+                                    fit: BoxFit.cover,
+                                    width: 50,
+                                    height: 50,
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      // 작성자가 본인일 경우 프로필 이미지 색을 변경
+                                      color: widget.postCommentData.authorUid ==
+                                              currentUserUid
+                                          ? AppColors.button.withOpacity(0.2)
+                                          : Colors.grey.withOpacity(0.0),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             )
                           : null,
                     ),
@@ -320,8 +339,8 @@ class _CommentItemState extends State<CommentItem> {
                         // 익명 게시판에서 댓글 작성자가 글 작성자라면 표시
                         widget.postCommentData.authorUid == widget.postAuthorUid
                             ? Container(
-                                margin: const EdgeInsets.only(left: 4),
-                                padding: const EdgeInsets.all(3),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 3, vertical: 1),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     width: 1,
