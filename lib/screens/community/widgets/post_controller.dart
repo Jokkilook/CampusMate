@@ -147,7 +147,7 @@ class _PostControllerState extends State<PostController> {
                 style: TextStyle(color: AppColors.alertText),
               ),
               onTap: () {
-                _showAlertDialog(context, '정말 삭제하겠습니까?');
+                _showAlertDialog(context, '게시글을 삭제하시겠습니까?');
               },
             ),
           if (widget.currentUserUid != widget.postData.authorUid)
@@ -156,7 +156,31 @@ class _PostControllerState extends State<PostController> {
                 '신고하기',
                 textAlign: TextAlign.center,
               ),
-              onTap: () {},
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      elevation: 0,
+                      actionsPadding: const EdgeInsets.symmetric(horizontal: 9),
+                      shape: ContinuousRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      content: const Text(
+                        '신고가 접수되었습니다.',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("확인"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           if (widget.currentUserUid != widget.postData.authorUid)
             ListTile(

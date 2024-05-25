@@ -157,6 +157,7 @@ class _CommentItemState extends State<CommentItem> {
   void _showAlertDialog(BuildContext context) {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     String authorUid = widget.postCommentData.authorUid.toString();
+    String authorName = widget.postCommentData.authorName.toString();
 
     showDialog(
       context: context,
@@ -167,7 +168,9 @@ class _CommentItemState extends State<CommentItem> {
           shape: ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(10)),
           content: Text(
-            currentUserUid == authorUid ? '정말 삭제하시겠습니까?' : '정말 신고하시겠습니까?',
+            currentUserUid == authorUid
+                ? '댓글을 삭제하시겠습니까?'
+                : '$authorName님을 신고하시겠습니까?',
             style: const TextStyle(fontSize: 14),
           ),
           actions: [
@@ -184,7 +187,31 @@ class _CommentItemState extends State<CommentItem> {
               onPressed: () {
                 currentUserUid == authorUid
                     ? _deleteComment(context)
-                    : Navigator.pop(context);
+                    : showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            elevation: 0,
+                            actionsPadding:
+                                const EdgeInsets.symmetric(horizontal: 9),
+                            shape: ContinuousRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            content: const Text(
+                              '신고가 접수되었습니다.',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("확인"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
               },
               child: const Text("확인"),
             ),
