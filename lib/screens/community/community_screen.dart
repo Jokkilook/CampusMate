@@ -60,7 +60,6 @@ class _CommunityScreenState extends State<CommunityScreen>
             ],
           ),
           actions: [
-            // 검색
             IconButton(
               onPressed: () {
                 Navigator.push(
@@ -76,7 +75,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                 Icons.search,
               ),
             ),
-            // 내가 쓴 글 조회
             IconButton(
               onPressed: () {
                 Navigator.push(
@@ -115,130 +113,8 @@ class _CommunityScreenState extends State<CommunityScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            // 일반 게시판
-            RefreshIndicator(
-              onRefresh: _refreshScreen,
-              child: FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection('schools/${userData.school}/generalPosts')
-                    .orderBy('timestamp', descending: true)
-                    .get(),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircleLoading(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-                  var data = snapshot.data!.docs;
-                  if (data.isEmpty) {
-                    return const Center(
-                      child: Text('게시글이 없습니다.'),
-                    );
-                  }
-                  return ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return Divider(
-                        height: 0,
-                        color:
-                            isDark ? AppColors.darkLine : AppColors.lightLine,
-                      );
-                    },
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      var postData = PostData.fromJson(
-                          data[index].data() as Map<String, dynamic>);
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PostScreen(
-                                postData: postData,
-                                firestore: FirebaseFirestore.instance,
-                                userData: userData,
-                              ),
-                            ),
-                          ).then((_) {
-                            _refreshScreen();
-                          });
-                        },
-                        child: GeneralBoardItem(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            // 익명 게시판
-            RefreshIndicator(
-              onRefresh: _refreshScreen,
-              child: FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection('schools/${userData.school}/anonymousPosts')
-                    .orderBy('timestamp', descending: true)
-                    .get(),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircleLoading(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-                  var data = snapshot.data!.docs;
-                  if (data.isEmpty) {
-                    return const Center(
-                      child: Text('게시글이 없습니다.'),
-                    );
-                  }
-
-                  return ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return Divider(
-                        height: 0,
-                        color:
-                            isDark ? AppColors.darkLine : AppColors.lightLine,
-                      );
-                    },
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      var postData = PostData.fromJson(
-                          data[index].data() as Map<String, dynamic>);
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PostScreen(
-                                postData: postData,
-                                firestore: FirebaseFirestore.instance,
-                                userData: userData,
-                              ),
-                            ),
-                          ).then((_) {
-                            _refreshScreen();
-                          });
-                        },
-                        child: AnonymousBoardItem(
-                          postData: postData,
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
+            _buildGeneralBoard(userData, isDark),
+            _buildAnonymousBoard(userData, isDark),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -271,6 +147,149 @@ class _CommunityScreenState extends State<CommunityScreen>
         bottomNavigationBar: const SizedBox(
           height: 70,
         ),
+      ),
+    );
+  }
+
+  Widget _buildGeneralBoard(UserData userData, bool isDark) {
+    return RefreshIndicator(
+      onRefresh: _refreshScreen,
+      child: FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('schools/${userData.school}/generalPosts')
+            .orderBy('timestamp', descending: true)
+            .get(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircleLoading(),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text('게시글이 없습니다.'),
+            );
+          }
+          var data = snapshot.data!.docs;
+          return ListView.separated(
+            separatorBuilder: (context, index) {
+              return Divider(
+                height: 0,
+                color: isDark ? AppColors.darkLine : AppColors.lightLine,
+              );
+            },
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              try {
+                var postData = PostData.fromJson(
+                    data[index].data() as Map<String, dynamic>);
+                if (postData.authorUid == null || postData.authorUid!.isEmpty) {
+                  // 작성자 UID가 없으면 건너뛰기
+                  return const SizedBox.shrink();
+                }
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PostScreen(
+                          postData: postData,
+                          firestore: FirebaseFirestore.instance,
+                          userData: userData,
+                        ),
+                      ),
+                    ).then((_) {
+                      _refreshScreen();
+                    });
+                  },
+                  child: GeneralBoardItem(
+                    postData: postData,
+                    firestore: FirebaseFirestore.instance,
+                  ),
+                );
+              } catch (e) {
+                // 예외 발생 시 건너뛰기
+                return const SizedBox.shrink();
+              }
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildAnonymousBoard(UserData userData, bool isDark) {
+    return RefreshIndicator(
+      onRefresh: _refreshScreen,
+      child: FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('schools/${userData.school}/anonymousPosts')
+            .orderBy('timestamp', descending: true)
+            .get(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircleLoading(),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text('게시글이 없습니다.'),
+            );
+          }
+          var data = snapshot.data!.docs;
+          return ListView.separated(
+            separatorBuilder: (context, index) {
+              return Divider(
+                height: 0,
+                color: isDark ? AppColors.darkLine : AppColors.lightLine,
+              );
+            },
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              try {
+                var postData = PostData.fromJson(
+                    data[index].data() as Map<String, dynamic>);
+                if (postData.authorUid == null || postData.authorUid!.isEmpty) {
+                  // 작성자 UID가 없으면 건너뛰기
+                  return const SizedBox.shrink();
+                }
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PostScreen(
+                          postData: postData,
+                          firestore: FirebaseFirestore.instance,
+                          userData: userData,
+                        ),
+                      ),
+                    ).then((_) {
+                      _refreshScreen();
+                    });
+                  },
+                  child: AnonymousBoardItem(
+                    postData: postData,
+                  ),
+                );
+              } catch (e) {
+                // 예외 발생 시 건너뛰기
+                return const SizedBox.shrink();
+              }
+            },
+          );
+        },
       ),
     );
   }
