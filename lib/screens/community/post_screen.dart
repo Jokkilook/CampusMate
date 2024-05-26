@@ -385,27 +385,34 @@ class _PostScreenState extends State<PostScreen> {
                                       : null,
                                 ),
                                 const SizedBox(width: 10),
-                                Text(
-                                  widget.postData.boardType == 'General'
-                                      ? widget.postData.authorName.toString()
-                                      : '익명',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      widget.postData.boardType == 'General'
+                                          ? widget.postData.authorName
+                                              .toString()
+                                          : '익명',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    // 작성일시
+                                    Text(
+                                      formattedTime,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
                           const Spacer(),
-                          // 작성일시
-                          Text(
-                            formattedTime,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
                           // 조회수
                           const Icon(
                             Icons.account_circle_outlined,
