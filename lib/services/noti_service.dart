@@ -8,6 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 
 class NotiService {
@@ -20,46 +21,38 @@ class NotiService {
 
   ///알림 서비스 초기화
   static init() async {
-    //종료 중 알림 터치 시
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) async {
-      if (message != null) {
-        //1:1 채팅 알림일 때,
-        if (message.data["type"] == "chat") {
-          var data = await FirebaseFirestore.instance
-              .collection("schools/${message.data["school"]}/chats")
-              .doc(message.data["roomId"])
-              .get();
-
-          var roomData =
-              ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
-
-          router.pushNamed(Screen.chatRoom,
-              pathParameters: {"isGroup": "one"}, extra: roomData);
-        }
-        //그룹 채팅 알림일 때,
-        if (message.data["type"] == "groupChat") {
-          var data = await FirebaseFirestore.instance
-              .collection("schools/${message.data["school"]}/groupChats")
-              .doc(message.data["roomId"])
-              .get();
-
-          var roomData =
-              GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
-
-          //채팅방 화면으로 이동
-          router.pushNamed(Screen.chatRoom,
-              pathParameters: {"isGroup": "group"}, extra: roomData);
-        }
-      }
-    });
-
     //포그라운드에서 알림 수신 시
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint("MESSAGE DATA: ${message.data}");
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      String payloadString = "";
+
+      //1:1 채팅 알림일 때,
+      if (message.data["type"] == "chat") {
+        var data = await FirebaseFirestore.instance
+            .collection("schools/${message.data["school"]}/chats")
+            .doc(message.data["roomId"])
+            .get();
+
+        var roomData =
+            ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+        payloadString = jsonEncode(roomData.toJson());
+      }
+      //그룹 채팅 알림일 때,
+      if (message.data["type"] == "groupChat") {
+        var data = await FirebaseFirestore.instance
+            .collection("schools/${message.data["school"]}/groupChats")
+            .doc(message.data["roomId"])
+            .get();
+
+        var roomData =
+            GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+        payloadString = jsonEncode(roomData.toJson());
+      }
+
       showNoti(
-          message.notification?.title ?? "", message.notification?.body ?? "");
+        title: message.notification?.title ?? "",
+        content: message.notification?.body ?? "",
+        payload: payloadString,
+      );
     });
 
     //백그라운드 알림 터치로 어플 실행 시
@@ -105,7 +98,17 @@ class NotiService {
     InitializationSettings initializationSettings = InitializationSettings(
         android: androidInitializationSettings, iOS: iosInitializationSettings);
 
-    await notiPlugin.initialize(initializationSettings);
+    await notiPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (details) {
+        String payloadString = details.payload!;
+        ChatRoomData roomData =
+            ChatRoomData.fromJson(jsonDecode(payloadString));
+
+        router.pushNamed(Screen.chatRoom,
+            pathParameters: {"isGroup": "one"}, extra: roomData);
+      },
+    );
   }
 
   ///알림 권한 요청
@@ -124,7 +127,10 @@ class NotiService {
     }
   }
 
-  static Future showNoti(String title, String content) async {
+  static Future showNoti(
+      {required String title,
+      required String content,
+      String payload = ""}) async {
     const AndroidNotificationDetails androidNotiDetails =
         AndroidNotificationDetails("channel id", "channel name",
             channelDescription: "channel description",
@@ -136,7 +142,7 @@ class NotiService {
         android: androidNotiDetails,
         iOS: DarwinNotificationDetails(badgeNumber: 1));
 
-    await notiPlugin.show(0, title, content, notiDetails);
+    await notiPlugin.show(0, title, content, notiDetails, payload: "Asd");
   }
 
   ///푸쉬 알림 보내는 함수<br>

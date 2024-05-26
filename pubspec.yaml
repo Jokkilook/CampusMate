@@ -14,6 +14,7 @@ dependencies:
     dropdown_search: ^5.0.6
     firebase_core: ^2.27.1
     firebase_database: ^10.4.10
+    #mailer web 지원 안함
     mailer: ^6.1.0
     crypto: ^3.0.3
     firebase_auth: ^4.17.9
@@ -23,6 +24,7 @@ dependencies:
     cloud_firestore: ^4.15.10
     random_name_generator: ^1.3.0
     flutter_lorem: ^2.0.0
+    #google mobile ads web 지원 안함
     google_mobile_ads: ^5.0.0
     flutter_card_swiper: ^7.0.0
     extended_wrap: ^0.1.5
@@ -31,7 +33,9 @@ dependencies:
     firebase_storage: ^11.7.0
     image_picker: ^1.0.7
     intl: ^0.19.0
+    #cached_network_image web 지원 안함
     cached_network_image: ^3.3.1
+    #flutter cache manager web 지원 안함
     flutter_cache_manager: ^3.3.1
     firebase_messaging: ^14.9.2
     async: ^2.11.0
@@ -40,8 +44,10 @@ dependencies:
     uuid: ^4.4.0
     flutter_image_compress: ^2.2.0
     flick_video_player: ^0.7.0
+    #video compress web 지원 안함
     video_compress: ^3.1.2
     shared_preferences: ^2.2.3
+    #flutter local notification web 지원 안함
     flutter_local_notifications: ^17.1.2
     googleapis_auth: ^1.4.1
     firebase_analytics: ^10.10.6

@@ -1,8 +1,11 @@
+import 'package:campusmate/models/chat_room_data.dart';
+import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/services/noti_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +79,41 @@ class _SplashScreenState extends State<SplashScreen> {
 
         //2-3. 메인 페이지로 이동
         context.goNamed(Screen.main);
+
+        //종료 중 알림 터치 시
+        FirebaseMessaging.instance
+            .getInitialMessage()
+            .then((RemoteMessage? message) async {
+          if (message != null) {
+            //1:1 채팅 알림일 때,
+            if (message.data["type"] == "chat") {
+              var data = await FirebaseFirestore.instance
+                  .collection("schools/${message.data["school"]}/chats")
+                  .doc(message.data["roomId"])
+                  .get();
+
+              var roomData =
+                  ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+
+              router.pushNamed(Screen.chatRoom,
+                  pathParameters: {"isGroup": "one"}, extra: roomData);
+            }
+            //그룹 채팅 알림일 때,
+            if (message.data["type"] == "groupChat") {
+              var data = await FirebaseFirestore.instance
+                  .collection("schools/${message.data["school"]}/groupChats")
+                  .doc(message.data["roomId"])
+                  .get();
+
+              var roomData = GroupChatRoomData.fromJson(
+                  data.data() as Map<String, dynamic>);
+
+              //채팅방 화면으로 이동
+              router.pushNamed(Screen.chatRoom,
+                  pathParameters: {"isGroup": "group"}, extra: roomData);
+            }
+          }
+        });
       }
     }
 
