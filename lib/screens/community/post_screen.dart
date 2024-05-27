@@ -74,10 +74,8 @@ class _PostScreenState extends State<PostScreen> {
 
         debugPrint('조회수 업데이트 성공');
 
-        setState(() {
-          widget.postData.viewers ??= [];
-          widget.postData.viewers!.add(currentUserUid);
-        });
+        widget.postData.viewers ??= [];
+        widget.postData.viewers!.add(currentUserUid);
       } else {
         debugPrint('이미 조회한 사용자입니다.');
       }
