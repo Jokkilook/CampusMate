@@ -8,7 +8,7 @@ import 'package:campusmate/screens/community/widgets/general_board_item.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
 import 'package:provider/provider.dart';
 
-import 'post_screen.dart'; // 추가된 import
+import 'post_screen.dart';
 
 class PostSearchScreen extends StatefulWidget {
   const PostSearchScreen({super.key});
@@ -30,6 +30,8 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
           .collection("schools/${userData.school!}/generalPosts")
           .where('title', isGreaterThanOrEqualTo: query)
           .where('title', isLessThanOrEqualTo: query + '\uf8ff')
+          .orderBy('title')
+          .orderBy('timestamp', descending: true)
           .get();
 
       // anonymousPosts title 검색
@@ -38,6 +40,8 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
           .collection("schools/${userData.school!}/anonymousPosts")
           .where('title', isGreaterThanOrEqualTo: query)
           .where('title', isLessThanOrEqualTo: query + '\uf8ff')
+          .orderBy('title')
+          .orderBy('timestamp', descending: true)
           .get();
 
       // generalPosts content 검색
@@ -46,6 +50,8 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
           .collection("schools/${userData.school!}/generalPosts")
           .where('content', isGreaterThanOrEqualTo: query)
           .where('content', isLessThanOrEqualTo: query + '\uf8ff')
+          .orderBy('content')
+          .orderBy('timestamp', descending: true)
           .get();
 
       // anonymousPosts content 검색
@@ -54,6 +60,8 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
           .collection("schools/${userData.school!}/anonymousPosts")
           .where('content', isGreaterThanOrEqualTo: query)
           .where('content', isLessThanOrEqualTo: query + '\uf8ff')
+          .orderBy('content')
+          .orderBy('timestamp', descending: true)
           .get();
 
       // 검색 결과 병합 및 중복 제거
@@ -67,6 +75,13 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
       // 중복 제거
       final uniqueResults =
           {for (var doc in allResults) doc.id: doc}.values.toList();
+
+      // 시간순으로 정렬
+      uniqueResults.sort((a, b) {
+        Timestamp timestampA = a['timestamp'] as Timestamp;
+        Timestamp timestampB = b['timestamp'] as Timestamp;
+        return timestampB.compareTo(timestampA); // 내림차순 정렬
+      });
 
       setState(() {
         _searchResults = uniqueResults;

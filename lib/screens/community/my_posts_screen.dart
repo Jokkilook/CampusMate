@@ -11,39 +11,43 @@ import 'post_screen.dart';
 class MyPostsScreen extends StatelessWidget {
   const MyPostsScreen({super.key});
 
+  static const String generalPostsCollection = 'generalPosts';
+  static const String anonymousPostsCollection = 'anonymousPosts';
+
   Future<List<DocumentSnapshot>> _fetchUserPosts(BuildContext context) async {
     try {
-      // 사용자 데이터 가져오기
       final UserData userData = context.read<UserDataProvider>().userData;
       String currentUserUid = userData.uid!;
       String school = userData.school!;
 
-      // Firestore 인스턴스 가져오기
       final firestore = FirebaseFirestore.instance;
 
-      // 일반 게시물과 익명 게시물 쿼리
       var generalPostsQuery = firestore
-          .collection("schools/$school/generalPosts")
-          .where('authorUid', isEqualTo: currentUserUid);
+          .collection("schools/$school/$generalPostsCollection")
+          .where('authorUid', isEqualTo: currentUserUid)
+          .orderBy('timestamp', descending: true);
       var anonymousPostsQuery = firestore
-          .collection("schools/$school/anonymousPosts")
-          .where('authorUid', isEqualTo: currentUserUid);
+          .collection("schools/$school/$anonymousPostsCollection")
+          .where('authorUid', isEqualTo: currentUserUid)
+          .orderBy('timestamp', descending: true);
 
-      // 쿼리 실행
       List<QuerySnapshot> querySnapshots = await Future.wait([
         generalPostsQuery.get(),
         anonymousPostsQuery.get(),
       ]);
 
-      // 결과 병합
       List<DocumentSnapshot> allResults = [
         ...querySnapshots[0].docs,
         ...querySnapshots[1].docs,
       ];
 
+      // 디버깅 로그 출력
+      for (var doc in allResults) {
+        debugPrint('Fetched post: ${doc.data()}');
+      }
+
       return allResults;
     } catch (e) {
-      // 에러 처리
       debugPrint('Error fetching user posts: $e');
       return [];
     }
@@ -63,7 +67,7 @@ class MyPostsScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text('오류가 발생했습니다.'));
+            return const Center(child: Text('오류가 발생했습니다. 나중에 다시 시도해주세요.'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('작성한 글이 없습니다.'));
           }
@@ -75,47 +79,8 @@ class MyPostsScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               var postData = PostData.fromJson(
                   userPosts[index].data() as Map<String, dynamic>);
-              if (userPosts[index].reference.parent.id == 'generalPosts') {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
-                        ),
-                      ),
-                    );
-                  },
-                  child: GeneralBoardItem(
-                    postData: postData,
-                    firestore: FirebaseFirestore.instance,
-                  ),
-                );
-              } else if (userPosts[index].reference.parent.id ==
-                  'anonymousPosts') {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
-                        ),
-                      ),
-                    );
-                  },
-                  child: AnonymousBoardItem(
-                    postData: postData,
-                  ),
-                );
-              } else {
-                return Container();
-              }
+              return _buildPostItem(context, postData,
+                  userPosts[index].reference.parent.id, userData);
             },
             separatorBuilder: (context, index) {
               return const Divider(
@@ -126,5 +91,49 @@ class MyPostsScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Widget _buildPostItem(BuildContext context, PostData postData,
+      String parentCollectionId, UserData userData) {
+    if (parentCollectionId == generalPostsCollection) {
+      return InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostScreen(
+                postData: postData,
+                firestore: FirebaseFirestore.instance,
+                userData: userData,
+              ),
+            ),
+          );
+        },
+        child: GeneralBoardItem(
+          postData: postData,
+          firestore: FirebaseFirestore.instance,
+        ),
+      );
+    } else if (parentCollectionId == anonymousPostsCollection) {
+      return InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostScreen(
+                postData: postData,
+                firestore: FirebaseFirestore.instance,
+                userData: userData,
+              ),
+            ),
+          );
+        },
+        child: AnonymousBoardItem(
+          postData: postData,
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
