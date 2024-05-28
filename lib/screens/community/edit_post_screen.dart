@@ -5,6 +5,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -249,6 +250,17 @@ class _EditPostScreenState extends State<EditPostScreen> {
             isLoading = true;
           });
 
+          //로딩 오버레이 표시
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return const Center(
+                child: CircleLoading(),
+              );
+            },
+          );
+
           Timestamp time = Timestamp.now();
           FirebaseStorage storage = FirebaseStorage.instance;
 
@@ -329,6 +341,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
           await PostService()
               .updatePost(userData: userData, editedData: editedPost);
 
+          context.pop();
           context.pop();
 
           setState(() {

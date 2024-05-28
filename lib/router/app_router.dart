@@ -116,7 +116,7 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
     builder: (context, state) {
       final String uid = state.pathParameters["uid"] ?? "";
       final bool readOnly =
-          (bool.parse(state.pathParameters["readOnly"] ?? "false"));
+          (state.pathParameters["readOnly"] ?? "false") == "true";
       return StrangerProfilScreen(
         uid: uid,
         readOnly: readOnly,

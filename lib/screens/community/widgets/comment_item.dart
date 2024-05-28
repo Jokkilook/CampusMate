@@ -428,6 +428,7 @@ class _CommentItemState extends State<CommentItem> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
                     // 댓글 내용
                     SizedBox(
                       width: double.infinity,

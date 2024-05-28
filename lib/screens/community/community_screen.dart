@@ -181,7 +181,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                   context.pushNamed(
                     Screen.post,
                     pathParameters: {"postId": postData.postId ?? ""},
-                  );
+                  ).then((value) => setState(() {}));
                 },
                 child: GeneralBoardItem(
                   postData: postData,
@@ -239,7 +239,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                   context.pushNamed(
                     Screen.anonymousPost,
                     pathParameters: {"postId": postData.postId ?? ""},
-                  );
+                  ).then((value) => setState(() {}));
                 },
                 child: AnonymousBoardItem(
                   postData: postData,

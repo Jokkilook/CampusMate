@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/services/post_service.dart';
+import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -251,6 +252,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   setState(() {
                     isLoading = true;
                   });
+
+                  //로딩 오버레이 표시
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return const Center(
+                        child: CircleLoading(),
+                      );
+                    },
+                  );
 
                   FirebaseStorage storage = FirebaseStorage.instance;
 

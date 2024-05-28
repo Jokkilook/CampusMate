@@ -271,62 +271,71 @@ class _ReplyItemState extends State<ReplyItem> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     //작성자 닉네임
-                    GestureDetector(
-                      onTap: () {
-                        // boardType이 General일 때만 프로필 조회 가능
-                        if (widget.postReplyData.boardType == 'General') {
-                          // 작성자가 현재 유저일 때
-                          if (widget.postReplyData.authorUid ==
-                              currentUserUid) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ProfileScreen(),
-                                ));
-                          }
-                          // 작성자가 다른 유저일 때
-                          else {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => StrangerProfilScreen(
-                                      uid: widget.postReplyData.authorUid
-                                          .toString()),
-                                ));
-                          }
-                        }
-                      },
-                      child: Text(
-                        widget.postReplyData.boardType == 'General'
-                            ? widget.postReplyData.authorName.toString()
-                            : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
-                        style: const TextStyle(
-                          fontSize: 16,
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            // boardType이 General일 때만 프로필 조회 가능
+                            if (widget.postReplyData.boardType == 'General') {
+                              // 작성자가 현재 유저일 때
+                              if (widget.postReplyData.authorUid ==
+                                  currentUserUid) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ProfileScreen(),
+                                    ));
+                              }
+                              // 작성자가 다른 유저일 때
+                              else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          StrangerProfilScreen(
+                                              uid: widget
+                                                  .postReplyData.authorUid
+                                                  .toString()),
+                                    ));
+                              }
+                            }
+                          },
+                          child: Text(
+                            widget.postReplyData.boardType == 'General'
+                                ? widget.postReplyData.authorName.toString()
+                                : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
-                      ),
+                        widget.postReplyData.boardType != 'General'
+                            ?
+                            // 익명 게시판에서 댓글 작성자가 글 작성자라면 표시
+                            widget.postReplyData.authorUid ==
+                                    widget.postAuthorUid
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 3, vertical: 1),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 1,
+                                        color: Colors.grey,
+                                      ),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: const Text(
+                                      '작성자',
+                                      style: TextStyle(
+                                          fontSize: 8, color: Colors.grey),
+                                    ),
+                                  )
+                                : const SizedBox()
+                            : const SizedBox(),
+                      ],
                     ),
-                    widget.postReplyData.boardType != 'General'
-                        ?
-                        // 익명 게시판에서 댓글 작성자가 글 작성자라면 표시
-                        widget.postReplyData.authorUid == widget.postAuthorUid
-                            ? Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 3, vertical: 1),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1,
-                                    color: Colors.grey,
-                                  ),
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: const Text(
-                                  '작성자',
-                                  style: TextStyle(
-                                      fontSize: 8, color: Colors.grey),
-                                ),
-                              )
-                            : const SizedBox()
-                        : const SizedBox(),
+
                     // 삭제 or 신고 버튼
                     InkWell(
                       borderRadius: BorderRadius.circular(10),
@@ -339,6 +348,7 @@ class _ReplyItemState extends State<ReplyItem> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
                 //내용
                 SizedBox(
                   width: double.infinity,
