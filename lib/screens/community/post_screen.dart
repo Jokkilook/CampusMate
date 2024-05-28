@@ -1,9 +1,9 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
+import 'package:campusmate/screens/community/widgets/like_dislike_panel.dart';
 import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
-import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -151,59 +151,7 @@ class _PostScreenState extends State<PostScreen> {
                 PostData.fromJson(data.data() as Map<String, dynamic>);
             ref = postData;
 
-            bool userLiked = postData.likers!.contains(currentUserUid);
-            bool userDisliked = postData.dislikers!.contains(currentUserUid);
-
             postService.updateViewCount(postData: postData, userData: userData);
-
-            // 좋아요, 싫어요
-            Future<void> voteLikeDislike(bool isLike) async {
-              String currentUserUid =
-                  context.read<UserDataProvider>().userData.uid ?? '';
-              bool userLiked = postData.likers!.contains(currentUserUid);
-              bool userDisliked = postData.dislikers!.contains(currentUserUid);
-
-              if (userLiked) {
-                // 이미 좋아요를 누른 경우
-                showDialog(
-                  context: context,
-                  builder: (context) =>
-                      ConfirmDialog(content: '이미 좋아요를 눌렀습니다.'),
-                );
-              } else if (userDisliked) {
-                // 이미 싫어요를 누른 경우
-                showDialog(
-                  context: context,
-                  builder: (context) =>
-                      ConfirmDialog(content: '이미 싫어요를 눌렀습니다.'),
-                );
-              } else {
-                if (isLike) {
-                  await FirebaseFirestore.instance
-                      .collection(
-                          "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                      .doc(postData.postId)
-                      .update({
-                    'likers': FieldValue.arrayUnion([currentUserUid]),
-                  });
-                  setState(() {
-                    postData.likers!.add(currentUserUid);
-                  });
-                }
-                if (!isLike) {
-                  await FirebaseFirestore.instance
-                      .collection(
-                          "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                      .doc(postData.postId)
-                      .update({
-                    'dislikers': FieldValue.arrayUnion([currentUserUid]),
-                  });
-                  setState(() {
-                    postData.dislikers!.add(currentUserUid);
-                  });
-                }
-              }
-            }
 
             // 댓글 가져오기 및 출력
             Widget buildComments() {
@@ -267,7 +215,7 @@ class _PostScreenState extends State<PostScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //제목, 프로필
+                      //게시글 상세 섹션
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -395,7 +343,11 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
 
-                      const Divider(height: 0),
+                      Divider(
+                        height: 0,
+                        color:
+                            isDark ? AppColors.darkLine : AppColors.lightLine,
+                      ),
 
                       //내용, 좋싫버튼
                       Padding(
@@ -430,64 +382,17 @@ class _PostScreenState extends State<PostScreen> {
                             const SizedBox(height: 20),
                             //좋싫버튼
                             Center(
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                  ),
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      postData.likers!.length.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    InkWell(
-                                      child: Icon(
-                                        userLiked
-                                            ? Icons.thumb_up
-                                            : Icons.thumb_up_alt_outlined,
-                                        size: 16,
-                                        color: Colors.grey,
-                                      ),
-                                      onTap: () => voteLikeDislike(true),
-                                    ),
-                                    InkWell(
-                                      child: Icon(
-                                        userDisliked
-                                            ? Icons.thumb_down
-                                            : Icons.thumb_down_outlined,
-                                        size: 16,
-                                        color: Colors.grey,
-                                      ),
-                                      onTap: () => voteLikeDislike(false),
-                                    ),
-                                    Text(
-                                      postData.dislikers!.length.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              child: LikeDislikePanel(postData: postData),
                             ),
                           ],
                         ),
                       ),
 
-                      const Divider(height: 0),
+                      Divider(
+                        height: 0,
+                        color:
+                            isDark ? AppColors.darkLine : AppColors.lightLine,
+                      ),
 
                       //댓글 섹션
                       Padding(
@@ -504,7 +409,12 @@ class _PostScreenState extends State<PostScreen> {
                           ],
                         ),
                       ),
-                      const Divider(height: 0),
+
+                      Divider(
+                        height: 0,
+                        color:
+                            isDark ? AppColors.darkLine : AppColors.lightLine,
+                      ),
                       // 댓글
                       Padding(
                         padding: const EdgeInsets.all(16),
@@ -513,7 +423,8 @@ class _PostScreenState extends State<PostScreen> {
                     ],
                   ),
                 ),
-              ), //댓&답글 입력 창
+              ),
+              //댓&답글 입력 창
               bottomNavigationBar: Padding(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -523,9 +434,7 @@ class _PostScreenState extends State<PostScreen> {
                   child: Row(
                     children: [
                       !_isReplying
-                          ? const SizedBox(
-                              // width: MediaQuery.of(context).size.width * 0.08,
-                              )
+                          ? const SizedBox()
                           : InkWell(
                               onTap: () {
                                 setState(() {

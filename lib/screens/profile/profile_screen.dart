@@ -32,15 +32,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onPressed: () {
           context
               .pushNamed(Screen.editProfile)
-              .whenComplete(() => setState(() {}));
+              .then((value) => setState(() {}));
         },
-        child: const Icon(Icons.edit, size: 30),
         backgroundColor: Colors.green,
         foregroundColor: const Color(0xFF0A351E),
         elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
+        child: const Icon(Icons.edit, size: 30),
       ),
       appBar: AppBar(
         title: const Text('내 프로필'),

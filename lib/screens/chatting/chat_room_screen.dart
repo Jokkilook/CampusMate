@@ -152,6 +152,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               }
 
               return Scaffold(
+                //앱바
                 appBar: AppBar(
                   actions: [
                     Builder(builder: (context) {
@@ -565,11 +566,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       width: double.infinity,
                       child: Column(
                         children: [
+                          //채팅바
                           Container(
+                            height:
+                                (widget.media == null || isSending) ? 50 : 100,
+                            clipBehavior: Clip.hardEdge,
                             decoration: BoxDecoration(
-                                color: isDark
-                                    ? AppColors.darkInput
-                                    : AppColors.lightInput),
+                                color:
+                                    // Colors.green,
+                                    isDark
+                                        ? AppColors.darkInput
+                                        : AppColors.lightInput),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -577,24 +584,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 //+버튼
                                 InkWell(
                                   borderRadius: BorderRadius.circular(100),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        constraints:
-                                            const BoxConstraints(minHeight: 50),
-                                        width: 50,
-                                        //margin: const EdgeInsets.all(5),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.green,
-                                          //borderRadius: BorderRadius.circular(100),
-                                        ),
-                                      ),
-                                      Icon(
-                                        prepareMedia ? Icons.close : Icons.add,
-                                        color: AppColors.buttonText,
-                                      )
-                                    ],
+                                  child: Container(
+                                    constraints:
+                                        const BoxConstraints(minHeight: 50),
+                                    height: 100,
+                                    width: 50,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                    ),
+                                    child: Icon(
+                                      prepareMedia ? Icons.close : Icons.add,
+                                      color: AppColors.buttonText,
+                                    ),
                                   ),
                                   onTap: () {
                                     if (prepareMedia) {
@@ -721,26 +722,19 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 //보내기 버튼
                                 InkWell(
                                   radius: 10,
-                                  //borderRadius: BorderRadius.circular(100),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        constraints:
-                                            const BoxConstraints(minHeight: 50),
-                                        width: 50,
-                                        //margin: const EdgeInsets.all(5),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.green,
-                                          //borderRadius: BorderRadius.circular(100),
-                                        ),
-                                      ),
-                                      const Icon(
-                                        Icons.send,
-                                        size: 18,
-                                        color: AppColors.buttonText,
-                                      )
-                                    ],
+                                  child: Container(
+                                    constraints:
+                                        const BoxConstraints(minHeight: 50),
+                                    height: 100,
+                                    width: 50,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                    ),
+                                    child: const Icon(
+                                      Icons.send,
+                                      size: 18,
+                                      color: AppColors.buttonText,
+                                    ),
                                   ),
                                   onTap: () async {
                                     prepareMedia

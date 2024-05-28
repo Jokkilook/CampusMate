@@ -270,7 +270,7 @@ class _ReplyItemState extends State<ReplyItem> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //작성자 닉네임
+                    //작성자 닉네임, 작성 시간
                     Row(
                       children: [
                         GestureDetector(
@@ -333,6 +333,15 @@ class _ReplyItemState extends State<ReplyItem> {
                                   )
                                 : const SizedBox()
                             : const SizedBox(),
+                        const SizedBox(width: 8),
+                        // 작성시간
+                        Text(
+                          formattedTime,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ],
                     ),
 
@@ -357,8 +366,8 @@ class _ReplyItemState extends State<ReplyItem> {
                     textAlign: TextAlign.start,
                   ),
                 ),
-                const SizedBox(height: 4),
-                //좋,싫, 작성시간
+                const SizedBox(height: 6),
+                //좋,싫
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -416,15 +425,6 @@ class _ReplyItemState extends State<ReplyItem> {
                             ),
                           ),
                         ],
-                      ),
-                    ),
-
-                    // 작성시간
-                    Text(
-                      formattedTime,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
                       ),
                     ),
                   ],

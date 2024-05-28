@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
@@ -64,161 +63,164 @@ class _AddPostScreenState extends State<AddPostScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            DropdownButtonFormField(
-              // 게시판 선택
-              value: _selectedBoard,
-              items: const [
-                DropdownMenuItem(value: 'General', child: Text('일반')),
-                DropdownMenuItem(value: 'Anonymous', child: Text('익명')),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedBoard = value.toString();
-                  postData.boardType = _selectedBoard;
-                });
-              },
-              decoration: const InputDecoration(labelText: '게시판 선택'),
-            ),
-            TextField(
-              // 제목 입력
-              controller: _titleController,
-              onTapOutside: (event) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              decoration: const InputDecoration(
-                labelText: '제목',
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              DropdownButtonFormField(
+                // 게시판 선택
+                value: _selectedBoard,
+                items: const [
+                  DropdownMenuItem(value: 'General', child: Text('일반')),
+                  DropdownMenuItem(value: 'Anonymous', child: Text('익명')),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _selectedBoard = value.toString();
+                    postData.boardType = _selectedBoard;
+                  });
+                },
+                decoration: const InputDecoration(labelText: '게시판 선택'),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              // 내용 입력
-              controller: _contentController,
-              onTapOutside: (event) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              keyboardType: TextInputType.multiline,
-              maxLines: 8,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
+              TextField(
+                // 제목 입력
+                controller: _titleController,
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                decoration: const InputDecoration(
+                  labelText: '제목',
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Wrap(
-                alignment: WrapAlignment.center,
-                spacing: (MediaQuery.of(context).size.width - 32) * 0.05,
-                runSpacing: (MediaQuery.of(context).size.width - 32) * 0.05,
-                children: [
-                  for (var i = 0; i < 6; i++)
-                    // 사진 추가
-                    Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              barrierColor: Colors.black.withOpacity(0.4),
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                  clipBehavior: Clip.hardEdge,
-                                  shape: ContinuousRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: IntrinsicHeight(
-                                    child: SizedBox(
-                                      width: 100,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          InkWell(
-                                            onTap: () async {
-                                              context.pop();
-                                              image[i] = await ImagePicker()
-                                                  .pickImage(
-                                                      source:
-                                                          ImageSource.gallery);
-                                              setState(() {});
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(15),
-                                              child: Text(
-                                                "갤러리",
-                                                textAlign: TextAlign.start,
+              const SizedBox(height: 20),
+              TextFormField(
+                // 내용 입력
+                controller: _contentController,
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                keyboardType: TextInputType.multiline,
+                maxLines: 8,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: (MediaQuery.of(context).size.width - 32) * 0.05,
+                  runSpacing: (MediaQuery.of(context).size.width - 32) * 0.05,
+                  children: [
+                    for (var i = 0; i < 6; i++)
+                      // 사진 추가
+                      Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                barrierColor: Colors.black.withOpacity(0.4),
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    clipBehavior: Clip.hardEdge,
+                                    shape: ContinuousRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: IntrinsicHeight(
+                                      child: SizedBox(
+                                        width: 100,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                context.pop();
+                                                image[i] = await ImagePicker()
+                                                    .pickImage(
+                                                        source: ImageSource
+                                                            .gallery);
+                                                setState(() {});
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(15),
+                                                child: Text(
+                                                  "갤러리",
+                                                  textAlign: TextAlign.start,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const Divider(height: 0),
-                                          InkWell(
-                                            onTap: () async {
-                                              context.pop();
-                                              image[i] = await ImagePicker()
-                                                  .pickImage(
-                                                      source:
-                                                          ImageSource.camera);
-                                              setState(() {});
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(15),
-                                              child: Text(
-                                                "카메라",
-                                                textAlign: TextAlign.start,
+                                            const Divider(height: 0),
+                                            InkWell(
+                                              onTap: () async {
+                                                context.pop();
+                                                image[i] = await ImagePicker()
+                                                    .pickImage(
+                                                        source:
+                                                            ImageSource.camera);
+                                                setState(() {});
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(15),
+                                                child: Text(
+                                                  "카메라",
+                                                  textAlign: TextAlign.start,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            width:
-                                (MediaQuery.of(context).size.width - 32) * 0.3,
-                            height:
-                                (MediaQuery.of(context).size.width - 32) * 0.3,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: isDark
-                                  ? AppColors.darkInnerSection
-                                  : AppColors.lightTag,
-                            ),
-                            child: image[i] == null
-                                ? const Icon(
-                                    Icons.camera_alt_outlined,
-                                    color: Colors.white,
-                                  )
-                                : Image.file(
-                                    File(image[i]!.path),
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                        ),
-                        image[i] != null
-                            ? InkWell(
-                                child: Icon(
-                                  Icons.cancel,
-                                  color: Colors.grey[850],
-                                ),
-                                onTap: () {
-                                  image[i] = null;
-                                  setState(() {});
+                                  );
                                 },
-                              )
-                            : const SizedBox(
-                                width: 10,
-                                height: 10,
-                              )
-                      ],
-                    ),
-                ]),
-          ],
+                              );
+                            },
+                            child: Container(
+                              clipBehavior: Clip.hardEdge,
+                              width: (MediaQuery.of(context).size.width - 32) *
+                                  0.3,
+                              height: (MediaQuery.of(context).size.width - 32) *
+                                  0.3,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: isDark
+                                    ? AppColors.darkInnerSection
+                                    : AppColors.lightTag,
+                              ),
+                              child: image[i] == null
+                                  ? const Icon(
+                                      Icons.camera_alt_outlined,
+                                      color: Colors.white,
+                                    )
+                                  : Image.file(
+                                      File(image[i]!.path),
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
+                          image[i] != null
+                              ? InkWell(
+                                  child: Icon(
+                                    Icons.cancel,
+                                    color: Colors.grey[850],
+                                  ),
+                                  onTap: () {
+                                    image[i] = null;
+                                    setState(() {});
+                                  },
+                                )
+                              : const SizedBox(
+                                  width: 10,
+                                  height: 10,
+                                )
+                        ],
+                      ),
+                  ]),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Hero(
@@ -316,6 +318,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   await postService.addPost(
                       postData: postData, userData: userData);
 
+                  context.pop();
                   context.pop();
 
                   setState(() {

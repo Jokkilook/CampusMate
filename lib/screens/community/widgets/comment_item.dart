@@ -436,7 +436,7 @@ class _CommentItemState extends State<CommentItem> {
                         widget.postCommentData.content.toString(),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     //좋,싫, 작성시간
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

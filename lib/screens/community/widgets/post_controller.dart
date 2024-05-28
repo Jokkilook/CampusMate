@@ -44,8 +44,8 @@ class _PostControllerState extends State<PostController> {
               ),
             ),
             TextButton(
-              onPressed: () {
-                PostService().deletePost(postData: widget.postData);
+              onPressed: () async {
+                await PostService().deletePost(postData: widget.postData);
                 Navigator.pop(context);
                 Navigator.pop(context);
                 Navigator.pop(context);

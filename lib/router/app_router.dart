@@ -5,6 +5,7 @@ import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
 import 'package:campusmate/screens/chatting/group_chat_room_generation_screen.dart';
 import 'package:campusmate/screens/chatting/video_player_screen.dart';
+import 'package:campusmate/screens/community/add_post_screen.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
 import 'package:campusmate/screens/community/my_posts_screen.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
@@ -215,6 +216,16 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
         },
       )
     ],
+  ),
+
+  //게시글 추가 화면
+  GoRoute(
+    name: Screen.addPost,
+    path: Screen.addPost,
+    builder: (context, state) {
+      final int index = (state.extra ?? 0) as int;
+      return AddPostScreen(currentIndex: index);
+    },
   ),
 
   //게시글 검색 화면

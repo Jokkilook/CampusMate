@@ -65,164 +65,167 @@ class _EditPostScreenState extends State<EditPostScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _titleController,
-              onTapOutside: (event) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              decoration: const InputDecoration(labelText: '제목'),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _contentController,
-              onTapOutside: (event) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              keyboardType: TextInputType.multiline,
-              maxLines: 10,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: '내용',
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _titleController,
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                decoration: const InputDecoration(labelText: '제목'),
               ),
-            ),
-            const SizedBox(height: 20),
-            Wrap(
-                alignment: WrapAlignment.center,
-                spacing: (MediaQuery.of(context).size.width - 32) * 0.05,
-                runSpacing: (MediaQuery.of(context).size.width - 32) * 0.05,
-                children: [
-                  for (var i = 0; i < 6; i++)
-                    // 사진 추가
-                    Stack(
-                      clipBehavior: Clip.hardEdge,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              barrierColor: Colors.black.withOpacity(0.4),
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                  clipBehavior: Clip.hardEdge,
-                                  shape: ContinuousRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: IntrinsicHeight(
-                                    child: SizedBox(
-                                      width: 100,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          InkWell(
-                                            onTap: () async {
-                                              context.pop();
-                                              images[i] = await ImagePicker()
-                                                  .pickImage(
-                                                      source:
-                                                          ImageSource.gallery);
-                                              setState(() {});
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(15),
-                                              child: Text(
-                                                "갤러리",
-                                                textAlign: TextAlign.start,
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _contentController,
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                keyboardType: TextInputType.multiline,
+                maxLines: 10,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: '내용',
+                ),
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: (MediaQuery.of(context).size.width - 32) * 0.05,
+                  runSpacing: (MediaQuery.of(context).size.width - 32) * 0.05,
+                  children: [
+                    for (var i = 0; i < 6; i++)
+                      // 사진 추가
+                      Stack(
+                        clipBehavior: Clip.hardEdge,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                barrierColor: Colors.black.withOpacity(0.4),
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    clipBehavior: Clip.hardEdge,
+                                    shape: ContinuousRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: IntrinsicHeight(
+                                      child: SizedBox(
+                                        width: 100,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            InkWell(
+                                              onTap: () async {
+                                                context.pop();
+                                                images[i] = await ImagePicker()
+                                                    .pickImage(
+                                                        source: ImageSource
+                                                            .gallery);
+                                                setState(() {});
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(15),
+                                                child: Text(
+                                                  "갤러리",
+                                                  textAlign: TextAlign.start,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const Divider(height: 0),
-                                          InkWell(
-                                            onTap: () async {
-                                              context.pop();
-                                              images[i] = await ImagePicker()
-                                                  .pickImage(
-                                                      source:
-                                                          ImageSource.camera);
-                                              setState(() {});
-                                            },
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(15),
-                                              child: Text(
-                                                "카메라",
-                                                textAlign: TextAlign.start,
+                                            const Divider(height: 0),
+                                            InkWell(
+                                              onTap: () async {
+                                                context.pop();
+                                                images[i] = await ImagePicker()
+                                                    .pickImage(
+                                                        source:
+                                                            ImageSource.camera);
+                                                setState(() {});
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(15),
+                                                child: Text(
+                                                  "카메라",
+                                                  textAlign: TextAlign.start,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            width:
-                                (MediaQuery.of(context).size.width - 32) * 0.3,
-                            height:
-                                (MediaQuery.of(context).size.width - 32) * 0.3,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: isDark
-                                  ? AppColors.darkInnerSection
-                                  : AppColors.lightTag,
-                            ),
-                            //온라인 업로드 된 이미지가 없고,
-                            child: imageUrls[i] == ""
-                                //로컬 업로드 된 이미지가 있으면
-                                ? (images[i] != null
-                                    //로컬 이미지 표시
-                                    ? Image.file(
-                                        File(images[i]!.path),
-                                        fit: BoxFit.cover,
-                                      )
-                                    //빈 이미지 표시
-                                    : const Icon(
-                                        Icons.camera_alt_outlined,
-                                        color: Colors.white,
-                                      ))
-                                //온라인 업로드된 이미지가 있고,
-                                : images[i] != null
-                                    //로컬 업로드된 이미지가 있으면 로컬 이미지 표시
-                                    ? Image.file(
-                                        File(images[i]!.path),
-                                        fit: BoxFit.cover,
-                                      )
-                                    //로컬 업로드된 이미지가 없으면 온라인 이미지 표시
-                                    : Image.network(
-                                        imageUrls[i],
-                                        fit: BoxFit.cover,
-                                      ),
-                          ),
-                        ),
-                        (imageUrls[i] != "" || images[i] != null)
-                            ? InkWell(
-                                enableFeedback: false,
-                                child: Icon(
-                                  Icons.cancel,
-                                  color: Colors.grey[850],
-                                ),
-                                onTap: () {
-                                  deleteUrls.add(imageUrls[i]);
-                                  imageUrls[i] = "";
-                                  images[i] = null;
-                                  setState(() {});
+                                  );
                                 },
-                              )
-                            : const SizedBox(
-                                width: 10,
-                                height: 10,
-                              )
-                      ],
-                    ),
-                ]),
-          ],
+                              );
+                            },
+                            child: Container(
+                              clipBehavior: Clip.hardEdge,
+                              width: (MediaQuery.of(context).size.width - 32) *
+                                  0.3,
+                              height: (MediaQuery.of(context).size.width - 32) *
+                                  0.3,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: isDark
+                                    ? AppColors.darkInnerSection
+                                    : AppColors.lightTag,
+                              ),
+                              //온라인 업로드 된 이미지가 없고,
+                              child: imageUrls[i] == ""
+                                  //로컬 업로드 된 이미지가 있으면
+                                  ? (images[i] != null
+                                      //로컬 이미지 표시
+                                      ? Image.file(
+                                          File(images[i]!.path),
+                                          fit: BoxFit.cover,
+                                        )
+                                      //빈 이미지 표시
+                                      : const Icon(
+                                          Icons.camera_alt_outlined,
+                                          color: Colors.white,
+                                        ))
+                                  //온라인 업로드된 이미지가 있고,
+                                  : images[i] != null
+                                      //로컬 업로드된 이미지가 있으면 로컬 이미지 표시
+                                      ? Image.file(
+                                          File(images[i]!.path),
+                                          fit: BoxFit.cover,
+                                        )
+                                      //로컬 업로드된 이미지가 없으면 온라인 이미지 표시
+                                      : Image.network(
+                                          imageUrls[i],
+                                          fit: BoxFit.cover,
+                                        ),
+                            ),
+                          ),
+                          (imageUrls[i] != "" || images[i] != null)
+                              ? InkWell(
+                                  enableFeedback: false,
+                                  child: Icon(
+                                    Icons.cancel,
+                                    color: Colors.grey[850],
+                                  ),
+                                  onTap: () {
+                                    deleteUrls.add(imageUrls[i]);
+                                    imageUrls[i] = "";
+                                    images[i] = null;
+                                    setState(() {});
+                                  },
+                                )
+                              : const SizedBox(
+                                  width: 10,
+                                  height: 10,
+                                )
+                        ],
+                      ),
+                  ]),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomButton(
