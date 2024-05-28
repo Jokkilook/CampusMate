@@ -1,17 +1,16 @@
-import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'post_screen.dart';
-
 class MyPostsScreen extends StatelessWidget {
-  const MyPostsScreen({Key? key}) : super(key: key);
+  const MyPostsScreen({super.key});
 
   Future<List<DocumentSnapshot>> _fetchUserPosts(BuildContext context) async {
     try {
@@ -59,8 +58,6 @@ class MyPostsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserData userData = context.read<UserDataProvider>().userData;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('내가 작성한 글'),
@@ -86,36 +83,19 @@ class MyPostsScreen extends StatelessWidget {
               if (userPosts[index].reference.parent.id == 'generalPosts') {
                 return InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
-                        ),
-                      ),
-                    );
+                    context.pushNamed(Screen.post,
+                        pathParameters: {"postId": postData.postId ?? ""});
                   },
                   child: GeneralBoardItem(
                     postData: postData,
-                    firestore: FirebaseFirestore.instance,
                   ),
                 );
               } else if (userPosts[index].reference.parent.id ==
                   'anonymousPosts') {
                 return InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
-                        ),
-                      ),
-                    );
+                    context.pushNamed(Screen.anonymousPost,
+                        pathParameters: {"postId": postData.postId ?? ""});
                   },
                   child: AnonymousBoardItem(
                     postData: postData,

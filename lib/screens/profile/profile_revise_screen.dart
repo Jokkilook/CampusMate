@@ -2,10 +2,10 @@
 import 'dart:io';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/profile/widgets/loading_profile_card.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:campusmate/widgets/input_text_field.dart';
@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -228,7 +229,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                   widget.modifiedData.imageUrl = imageUrl;
 
                   // 커뮤니티 프로필 업데이트
-                  updateCommunityProfile(context, name, imageUrl);
+                  await updateCommunityProfile(context, name, imageUrl);
 
                   //채팅방 프로필 url 업데이트
                   await FirebaseFirestore.instance
@@ -304,12 +305,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
 
                 AuthService().setUserData(widget.modifiedData);
 
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MainScreen(index: 3),
-                    ),
-                    (route) => false);
+                context.goNamed(Screen.main, extra: 3);
               },
             ),
           ),
@@ -696,15 +692,6 @@ class _TagShowerState extends State<TagShower> {
 
                     setState(() {});
                   },
-                  child: Text(
-                    tag,
-                    style: TextStyle(
-                        color: userTag.contains(tag)
-                            ? const Color(0xff0B351E)
-                            : (isDark
-                                ? AppColors.darkTitle
-                                : AppColors.lightTitle)),
-                  ),
                   style: OutlinedButton.styleFrom(
                       side: userTag.contains(tag)
                           ? const BorderSide(width: 2, color: Colors.green)
@@ -716,6 +703,15 @@ class _TagShowerState extends State<TagShower> {
                       minimumSize: Size.zero,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 5)),
+                  child: Text(
+                    tag,
+                    style: TextStyle(
+                        color: userTag.contains(tag)
+                            ? const Color(0xff0B351E)
+                            : (isDark
+                                ? AppColors.darkTitle
+                                : AppColors.lightTitle)),
+                  ),
                 ),
             ],
           ),
@@ -765,14 +761,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.EI = widget.EI;
               setState(() {});
             },
-            child: Text(
-              "E",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: widget.EI ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: widget.EI
@@ -784,6 +772,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                       topLeft: Radius.circular(10),
                       bottomLeft: Radius.circular(10))),
             ),
+            child: Text(
+              "E",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: widget.EI ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         Expanded(
@@ -794,14 +790,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.EI = widget.EI;
               setState(() {});
             },
-            child: Text(
-              "I",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: !widget.EI ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.EI
@@ -812,6 +800,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
+            ),
+            child: Text(
+              "I",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: !widget.EI ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -824,14 +820,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.NS = widget.NS;
               setState(() {});
             },
-            child: Text(
-              "N",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: widget.NS ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: widget.NS
@@ -843,6 +831,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                       topLeft: Radius.circular(10),
                       bottomLeft: Radius.circular(10))),
             ),
+            child: Text(
+              "N",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: widget.NS ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         Expanded(
@@ -853,14 +849,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.NS = widget.NS;
               setState(() {});
             },
-            child: Text(
-              "S",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: !widget.NS ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.NS
@@ -871,6 +859,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
+            ),
+            child: Text(
+              "S",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: !widget.NS ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -883,14 +879,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.TF = widget.TF;
               setState(() {});
             },
-            child: Text(
-              "T",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: widget.TF ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: widget.TF
@@ -902,6 +890,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                       topLeft: Radius.circular(10),
                       bottomLeft: Radius.circular(10))),
             ),
+            child: Text(
+              "T",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: widget.TF ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         Expanded(
@@ -912,14 +908,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.TF = widget.TF;
               setState(() {});
             },
-            child: Text(
-              "F",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: !widget.TF ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.TF
@@ -930,6 +918,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
+            ),
+            child: Text(
+              "F",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: !widget.TF ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -942,14 +938,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.PJ = widget.PJ;
               setState(() {});
             },
-            child: Text(
-              "P",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: widget.PJ ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: widget.PJ
@@ -961,6 +949,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                       topLeft: Radius.circular(10),
                       bottomLeft: Radius.circular(10))),
             ),
+            child: Text(
+              "P",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: widget.PJ ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         Expanded(
@@ -971,14 +967,6 @@ class _MBTISelectorState extends State<MBTISelector> {
               widget.parent.PJ = widget.PJ;
               setState(() {});
             },
-            child: Text(
-              "J",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: !widget.PJ ? const Color(0xFF0A351E) : Colors.black45,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
               backgroundColor: !widget.PJ
@@ -989,6 +977,14 @@ class _MBTISelectorState extends State<MBTISelector> {
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(10),
                       bottomRight: Radius.circular(10))),
+            ),
+            child: Text(
+              "J",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: !widget.PJ ? const Color(0xFF0A351E) : Colors.black45,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),

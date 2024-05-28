@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,12 +7,10 @@ import '../modules/format_time_stamp.dart';
 
 class GeneralBoardItem extends StatelessWidget {
   final PostData postData;
-  final FirebaseFirestore firestore;
 
   const GeneralBoardItem({
     super.key,
     required this.postData,
-    required this.firestore,
   });
 
   @override
@@ -130,7 +127,7 @@ class GeneralBoardItem extends StatelessWidget {
                     const SizedBox(width: 10),
                     // 조회수
                     const Icon(
-                      Icons.account_circle_outlined,
+                      Icons.remove_red_eye_outlined,
                       color: Colors.grey,
                       size: 14,
                     ),
@@ -154,9 +151,9 @@ class GeneralBoardItem extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: postData.imageUrl != null
+                child: postData.imageUrl![0] != ""
                     ? Image.network(
-                        postData.imageUrl!,
+                        postData.imageUrl![0],
                         fit: BoxFit.cover,
                         height: 0,
                         width: 0,

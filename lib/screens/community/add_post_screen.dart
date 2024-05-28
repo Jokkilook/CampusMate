@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/services/post_service.dart';
+import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
@@ -16,13 +19,11 @@ Color primaryColor = const Color(0xFF2BB56B);
 
 //ignore: must_be_immutable
 class AddPostScreen extends StatefulWidget {
-  final UserData userData;
   final int currentIndex;
 
   const AddPostScreen({
     super.key,
     required this.currentIndex,
-    required this.userData,
   });
 
   @override
@@ -32,46 +33,29 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+  final PostService postService = PostService();
+
   late String _selectedBoard;
   bool isLoading = false;
 
   final PostData postData = PostData();
 
-  XFile? image;
+  List<XFile?> image = [null, null, null, null, null, null];
 
   @override
   void initState() {
     super.initState();
-    image = null;
+
     _selectedBoard = widget.currentIndex == 0 ? 'General' : 'Anonymous';
     postData.boardType = _selectedBoard;
   }
 
-  Future<void> _addPost(BuildContext context) async {
-    try {
-      postData.setData();
-      if (_selectedBoard == 'General') {
-        DocumentReference docRef = await FirebaseFirestore.instance
-            .collection('schools/${widget.userData.school}/generalPosts')
-            .add(postData.data!);
-        postData.postId = docRef.id;
-        await docRef.update({'postId': postData.postId});
-      }
-      if (_selectedBoard == 'Anonymous') {
-        DocumentReference docRef = await FirebaseFirestore.instance
-            .collection('schools/${widget.userData.school}/anonymousPosts')
-            .add(postData.data!);
-        postData.postId = docRef.id;
-        await docRef.update({'postId': postData.postId});
-      }
-      Navigator.pop(context);
-    } catch (error) {
-      debugPrint('에러: $error');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final UserData userData = context.read<UserDataProvider>().userData;
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -80,14 +64,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             DropdownButtonFormField(
               // 게시판 선택
               value: _selectedBoard,
               items: const [
-                DropdownMenuItem(child: Text('일반'), value: 'General'),
-                DropdownMenuItem(child: Text('익명'), value: 'Anonymous'),
+                DropdownMenuItem(value: 'General', child: Text('일반')),
+                DropdownMenuItem(value: 'Anonymous', child: Text('익명')),
               ],
               onChanged: (value) {
                 setState(() {
@@ -120,87 +104,119 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 12),
-            // 사진 추가
-            GestureDetector(
-              onTap: () {
-                showDialog(
-                  barrierColor: Colors.black.withOpacity(0.4),
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      clipBehavior: Clip.hardEdge,
-                      shape: ContinuousRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: IntrinsicHeight(
-                        child: SizedBox(
-                          width: 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              InkWell(
-                                onTap: () async {
-                                  Navigator.pop(context);
-                                  image = await ImagePicker()
-                                      .pickImage(source: ImageSource.gallery);
-                                  if (image != null) {
-                                    setState(() {});
-                                  }
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Text(
-                                    "갤러리",
-                                    textAlign: TextAlign.start,
+            const SizedBox(height: 20),
+            Wrap(
+                alignment: WrapAlignment.center,
+                spacing: (MediaQuery.of(context).size.width - 32) * 0.05,
+                runSpacing: (MediaQuery.of(context).size.width - 32) * 0.05,
+                children: [
+                  for (var i = 0; i < 6; i++)
+                    // 사진 추가
+                    Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              barrierColor: Colors.black.withOpacity(0.4),
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                  clipBehavior: Clip.hardEdge,
+                                  shape: ContinuousRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: IntrinsicHeight(
+                                    child: SizedBox(
+                                      width: 100,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          InkWell(
+                                            onTap: () async {
+                                              context.pop();
+                                              image[i] = await ImagePicker()
+                                                  .pickImage(
+                                                      source:
+                                                          ImageSource.gallery);
+                                              setState(() {});
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(15),
+                                              child: Text(
+                                                "갤러리",
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ),
+                                          const Divider(height: 0),
+                                          InkWell(
+                                            onTap: () async {
+                                              context.pop();
+                                              image[i] = await ImagePicker()
+                                                  .pickImage(
+                                                      source:
+                                                          ImageSource.camera);
+                                              setState(() {});
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(15),
+                                              child: Text(
+                                                "카메라",
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              const Divider(height: 0),
-                              InkWell(
-                                onTap: () async {
-                                  Navigator.pop(context);
-                                  image = await ImagePicker()
-                                      .pickImage(source: ImageSource.camera);
-                                  if (image != null) {
-                                    setState(() {});
-                                  }
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Text(
-                                    "카메라",
-                                    textAlign: TextAlign.start,
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            clipBehavior: Clip.hardEdge,
+                            width:
+                                (MediaQuery.of(context).size.width - 32) * 0.3,
+                            height:
+                                (MediaQuery.of(context).size.width - 32) * 0.3,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: isDark
+                                  ? AppColors.darkInnerSection
+                                  : AppColors.lightTag,
+                            ),
+                            child: image[i] == null
+                                ? const Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: Colors.white,
+                                  )
+                                : Image.file(
+                                    File(image[i]!.path),
+                                    fit: BoxFit.cover,
                                   ),
-                                ),
-                              ),
-                            ],
                           ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                width: MediaQuery.of(context).size.height * 0.1,
-                height: MediaQuery.of(context).size.height * 0.1,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey,
-                ),
-                child: image == null
-                    ? const Icon(
-                        Icons.camera_alt_outlined,
-                        color: Colors.white,
-                      )
-                    : Image.file(
-                        File(image!.path),
-                        fit: BoxFit.cover,
-                      ),
-              ),
-            ),
+                        image[i] != null
+                            ? InkWell(
+                                child: Icon(
+                                  Icons.cancel,
+                                  color: Colors.grey[850],
+                                ),
+                                onTap: () {
+                                  image[i] = null;
+                                  setState(() {});
+                                },
+                              )
+                            : const SizedBox(
+                                width: 10,
+                                height: 10,
+                              )
+                      ],
+                    ),
+                ]),
           ],
         ),
       ),
@@ -217,40 +233,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   if (_titleController.value.text == "") {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        elevation: 0,
-                        actionsPadding:
-                            const EdgeInsets.symmetric(horizontal: 8),
-                        shape: ContinuousRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        content: const Text('제목을 입력해주세요.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('확인'),
-                          ),
-                        ],
-                      ),
+                      builder: (context) =>
+                          ConfirmDialog(content: '제목을 입력해주세요.'),
                     );
                     return;
                   }
                   if (_contentController.value.text == "") {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        elevation: 0,
-                        actionsPadding:
-                            const EdgeInsets.symmetric(horizontal: 8),
-                        shape: ContinuousRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        content: const Text('내용을 입력해주세요.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('확인'),
-                          ),
-                        ],
-                      ),
+                      builder: (context) =>
+                          ConfirmDialog(content: '내용을 입력해주세요.'),
                     );
                     return;
                   }
@@ -260,38 +252,59 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     isLoading = true;
                   });
 
-                  final userData = context.read<UserDataProvider>().userData;
+                  FirebaseStorage storage = FirebaseStorage.instance;
+
+                  Timestamp time = Timestamp.now();
+                  postData.postId =
+                      "${userData.uid}_${time.millisecondsSinceEpoch}";
+
+                  postData.boardType = _selectedBoard;
                   postData.authorUid = userData.uid;
                   postData.authorName = userData.name;
                   postData.profileImageUrl = userData.imageUrl;
-                  postData.timestamp = Timestamp.fromDate(DateTime.now());
+                  postData.timestamp = time;
                   postData.title = _titleController.value.text;
                   postData.content = _contentController.value.text;
                   postData.school = userData.school;
 
-                  if (image != null) {
-                    // 이미지 압축
-                    XFile? compMedia =
-                        await FlutterImageCompress.compressAndGetFile(
-                      image!.path,
-                      "${image!.path}.jpg",
-                    );
+                  List<String> imageUrls = [];
+                  bool isGeneral = _selectedBoard == "General";
 
-                    // 원본 이미지 파일 이름 추출
-                    String fileName = path.basename(image!.path);
+                  int index = 0;
 
-                    // 프로필 이미지 파일 레퍼런스
-                    var ref = FirebaseStorage.instance.ref().child(
-                        "schools/${widget.userData.school}/postImages/$fileName");
+                  for (XFile? uploadedImage in image) {
+                    if (uploadedImage != null) {
+                      //이미지 압축
+                      XFile? compPic =
+                          await FlutterImageCompress.compressAndGetFile(
+                        uploadedImage.path,
+                        "${uploadedImage.path}.jpg",
+                      );
 
-                    // 파이어스토어에 이미지 파일 업로드
-                    await ref.putFile(File(compMedia!.path));
+                      if (compPic != null) {
+                        // 이미지 파일 이름 생성
+                        String fileName =
+                            "${userData.uid}_${time.millisecondsSinceEpoch}_$index.png";
 
-                    // 변경할 데이터에 변경된 URL 저장
-                    postData.imageUrl = await ref.getDownloadURL();
+                        // 프로필 이미지 파일 레퍼런스
+                        var ref = storage.ref().child(
+                            "schools/${userData.school}/postImages/${isGeneral ? "generalPosts" : "anonyPosts"}/${postData.postId}/$fileName");
+
+                        // 파이어스토어에 이미지 파일 업로드
+                        await ref.putFile(File(compPic.path));
+                        String url = await ref.getDownloadURL();
+                        imageUrls.add(url);
+
+                        postData.imageUrl![index] = imageUrls[index];
+                      }
+                      index++;
+                    }
                   }
 
-                  await _addPost(context);
+                  await postService.addPost(
+                      postData: postData, userData: userData);
+
+                  context.pop();
 
                   setState(() {
                     isLoading = false;

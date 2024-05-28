@@ -8,6 +8,7 @@ import 'package:campusmate/screens/chatting/widgets/chat_search_item.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -52,11 +53,12 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
         child: SingleChildScrollView(
           child: SizedBox(
             width: double.infinity,
-            height: 500,
+            height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
                 SizedBox(
                   width: double.infinity,
+                  //검색 바
                   child: Row(
                     children: [
                       IconButton(
@@ -96,7 +98,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                     ],
                   ),
                 ),
-                Flexible(
+                Expanded(
                   child: Center(
                     child: StreamBuilder<QuerySnapshot>(
                       stream: (controller.value.text == "")
@@ -110,7 +112,7 @@ class _ChatRoomSearchScreenState extends State<ChatRoomSearchScreen> {
                               .where("roomName",
                                   isGreaterThanOrEqualTo: controller.value.text)
                               .where("roomName",
-                                  isLessThan: controller.value.text + "z")
+                                  isLessThan: "${controller.value.text}z")
                               .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==

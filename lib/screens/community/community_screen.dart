@@ -1,21 +1,20 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/community/my_posts_screen.dart';
-import 'package:campusmate/screens/community/post_screen.dart';
-import 'package:campusmate/screens/community/post_search_screen.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'add_post_screen.dart';
 import 'models/post_data.dart';
 
 class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({Key? key}) : super(key: key);
+  const CommunityScreen({super.key});
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -63,14 +62,7 @@ class _CommunityScreenState extends State<CommunityScreen>
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PostSearchScreen(),
-                  ),
-                ).then((_) {
-                  _refreshScreen();
-                });
+                context.pushNamed(Screen.searchPost);
               },
               icon: const Icon(
                 Icons.search,
@@ -78,14 +70,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             ),
             IconButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyPostsScreen(),
-                  ),
-                ).then((_) {
-                  _refreshScreen();
-                });
+                context.pushNamed(Screen.myPosts);
               },
               icon: const Icon(
                 Icons.person_outlined,
@@ -127,22 +112,21 @@ class _CommunityScreenState extends State<CommunityScreen>
               MaterialPageRoute(
                   builder: (_) => AddPostScreen(
                         currentIndex: _tabController.index,
-                        userData: userData,
                       )),
             ).then((_) {
               _refreshScreen();
             });
           },
-          child: const Icon(
-            Icons.add,
-            size: 30,
-            color: AppColors.buttonText,
-          ),
           backgroundColor: AppColors.button,
           foregroundColor: const Color(0xFF0A351E),
           elevation: 5,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
+          ),
+          child: const Icon(
+            Icons.add,
+            size: 30,
+            color: AppColors.buttonText,
           ),
         ),
         bottomNavigationBar: const SizedBox(
@@ -194,22 +178,13 @@ class _CommunityScreenState extends State<CommunityScreen>
               }
               return InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PostScreen(
-                        postData: postData,
-                        firestore: FirebaseFirestore.instance,
-                        userData: userData,
-                      ),
-                    ),
-                  ).then((_) {
-                    _refreshScreen();
-                  });
+                  context.pushNamed(
+                    Screen.post,
+                    pathParameters: {"postId": postData.postId ?? ""},
+                  );
                 },
                 child: GeneralBoardItem(
                   postData: postData,
-                  firestore: FirebaseFirestore.instance,
                 ),
               );
             },
@@ -261,18 +236,10 @@ class _CommunityScreenState extends State<CommunityScreen>
               }
               return InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PostScreen(
-                        postData: postData,
-                        firestore: FirebaseFirestore.instance,
-                        userData: userData,
-                      ),
-                    ),
-                  ).then((_) {
-                    _refreshScreen();
-                  });
+                  context.pushNamed(
+                    Screen.anonymousPost,
+                    pathParameters: {"postId": postData.postId ?? ""},
+                  );
                 },
                 child: AnonymousBoardItem(
                   postData: postData,

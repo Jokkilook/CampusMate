@@ -5,10 +5,16 @@ import 'package:campusmate/screens/chatting/chat_room_screen.dart';
 import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
 import 'package:campusmate/screens/chatting/group_chat_room_generation_screen.dart';
 import 'package:campusmate/screens/chatting/video_player_screen.dart';
+import 'package:campusmate/screens/community/community_screen.dart';
+import 'package:campusmate/screens/community/edit_post_screen.dart';
+import 'package:campusmate/screens/community/my_posts_screen.dart';
+import 'package:campusmate/screens/community/post_screen.dart';
+import 'package:campusmate/screens/community/post_search_screen.dart';
 import 'package:campusmate/screens/login_screen.dart';
 import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/screens/more/my_info_screen.dart';
 import 'package:campusmate/screens/more/theme_setting_screen.dart';
+import 'package:campusmate/screens/profile/profile_revise_screen.dart';
 import 'package:campusmate/screens/profile/profile_screen.dart';
 import 'package:campusmate/screens/profile/profile_setting_a.dart';
 import 'package:campusmate/screens/profile/profile_setting_b.dart';
@@ -35,7 +41,10 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
   GoRoute(
     name: Screen.main,
     path: Screen.main,
-    builder: (context, state) => const MainScreen(),
+    builder: (context, state) {
+      final int index = (state.extra ?? 0) as int;
+      return MainScreen(index: index);
+    },
   ),
 
   //로그인 화면
@@ -121,6 +130,14 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
     name: Screen.myProfile,
     path: Screen.myProfile,
     builder: (context, state) => const ProfileScreen(),
+    routes: [
+      //프로필 수정 화면
+      GoRoute(
+        name: Screen.editProfile,
+        path: Screen.editProfile,
+        builder: (context, state) => ProfileReviseScreen(),
+      ),
+    ],
   ),
 
   //채팅방 리스트 화면
@@ -167,11 +184,59 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
     builder: (context, state) => const GroupChatRoomGenerationScreen(),
   ),
 
+  //커뮤니티 화면
+  GoRoute(
+    name: Screen.community,
+    path: Screen.community,
+    builder: (context, state) => const CommunityScreen(),
+    routes: [
+      //일반 게시글 상세페이지
+      GoRoute(
+        name: Screen.post,
+        path: "${Screen.post}=:postId",
+        builder: (context, state) {
+          final String postId = state.pathParameters["postId"] ?? "";
+          return PostScreen(
+            postId: postId,
+            isAnonymous: false,
+          );
+        },
+      ),
+
+      //익명 게시글 상세페이지
+      GoRoute(
+        name: Screen.anonymousPost,
+        path: "${Screen.anonymousPost}=:postId",
+        builder: (context, state) {
+          final String postId = state.pathParameters["postId"] ?? "";
+          return PostScreen(
+            postId: postId,
+            isAnonymous: true,
+          );
+        },
+      )
+    ],
+  ),
+
+  //게시글 검색 화면
+  GoRoute(
+    name: Screen.searchPost,
+    path: Screen.searchPost,
+    builder: (context, state) => const PostSearchScreen(),
+  ),
+
   //내 정보 화면
   GoRoute(
     name: Screen.myInfo,
     path: Screen.myInfo,
     builder: (context, state) => const MyInfoScreen(),
+  ),
+
+  //내가 쓴 게시글 화면
+  GoRoute(
+    name: Screen.myPosts,
+    path: Screen.myPosts,
+    builder: (context, state) => const MyPostsScreen(),
   ),
 
   //앱 테마 화면
@@ -206,11 +271,18 @@ class Screen {
   static String profileResult = '/profile_result';
   static String otherProfile = '/other_profile';
   static String myProfile = '/my_profile';
+  static String editProfile = 'edit_profile';
   static String chatList = '/chat_list';
   static String chatRoom = '/chat_room';
   static String chatRoomSearch = '/chat_room_search';
   static String generateGroupRoom = '/generate_group_room';
   static String community = '/community';
+  static String post = 'post';
+  static String anonymousPost = 'anonymous_post';
+  static String editPost = '/edit_post';
+  static String addPost = '/add_post';
+  static String searchPost = '/search_post';
+  static String myPosts = '/my_posts';
   static String myInfo = '/my_info';
   static String themeSetting = '/theme_setting';
   static String videoPlayer = '/video_player';

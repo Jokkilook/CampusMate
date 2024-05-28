@@ -1,15 +1,17 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/screens/community/edit_post_screen.dart';
+import 'package:campusmate/services/post_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
+import 'package:go_router/go_router.dart';
 
 class PostController extends StatefulWidget {
   const PostController({
-    Key? key,
+    super.key,
     required this.currentUserUid,
     required this.postData,
-  }) : super(key: key);
+  });
 
   final String currentUserUid;
   final PostData postData;
@@ -44,7 +46,10 @@ class _PostControllerState extends State<PostController> {
             ),
             TextButton(
               onPressed: () {
-                _deletePost(context);
+                PostService().deletePost(postData: widget.postData);
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.pop(context);
               },
               child: const Text("확인"),
             ),
@@ -60,11 +65,8 @@ class _PostControllerState extends State<PostController> {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
       // 게시글 컬렉션 참조
-      CollectionReference postsCollection = FirebaseFirestore.instance
-          .collection("schools/${widget.postData.school}/" +
-              (widget.postData.boardType == 'General'
-                  ? 'generalPosts'
-                  : 'anonymousPosts'));
+      CollectionReference postsCollection = FirebaseFirestore.instance.collection(
+          "schools/${widget.postData.school}/${widget.postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}");
 
       // 게시글 문서 참조
       DocumentReference postDocRef =
@@ -131,11 +133,10 @@ class _PostControllerState extends State<PostController> {
                   MaterialPageRoute(
                     builder: (context) => EditPostScreen(
                       postData: widget.postData,
-                      school: widget.postData.school.toString(),
                     ),
                   ),
                 ).then((_) {
-                  Navigator.pop(context);
+                  context.pop();
                 });
               },
             ),
@@ -173,7 +174,7 @@ class _PostControllerState extends State<PostController> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                           child: const Text("확인"),
                         ),

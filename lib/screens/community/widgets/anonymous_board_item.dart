@@ -116,7 +116,7 @@ class AnonymousBoardItem extends StatelessWidget {
                     const SizedBox(width: 10),
                     // 조회수
                     const Icon(
-                      Icons.account_circle_outlined,
+                      Icons.remove_red_eye_outlined,
                       color: Colors.grey,
                       size: 14,
                     ),
@@ -140,9 +140,9 @@ class AnonymousBoardItem extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: postData.imageUrl != null
+                child: postData.imageUrl![0] != ""
                     ? Image.network(
-                        postData.imageUrl!,
+                        postData.imageUrl![0],
                         fit: BoxFit.cover,
                         height: 0,
                         width: 0,

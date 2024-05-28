@@ -32,16 +32,15 @@ class DataBase {
 
   void addPost(UserData userData, PostData postData) async {
     try {
-      postData.setData();
       if (postData.boardType == 'General') {
         await FirebaseFirestore.instance
             .collection('schools/${userData.school}/generalPosts')
-            .add(postData.data!);
+            .add(postData.toJson());
       }
       if (postData.boardType == 'Anonymous') {
         await FirebaseFirestore.instance
             .collection('schools/${userData.school}/anonymousPosts')
-            .add(postData.data!);
+            .add(postData.toJson());
       }
     } catch (error) {
       debugPrint('안 올라감ㅋ: $error');

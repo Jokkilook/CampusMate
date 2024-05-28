@@ -8,7 +8,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:go_router/go_router.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 
 class NotiService {
@@ -32,6 +31,7 @@ class NotiService {
             .doc(message.data["roomId"])
             .get();
 
+        //타임스탬프가 json인코딩하는데 문제
         var roomData =
             ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
         payloadString = jsonEncode(roomData.toJson());

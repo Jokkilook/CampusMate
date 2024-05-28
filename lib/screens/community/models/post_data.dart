@@ -9,15 +9,13 @@ class PostData {
   String? authorName;
   String? postId;
   String? school;
-  String? imageUrl;
+  List<String>? imageUrl;
   String? profileImageUrl;
   int? commentCount;
   List<dynamic>? viewers;
   List<dynamic>? commentWriters;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
-
-  Map<String, dynamic>? data;
 
   PostData({
     this.boardType = 'General',
@@ -36,7 +34,7 @@ class PostData {
     this.likers = const [],
     this.dislikers = const [],
   }) {
-    setData();
+    imageUrl = ["", "", "", "", "", ""];
   }
 
   PostData.fromJson(Map<String, dynamic> json) {
@@ -48,19 +46,17 @@ class PostData {
     authorName = json['authorName'];
     postId = json['postId'];
     school = json['school'];
-    imageUrl = json['imageUrl'];
+    imageUrl = (json['imageUrl'] as List).map((e) => e.toString()).toList();
     profileImageUrl = json['profileImageUrl'];
     commentCount = json['commentCount'] ?? 0;
     viewers = json['viewers'] ?? [];
     commentWriters = json['commentWriters'] ?? [];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
-
-    setData();
   }
 
-  void setData() {
-    data = {
+  Map<String, dynamic> toJson() {
+    return {
       'boardType': boardType,
       'title': title,
       'content': content,

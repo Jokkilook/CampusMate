@@ -1,14 +1,14 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:campusmate/screens/community/widgets/general_board_item.dart';
 import 'package:campusmate/screens/community/widgets/anonymous_board_item.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
-import 'post_screen.dart';
 
 class PostSearchScreen extends StatefulWidget {
   const PostSearchScreen({super.key});
@@ -29,7 +29,7 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
       QuerySnapshot generalPostsTitleSnapshot = await FirebaseFirestore.instance
           .collection("schools/${userData.school!}/generalPosts")
           .where('title', isGreaterThanOrEqualTo: query)
-          .where('title', isLessThanOrEqualTo: query + '\uf8ff')
+          .where('title', isLessThanOrEqualTo: '$query\uf8ff')
           .orderBy('title')
           .orderBy('timestamp', descending: true)
           .get();
@@ -39,7 +39,7 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
           .instance
           .collection("schools/${userData.school!}/anonymousPosts")
           .where('title', isGreaterThanOrEqualTo: query)
-          .where('title', isLessThanOrEqualTo: query + '\uf8ff')
+          .where('title', isLessThanOrEqualTo: '$query\uf8ff')
           .orderBy('title')
           .orderBy('timestamp', descending: true)
           .get();
@@ -49,7 +49,7 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
           .instance
           .collection("schools/${userData.school!}/generalPosts")
           .where('content', isGreaterThanOrEqualTo: query)
-          .where('content', isLessThanOrEqualTo: query + '\uf8ff')
+          .where('content', isLessThanOrEqualTo: '$query\uf8ff')
           .orderBy('content')
           .orderBy('timestamp', descending: true)
           .get();
@@ -59,7 +59,7 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
           .instance
           .collection("schools/${userData.school!}/anonymousPosts")
           .where('content', isGreaterThanOrEqualTo: query)
-          .where('content', isLessThanOrEqualTo: query + '\uf8ff')
+          .where('content', isLessThanOrEqualTo: '$query\uf8ff')
           .orderBy('content')
           .orderBy('timestamp', descending: true)
           .get();
@@ -91,91 +91,102 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final UserData userData = context.read<UserDataProvider>().userData;
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Container(
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color:
-                isDark ? AppColors.darkSearchInput : AppColors.lightSearchInput,
-          ),
-          child: TextField(
-            onTapOutside: (event) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            decoration: const InputDecoration(
-                hintText: "검색어를 입력하세요",
-                suffixIcon: Icon(Icons.search),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                border: OutlineInputBorder(borderSide: BorderSide.none)),
-            controller: _searchController,
-            onChanged: (value) {
-              _searchPosts(_searchController.text);
-            },
-          ),
-        ),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(8),
-        child: Expanded(
-          child: ListView.separated(
-            itemCount: _searchResults.length,
-            itemBuilder: (context, index) {
-              var postData = PostData.fromJson(
-                  _searchResults[index].data() as Map<String, dynamic>);
-              if (_searchResults[index].reference.parent.id == 'generalPosts') {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: SizedBox(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  //검색 바
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: const Icon(Icons.arrow_back)),
+                      const Divider(),
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: isDark
+                                ? AppColors.darkSearchInput
+                                : AppColors.lightSearchInput,
+                          ),
+                          child: TextField(
+                            onTapOutside: (event) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                            decoration: const InputDecoration(
+                                hintText: "게시글 제목을 검색해주세요!",
+                                suffixIcon: Icon(Icons.search),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 15),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none)),
+                            controller: _searchController,
+                            onChanged: (value) {
+                              _searchPosts(_searchController.text);
+                            },
+                          ),
                         ),
                       ),
-                    );
-                  },
-                  child: GeneralBoardItem(
-                    postData: postData,
-                    firestore: FirebaseFirestore.instance,
+                    ],
                   ),
-                );
-              } else if (_searchResults[index].reference.parent.id ==
-                  'anonymousPosts') {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostScreen(
-                          postData: postData,
-                          firestore: FirebaseFirestore.instance,
-                          userData: userData,
-                        ),
-                      ),
-                    );
-                  },
-                  child: AnonymousBoardItem(
-                    postData: postData,
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: _searchResults.length,
+                    itemBuilder: (context, index) {
+                      var postData = PostData.fromJson(
+                          _searchResults[index].data() as Map<String, dynamic>);
+                      if (_searchResults[index].reference.parent.id ==
+                          'generalPosts') {
+                        return InkWell(
+                          onTap: () {
+                            context.pushNamed(Screen.post, pathParameters: {
+                              "postId": postData.postId ?? ""
+                            });
+                          },
+                          child: GeneralBoardItem(
+                            postData: postData,
+                          ),
+                        );
+                      } else if (_searchResults[index].reference.parent.id ==
+                          'anonymousPosts') {
+                        return InkWell(
+                          onTap: () {
+                            context.pushNamed(Screen.anonymousPost,
+                                pathParameters: {
+                                  "postId": postData.postId ?? ""
+                                });
+                          },
+                          child: AnonymousBoardItem(
+                            postData: postData,
+                          ),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider(
+                        height: 0,
+                      );
+                    },
                   ),
-                );
-              } else {
-                return Container();
-              }
-            },
-            separatorBuilder: (context, index) {
-              return const Divider(
-                height: 0,
-              );
-            },
+                ),
+              ],
+            ),
           ),
         ),
       ),

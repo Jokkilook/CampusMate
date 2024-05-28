@@ -25,7 +25,6 @@ class PostGenerator {
 
     for (int i = 0; i < quantity; i++) {
       randomAsign(context, isGeneral);
-      postData.setData();
       db.addPost(userData, postData);
       index++;
     }

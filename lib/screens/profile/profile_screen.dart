@@ -1,11 +1,12 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/profile/profile_revise_screen.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/profile/widgets/full_profile_card.dart';
 import 'package:campusmate/screens/profile/widgets/loading_profile_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 ///내 정보 화면
@@ -27,11 +28,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     userData = context.read<UserDataProvider>().userData;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: "revise",
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ProfileReviseScreen()),
-          );
+          context
+              .pushNamed(Screen.editProfile)
+              .whenComplete(() => setState(() {}));
         },
         child: const Icon(Icons.edit, size: 30),
         backgroundColor: Colors.green,

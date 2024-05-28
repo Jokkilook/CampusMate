@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 ///프로필을 표시하는 스크린<br>
@@ -147,7 +148,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                   const Text("존재하지 않는 사용자입니다."),
                   IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       icon: const Icon(Icons.cancel))
                 ],
@@ -187,7 +188,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                     const Text("존재하지 않는 사용자입니다."),
                     IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          context.pop();
                         },
                         icon: const Icon(Icons.cancel))
                   ],
@@ -288,7 +289,7 @@ class _StrangerProfilScreenState extends State<StrangerProfilScreen> {
                 const Text("존재하지 않는 사용자입니다."),
                 IconButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      context.pop();
                     },
                     icon: const Icon(Icons.cancel))
               ],
