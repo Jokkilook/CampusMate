@@ -6,7 +6,6 @@ import 'package:campusmate/screens/chatting/chat_room_search_screen.dart';
 import 'package:campusmate/screens/chatting/group_chat_room_generation_screen.dart';
 import 'package:campusmate/screens/chatting/video_player_screen.dart';
 import 'package:campusmate/screens/community/community_screen.dart';
-import 'package:campusmate/screens/community/edit_post_screen.dart';
 import 'package:campusmate/screens/community/my_posts_screen.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
 import 'package:campusmate/screens/community/post_search_screen.dart';
