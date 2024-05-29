@@ -414,14 +414,14 @@ class _PostScreenState extends State<PostScreen> {
 
                           //댓글이면
                           if (!_isReplying) {
-                            postService.postComment(
+                            await postService.postComment(
                                 userData: userData,
                                 postData: postData,
                                 content: content);
                           }
                           //답글이면
                           else {
-                            postService.postReply(
+                            await postService.postReply(
                                 userData: userData,
                                 postData: postData,
                                 targetCommentId: _selectedCommentId ?? "",

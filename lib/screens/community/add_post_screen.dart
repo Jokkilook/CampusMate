@@ -71,8 +71,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 // 게시판 선택
                 value: _selectedBoard,
                 items: const [
-                  DropdownMenuItem(value: 'General', child: Text('일반')),
-                  DropdownMenuItem(value: 'Anonymous', child: Text('익명')),
+                  DropdownMenuItem(
+                    value: 'General',
+                    child: Text(
+                      '일반',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Anonymous',
+                    child: Text(
+                      '익명',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
+                  ),
                 ],
                 onChanged: (value) {
                   setState(() {

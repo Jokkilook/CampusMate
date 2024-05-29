@@ -107,7 +107,12 @@ class _CommunityScreenState extends State<CommunityScreen>
           heroTag: "addPost",
           onPressed: () {
             debugPrint('index: ${_tabController.index}');
-            context.pushNamed(Screen.addPost).then((value) => setState(() {}));
+            context
+                .pushNamed(
+                  Screen.addPost,
+                  extra: _tabController.index,
+                )
+                .then((value) => setState(() {}));
           },
           backgroundColor: AppColors.button,
           foregroundColor: const Color(0xFF0A351E),
