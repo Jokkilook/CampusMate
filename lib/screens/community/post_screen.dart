@@ -1,8 +1,10 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/router/app_router.dart';
+import 'package:campusmate/screens/community/comment_section.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/widgets/like_dislike_panel.dart';
 import 'package:campusmate/services/post_service.dart';
+import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -217,7 +219,7 @@ class _PostScreenState extends State<PostScreen> {
                     children: [
                       //게시글 상세 섹션
                       Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -338,15 +340,8 @@ class _PostScreenState extends State<PostScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
                           ],
                         ),
-                      ),
-
-                      Divider(
-                        height: 0,
-                        color:
-                            isDark ? AppColors.darkLine : AppColors.lightLine,
                       ),
 
                       //내용, 좋싫버튼
@@ -356,8 +351,11 @@ class _PostScreenState extends State<PostScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // 글 내용
-                            Text(postData.content ?? ''),
-                            const SizedBox(height: 10),
+                            Text(
+                              postData.content ?? '',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 14),
                             //사진
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -388,10 +386,11 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
 
-                      Divider(
-                        height: 0,
-                        color:
-                            isDark ? AppColors.darkLine : AppColors.lightLine,
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        width: double.infinity,
+                        color: isDark ? AppColors.darkTag : AppColors.lightTag,
+                        child: const AdArea(),
                       ),
 
                       //댓글 섹션
@@ -410,15 +409,14 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
 
-                      Divider(
-                        height: 0,
-                        color:
-                            isDark ? AppColors.darkLine : AppColors.lightLine,
-                      ),
                       // 댓글
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: buildComments(),
+                      SizedBox(
+                        height: 500,
+                        child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: CommentSection(postData: postData)
+                            //buildComments(),
+                            ),
                       ),
                     ],
                   ),

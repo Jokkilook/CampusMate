@@ -338,7 +338,7 @@ class ChattingService {
                 content: "방장으로 있는 채팅방을 나가면 모든 참여자를 내보내고 채팅방을 삭제합니다.",
                 onYes: () {
                   onList ? null : context.pop();
-                  Navigator.pop(_);
+                  context.pop();
                   deleteChatRoom(
                       userData: userData, roomId: roomId, isGroup: true);
                 });

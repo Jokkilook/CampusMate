@@ -7,7 +7,7 @@ class PostService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseStorage storage = FirebaseStorage.instance;
 
-  //게시글 정보 불러오기
+  ///게시글 정보 불러오기
   Future<PostData> getPostData(
       {required String postId,
       required UserData userData,
@@ -23,7 +23,7 @@ class PostService {
     return postData;
   }
 
-  //게시글 올리기
+  ///게시글 올리기
   Future<void> addPost(
       {required PostData postData, required UserData userData}) async {
     try {
@@ -44,7 +44,7 @@ class PostService {
     }
   }
 
-  //게시글 삭제
+  ///게시글 삭제
   Future deletePost({required PostData postData}) async {
     for (var url in postData.imageUrl!) {
       if (url != "") {
@@ -102,7 +102,7 @@ class PostService {
         .delete();
   }
 
-  //게시글 수정
+  ///게시글 수정
   Future updatePost(
       {required UserData userData, required PostData editedData}) async {
     if (userData.uid != editedData.authorUid) return;
@@ -114,7 +114,7 @@ class PostService {
         .update(editedData.toJson());
   }
 
-  // 조회수
+  ///조회수 업데이트
   Future<void> updateViewCount(
       {required PostData postData, required UserData userData}) async {
     String viewerUID = userData.uid ?? "";
@@ -133,5 +133,16 @@ class PostService {
     } catch (error) {
       //
     }
+  }
+
+  ///댓글 불러오기
+  Future<QuerySnapshot> getPostComment(PostData postData) async {
+    return firestore
+        .collection(
+            "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
+        .doc(postData.postId)
+        .collection('comments')
+        .orderBy('timestamp', descending: false)
+        .get();
   }
 }

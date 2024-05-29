@@ -54,9 +54,6 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
       //채팅방 생성 플로팅버튼
       floatingActionButton: FloatingActionButton(
         heroTag: "createRoom",
-        child: widget.onCreating
-            ? const CircleLoading()
-            : const Icon(Icons.add, size: 30),
         backgroundColor: AppColors.button,
         foregroundColor: const Color(0xFF0A351E),
         elevation: 5,
@@ -66,6 +63,9 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
         onPressed: () async {
           context.pushNamed(Screen.generateGroupRoom);
         },
+        child: widget.onCreating
+            ? const CircleLoading()
+            : const Icon(Icons.add, size: 30),
       ),
       body: DefaultTabController(
         length: 2,

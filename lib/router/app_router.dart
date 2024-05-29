@@ -41,6 +41,9 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
   GoRoute(
     name: Screen.main,
     path: Screen.main,
+    onExit: (context, state) {
+      return true;
+    },
     builder: (context, state) {
       final int index = (state.extra ?? 0) as int;
       return MainScreen(index: index);

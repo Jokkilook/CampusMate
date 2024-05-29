@@ -145,10 +145,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             if (roomSnapshot.hasData) {
               var roomData = roomSnapshot.data!;
               int count = 0;
+              String roomName = "알 수 없음";
               try {
                 count = (roomData["participantsUid"] as List).length;
+                roomName = (roomData["roomName"] ?? "");
               } catch (e) {
                 count = 0;
+                roomName = "알 수 없음";
               }
 
               return Scaffold(
@@ -163,8 +166,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           icon: const Icon(Icons.more_vert));
                     }),
                   ],
-                  title: Text(
-                      !widget.isGroup ? name : (roomData["roomName"] ?? "")),
+                  title: Text(!widget.isGroup ? name : roomName),
                 ),
 
                 //드로어

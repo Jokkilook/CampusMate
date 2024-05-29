@@ -1,7 +1,6 @@
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
-import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,15 +25,33 @@ class _LikeDislikePanelState extends State<LikeDislikePanel> {
     Future<void> voteLikeDislike(bool isLike) async {
       if (userLiked) {
         // 이미 좋아요를 누른 경우
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmDialog(content: '이미 좋아요를 눌렀습니다.'),
+        ScaffoldMessenger.of(context).clearSnackBars();
+        //스낵바 출력
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.black.withOpacity(0.8),
+            content: const Text(
+              "이미 좋아요를 눌렀습니다.",
+              style: TextStyle(color: Colors.white),
+            ),
+            duration: const Duration(milliseconds: 1500),
+          ),
         );
       } else if (userDisliked) {
         // 이미 싫어요를 누른 경우
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmDialog(content: '이미 싫어요를 눌렀습니다.'),
+        ScaffoldMessenger.of(context).clearSnackBars();
+        //스낵바 출력
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            backgroundColor: Colors.black.withOpacity(0.8),
+            content: const Text(
+              "이미 싫어요를 눌렀습니다.",
+              style: TextStyle(color: Colors.white),
+            ),
+            duration: const Duration(milliseconds: 1500),
+          ),
         );
       } else {
         if (isLike) {
@@ -66,7 +83,7 @@ class _LikeDislikePanelState extends State<LikeDislikePanel> {
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.3,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.grey,
@@ -86,6 +103,7 @@ class _LikeDislikePanelState extends State<LikeDislikePanel> {
             ),
           ),
           InkWell(
+            overlayColor: const MaterialStatePropertyAll(Colors.transparent),
             child: Icon(
               userLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined,
               size: 16,
@@ -94,6 +112,7 @@ class _LikeDislikePanelState extends State<LikeDislikePanel> {
             onTap: () => voteLikeDislike(true),
           ),
           InkWell(
+            overlayColor: const MaterialStatePropertyAll(Colors.transparent),
             child: Icon(
               userDisliked ? Icons.thumb_down : Icons.thumb_down_outlined,
               size: 16,
