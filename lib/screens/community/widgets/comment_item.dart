@@ -227,9 +227,6 @@ class _CommentItemState extends State<CommentItem> {
 
       await batch.commit();
 
-      // 다이얼로그 닫기
-      Navigator.pop(context);
-
       // 화면 새로 고침 콜백 호출
       widget.refreshCallback();
     } catch (e) {
@@ -362,13 +359,21 @@ class _CommentItemState extends State<CommentItem> {
                           //작성자 표시
                           child: Row(
                             children: [
-                              Text(
-                                widget.postCommentData.boardType == 'General'
-                                    ? widget.postCommentData.authorName
-                                        .toString()
-                                    : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
-                                style: const TextStyle(
-                                  fontSize: 16,
+                              Container(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width *
+                                            0.2),
+                                child: Text(
+                                  widget.postCommentData.boardType == 'General'
+                                      ? widget.postCommentData.authorName
+                                          .toString()
+                                      : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                               widget.postCommentData.boardType != 'General'
@@ -396,6 +401,17 @@ class _CommentItemState extends State<CommentItem> {
                                         )
                                       : const SizedBox()
                                   : const SizedBox(),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              //작성 시간
+                              Text(
+                                formattedTime,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -413,7 +429,7 @@ class _CommentItemState extends State<CommentItem> {
                               onTap: () => widget.onReplyPressed(
                                   widget.postCommentData.commentId.toString()),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 20),
                             // 삭제 or 신고 버튼
                             InkWell(
                               borderRadius: BorderRadius.circular(100),
@@ -452,7 +468,7 @@ class _CommentItemState extends State<CommentItem> {
                                 userLiked
                                     ? Icons.thumb_up
                                     : Icons.thumb_up_alt_outlined,
-                                size: 16,
+                                size: 14,
                                 color: Colors.grey,
                               ),
                               const SizedBox(width: 4),
@@ -460,7 +476,7 @@ class _CommentItemState extends State<CommentItem> {
                                 widget.postCommentData.likers!.length
                                     .toString(),
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   color: Colors.grey,
                                 ),
                               ),
@@ -476,7 +492,7 @@ class _CommentItemState extends State<CommentItem> {
                                       userDisliked
                                           ? Icons.thumb_down
                                           : Icons.thumb_down_outlined,
-                                      size: 16,
+                                      size: 14,
                                       color: Colors.grey,
                                     ),
                                     const SizedBox(width: 4),
@@ -484,7 +500,7 @@ class _CommentItemState extends State<CommentItem> {
                                       widget.postCommentData.dislikers!.length
                                           .toString(),
                                       style: const TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: Colors.grey,
                                       ),
                                     ),
@@ -492,14 +508,6 @@ class _CommentItemState extends State<CommentItem> {
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-
-                        Text(
-                          formattedTime,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
                           ),
                         ),
                       ],

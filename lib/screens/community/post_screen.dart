@@ -1,7 +1,6 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/comment_section.dart';
-import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/widgets/like_dislike_panel.dart';
 import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/ad_area.dart';
@@ -14,8 +13,6 @@ import 'package:go_router/go_router.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:provider/provider.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/screens/community/models/post_comment_data.dart';
-import 'package:campusmate/screens/community/widgets/comment_item.dart';
 import '../../provider/user_data_provider.dart';
 import 'models/post_data.dart';
 import 'modules/format_time_stamp.dart';
@@ -58,6 +55,7 @@ class _PostScreenState extends State<PostScreen> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,10 +108,12 @@ class _PostScreenState extends State<PostScreen> {
             .doc(widget.postId)
             .get(),
         builder: (context, snapshot) {
+          //로딩 중
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircleLoading();
           }
 
+          //에러 시
           if (snapshot.hasError) {
             return Center(
               child: Column(
@@ -130,9 +130,11 @@ class _PostScreenState extends State<PostScreen> {
             );
           }
 
+          //스냅샷 데이터가 있으면
           if (snapshot.hasData) {
             var data = snapshot.data;
 
+            //스냅샷 데이터에 게시글 데이터가 존재하지 않으면
             if (!data!.exists) {
               return Center(
                 child: Column(
@@ -140,10 +142,11 @@ class _PostScreenState extends State<PostScreen> {
                   children: [
                     const Text("게시글을 불러올 수 없습니다."),
                     IconButton(
-                        onPressed: () {
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.refresh))
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.refresh),
+                    )
                   ],
                 ),
               );
@@ -152,63 +155,12 @@ class _PostScreenState extends State<PostScreen> {
             PostData postData =
                 PostData.fromJson(data.data() as Map<String, dynamic>);
             ref = postData;
+            final GlobalKey<CommentSectionState> key =
+                GlobalKey<CommentSectionState>();
+            CommentSection commentSection =
+                CommentSection(key: key, postData: postData);
 
             postService.updateViewCount(postData: postData, userData: userData);
-
-            // 댓글 가져오기 및 출력
-            Widget buildComments() {
-              return FutureBuilder<QuerySnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection(
-                        "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                    .doc(postData.postId)
-                    .collection('comments')
-                    .orderBy('timestamp', descending: false)
-                    .get(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data == null) {
-                    return const Text('댓글이 없습니다.');
-                  } else {
-                    List<PostCommentData> comments = snapshot.data!.docs
-                        .map((doc) => PostCommentData.fromJson(
-                            doc.data() as Map<String, dynamic>))
-                        .toList();
-                    List<Widget> visibleComments = [];
-                    for (var comment in comments) {
-                      // 차단된 사용자의 댓글인지 확인
-                      if (!(userData.banUsers?.contains(comment.authorUid) ??
-                          false)) {
-                        // 차단되지 않은 사용자의 댓글만 출력
-                        visibleComments.add(
-                          CommentItem(
-                            postAuthorUid: postData.authorUid.toString(),
-                            postCommentData: comment,
-                            refreshCallback: () => setState(() {}),
-                            userData: userData,
-                            onReplyPressed: (commentId) {
-                              setState(() {
-                                // 선택된 댓글의 내용을 저장하고 댓글 입력 창을 업데이트
-                                _selectedCommentId = commentId;
-                                _isReplying = true;
-                              });
-                            },
-                          ),
-                        );
-                      }
-                    }
-                    return ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: visibleComments,
-                    );
-                  }
-                },
-              );
-            }
 
             return Scaffold(
               body: RefreshIndicator(
@@ -306,7 +258,7 @@ class _PostScreenState extends State<PostScreen> {
                                                 ? postData.authorName.toString()
                                                 : '익명',
                                             style: const TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 14,
                                             ),
                                           ),
                                           // 작성일시
@@ -386,6 +338,7 @@ class _PostScreenState extends State<PostScreen> {
                         ),
                       ),
 
+                      //광고 섹션
                       Container(
                         padding: const EdgeInsets.all(5),
                         width: double.infinity,
@@ -393,30 +346,10 @@ class _PostScreenState extends State<PostScreen> {
                         child: const AdArea(),
                       ),
 
-                      //댓글 섹션
+                      // 댓글 섹션
                       Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '댓글 ${postData.commentCount}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // 댓글
-                      SizedBox(
-                        height: 500,
-                        child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: CommentSection(postData: postData)
-                            //buildComments(),
-                            ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: commentSection,
                       ),
                     ],
                   ),
@@ -475,163 +408,28 @@ class _PostScreenState extends State<PostScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          if (_isReplying) {
-                            // 답글 작성 중
-                            if (_selectedCommentId != null) {
-                              String replyContent =
-                                  _commentController.text.trim();
-                              final postAuthorUid = postData.authorUid;
-                              final commentWriters =
-                                  postData.commentWriters ??= [];
-                              int writerIndex = 0;
-                              // 현재 유저가 게시글 작성자가 아니면
-                              if (currentUserUid != postAuthorUid) {
-                                // 현재 게시글에서 댓글을 작성한 적이 없는 유저라면
-                                if (!commentWriters.contains(currentUserUid)) {
-                                  await FirebaseFirestore.instance
-                                      .collection(
-                                          "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                                      .doc(postData.postId)
-                                      .update({
-                                    'commentWriters':
-                                        FieldValue.arrayUnion([currentUserUid]),
-                                  });
-                                  writerIndex = commentWriters.length + 1;
-                                } else {
-                                  writerIndex =
-                                      commentWriters.indexOf(currentUserUid) +
-                                          1;
-                                }
-                              }
+                          if (_commentController.value.text == "") return;
 
-                              if (replyContent.isNotEmpty) {
-                                PostReplyData newReply = PostReplyData(
-                                  postId: postData.postId,
-                                  commentId: _selectedCommentId,
-                                  content: replyContent,
-                                  timestamp: Timestamp.now(),
-                                  authorUid: currentUserUid,
-                                  authorName: userData.name,
-                                  school: postData.school,
-                                  profileImageUrl: userData.imageUrl,
-                                  boardType: postData.boardType,
-                                  writerIndex: writerIndex,
-                                );
+                          String content = _commentController.value.text;
 
-                                try {
-                                  // 답글 Firestore에 추가
-                                  DocumentReference docRef = await FirebaseFirestore
-                                      .instance
-                                      .collection(
-                                          "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                                      .doc(postData.postId)
-                                      .collection('comments')
-                                      .doc(_selectedCommentId)
-                                      .collection('replies')
-                                      .add(newReply.data!);
-                                  await docRef.update({'replyId': docRef.id});
-
-                                  // 총 댓글 수 업데이트
-                                  DocumentReference postDocRef = FirebaseFirestore
-                                      .instance
-                                      .collection(
-                                          "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                                      .doc(postData.postId);
-                                  DocumentSnapshot postDoc =
-                                      await postDocRef.get();
-                                  int currentCommentCount =
-                                      (postDoc.data() as Map<String, dynamic>)[
-                                              'commentCount'] ??
-                                          0;
-                                  await postDocRef.update({
-                                    'commentCount': currentCommentCount + 1,
-                                  });
-
-                                  // 텍스트 필드 내용 지우기
-                                  _commentController.clear();
-                                  _isReplying = false;
-
-                                  // 화면 새로고침
-                                  setState(() {});
-                                } catch (error) {
-                                  debugPrint('Error adding reply: $error');
-                                }
-                              }
-                            }
-                          } else {
-                            // 댓글 작성 중
-                            String commentContent =
-                                _commentController.text.trim();
-
-                            final postAuthorUid = postData.authorUid;
-                            final commentWriters =
-                                postData.commentWriters ??= [];
-                            int writerIndex = 0;
-                            // 현재 유저가 게시글 작성자가 아니면
-                            if (currentUserUid != postAuthorUid) {
-                              // 현재 게시글에서 댓글을 작성한 적이 없는 유저라면
-                              if (!commentWriters.contains(currentUserUid)) {
-                                await FirebaseFirestore.instance
-                                    .collection(
-                                        "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                                    .doc(postData.postId)
-                                    .update({
-                                  'commentWriters':
-                                      FieldValue.arrayUnion([currentUserUid]),
-                                });
-                                writerIndex = commentWriters.length + 1;
-                              } else {
-                                writerIndex =
-                                    commentWriters.indexOf(currentUserUid) + 1;
-                              }
-                            }
-
-                            if (commentContent.isNotEmpty) {
-                              PostCommentData newComment = PostCommentData(
-                                postId: postData.postId,
-                                content: commentContent,
-                                timestamp: Timestamp.now(),
-                                authorUid: currentUserUid,
-                                authorName: userData.name,
-                                school: postData.school,
-                                profileImageUrl: userData.imageUrl,
-                                boardType: postData.boardType,
-                                writerIndex: writerIndex,
-                              );
-
-                              try {
-                                DocumentReference docRef = await FirebaseFirestore
-                                    .instance
-                                    .collection(
-                                        "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                                    .doc(postData.postId)
-                                    .collection('comments')
-                                    .add(newComment.data!);
-                                await docRef.update({'commentId': docRef.id});
-
-                                // 총 댓글 수 업데이트
-                                DocumentReference postDocRef = FirebaseFirestore
-                                    .instance
-                                    .collection(
-                                        "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-                                    .doc(postData.postId);
-                                DocumentSnapshot postDoc =
-                                    await postDocRef.get();
-                                int currentCommentCount =
-                                    (postDoc.data() as Map<String, dynamic>)[
-                                            'commentCount'] ??
-                                        0;
-                                await postDocRef.update(
-                                    {'commentCount': currentCommentCount + 1});
-
-                                _commentController.clear();
-
-                                setState(() {});
-                              } catch (error) {
-                                debugPrint('Error adding comment: $error');
-                              }
-                            }
+                          //댓글이면
+                          if (!_isReplying) {
+                            postService.postComment(
+                                userData: userData,
+                                postData: postData,
+                                content: content);
                           }
+                          //답글이면
+                          else {
+                            postService.postReply(
+                                userData: userData,
+                                postData: postData,
+                                targetCommentId: _selectedCommentId ?? "",
+                                content: content);
+                          }
+
+                          key.currentState?.refresh();
+                          _commentController.clear();
                         },
                       ),
                     ],

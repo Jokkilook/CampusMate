@@ -354,6 +354,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
           ),
           child: Column(
             children: [
+              //사진 변경
               GestureDetector(
                 onTap: () {
                   showDialog(
@@ -430,35 +431,39 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
               ),
               const SizedBox(height: 10),
               //이름입력
-              IntrinsicWidth(
-                child: TextField(
-                  scrollPadding: const EdgeInsets.only(bottom: 100),
-                  cursorColor:
-                      isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                  decoration: InputDecoration(
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: IntrinsicWidth(
+                  child: TextField(
+                    scrollPadding: const EdgeInsets.only(bottom: 100),
+                    cursorColor:
+                        isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 5),
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                        color:
+                            isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                      )),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                        color:
+                            isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                      )),
+                    ),
+                    maxLength: 20,
+                    controller: nameController,
+                    onTapOutside: (event) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
                       color:
                           isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                    )),
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                      color:
-                          isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                    )),
-                  ),
-                  maxLength: 20,
-                  controller: nameController,
-                  onTapOutside: (event) {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

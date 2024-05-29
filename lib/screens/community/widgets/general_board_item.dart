@@ -60,11 +60,17 @@ class GeneralBoardItem extends StatelessWidget {
                 Row(
                   children: [
                     // 닉네임
-                    Text(
-                      postData.authorName.toString(),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
+                    Container(
+                      constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.3),
+                      child: Text(
+                        postData.authorName.toString(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                     // 작성 시간

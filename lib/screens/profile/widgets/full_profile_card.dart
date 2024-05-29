@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/services/profile_service.dart';
@@ -84,15 +85,26 @@ class FullProfileCard extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
+                    AutoSizeText(
                       "${userData.name}",
+                      minFontSize: 12,
+                      maxFontSize: 30,
                       style: TextStyle(
                         color:
                             isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                        fontSize: 30,
+                        //fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    // Text(
+                    //   "${userData.name}",
+                    //   style: TextStyle(
+                    //     color:
+                    //         isDark ? AppColors.darkTitle : AppColors.lightTitle,
+                    //     fontSize: 30,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),

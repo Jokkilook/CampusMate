@@ -1,5 +1,7 @@
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/models/post_data.dart';
+import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -136,7 +138,8 @@ class PostService {
   }
 
   ///댓글 불러오기
-  Future<QuerySnapshot> getPostComment(PostData postData) async {
+  Future<QuerySnapshot<Map<String, dynamic>>> getPostComment(
+      PostData postData) async {
     return firestore
         .collection(
             "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
@@ -144,5 +147,134 @@ class PostService {
         .collection('comments')
         .orderBy('timestamp', descending: false)
         .get();
+  }
+
+  ///댓&답글 갯수 불러오기
+  Future getCommentCount(PostData postData) async {
+    int count = 0;
+
+    var postRef = firestore
+        .collection(
+            "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}/")
+        .doc(postData.postId);
+
+    //댓글 수 더하기
+    await postRef.collection('comments').get().then((value) {
+      count += value as int;
+    });
+
+    //답글 수 더하기
+    await postRef.collection('comments').get().then((value) {
+      count += value as int;
+    });
+
+    return count;
+  }
+
+  ///댓글 작성
+  Future postComment(
+      {required UserData userData,
+      required PostData postData,
+      required String content}) async {
+    //게시글 데이터 파이어스토어 레퍼런스
+    var postRef = firestore
+        .collection(
+            "schools/${postData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}/")
+        .doc(postData.postId);
+
+    //익명일 시, 유저 번호를 나타낼 인덱스
+    int writerIndex = 0;
+
+    //댓글 작성자가 게시글 작성자가 아니고, 게시글 댓글 작성자 리스트에 포함되어 있지 않으면,
+    if (userData.uid != postData.authorUid &&
+        !(postData.commentWriters!.contains(userData.uid))) {
+      //댓글 작성자 리스트에 추가
+      await postRef.update({
+        'commentWriters': FieldValue.arrayUnion([userData.uid])
+      });
+
+      writerIndex = postData.commentWriters!.length + 1;
+    }
+
+    writerIndex = postData.commentWriters!.indexOf(userData.uid) + 1;
+
+    Timestamp time = Timestamp.now();
+    String commentId = "comment_${userData.uid}_${time.millisecondsSinceEpoch}";
+    //댓글 데이터 생성
+    PostCommentData comment = PostCommentData(
+      commentId: commentId,
+      boardType: postData.boardType,
+      postId: postData.postId,
+      authorUid: userData.uid,
+      authorName: userData.name,
+      profileImageUrl: userData.imageUrl,
+      school: userData.school,
+      content: content,
+      timestamp: time,
+      writerIndex: writerIndex,
+    );
+
+    //댓글 데이터 삽입
+    await postRef.collection("comments").doc(commentId).set(comment.toJson());
+
+    //표시할 댓글 수 수정 (+1)
+    await postRef.update({'commentCount': FieldValue.increment(1)});
+  }
+
+  ///답글 작성
+  Future postReply(
+      {required UserData userData,
+      required PostData postData,
+      required String targetCommentId,
+      required String content}) async {
+    //게시글 데이터 파이어스토어 레퍼런스
+    var postRef = firestore
+        .collection(
+            "schools/${userData.school}/${postData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}/")
+        .doc(postData.postId);
+
+    //익명일 시, 유저 번호를 나타낼 인덱스
+    int writerIndex = 0;
+
+    //답글 작성자가 게시글 작성자가 아니고, 게시글 댓글 작성자 리스트에 포함되어 있지 않으면,
+    if (userData.uid != postData.authorUid &&
+        !(postData.commentWriters!.contains(userData.uid))) {
+      //댓글 작성자 리스트에 추가
+      await postRef.update({
+        'commentWriters': FieldValue.arrayUnion([userData.uid])
+      });
+
+      writerIndex = postData.commentWriters!.length + 1;
+    }
+
+    writerIndex = postData.commentWriters!.indexOf(userData.uid) + 1;
+
+    Timestamp time = Timestamp.now();
+    String replyId = "reply_${userData.uid}_${time.millisecondsSinceEpoch}";
+    //답글 데이터 생성
+    PostReplyData reply = PostReplyData(
+      replyId: replyId,
+      commentId: targetCommentId,
+      boardType: postData.boardType,
+      postId: postData.postId,
+      authorUid: userData.uid,
+      authorName: userData.name,
+      profileImageUrl: userData.imageUrl,
+      school: userData.school,
+      content: content,
+      timestamp: time,
+      writerIndex: writerIndex,
+    );
+
+    //답글 데이터 삽입
+    await postRef
+        .collection("comments")
+        .doc(targetCommentId)
+        .collection("replies")
+        .doc(replyId)
+        .set(reply.toJson());
+
+    //표시할 댓글 수 수정 (+1)
+    await postRef.update({'commentCount': FieldValue.increment(1)});
   }
 }

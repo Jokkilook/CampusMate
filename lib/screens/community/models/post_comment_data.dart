@@ -14,8 +14,6 @@ class PostCommentData {
   List<dynamic>? likers;
   List<dynamic>? dislikers;
 
-  Map<String, dynamic>? data;
-
   PostCommentData({
     this.postId,
     this.commentId,
@@ -27,10 +25,11 @@ class PostCommentData {
     this.profileImageUrl,
     this.boardType,
     this.writerIndex,
-    this.likers = const [],
-    this.dislikers = const [],
+    this.likers,
+    this.dislikers,
   }) {
-    setData();
+    likers = [];
+    dislikers = [];
   }
 
   PostCommentData.fromJson(Map<String, dynamic> json) {
@@ -46,12 +45,10 @@ class PostCommentData {
     writerIndex = json['writerIndex'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
-
-    setData();
   }
 
-  void setData() {
-    data = {
+  toJson() {
+    return {
       'postId': postId,
       'commentId': commentId,
       'content': content,

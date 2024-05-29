@@ -29,11 +29,15 @@ class PostData {
     this.imageUrl,
     this.profileImageUrl,
     this.commentCount,
-    this.viewers = const [],
-    this.commentWriters = const [],
-    this.likers = const [],
-    this.dislikers = const [],
+    this.viewers,
+    this.commentWriters,
+    this.likers,
+    this.dislikers,
   }) {
+    viewers = [];
+    commentWriters = [];
+    likers = [];
+    dislikers = [];
     imageUrl = ["", "", "", "", "", ""];
   }
 
