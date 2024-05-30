@@ -277,4 +277,37 @@ class PostService {
     //표시할 댓글 수 수정 (+1)
     await postRef.update({'commentCount': FieldValue.increment(1)});
   }
+
+  ///댓글(하위 답글 포함) 삭제
+  Future deleteCommentAndReply(PostCommentData commentData) async {
+    //게시글 파이어스토어 레퍼런스
+    DocumentReference postRef = firestore
+        .collection(
+            "schools/${commentData.school}/${commentData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
+        .doc(commentData.postId);
+
+    // 댓글의 하위 답글 가져오기
+    QuerySnapshot replySnapshot = await postRef
+        .collection('comments')
+        .doc(commentData.commentId)
+        .collection('replies')
+        .get();
+
+    // 댓글과 답글 삭제
+    WriteBatch batch = firestore.batch();
+    batch.delete(postRef.collection('comments').doc(commentData.commentId));
+
+    for (var doc in replySnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    // commentCount 업데이트
+    int repliesCount = replySnapshot.docs.length;
+
+    batch.update(postRef, {
+      'commentCount': FieldValue.increment(-(1 + repliesCount)),
+    });
+
+    await batch.commit();
+  }
 }

@@ -104,7 +104,7 @@ class CommentSectionState extends State<CommentSection> {
 
                     return CommentItem(
                         postCommentData: comment,
-                        onReplyPressed: (p0) {},
+                        onReplyPressed: () {},
                         refreshCallback: () {
                           commentCount--;
                           setState(() {});

@@ -67,6 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //2. 유저 데이터가 반환되면 (로그인 상태이면)
       else {
         //2-1. 유저 데이터 저장 후 메인 화면으로 이동
+
         context.read<UserDataProvider>().userData = currentUser;
 
         //2-2. 알림 토큰 최신화

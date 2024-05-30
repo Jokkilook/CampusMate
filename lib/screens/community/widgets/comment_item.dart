@@ -1,9 +1,11 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/models/post_comment_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/screens/community/widgets/reply_item.dart';
+import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:campusmate/widgets/yest_no_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,12 +14,10 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../models/user_data.dart';
-import '../../profile/stranger_profile_screen.dart';
 
 class CommentItem extends StatefulWidget {
   final PostCommentData postCommentData;
-
-  final Function(String) onReplyPressed;
+  final Function() onReplyPressed;
   final VoidCallback refreshCallback;
   final String postAuthorUid;
   final UserData userData;
@@ -36,6 +36,7 @@ class CommentItem extends StatefulWidget {
 }
 
 class _CommentItemState extends State<CommentItem> {
+  PostService postService = PostService();
   // 답글 리스트
   Widget _buildCommentReplies() {
     return FutureBuilder<QuerySnapshot>(
@@ -94,39 +95,13 @@ class _CommentItemState extends State<CommentItem> {
     if (userLiked) {
       // 이미 좋아요를 누른 경우
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          elevation: 0,
-          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
-          shape: ContinuousRectangleBorder(
-              borderRadius: BorderRadius.circular(10)),
-          content: const Text('이미 좋아요를 눌렀습니다.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('확인'),
-            ),
-          ],
-        ),
-      );
+          context: context,
+          builder: (context) => ConfirmDialog(content: "이미 좋아요를 눌렀습니다."));
     } else if (userDisliked) {
       // 이미 싫어요를 누른 경우
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          elevation: 0,
-          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
-          shape: ContinuousRectangleBorder(
-              borderRadius: BorderRadius.circular(10)),
-          content: const Text('이미 싫어요를 눌렀습니다.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('확인'),
-            ),
-          ],
-        ),
-      );
+          context: context,
+          builder: (context) => ConfirmDialog(content: "이미 싫어요를 눌렀습니다."));
     } else {
       if (isLike) {
         await FirebaseFirestore.instance
@@ -159,7 +134,7 @@ class _CommentItemState extends State<CommentItem> {
     }
   }
 
-  // 삭제 or 신고
+  // 삭제 or 신고 다이얼로그
   void _showAlertDialog(BuildContext context) {
     String currentUserUid = context.read<UserDataProvider>().userData.uid ?? '';
     String authorUid = widget.postCommentData.authorUid.toString();
@@ -172,66 +147,24 @@ class _CommentItemState extends State<CommentItem> {
             content: currentUserUid == authorUid
                 ? '댓글을 삭제하시겠습니까?'
                 : '$authorName님을 신고하시겠습니까?',
-            onYes: () {
+            onYes: () async {
               context.pop();
-              currentUserUid == authorUid
-                  ? _deleteComment(context)
-                  : showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return ConfirmDialog(
-                          content: '신고가 접수되었습니다.',
-                        );
-                      },
+              if (currentUserUid == authorUid) {
+                await postService.deleteCommentAndReply(widget.postCommentData);
+                widget.refreshCallback();
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ConfirmDialog(
+                      content: '신고가 접수되었습니다.',
                     );
+                  },
+                );
+              }
             });
       },
     );
-  }
-
-  Future<void> _deleteComment(BuildContext context) async {
-    try {
-      // 댓글의 하위 답글 가져오기
-      QuerySnapshot replySnapshot = await FirebaseFirestore.instance
-          .collection(
-              "schools/${widget.postCommentData.school}/${widget.postCommentData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-          .doc(widget.postCommentData.postId)
-          .collection('comments')
-          .doc(widget.postCommentData.commentId)
-          .collection('replies')
-          .get();
-
-      // 댓글과 답글 삭제
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-      batch.delete(FirebaseFirestore.instance
-          .collection(
-              "schools/${widget.postCommentData.school}/${widget.postCommentData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-          .doc(widget.postCommentData.postId)
-          .collection('comments')
-          .doc(widget.postCommentData.commentId));
-
-      for (var doc in replySnapshot.docs) {
-        batch.delete(doc.reference);
-      }
-
-      // commentCount 업데이트
-      int repliesCount = replySnapshot.docs.length;
-      DocumentReference postRef = FirebaseFirestore.instance
-          .collection(
-              "schools/${widget.postCommentData.school}/${widget.postCommentData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
-          .doc(widget.postCommentData.postId);
-
-      batch.update(postRef, {
-        'commentCount': FieldValue.increment(-(1 + repliesCount)),
-      });
-
-      await batch.commit();
-
-      // 화면 새로 고침 콜백 호출
-      widget.refreshCallback();
-    } catch (e) {
-      debugPrint('삭제 실패: $e');
-    }
   }
 
   @override
@@ -261,23 +194,17 @@ class _CommentItemState extends State<CommentItem> {
                   if (widget.postCommentData.boardType == 'General') {
                     // 작성자가 현재 유저일 때
                     if (widget.postCommentData.authorUid == currentUserUid) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StrangerProfilScreen(
-                                uid: widget.postCommentData.authorUid
-                                    .toString()),
-                          ));
+                      context.pushNamed(Screen.otherProfile, pathParameters: {
+                        "uid": widget.postCommentData.authorUid ?? "",
+                        "readOnly": "true"
+                      });
                     }
                     // 작성자가 다른 유저일 때
                     else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StrangerProfilScreen(
-                                uid: widget.postCommentData.authorUid
-                                    .toString()),
-                          ));
+                      context.pushNamed(Screen.otherProfile, pathParameters: {
+                        "uid": widget.postCommentData.authorUid ?? "",
+                        "readOnly": "true"
+                      });
                     }
                   }
                 },
@@ -332,27 +259,21 @@ class _CommentItemState extends State<CommentItem> {
                               // 작성자가 현재 유저일 때
                               if (widget.postCommentData.authorUid ==
                                   currentUserUid) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          StrangerProfilScreen(
-                                              uid: widget
-                                                  .postCommentData.authorUid
-                                                  .toString()),
-                                    ));
+                                context.pushNamed(Screen.otherProfile,
+                                    pathParameters: {
+                                      "uid": widget.postCommentData.authorUid ??
+                                          "",
+                                      "readOnly": "true"
+                                    });
                               }
                               // 작성자가 다른 유저일 때
                               else {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          StrangerProfilScreen(
-                                              uid: widget
-                                                  .postCommentData.authorUid
-                                                  .toString()),
-                                    ));
+                                context.pushNamed(Screen.otherProfile,
+                                    pathParameters: {
+                                      "uid": widget.postCommentData.authorUid ??
+                                          "",
+                                      "readOnly": "true"
+                                    });
                               }
                             }
                           },
@@ -426,8 +347,7 @@ class _CommentItemState extends State<CommentItem> {
                                 color: Colors.grey,
                                 size: 16,
                               ),
-                              onTap: () => widget.onReplyPressed(
-                                  widget.postCommentData.commentId.toString()),
+                              onTap: () => widget.onReplyPressed(),
                             ),
                             const SizedBox(width: 20),
                             // 삭제 or 신고 버튼

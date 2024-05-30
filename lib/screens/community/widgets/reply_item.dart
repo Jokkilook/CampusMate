@@ -1,5 +1,6 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';
@@ -10,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../profile/profile_screen.dart';
-import '../../profile/stranger_profile_screen.dart';
 
 //ignore: must_be_immutable
 class ReplyItem extends StatefulWidget {
@@ -42,39 +41,13 @@ class _ReplyItemState extends State<ReplyItem> {
     if (userLiked) {
       // 이미 좋아요를 누른 경우
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          elevation: 0,
-          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
-          shape: ContinuousRectangleBorder(
-              borderRadius: BorderRadius.circular(10)),
-          content: const Text('이미 좋아요를 눌렀습니다.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('확인'),
-            ),
-          ],
-        ),
-      );
+          context: context,
+          builder: (context) => ConfirmDialog(content: "이미 좋아요를 눌렀습니다."));
     } else if (userDisliked) {
       // 이미 싫어요를 누른 경우
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          elevation: 0,
-          actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
-          shape: ContinuousRectangleBorder(
-              borderRadius: BorderRadius.circular(10)),
-          content: const Text('이미 싫어요를 눌렀습니다.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('확인'),
-            ),
-          ],
-        ),
-      );
+          context: context,
+          builder: (context) => ConfirmDialog(content: "이미 싫어요를 눌렀습니다."));
     } else {
       if (isLike) {
         await FirebaseFirestore.instance
@@ -126,15 +99,17 @@ class _ReplyItemState extends State<ReplyItem> {
               : '$authorName님을 신고하시겠습니까?',
           onYes: () {
             context.pop();
-            currentUserUid == authorUid
-                ? _deleteReply(context)
-                : showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      Navigator.pop(context);
-                      return ConfirmDialog(content: '신고가 접수되었습니다.');
-                    },
-                  );
+            if (currentUserUid == authorUid) {
+              _deleteReply(context);
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  context.pop();
+                  return ConfirmDialog(content: '신고가 접수되었습니다.');
+                },
+              );
+            }
           },
         );
       },
@@ -185,6 +160,8 @@ class _ReplyItemState extends State<ReplyItem> {
     }
   }
 
+  void openProfile(String userUID) {}
+
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
@@ -211,20 +188,17 @@ class _ReplyItemState extends State<ReplyItem> {
               if (widget.postReplyData.boardType == 'General') {
                 // 작성자가 현재 유저일 때
                 if (widget.postReplyData.authorUid == currentUserUid) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProfileScreen(),
-                      ));
+                  context.pushNamed(Screen.otherProfile, pathParameters: {
+                    "uid": widget.postReplyData.authorUid ?? "",
+                    "readOnly": "true"
+                  });
                 }
                 // 작성자가 다른 유저일 때
                 else {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StrangerProfilScreen(
-                            uid: widget.postReplyData.authorUid.toString()),
-                      ));
+                  context.pushNamed(Screen.otherProfile, pathParameters: {
+                    "uid": widget.postReplyData.authorUid ?? "",
+                    "readOnly": "true"
+                  });
                 }
               }
             },
@@ -280,24 +254,21 @@ class _ReplyItemState extends State<ReplyItem> {
                               // 작성자가 현재 유저일 때
                               if (widget.postReplyData.authorUid ==
                                   currentUserUid) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProfileScreen(),
-                                    ));
+                                context.pushNamed(Screen.otherProfile,
+                                    pathParameters: {
+                                      "uid":
+                                          widget.postReplyData.authorUid ?? "",
+                                      "readOnly": "true"
+                                    });
                               }
                               // 작성자가 다른 유저일 때
                               else {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          StrangerProfilScreen(
-                                              uid: widget
-                                                  .postReplyData.authorUid
-                                                  .toString()),
-                                    ));
+                                context.pushNamed(Screen.otherProfile,
+                                    pathParameters: {
+                                      "uid":
+                                          widget.postReplyData.authorUid ?? "",
+                                      "readOnly": "true"
+                                    });
                               }
                             }
                           },
