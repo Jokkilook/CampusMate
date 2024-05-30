@@ -103,14 +103,21 @@ class CommentSectionState extends State<CommentSection> {
                     PostCommentData comment = comments[index];
 
                     return CommentItem(
-                        postCommentData: comment,
-                        onReplyPressed: () {},
-                        refreshCallback: () {
-                          commentCount--;
-                          setState(() {});
-                        },
-                        postAuthorUid: comment.authorUid ?? "",
-                        userData: userData);
+                      postCommentData: comment,
+                      onReplyPressed: () {},
+                      postCallback: () {
+                        commentCount++;
+                        setState(() {});
+                      },
+                      deleteCallback: () {
+                        commentCount =
+                            commentCount - (1 + (comment.replyCount ?? 0));
+                        setState(() {});
+                      },
+                      postAuthorUid: comment.authorUid ?? "",
+                      userData: userData,
+                      postData: widget.postData,
+                    );
                   },
                 );
               }

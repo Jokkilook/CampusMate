@@ -197,6 +197,9 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
       GoRoute(
         name: Screen.post,
         path: "${Screen.post}=:postId",
+        onExit: (context, state) {
+          return true;
+        },
         builder: (context, state) {
           final String postId = state.pathParameters["postId"] ?? "";
           return PostScreen(
@@ -210,6 +213,9 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
       GoRoute(
         name: Screen.anonymousPost,
         path: "${Screen.anonymousPost}=:postId",
+        onExit: (context, state) {
+          return true;
+        },
         builder: (context, state) {
           final String postId = state.pathParameters["postId"] ?? "";
           return PostScreen(

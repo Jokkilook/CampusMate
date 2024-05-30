@@ -452,7 +452,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                             isDark ? AppColors.darkTitle : AppColors.lightTitle,
                       )),
                     ),
-                    maxLength: 20,
+                    maxLength: 10,
                     controller: nameController,
                     onTapOutside: (event) {
                       FocusManager.instance.primaryFocus?.unfocus();

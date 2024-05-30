@@ -262,6 +262,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             },
                           ),
                         ),
+                        //드로어 내용
                         IntrinsicHeight(
                           child: Row(
                             mainAxisSize: MainAxisSize.max,

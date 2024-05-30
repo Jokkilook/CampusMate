@@ -2,6 +2,7 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/models/post_comment_data.dart';
+import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/screens/community/widgets/reply_item.dart';
@@ -9,6 +10,7 @@ import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:campusmate/widgets/yest_no_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -18,18 +20,21 @@ import '../../../models/user_data.dart';
 class CommentItem extends StatefulWidget {
   final PostCommentData postCommentData;
   final Function() onReplyPressed;
-  final VoidCallback refreshCallback;
+  final VoidCallback postCallback;
+  final VoidCallback deleteCallback;
   final String postAuthorUid;
   final UserData userData;
+  final PostData postData;
 
-  const CommentItem({
-    super.key,
-    required this.postCommentData,
-    required this.onReplyPressed,
-    required this.refreshCallback,
-    required this.postAuthorUid,
-    required this.userData,
-  });
+  const CommentItem(
+      {super.key,
+      required this.postCommentData,
+      required this.onReplyPressed,
+      required this.postCallback,
+      required this.deleteCallback,
+      required this.postAuthorUid,
+      required this.userData,
+      required this.postData});
 
   @override
   State<CommentItem> createState() => _CommentItemState();
@@ -37,6 +42,8 @@ class CommentItem extends StatefulWidget {
 
 class _CommentItemState extends State<CommentItem> {
   PostService postService = PostService();
+  TextEditingController replycontroller = TextEditingController();
+
   // 답글 리스트
   Widget _buildCommentReplies() {
     return FutureBuilder<QuerySnapshot>(
@@ -71,7 +78,8 @@ class _CommentItemState extends State<CommentItem> {
                 ReplyItem(
                   postAuthorUid: widget.postAuthorUid,
                   postReplyData: reply,
-                  refreshCallback: widget.refreshCallback,
+                  postCallback: widget.postCallback,
+                  deleteCallback: widget.deleteCallback,
                 ),
               );
             }
@@ -151,7 +159,7 @@ class _CommentItemState extends State<CommentItem> {
               context.pop();
               if (currentUserUid == authorUid) {
                 await postService.deleteCommentAndReply(widget.postCommentData);
-                widget.refreshCallback();
+                widget.deleteCallback();
               } else {
                 showDialog(
                   context: context,
@@ -169,6 +177,7 @@ class _CommentItemState extends State<CommentItem> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     DateTime now = DateTime.now();
     String formattedTime =
         formatTimeStamp(widget.postCommentData.timestamp!, now);
@@ -347,7 +356,91 @@ class _CommentItemState extends State<CommentItem> {
                                 color: Colors.grey,
                                 size: 16,
                               ),
-                              onTap: () => widget.onReplyPressed(),
+                              onTap: () {
+                                //스낵바로 답글 입력창 출력
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    padding: const EdgeInsets.all(0),
+                                    elevation: 0,
+                                    backgroundColor: isDark
+                                        ? AppColors.darkInput
+                                        : AppColors.lightInput,
+                                    content: Container(
+                                      padding: const EdgeInsets.all(0),
+                                      height: 50,
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: InkWell(
+                                              onTap: () {
+                                                ScaffoldMessenger.of(context)
+                                                    .clearSnackBars();
+                                              },
+                                              child: Icon(
+                                                Icons.close,
+                                                color: isDark
+                                                    ? AppColors.darkHint
+                                                    : AppColors.lightHint,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                              child: TextField(
+                                            onTapOutside: (event) {
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                            },
+                                            controller: replycontroller,
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                            minLines: 1,
+                                            maxLines: 4,
+                                            decoration: InputDecoration(
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8),
+                                                hintText:
+                                                    '${widget.postCommentData.authorName}님에게 답글을 작성합니다.',
+                                                border: InputBorder.none),
+                                          )),
+                                          TextButton(
+                                            onPressed: () async {
+                                              if (replycontroller.value.text ==
+                                                  "") return;
+
+                                              String content =
+                                                  replycontroller.value.text;
+
+                                              await postService.postReply(
+                                                  targetCommentId: widget
+                                                          .postCommentData
+                                                          .commentId ??
+                                                      "",
+                                                  userData: widget.userData,
+                                                  postData: widget.postData,
+                                                  content: content);
+
+                                              widget.postCallback();
+                                              replycontroller.clear();
+                                              ScaffoldMessenger.of(context)
+                                                  .clearSnackBars();
+
+                                              setState(() {});
+                                            },
+                                            style: const ButtonStyle(
+                                                overlayColor:
+                                                    MaterialStatePropertyAll(
+                                                        Colors.transparent)),
+                                            child: const Text("등록"),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    duration: const Duration(days: 1),
+                                  ),
+                                );
+                              },
                             ),
                             const SizedBox(width: 20),
                             // 삭제 or 신고 버튼

@@ -11,6 +11,7 @@ class PostCommentData {
   String? profileImageUrl;
   String? boardType;
   int? writerIndex;
+  int? replyCount;
   List<dynamic>? likers;
   List<dynamic>? dislikers;
 
@@ -25,6 +26,7 @@ class PostCommentData {
     this.profileImageUrl,
     this.boardType,
     this.writerIndex,
+    this.replyCount = 0,
     this.likers,
     this.dislikers,
   }) {
@@ -43,6 +45,7 @@ class PostCommentData {
     profileImageUrl = json['profileImageUrl'];
     boardType = json['boardType'];
     writerIndex = json['writerIndex'];
+    replyCount = json['replyCount'];
     likers = json['likers'] ?? [];
     dislikers = json['dislikers'] ?? [];
   }
@@ -59,6 +62,7 @@ class PostCommentData {
       'profileImageUrl': profileImageUrl,
       'boardType': boardType,
       'writerIndex': writerIndex,
+      'replyCount': replyCount,
       'likers': likers,
       'dislikers': dislikers,
     };

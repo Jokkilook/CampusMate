@@ -55,18 +55,18 @@ class _MoreScreenState extends State<MoreScreen> {
               await AuthService().signOut(context);
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.code),
-            title: const Text("개발자 메뉴"),
-            onTap: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ScreenList(),
-                ),
-              );
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.code),
+          //   title: const Text("개발자 메뉴"),
+          //   onTap: () async {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => const ScreenList(),
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
     );

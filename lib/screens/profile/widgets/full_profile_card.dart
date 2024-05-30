@@ -92,19 +92,10 @@ class FullProfileCard extends StatelessWidget {
                       style: TextStyle(
                         color:
                             isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                        //fontSize: 30,
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // Text(
-                    //   "${userData.name}",
-                    //   style: TextStyle(
-                    //     color:
-                    //         isDark ? AppColors.darkTitle : AppColors.lightTitle,
-                    //     fontSize: 30,
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -243,11 +234,17 @@ class FullProfileCard extends StatelessWidget {
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) => Dialog(
+                                                    shape:
+                                                        ContinuousRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20)),
                                                     child: Padding(
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 40,
-                                                          vertical: 40),
+                                                          vertical: 20),
                                                       child: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,

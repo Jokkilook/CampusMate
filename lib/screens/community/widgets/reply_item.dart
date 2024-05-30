@@ -3,6 +3,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
+import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:campusmate/widgets/yest_no_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,13 +16,14 @@ import 'package:provider/provider.dart';
 //ignore: must_be_immutable
 class ReplyItem extends StatefulWidget {
   PostReplyData postReplyData;
-
-  final VoidCallback refreshCallback;
+  final VoidCallback postCallback;
+  final VoidCallback deleteCallback;
   final String postAuthorUid;
 
   ReplyItem({
     required this.postReplyData,
-    required this.refreshCallback,
+    required this.postCallback,
+    required this.deleteCallback,
     required this.postAuthorUid,
     super.key,
   });
@@ -97,10 +99,11 @@ class _ReplyItemState extends State<ReplyItem> {
           content: currentUserUid == authorUid
               ? '답글을 삭제하시겠습니까?'
               : '$authorName님을 신고하시겠습니까?',
-          onYes: () {
+          onYes: () async {
             context.pop();
             if (currentUserUid == authorUid) {
-              _deleteReply(context);
+              await PostService().deleteReply(widget.postReplyData);
+              widget.deleteCallback();
             } else {
               showDialog(
                 context: context,
@@ -154,7 +157,7 @@ class _ReplyItemState extends State<ReplyItem> {
       Navigator.pop(context);
 
       // 화면 새로 고침 콜백 호출
-      widget.refreshCallback();
+      widget.deleteCallback();
     } catch (e) {
       debugPrint('삭제 실패: $e');
     }

@@ -274,6 +274,12 @@ class PostService {
         .doc(replyId)
         .set(reply.toJson());
 
+    //댓글의 답글 수 업데이트
+    await postRef
+        .collection("comments")
+        .doc(targetCommentId)
+        .update({"replyCount": FieldValue.increment(1)});
+
     //표시할 댓글 수 수정 (+1)
     await postRef.update({'commentCount': FieldValue.increment(1)});
   }
@@ -308,6 +314,41 @@ class PostService {
       'commentCount': FieldValue.increment(-(1 + repliesCount)),
     });
 
+    await batch.commit();
+  }
+
+  ///답글 삭제
+  Future deleteReply(PostReplyData replyData) async {
+    // Firestore batch 초기화
+    WriteBatch batch = firestore.batch();
+
+    // 댓글 컬렉션 참조
+    CollectionReference commentsCollection = firestore
+        .collection(
+            "schools/${replyData.school}/${replyData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
+        .doc(replyData.postId)
+        .collection('comments');
+
+    // 답글 문서 참조
+    DocumentReference replyDocRef = commentsCollection
+        .doc(replyData.commentId)
+        .collection('replies')
+        .doc(replyData.replyId);
+
+    // 답글 삭제를 배치에 추가
+    batch.delete(replyDocRef);
+
+    // 게시글의 commentCount 감소를 배치에 추가
+    DocumentReference postDocRef = firestore
+        .collection(
+            "schools/${replyData.school}/${replyData.boardType == 'General' ? 'generalPosts' : 'anonymousPosts'}")
+        .doc(replyData.postId);
+
+    batch.update(postDocRef, {
+      'commentCount': FieldValue.increment(-1),
+    });
+
+    // 배치 커밋
     await batch.commit();
   }
 }
