@@ -139,7 +139,7 @@ class NotiService {
             //채팅방 데이터 불러오기
             var data = await FirebaseFirestore.instance
                 .collection("schools/${json["school"]}/chats")
-                .doc(json["roomId"])
+                .doc(json["id"])
                 .get();
             ChatRoomData roomData =
                 ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
@@ -155,7 +155,7 @@ class NotiService {
             //그룹 채팅방 데이터 불러오기
             var data = await FirebaseFirestore.instance
                 .collection("schools/${json["school"]}/groupChats")
-                .doc(json["roomId"])
+                .doc(json["id"])
                 .get();
 
             GroupChatRoomData roomData =
@@ -172,7 +172,7 @@ class NotiService {
             //일반 게시글 화면으로 이동
             router.pushNamed(
               Screen.post,
-              pathParameters: {"postId": json["postId"] ?? ""},
+              pathParameters: {"id": json["postId"] ?? ""},
             );
             return;
           }
@@ -181,7 +181,7 @@ class NotiService {
             //익명 게시글 화면으로 이동
             router.pushNamed(
               Screen.anonymousPost,
-              pathParameters: {"postId": json["postId"] ?? ""},
+              pathParameters: {"id": json["postId"] ?? ""},
             );
             return;
           }

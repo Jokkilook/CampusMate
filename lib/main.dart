@@ -1,6 +1,7 @@
 import 'package:campusmate/app_theme.dart';
 import 'package:campusmate/firebase_options.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/notification_provider.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/provider/theme_provider.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
@@ -38,6 +39,7 @@ void main() async {
   //백그라운드 알림 수신 시
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  NotificationProvider.init();
   runApp(
     MultiProvider(
       providers: [
@@ -47,7 +49,10 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) =>
               ThemeProvider(currentThemeMode: currentThemeMode),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (context) => NotificationProvider(),
+        ),
       ],
       child: const MyApp(),
     ),

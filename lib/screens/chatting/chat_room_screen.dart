@@ -833,8 +833,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         NotiService.sendNotiToUser(
                                           data: {
                                             "type": "groupChat",
-                                            "roomId":
-                                                widget.chatRoomData.roomId,
+                                            "id": widget.chatRoomData.roomId,
                                             "school": userData.school ?? ""
                                           },
                                           targetUID: user?.uid ?? "",
@@ -847,7 +846,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                       NotiService.sendNotiToUser(
                                         data: {
                                           "type": "chat",
-                                          "roomId": widget.chatRoomData.roomId,
+                                          "id": widget.chatRoomData.roomId,
                                           "school": userData.school ?? ""
                                         },
                                         targetUID: chatUser?.uid ?? "",

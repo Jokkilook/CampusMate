@@ -400,7 +400,7 @@ class _PostScreenState extends State<PostScreen> {
                             "type": widget.isAnonymous
                                 ? "anonyPost"
                                 : "generalPost",
-                            "postId": postData.postId,
+                            "id": postData.postId,
                             "school": userData.school ?? ""
                           },
                         );

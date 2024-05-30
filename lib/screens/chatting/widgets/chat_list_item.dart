@@ -3,6 +3,7 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/provider/notification_provider.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -330,7 +331,9 @@ class ChatListItem extends StatelessWidget {
                     child: Center(
                       child: IconButton(
                           padding: const EdgeInsets.all(0),
-                          onPressed: () {},
+                          onPressed: () {
+                            List<String> list = NotificationProvider.getList();
+                          },
                           icon: Icon(Icons.notifications,
                               size: 20,
                               color: isDark

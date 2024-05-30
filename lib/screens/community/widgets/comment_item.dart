@@ -446,7 +446,7 @@ class _CommentItemState extends State<CommentItem> {
                                                             "General"
                                                         ? "generalPost"
                                                         : "anonyPost",
-                                                    "postId":
+                                                    "id":
                                                         widget.postData.postId,
                                                     "school": widget
                                                             .userData.school ??
