@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/router/app_router.dart';
@@ -47,15 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        AutoSizeText(
                           "학교에서 친구찾기",
+                          maxLines: 1,
                           style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF838383)),
                         ),
-                        Text(
+                        AutoSizeText(
                           "캠퍼스 메이트",
+                          maxLines: 1,
                           style: TextStyle(
                               fontSize: 50,
                               fontWeight: FontWeight.bold,
@@ -185,17 +188,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     ElevatedButton(
-                      child: isLoading
-                          ? CircleLoading(
-                              color: Colors.green[900]!,
-                            )
-                          : const Text(
-                              "로그인",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.buttonText,
-                                  fontSize: 18),
-                            ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.button,
                         minimumSize: const Size(1000, 50),
@@ -284,6 +276,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                         setState(() {});
                       },
+                      child: isLoading
+                          ? CircleLoading(
+                              color: Colors.green[900]!,
+                            )
+                          : const Text(
+                              "로그인",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.buttonText,
+                                  fontSize: 18),
+                            ),
                     ),
                     const SizedBox(height: 15),
                     TextButton(

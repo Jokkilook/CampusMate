@@ -106,7 +106,6 @@ class _CommunityScreenState extends State<CommunityScreen>
         floatingActionButton: FloatingActionButton(
           heroTag: "addPost",
           onPressed: () {
-            debugPrint('index: ${_tabController.index}');
             context
                 .pushNamed(
                   Screen.addPost,

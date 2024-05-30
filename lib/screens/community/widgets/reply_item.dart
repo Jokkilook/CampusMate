@@ -231,12 +231,19 @@ class _ReplyItemState extends State<ReplyItem> {
                               }
                             }
                           },
-                          child: Text(
-                            widget.postReplyData.boardType == 'General'
-                                ? widget.postReplyData.authorName.toString()
-                                : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
-                            style: const TextStyle(
-                              fontSize: 16,
+                          child: Container(
+                            constraints: BoxConstraints(
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.2),
+                            child: Text(
+                              widget.postReplyData.boardType == 'General'
+                                  ? widget.postReplyData.authorName.toString()
+                                  : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         ),

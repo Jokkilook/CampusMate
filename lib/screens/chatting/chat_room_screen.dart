@@ -829,26 +829,28 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     if (widget.isGroup) {
                                       for (var user in groupChatUsers) {
                                         if (user?.uid == userData.uid) continue;
-                                        NotiService.sendNoti(
+                                        //그룹 채팅이면 나 이외 모두에게 알림
+                                        NotiService.sendNotiToUser(
                                           data: {
                                             "type": "groupChat",
                                             "roomId":
                                                 widget.chatRoomData.roomId,
                                             "school": userData.school ?? ""
                                           },
-                                          targetToken: user?.notiToken ?? "",
+                                          targetUID: user?.uid ?? "",
                                           title: userData.name ?? "",
                                           content: content,
                                         );
                                       }
                                     } else {
-                                      NotiService.sendNoti(
+                                      //1:1이면 상대방에게 알림
+                                      NotiService.sendNotiToUser(
                                         data: {
                                           "type": "chat",
                                           "roomId": widget.chatRoomData.roomId,
                                           "school": userData.school ?? ""
                                         },
-                                        targetToken: chatUser?.notiToken ?? "",
+                                        targetUID: chatUser?.uid ?? "",
                                         title: userData.name ?? "",
                                         content: content,
                                       );

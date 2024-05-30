@@ -29,26 +29,20 @@ class NotiService {
 
       //1:1 채팅 알림일 때,
       if (message.data["type"] == "chat") {
-        var data = await FirebaseFirestore.instance
-            .collection("schools/${message.data["school"]}/chats")
-            .doc(message.data["roomId"])
-            .get();
-
-        //타임스탬프가 json인코딩하는데 문제
-        var roomData =
-            ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
-        payloadString = jsonEncode(roomData.toJson());
+        payloadString = jsonEncode(message.data);
       }
       //그룹 채팅 알림일 때,
       if (message.data["type"] == "groupChat") {
-        var data = await FirebaseFirestore.instance
-            .collection("schools/${message.data["school"]}/groupChats")
-            .doc(message.data["roomId"])
-            .get();
-
-        var roomData =
-            GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
-        payloadString = jsonEncode(roomData.toJson());
+        payloadString = jsonEncode(message.data);
+      }
+      //일반 게시판 댓글, 답글 알림일 때,
+      if (message.data["type"] == "generalPost") {
+        payloadString =
+            jsonEncode({"type": "general", "postId": message.data["postId"]});
+      }
+      //익명 게시판 댓글, 답글 알림일 때,
+      if (message.data["type"] == "anonyPost") {
+        jsonEncode({"type": "anonymous", "postId": message.data["postId"]});
       }
 
       showNoti(
@@ -129,17 +123,71 @@ class NotiService {
             requestCriticalPermission: false);
 
     InitializationSettings initializationSettings = InitializationSettings(
-        android: androidInitializationSettings, iOS: iosInitializationSettings);
+      android: androidInitializationSettings,
+      iOS: iosInitializationSettings,
+    );
 
+    //포그라운드 알림 클릭 시 행동
     await notiPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (details) {
-        String payloadString = details.payload!;
-        ChatRoomData roomData =
-            ChatRoomData.fromJson(jsonDecode(payloadString));
+      onDidReceiveNotificationResponse: (NotificationResponse details) async {
+        try {
+          String payloadString = details.payload!;
+          Map<String, dynamic> json = jsonDecode(payloadString);
+          //1:1 채팅방 알림이면
+          if (json["type"] == "chat") {
+            //채팅방 데이터 불러오기
+            var data = await FirebaseFirestore.instance
+                .collection("schools/${json["school"]}/chats")
+                .doc(json["roomId"])
+                .get();
+            ChatRoomData roomData =
+                ChatRoomData.fromJson(data.data() as Map<String, dynamic>);
 
-        router.pushNamed(Screen.chatRoom,
-            pathParameters: {"isGroup": "one"}, extra: roomData);
+            //1:1 채팅방 화면으로 이동
+            router.pushNamed(Screen.chatRoom,
+                pathParameters: {"isGroup": "one"}, extra: roomData);
+
+            return;
+          }
+          //그룹 채팅방 알림이면
+          if (json["type"] == "groupChat") {
+            //그룹 채팅방 데이터 불러오기
+            var data = await FirebaseFirestore.instance
+                .collection("schools/${json["school"]}/groupChats")
+                .doc(json["roomId"])
+                .get();
+
+            GroupChatRoomData roomData =
+                GroupChatRoomData.fromJson(data.data() as Map<String, dynamic>);
+
+            //그룹 채팅방 화면으로 이동
+            router.pushNamed(Screen.chatRoom,
+                pathParameters: {"isGroup": "group"}, extra: roomData);
+
+            return;
+          }
+          //일반 게시글 관련 알림이면
+          if (json["type"] == "general") {
+            //일반 게시글 화면으로 이동
+            router.pushNamed(
+              Screen.post,
+              pathParameters: {"postId": json["postId"] ?? ""},
+            );
+            return;
+          }
+          //익명 게시글 관련 알림이면
+          if (json["type"] == "anonymous") {
+            //익명 게시글 화면으로 이동
+            router.pushNamed(
+              Screen.anonymousPost,
+              pathParameters: {"postId": json["postId"] ?? ""},
+            );
+            return;
+          }
+        } catch (e) {
+          debugPrint("${e.hashCode}: $e");
+        }
       },
     );
   }
@@ -160,28 +208,34 @@ class NotiService {
     }
   }
 
+  ///로컬 알림 보내기
   static Future showNoti(
       {required String title,
       required String content,
       String payload = ""}) async {
     const AndroidNotificationDetails androidNotiDetails =
-        AndroidNotificationDetails("channel id", "channel name",
-            channelDescription: "channel description",
-            importance: Importance.max,
-            priority: Priority.max,
-            showWhen: false);
+        AndroidNotificationDetails(
+      "channel id",
+      "channel name",
+      channelDescription: "channel description",
+      importance: Importance.max,
+      priority: Priority.max,
+      showWhen: false,
+      actions: [AndroidNotificationAction("1", "열기", showsUserInterface: true)],
+    );
 
     const NotificationDetails notiDetails = NotificationDetails(
         android: androidNotiDetails,
         iOS: DarwinNotificationDetails(badgeNumber: 1));
 
-    await notiPlugin.show(0, title, content, notiDetails, payload: "Asd");
+    await notiPlugin.show(0, title, content, notiDetails, payload: payload);
   }
 
   ///푸쉬 알림 보내는 함수<br>
   ///required [targetToken] : 받을 유저의 기기 토큰<br>
   ///required [title] : 알림의 제목<br>
-  ///required [content] : 알림의 내용
+  ///required [content] : 알림의 내용<br>
+  //////required [data] : 같이 전송할 데이터 Map<String, dynamic>
   static Future sendNoti({
     required String targetToken,
     required String title,
@@ -220,6 +274,11 @@ class NotiService {
         "RESULT: ${response.statusCode}: ${response.reasonPhrase} ${response.body}");
   }
 
+  ///UID로 알림 보내기
+  //////required [targetUID] : 받을 유저의 UID<br>
+  ///required [title] : 알림의 제목<br>
+  ///required [content] : 알림의 내용<br>
+  //////required [data] : 같이 전송할 데이터 Map<String, dynamic>
   static Future sendNotiToUser(
       {required String targetUID,
       required String title,
