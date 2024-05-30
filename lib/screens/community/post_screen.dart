@@ -3,6 +3,7 @@ import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/comment_section.dart';
 import 'package:campusmate/screens/community/widgets/comment_input_bar.dart';
 import 'package:campusmate/screens/community/widgets/like_dislike_panel.dart';
+import 'package:campusmate/services/noti_service.dart';
 import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
@@ -187,7 +188,7 @@ class _PostScreenState extends State<PostScreen> {
                                 Text(
                                   postData.title ?? '',
                                   style: const TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 24,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -386,6 +387,24 @@ class _PostScreenState extends State<PostScreen> {
 
                       _commentController.clear();
                       key.currentState?.refresh();
+
+                      //게시글 작성자에게 댓글 알림 (내가 작성자면 보내지 않음)
+                      if (userData.uid != postData.authorUid) {
+                        NotiService.sendNotiToUser(
+                          targetUID: postData.authorUid ?? "",
+                          title: widget.isAnonymous
+                              ? "댓글이 달렸습니다."
+                              : "${userData.name}님의 댓글",
+                          content: content,
+                          data: {
+                            "type": widget.isAnonymous
+                                ? "anonyPost"
+                                : "generalPost",
+                            "postId": postData.postId,
+                            "school": userData.school ?? ""
+                          },
+                        );
+                      }
                     },
                   ));
             }

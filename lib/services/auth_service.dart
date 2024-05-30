@@ -226,4 +226,14 @@ class AuthService {
           (route) => false);
     });
   }
+
+  ///유저 Notification Token 값 반환
+  Future<String> getUserNotiToken(String userUID) async {
+    String token = "";
+
+    UserData userData = await getUserData(uid: userUID);
+    token = userData.notiToken ?? "";
+
+    return token;
+  }
 }

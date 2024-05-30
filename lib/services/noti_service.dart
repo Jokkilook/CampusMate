@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/router/app_router.dart';
+import 'package:campusmate/screens/community/models/post_data.dart';
+import 'package:campusmate/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ class NotiService {
   NotiService._();
 
   static FirebaseMessaging fireMessage = FirebaseMessaging.instance;
+  static AuthService authService = AuthService();
 
   static FlutterLocalNotificationsPlugin notiPlugin =
       FlutterLocalNotificationsPlugin();
@@ -83,6 +86,36 @@ class NotiService {
         //채팅방 화면으로 이동
         router.pushNamed(Screen.chatRoom,
             pathParameters: {"isGroup": "group"}, extra: roomData);
+      }
+      //일반 게시판 댓글, 답글 알림일 때,
+      if (message.data["type"] == "generalPost") {
+        var data = await FirebaseFirestore.instance
+            .collection("schools/${message.data["school"]}/generalPosts")
+            .doc(message.data["postId"])
+            .get();
+
+        var postData = PostData.fromJson(data.data() as Map<String, dynamic>);
+
+        //일반 게시글 화면으로 이동
+        router.pushNamed(
+          Screen.post,
+          pathParameters: {"postId": postData.postId ?? ""},
+        );
+      }
+      //익명 게시판 댓글, 답글 알림일 때,
+      if (message.data["type"] == "anonyPost") {
+        var data = await FirebaseFirestore.instance
+            .collection("schools/${message.data["school"]}/anonymousPosts")
+            .doc(message.data["postId"])
+            .get();
+
+        var postData = PostData.fromJson(data.data() as Map<String, dynamic>);
+
+        //일반 게시글 화면으로 이동
+        router.pushNamed(
+          Screen.anonymousPost,
+          pathParameters: {"postId": postData.postId ?? ""},
+        );
       }
     });
 
@@ -185,5 +218,16 @@ class NotiService {
 
     debugPrint(
         "RESULT: ${response.statusCode}: ${response.reasonPhrase} ${response.body}");
+  }
+
+  static Future sendNotiToUser(
+      {required String targetUID,
+      required String title,
+      required String content,
+      Map<String, dynamic>? data}) async {
+    String token = await authService.getUserNotiToken(targetUID);
+
+    await sendNoti(
+        targetToken: token, content: content, title: title, data: data);
   }
 }

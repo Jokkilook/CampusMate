@@ -6,6 +6,7 @@ import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/screens/community/widgets/reply_item.dart';
+import 'package:campusmate/services/noti_service.dart';
 import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';
 import 'package:campusmate/widgets/yest_no_dialog.dart';
@@ -76,7 +77,7 @@ class _CommentItemState extends State<CommentItem> {
               // 차단되지 않은 사용자의 답글만 출력
               visibleReplies.add(
                 ReplyItem(
-                  postAuthorUid: widget.postAuthorUid,
+                  postAuthorUid: widget.postData.authorUid ?? "",
                   postReplyData: reply,
                   postCallback: widget.postCallback,
                   deleteCallback: widget.deleteCallback,
@@ -187,6 +188,7 @@ class _CommentItemState extends State<CommentItem> {
     bool userDisliked =
         widget.postCommentData.dislikers!.contains(currentUserUid);
     final writerIndex = widget.postCommentData.writerIndex;
+    final FocusNode keyboardFocus = FocusNode();
 
     return Container(
       width: double.infinity,
@@ -309,8 +311,8 @@ class _CommentItemState extends State<CommentItem> {
                               widget.postCommentData.boardType != 'General'
                                   ?
                                   // 익명 게시판에서 댓글 작성자가 글 작성자라면 표시
-                                  widget.postCommentData.authorUid ==
-                                          widget.postAuthorUid
+                                  (widget.postCommentData.authorUid ==
+                                          widget.postData.authorUid
                                       ? Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 3, vertical: 1),
@@ -329,7 +331,7 @@ class _CommentItemState extends State<CommentItem> {
                                                 color: Colors.grey),
                                           ),
                                         )
-                                      : const SizedBox()
+                                      : const SizedBox())
                                   : const SizedBox(),
                               const SizedBox(
                                 width: 8,
@@ -387,6 +389,7 @@ class _CommentItemState extends State<CommentItem> {
                                           ),
                                           Expanded(
                                               child: TextField(
+                                            focusNode: keyboardFocus,
                                             onTapOutside: (event) {
                                               FocusManager.instance.primaryFocus
                                                   ?.unfocus();
@@ -423,6 +426,35 @@ class _CommentItemState extends State<CommentItem> {
 
                                               widget.postCallback();
                                               replycontroller.clear();
+
+                                              //답글 대상 댓글 작성자에게 알림 보내기 (댓글 작성자가 본인이 아니면 알림을 보냄)
+                                              if ((widget.userData.uid ?? "") !=
+                                                  (widget.postCommentData
+                                                          .authorUid ??
+                                                      "")) {
+                                                NotiService.sendNotiToUser(
+                                                  targetUID: widget
+                                                          .postCommentData
+                                                          .authorUid ??
+                                                      "",
+                                                  title:
+                                                      "${widget.userData.name ?? ""}님의 답글",
+                                                  content: content,
+                                                  data: {
+                                                    "type": widget.postData
+                                                                .boardType ==
+                                                            "General"
+                                                        ? "generalPost"
+                                                        : "anonyPost",
+                                                    "postId":
+                                                        widget.postData.postId,
+                                                    "school": widget
+                                                            .userData.school ??
+                                                        ""
+                                                  },
+                                                );
+                                              }
+
                                               ScaffoldMessenger.of(context)
                                                   .clearSnackBars();
 
@@ -440,6 +472,7 @@ class _CommentItemState extends State<CommentItem> {
                                     duration: const Duration(days: 1),
                                   ),
                                 );
+                                keyboardFocus.requestFocus();
                               },
                             ),
                             const SizedBox(width: 20),
