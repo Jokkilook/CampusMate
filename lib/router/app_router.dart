@@ -117,6 +117,9 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
   GoRoute(
     name: Screen.otherProfile,
     path: "${Screen.otherProfile}/uid=:uid&readOnly=:readOnly",
+    onExit: (context, state) {
+      return true;
+    },
     builder: (context, state) {
       final String uid = state.pathParameters["uid"] ?? "";
       final bool readOnly =
