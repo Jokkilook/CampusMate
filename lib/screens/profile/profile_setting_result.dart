@@ -56,12 +56,7 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
                 await AuthService().registUser(userData).then((value) {
                   //가입 성공 시
                   if (value) {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MainScreen(),
-                        ),
-                        (route) => false);
+                    context.goNamed(Screen.main);
                   }
                   //회원가입 실패 시
                   else {
@@ -80,7 +75,7 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
 
                     //로그인 화면으로 이동
 
-                    context.goNamed(Screen.main);
+                    context.goNamed(Screen.login);
 
                     // Navigator.pushAndRemoveUntil(
                     //     context,
@@ -91,6 +86,12 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
                   }
                 });
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.button,
+                minimumSize: const Size(10000, 50),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
               child: isLoading
                   ? const CircleLoading(color: AppColors.buttonText)
                   : const Text(
@@ -100,12 +101,6 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.button,
-                minimumSize: const Size(10000, 50),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-              ),
             )
           ],
         ),

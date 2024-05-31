@@ -37,18 +37,18 @@ class RegisterResult extends StatelessWidget {
               onPressed: () {
                 context.goNamed(Screen.profileA);
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.button,
+                minimumSize: const Size(10000, 50),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
               child: const Text(
                 "프로필 설정하기",
                 style: TextStyle(
                     color: AppColors.buttonText,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.button,
-                minimumSize: const Size(10000, 50),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
               ),
             )
           ],

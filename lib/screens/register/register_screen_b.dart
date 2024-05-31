@@ -282,6 +282,12 @@ class _RegisterScreenBState extends State<RegisterScreenB> {
                                         });
                                       }
                                     : null),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.button,
+                              minimumSize: const Size(10000, 50),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
                             child: isLoading
                                 ? const CircleLoading(
                                     color: AppColors.buttonText)
@@ -294,12 +300,6 @@ class _RegisterScreenBState extends State<RegisterScreenB> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
                                   ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.button,
-                              minimumSize: const Size(10000, 50),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
                           ),
                           Visibility(
                             visible: isSended,
@@ -393,6 +393,13 @@ class _RegisterScreenBState extends State<RegisterScreenB> {
 
                                           setState(() {});
                                         },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    minimumSize: const Size(10000, 50),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
                                   child: Text(
                                     "확인",
                                     style: TextStyle(
@@ -401,13 +408,6 @@ class _RegisterScreenBState extends State<RegisterScreenB> {
                                             : AppColors.buttonText,
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    minimumSize: const Size(10000, 50),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
                                   ),
                                 )
                               ],
