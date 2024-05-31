@@ -24,6 +24,12 @@ class BottomButton extends StatelessWidget {
       padding: padding,
       child: ElevatedButton(
         onPressed: isCompleted ? onPressed : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.button,
+          minimumSize: Size(10000, height),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
         child: isLoading
             ? const SizedBox(
                 width: 20,
@@ -36,12 +42,6 @@ class BottomButton extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.button,
-          minimumSize: Size(10000, height),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
       ),
     );
   }

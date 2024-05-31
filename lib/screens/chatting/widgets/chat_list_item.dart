@@ -3,7 +3,6 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
-import 'package:campusmate/provider/notification_provider.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -315,32 +314,22 @@ class ChatListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              //시간+알림설정 버튼
+              //시간
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    timeStampToHourMinutes(roomData.lastMessageTime!),
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color:
-                            isDark ? AppColors.darkHint : AppColors.lightHint),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: IconButton(
-                          padding: const EdgeInsets.all(0),
-                          onPressed: () {
-                            List<String> list = NotificationProvider.getList();
-                          },
-                          icon: Icon(Icons.notifications,
-                              size: 20,
-                              color: isDark
-                                  ? AppColors.darkHint
-                                  : AppColors.lightHint)),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      timeStampToHourMinutes(roomData.lastMessageTime!),
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: isDark
+                              ? AppColors.darkHint
+                              : AppColors.lightHint),
                     ),
-                  )
+                  ),
                 ],
               )
             ],

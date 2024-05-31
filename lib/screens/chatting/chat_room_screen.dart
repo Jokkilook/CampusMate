@@ -5,17 +5,18 @@ import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
 import 'package:campusmate/models/user_data.dart';
+import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/profile/stranger_profile_screen.dart';
 import 'package:campusmate/screens/chatting/video_player_screen.dart';
 import 'package:campusmate/screens/chatting/widgets/chat_bubble.dart';
 import 'package:campusmate/services/noti_service.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -193,15 +194,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   widget.chatRoomData.participantsUid?[index];
                               return InkWell(
                                 onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            StrangerProfilScreen(
-                                                uid: widget.chatRoomData
-                                                    .participantsUid![index],
-                                                readOnly: true),
-                                      ));
+                                  context.pushNamed(
+                                    Screen.otherProfile,
+                                    pathParameters: {
+                                      "uid": widget
+                                          .chatRoomData.participantsUid![index],
+                                      "readOnly": "true"
+                                    },
+                                  );
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(

@@ -38,11 +38,11 @@ class NotiService {
       //일반 게시판 댓글, 답글 알림일 때,
       if (message.data["type"] == "generalPost") {
         payloadString =
-            jsonEncode({"type": "general", "postId": message.data["postId"]});
+            jsonEncode({"type": "general", "id": message.data["id"]});
       }
       //익명 게시판 댓글, 답글 알림일 때,
       if (message.data["type"] == "anonyPost") {
-        jsonEncode({"type": "anonymous", "postId": message.data["postId"]});
+        jsonEncode({"type": "anonymous", "id": message.data["id"]});
       }
 
       showNoti(
@@ -58,7 +58,7 @@ class NotiService {
       if (message.data["type"] == "chat") {
         var data = await FirebaseFirestore.instance
             .collection("schools/${message.data["school"]}/chats")
-            .doc(message.data["roomId"])
+            .doc(message.data["id"])
             .get();
 
         var roomData =
@@ -71,7 +71,7 @@ class NotiService {
       if (message.data["type"] == "groupChat") {
         var data = await FirebaseFirestore.instance
             .collection("schools/${message.data["school"]}/groupChats")
-            .doc(message.data["roomId"])
+            .doc(message.data["id"])
             .get();
 
         var roomData =
@@ -85,7 +85,7 @@ class NotiService {
       if (message.data["type"] == "generalPost") {
         var data = await FirebaseFirestore.instance
             .collection("schools/${message.data["school"]}/generalPosts")
-            .doc(message.data["postId"])
+            .doc(message.data["id"])
             .get();
 
         var postData = PostData.fromJson(data.data() as Map<String, dynamic>);
@@ -100,7 +100,7 @@ class NotiService {
       if (message.data["type"] == "anonyPost") {
         var data = await FirebaseFirestore.instance
             .collection("schools/${message.data["school"]}/anonymousPosts")
-            .doc(message.data["postId"])
+            .doc(message.data["id"])
             .get();
 
         var postData = PostData.fromJson(data.data() as Map<String, dynamic>);
@@ -172,7 +172,7 @@ class NotiService {
             //일반 게시글 화면으로 이동
             router.pushNamed(
               Screen.post,
-              pathParameters: {"id": json["postId"] ?? ""},
+              pathParameters: {"postId": json["id"] ?? ""},
             );
             return;
           }
@@ -181,7 +181,7 @@ class NotiService {
             //익명 게시글 화면으로 이동
             router.pushNamed(
               Screen.anonymousPost,
-              pathParameters: {"id": json["postId"] ?? ""},
+              pathParameters: {"postId": json["id"] ?? ""},
             );
             return;
           }

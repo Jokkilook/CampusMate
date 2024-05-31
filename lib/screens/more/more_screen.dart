@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/auth_service.dart';
@@ -43,6 +44,17 @@ class _MoreScreenState extends State<MoreScreen> {
             title: const Text("앱 테마"),
             onTap: () {
               context.pushNamed(Screen.themeSetting);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.notifications),
+            title: const Text("알림 설정"),
+            onTap: () async {
+              try {
+                AppSettings.openAppSettings(type: AppSettingsType.notification);
+              } catch (e) {
+                debugPrint(e.toString());
+              }
             },
           ),
           ListTile(
