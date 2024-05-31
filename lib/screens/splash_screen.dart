@@ -120,6 +120,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     init();
 
-    return const Placeholder();
+    return Container(
+      color: Colors.white,
+      child: Image.asset(
+        'assets/images/campusmate_splash.png',
+        fit: BoxFit.fitHeight,
+      ),
+    );
   }
 }

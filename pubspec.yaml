@@ -62,7 +62,6 @@ dev_dependencies:
 
 flutter:
     assets:
-        - assets/images/default_image.png
         - assets/data/
-        - assets/ # assets 폴더의 모든 이미지를 불러옴
+        - assets/images/ # images 폴더의 모든 이미지를 불러옴
     uses-material-design: true
