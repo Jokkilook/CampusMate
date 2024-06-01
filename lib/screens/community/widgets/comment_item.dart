@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../models/user_data.dart';
 
+//ignore: must_be_immutable
 class CommentItem extends StatefulWidget {
   final PostCommentData postCommentData;
   final Function() onReplyPressed;
@@ -25,9 +26,9 @@ class CommentItem extends StatefulWidget {
   final VoidCallback deleteCallback;
   final String postAuthorUid;
   final UserData userData;
-  final PostData postData;
+  PostData postData;
 
-  const CommentItem(
+  CommentItem(
       {super.key,
       required this.postCommentData,
       required this.onReplyPressed,
@@ -79,6 +80,7 @@ class _CommentItemState extends State<CommentItem> {
                 ReplyItem(
                   postAuthorUid: widget.postData.authorUid ?? "",
                   postReplyData: reply,
+                  postData: widget.postData,
                   postCallback: widget.postCallback,
                   deleteCallback: widget.deleteCallback,
                 ),
@@ -187,8 +189,12 @@ class _CommentItemState extends State<CommentItem> {
     bool userLiked = widget.postCommentData.likers!.contains(currentUserUid);
     bool userDisliked =
         widget.postCommentData.dislikers!.contains(currentUserUid);
-    final writerIndex = widget.postCommentData.writerIndex;
+    //final writerIndex = widget.postCommentData.writerIndex;
     final FocusNode keyboardFocus = FocusNode();
+
+    print(widget.postData.commentWriters);
+    print(currentUserUid);
+    //?.indexOf(currentUserUid));
 
     return Container(
       width: double.infinity,
@@ -297,10 +303,14 @@ class _CommentItemState extends State<CommentItem> {
                                         MediaQuery.of(context).size.width *
                                             0.2),
                                 child: Text(
+                                  //일반 게시판이면
                                   widget.postCommentData.boardType == 'General'
-                                      ? widget.postCommentData.authorName
+                                      ?
+                                      //댓글 작성자 닉네임 표시
+                                      widget.postCommentData.authorName
                                           .toString()
-                                      : '익명 $writerIndex ${writerIndex != 0 ? writerIndex.toString() : ''}',
+                                      //아니면 익명(댓글 단 순서)표시
+                                      : '익명 ${widget.postCommentData.authorUid == widget.postData.authorUid ? "" : (widget.postData.commentWriters?.indexOf(widget.postCommentData.authorUid) ?? 0) + 1}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -409,6 +419,7 @@ class _CommentItemState extends State<CommentItem> {
                                           )),
                                           TextButton(
                                             onPressed: () async {
+                                              //답글 입력 시퀀스
                                               if (replycontroller.value.text ==
                                                   "") return;
 
@@ -423,6 +434,9 @@ class _CommentItemState extends State<CommentItem> {
                                                   userData: widget.userData,
                                                   postData: widget.postData,
                                                   content: content);
+
+                                              widget.postData.commentWriters
+                                                  ?.add(currentUserUid);
 
                                               widget.postCallback();
                                               replycontroller.clear();

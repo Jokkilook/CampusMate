@@ -1,6 +1,7 @@
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
+import 'package:campusmate/screens/community/models/post_data.dart';
 import 'package:campusmate/screens/community/models/post_reply_data.dart';
 import 'package:campusmate/screens/community/modules/format_time_stamp.dart';
 import 'package:campusmate/services/post_service.dart';
@@ -15,12 +16,14 @@ import 'package:provider/provider.dart';
 
 //ignore: must_be_immutable
 class ReplyItem extends StatefulWidget {
+  final PostData postData;
   PostReplyData postReplyData;
   final VoidCallback postCallback;
   final VoidCallback deleteCallback;
   final String postAuthorUid;
 
   ReplyItem({
+    required this.postData,
     required this.postReplyData,
     required this.postCallback,
     required this.deleteCallback,
@@ -131,7 +134,7 @@ class _ReplyItemState extends State<ReplyItem> {
     bool userLiked = widget.postReplyData.likers!.contains(currentUserUid);
     bool userDisliked =
         widget.postReplyData.dislikers!.contains(currentUserUid);
-    final writerIndex = widget.postReplyData.writerIndex;
+    //final writerIndex = widget.postReplyData.writerIndex;
 
     return Container(
       width: double.infinity,
@@ -236,9 +239,13 @@ class _ReplyItemState extends State<ReplyItem> {
                                 maxWidth:
                                     MediaQuery.of(context).size.width * 0.2),
                             child: Text(
+                              //일반 게시판이면
                               widget.postReplyData.boardType == 'General'
-                                  ? widget.postReplyData.authorName.toString()
-                                  : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
+                                  ?
+                                  //댓글 작성자 닉네임 표시
+                                  widget.postReplyData.authorName.toString()
+                                  //아니면 익명(댓글 단 순서)표시
+                                  : '익명 ${widget.postReplyData.authorUid == widget.postData.authorUid ? "" : (widget.postData.commentWriters?.indexOf(widget.postReplyData.authorUid) ?? 0) + 1}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(

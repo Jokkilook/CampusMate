@@ -161,7 +161,9 @@ class _PostScreenState extends State<PostScreen> {
 
               PostData postData =
                   PostData.fromJson(data.data() as Map<String, dynamic>);
+
               ref = postData;
+
               final GlobalKey<CommentSectionState> key =
                   GlobalKey<CommentSectionState>();
               CommentSection commentSection =
@@ -384,6 +386,8 @@ class _PostScreenState extends State<PostScreen> {
                           userData: userData,
                           postData: postData,
                           content: content);
+
+                      postData.commentWriters?.add(currentUserUid);
 
                       _commentController.clear();
                       key.currentState?.refresh();

@@ -10,9 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CommentSection extends StatefulWidget {
-  final PostData postData;
+  PostData postData;
 
-  const CommentSection({super.key, required this.postData});
+  CommentSection({super.key, required this.postData});
 
   @override
   State<CommentSection> createState() => CommentSectionState();
@@ -105,10 +105,12 @@ class CommentSectionState extends State<CommentSection> {
                     return CommentItem(
                       postCommentData: comment,
                       onReplyPressed: () {},
+                      //댓글 작성 시 콜백
                       postCallback: () {
                         commentCount++;
                         setState(() {});
                       },
+                      //댓글 삭제 시 콜백
                       deleteCallback: () {
                         commentCount =
                             commentCount - (1 + (comment.replyCount ?? 0));
