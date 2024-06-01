@@ -189,12 +189,7 @@ class _CommentItemState extends State<CommentItem> {
     bool userLiked = widget.postCommentData.likers!.contains(currentUserUid);
     bool userDisliked =
         widget.postCommentData.dislikers!.contains(currentUserUid);
-    //final writerIndex = widget.postCommentData.writerIndex;
     final FocusNode keyboardFocus = FocusNode();
-
-    print(widget.postData.commentWriters);
-    print(currentUserUid);
-    //?.indexOf(currentUserUid));
 
     return Container(
       width: double.infinity,
@@ -235,7 +230,7 @@ class _CommentItemState extends State<CommentItem> {
                       : null,
                   child: widget.postCommentData.boardType != 'General'
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(10),
                           child: Stack(
                             children: [
                               Image.asset(
@@ -249,9 +244,8 @@ class _CommentItemState extends State<CommentItem> {
                                   // 작성자가 본인일 경우 프로필 이미지 색을 변경
                                   color: widget.postCommentData.authorUid ==
                                           currentUserUid
-                                      ? AppColors.button.withOpacity(0.2)
-                                      : Colors.grey.withOpacity(0.0),
-                                  borderRadius: BorderRadius.circular(25),
+                                      ? Colors.blueAccent.withOpacity(0.4)
+                                      : Colors.transparent,
                                 ),
                               ),
                             ],
@@ -328,17 +322,22 @@ class _CommentItemState extends State<CommentItem> {
                                               horizontal: 3, vertical: 1),
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                              width: 1,
-                                              color: Colors.grey,
+                                              width: 0.8,
+                                              color: isDark
+                                                  ? AppColors.darkText
+                                                  : AppColors.lightText,
                                             ),
                                             borderRadius:
                                                 BorderRadius.circular(25),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             '작성자',
                                             style: TextStyle(
-                                                fontSize: 8,
-                                                color: Colors.grey),
+                                              fontSize: 8,
+                                              color: isDark
+                                                  ? AppColors.darkText
+                                                  : AppColors.lightText,
+                                            ),
                                           ),
                                         )
                                       : const SizedBox())

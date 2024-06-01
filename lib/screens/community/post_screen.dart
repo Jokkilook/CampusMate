@@ -227,7 +227,7 @@ class _PostScreenState extends State<PostScreen> {
                                                 ? ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            25),
+                                                            10),
                                                     child: Stack(
                                                       children: [
                                                         Image.asset(
@@ -243,17 +243,17 @@ class _PostScreenState extends State<PostScreen> {
                                                             color: postData
                                                                         .authorUid ==
                                                                     currentUserUid
-                                                                ? AppColors
-                                                                    .button
+                                                                ? Colors
+                                                                    .blueAccent
                                                                     .withOpacity(
-                                                                        0.2)
+                                                                        0.4)
                                                                 : Colors.grey
                                                                     .withOpacity(
                                                                         0.0),
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                        25),
+                                                                        10),
                                                           ),
                                                         ),
                                                       ],
