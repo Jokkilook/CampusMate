@@ -200,6 +200,7 @@ class PostService {
 
     Timestamp time = Timestamp.now();
     String commentId = "comment_${userData.uid}_${time.millisecondsSinceEpoch}";
+
     //댓글 데이터 생성
     PostCommentData comment = PostCommentData(
       commentId: commentId,
@@ -251,6 +252,7 @@ class PostService {
 
     Timestamp time = Timestamp.now();
     String replyId = "reply_${userData.uid}_${time.millisecondsSinceEpoch}";
+
     //답글 데이터 생성
     PostReplyData reply = PostReplyData(
       replyId: replyId,

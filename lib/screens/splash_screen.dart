@@ -1,3 +1,4 @@
+import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -49,6 +50,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
+
     Future init() async {
       //알림 서비스 초기화
       NotiService.init();
@@ -121,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen> {
     init();
 
     return Container(
-      color: Colors.white,
+      color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
       child: Image.asset(
         'assets/images/campusmate_splash.png',
         fit: BoxFit.fitHeight,

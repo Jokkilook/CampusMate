@@ -300,7 +300,7 @@ class _CommentItemState extends State<CommentItem> {
                                   widget.postCommentData.boardType == 'General'
                                       ? widget.postCommentData.authorName
                                           .toString()
-                                      : '익명 ${writerIndex != 0 ? writerIndex.toString() : ''}',
+                                      : '익명 $writerIndex ${writerIndex != 0 ? writerIndex.toString() : ''}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -437,8 +437,11 @@ class _CommentItemState extends State<CommentItem> {
                                                           .postCommentData
                                                           .authorUid ??
                                                       "",
-                                                  title:
-                                                      "${widget.userData.name ?? ""}님의 답글",
+                                                  title: widget.postData
+                                                              .boardType ==
+                                                          "General"
+                                                      ? "${widget.userData.name ?? ""}님의 답글"
+                                                      : "답글이 달렸습니다.",
                                                   content: content,
                                                   data: {
                                                     "type": widget.postData

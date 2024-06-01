@@ -2,7 +2,6 @@ import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
-import 'package:campusmate/screens/main_screen.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:flutter/material.dart';
@@ -74,15 +73,7 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
                     );
 
                     //로그인 화면으로 이동
-
                     context.goNamed(Screen.login);
-
-                    // Navigator.pushAndRemoveUntil(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const MainScreen(),
-                    //     ),
-                    //     (route) => false);
                   }
                 });
               },

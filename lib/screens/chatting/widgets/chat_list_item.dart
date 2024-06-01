@@ -264,39 +264,51 @@ class ChatListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(
-                          flex: 8,
-                          child: Text(
-                            !isGroup ? name : roomData.roomName!,
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: isDark
-                                    ? AppColors.darkTitle
-                                    : AppColors.lightTitle),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
+                        Row(
+                          children: [
+                            //채팅방 이름
+                            Text(
+                              !isGroup ? name : roomData.roomName!,
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: isDark
+                                      ? AppColors.darkTitle
+                                      : AppColors.lightTitle),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            //참여자 수
+                            Row(
+                              children: [
+                                Icon(Icons.person,
+                                    size: 18,
+                                    color: isDark
+                                        ? AppColors.darkHint
+                                        : AppColors.lightHint),
+                                Text(
+                                  "$userCount",
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkHint
+                                        : AppColors.lightHint,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
                         ),
-                        Flexible(
-                          flex: 1,
-                          child: Row(
-                            children: [
-                              Icon(Icons.person,
-                                  size: 18,
-                                  color: isDark
-                                      ? AppColors.darkHint
-                                      : AppColors.lightHint),
-                              Text(
-                                "$userCount",
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.darkHint
-                                      : AppColors.lightHint,
-                                ),
-                              )
-                            ],
-                          ),
+
+                        //시간
+                        Text(
+                          timeStampToHourMinutes(roomData.lastMessageTime!),
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: isDark
+                                  ? AppColors.darkHint
+                                  : AppColors.lightHint),
                         ),
                       ],
                     ),
@@ -314,24 +326,6 @@ class ChatListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              //시간
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      timeStampToHourMinutes(roomData.lastMessageTime!),
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: isDark
-                              ? AppColors.darkHint
-                              : AppColors.lightHint),
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
         ),

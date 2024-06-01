@@ -163,7 +163,7 @@ class _MatchCardState extends State<MatchCard> {
         }
         //유저 데이터가 없으면
         if (!snapshot.hasData) {
-          return refreshMessage("아직 사용자가 없어요 😳");
+          return refreshMessage("학교에 아직 사용자가 없어요 😳");
         }
         //에러가 발생했으면
         if (snapshot.hasError) {
@@ -175,7 +175,7 @@ class _MatchCardState extends State<MatchCard> {
 
           //데이터가 있는데 2개 미만일때,
           if (data.length < 2) {
-            return refreshMessage("아직 사용자가 없어요 😳");
+            return refreshMessage("학교에 아직 사용자가 없어요 😳");
           }
           //2개 이상 데이터가 들어왔을 때 스와이프 카드 출력 시도
           try {
