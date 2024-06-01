@@ -412,8 +412,17 @@ class _CommentItemState extends State<CommentItem> {
                                                 contentPadding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 8),
-                                                hintText:
-                                                    '${widget.postCommentData.authorName}님에게 답글을 작성합니다.',
+                                                hintText: //일반 게시판이면
+                                                    widget.postCommentData
+                                                                .boardType ==
+                                                            'General'
+                                                        ?
+                                                        //댓글 작성자 닉네임 표시
+                                                        widget.postCommentData
+                                                            .authorName
+                                                            .toString()
+                                                        //아니면 익명(댓글 단 순서)표시
+                                                        : '익명 ${widget.postCommentData.authorUid == widget.postData.authorUid ? "" : (widget.postData.commentWriters?.indexOf(widget.postCommentData.authorUid) ?? 0) + 1}님에게 답글을 작성합니다.',
                                                 border: InputBorder.none),
                                           )),
                                           TextButton(
