@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/comment_section.dart';
@@ -172,6 +173,9 @@ class _PostScreenState extends State<PostScreen> {
               postService.updateViewCount(
                   postData: postData, userData: userData);
 
+              print("AUTHOR: ${postData.authorUid}");
+              print("CURRENT: $currentUserUid");
+
               return Scaffold(
                   body: RefreshIndicator(
                     onRefresh: () async => setState(() {}),
@@ -214,52 +218,62 @@ class _PostScreenState extends State<PostScreen> {
                                       },
                                       child: Row(
                                         children: [
-                                          CircleAvatar(
-                                            radius: 18,
-                                            backgroundImage:
-                                                postData.boardType == 'General'
-                                                    ? NetworkImage(postData
-                                                        .profileImageUrl
-                                                        .toString())
-                                                    : null,
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             child: postData.boardType !=
                                                     'General'
-                                                ? ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    child: Stack(
-                                                      children: [
-                                                        Image.asset(
-                                                          'assets/images/default_image.png',
-                                                          fit: BoxFit.cover,
-                                                          width: 50,
-                                                          height: 50,
+                                                ? Stack(
+                                                    children: [
+                                                      Image.asset(
+                                                        'assets/images/default_image.png',
+                                                        fit: BoxFit.cover,
+                                                        width: 36,
+                                                        height: 36,
+                                                      ),
+                                                      Container(
+                                                        width: 36,
+                                                        height: 36,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          // 작성자가 본인일 경우 프로필 이미지 색을 변경
+                                                          color: postData
+                                                                      .authorUid ==
+                                                                  currentUserUid
+                                                              ? Colors
+                                                                  .blueAccent
+                                                                  .withOpacity(
+                                                                      0.4)
+                                                              : Colors
+                                                                  .transparent,
                                                         ),
-                                                        Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            // 작성자가 본인일 경우 프로필 이미지 색을 변경
-                                                            color: postData
-                                                                        .authorUid ==
-                                                                    currentUserUid
-                                                                ? Colors
-                                                                    .blueAccent
-                                                                    .withOpacity(
-                                                                        0.4)
-                                                                : Colors.grey
-                                                                    .withOpacity(
-                                                                        0.0),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                    ],
                                                   )
-                                                : null,
+                                                : CachedNetworkImage(
+                                                    imageUrl: postData
+                                                            .profileImageUrl ??
+                                                        "",
+                                                    fit: BoxFit.cover,
+                                                    width: 38,
+                                                    height: 38,
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Image.asset(
+                                                      'assets/images/default_image.png',
+                                                      fit: BoxFit.cover,
+                                                      width: 38,
+                                                      height: 38,
+                                                    ),
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            Image.asset(
+                                                      'assets/images/default_image.png',
+                                                      fit: BoxFit.cover,
+                                                      width: 38,
+                                                      height: 38,
+                                                    ),
+                                                  ),
                                           ),
                                           const SizedBox(width: 10),
                                           Column(

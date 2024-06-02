@@ -127,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Container(
       color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
       child: Image.asset(
-        'assets/images/campusmate_splash.png',
+        'assets/images/${isDark ? "dark_splash.png" : "light_splash.png"}',
         fit: BoxFit.fitHeight,
       ),
     );

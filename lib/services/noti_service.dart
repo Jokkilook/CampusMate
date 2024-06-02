@@ -114,7 +114,7 @@ class NotiService {
     });
 
     AndroidInitializationSettings androidInitializationSettings =
-        const AndroidInitializationSettings("mipmap/ic_launcher");
+        const AndroidInitializationSettings("mipmap/ic_noti");
 
     DarwinInitializationSettings iosInitializationSettings =
         const DarwinInitializationSettings(

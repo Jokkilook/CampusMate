@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:campusmate/app_colors.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
@@ -164,37 +165,49 @@ class _ReplyItemState extends State<ReplyItem> {
                 }
               }
             },
-            child: CircleAvatar(
-              radius: 18,
-              backgroundImage: widget.postReplyData.boardType == 'General'
-                  ? NetworkImage(
-                      widget.postReplyData.profileImageUrl.toString())
-                  : null,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
               child: widget.postReplyData.boardType != 'General'
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Stack(
-                        children: [
-                          Image.asset(
-                            'assets/images/default_image.png',
-                            fit: BoxFit.cover,
-                            width: 50,
-                            height: 50,
+                  ? Stack(
+                      children: [
+                        Image.asset(
+                          'assets/images/default_image.png',
+                          fit: BoxFit.cover,
+                          width: 36,
+                          height: 36,
+                        ),
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            // 작성자가 본인일 경우 프로필 이미지 색을 변경
+                            color:
+                                widget.postReplyData.authorUid == currentUserUid
+                                    ? Colors.blueAccent.withOpacity(0.4)
+                                    : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              // 작성자가 본인일 경우 프로필 이미지 색을 변경
-                              color: widget.postReplyData.authorUid ==
-                                      currentUserUid
-                                  ? Colors.blueAccent.withOpacity(0.4)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     )
-                  : null,
+                  : CachedNetworkImage(
+                      imageUrl: widget.postReplyData.profileImageUrl ?? "",
+                      fit: BoxFit.cover,
+                      width: 36,
+                      height: 36,
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/images/default_image.png',
+                        fit: BoxFit.cover,
+                        width: 36,
+                        height: 36,
+                      ),
+                      placeholder: (context, url) => Image.asset(
+                        'assets/images/default_image.png',
+                        fit: BoxFit.cover,
+                        width: 36,
+                        height: 36,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: 16),
