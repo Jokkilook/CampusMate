@@ -433,11 +433,9 @@ class _CommentItemState extends State<CommentItem> {
                                                             'General'
                                                         ?
                                                         //댓글 작성자 닉네임 표시
-                                                        widget.postCommentData
-                                                            .authorName
-                                                            .toString()
+                                                        '${widget.postCommentData.authorName.toString()} 님에게 답글을 작성합니다.'
                                                         //아니면 익명(댓글 단 순서)표시
-                                                        : '익명 ${widget.postCommentData.authorUid == widget.postData.authorUid ? "" : (widget.postData.commentWriters?.indexOf(widget.postCommentData.authorUid) ?? 0) + 1}님에게 답글을 작성합니다.',
+                                                        : '익명 ${widget.postCommentData.authorUid == widget.postData.authorUid ? "" : (widget.postData.commentWriters?.indexOf(widget.postCommentData.authorUid) ?? 0) + 1} 님에게 답글을 작성합니다.',
                                                 border: InputBorder.none),
                                           )),
                                           TextButton(
