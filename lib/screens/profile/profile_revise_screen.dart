@@ -69,64 +69,74 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
       // Firestore 인스턴스 가져오기
       final firestore = FirebaseFirestore.instance;
 
-      // 특정 경로의 게시글 쿼리
+      // 게시물 쿼리
       var generalPostsQuery = firestore
           .collection('schools')
           .doc(school)
-          .collection('generalPosts')
-          .where('authorUid', isEqualTo: currentUserUid);
-      var anonymousPostsQuery = firestore
-          .collection('schools')
-          .doc(school)
-          .collection('anonymousPosts')
-          .where('authorUid', isEqualTo: currentUserUid);
+          .collection('generalPosts');
 
-      // 쿼리 실행
-      List<QuerySnapshot> postSnapshots = await Future.wait([
-        generalPostsQuery.get(),
-        anonymousPostsQuery.get(),
-      ]);
+      // 모든 게시물에 대해 업데이트
+      await _updatePostsAndComments(
+          generalPostsQuery, newAuthorName, newProfileImageUrl, currentUserUid);
 
-      // 게시글 업데이트 및 하위 컬렉션인 comments, replies 업데이트
-      for (var postSnapshot in postSnapshots) {
-        for (var postDoc in postSnapshot.docs) {
-          // 게시글 업데이트
-          await postDoc.reference.update({
-            'authorName': newAuthorName,
-            'profileImageUrl': newProfileImageUrl,
-          });
+      debugPrint('커뮤니티 프로필 업데이트 성공');
+    } catch (e) {
+      // 에러 처리
+      debugPrint('커뮤니티 프로필 업데이트 실패: $e');
+    }
+  }
 
-          // 댓글 쿼리 및 업데이트
-          var commentsQuery = postDoc.reference
-              .collection('comments')
-              .where('authorUid', isEqualTo: currentUserUid);
-          var commentsSnapshot = await commentsQuery.get();
-          for (var commentDoc in commentsSnapshot.docs) {
-            await commentDoc.reference.update({
-              'authorName': newAuthorName,
-              'profileImageUrl': newProfileImageUrl,
-            });
+  Future<void> _updatePostsAndComments(
+    Query postsQuery,
+    String newAuthorName,
+    String newProfileImageUrl,
+    String currentUserUid,
+  ) async {
+    // 게시물 쿼리 실행
+    var postsSnapshot = await postsQuery.get();
 
-            // 답글 쿼리 및 업데이트
-            var repliesQuery = commentDoc.reference
-                .collection('replies')
-                .where('authorUid', isEqualTo: currentUserUid);
-            var repliesSnapshot = await repliesQuery.get();
-            for (var replyDoc in repliesSnapshot.docs) {
-              await replyDoc.reference.update({
-                'authorName': newAuthorName,
-                'profileImageUrl': newProfileImageUrl,
-              });
-            }
+    // 각 게시물에 대해 업데이트
+    for (var postDoc in postsSnapshot.docs) {
+      // 게시글 작성자가 현재 사용자인 경우에만 업데이트
+      if (postDoc['authorUid'] == currentUserUid) {
+        await _updateProfile(
+            postDoc.reference, newAuthorName, newProfileImageUrl);
+      }
+
+      // 댓글 쿼리 및 업데이트
+      var commentsQuery = postDoc.reference.collection('comments');
+      var commentsSnapshot = await commentsQuery.get();
+      for (var commentDoc in commentsSnapshot.docs) {
+        // 댓글 작성자가 현재 사용자인 경우에만 업데이트
+        if (commentDoc['authorUid'] == currentUserUid) {
+          await _updateProfile(
+              commentDoc.reference, newAuthorName, newProfileImageUrl);
+        }
+
+        // 답글 쿼리 및 업데이트
+        var repliesQuery = commentDoc.reference.collection('replies');
+        var repliesSnapshot = await repliesQuery.get();
+        for (var replyDoc in repliesSnapshot.docs) {
+          // 답글 작성자가 현재 사용자인 경우에만 업데이트
+          if (replyDoc['authorUid'] == currentUserUid) {
+            await _updateProfile(
+                replyDoc.reference, newAuthorName, newProfileImageUrl);
           }
         }
       }
-
-      debugPrint('User posts and comments updated successfully');
-    } catch (e) {
-      // 에러 처리
-      debugPrint('Error updating user posts and comments: $e');
     }
+  }
+
+  Future<void> _updateProfile(
+    DocumentReference reference,
+    String newAuthorName,
+    String newProfileImageUrl,
+  ) async {
+    // 프로필 업데이트
+    await reference.update({
+      'authorName': newAuthorName,
+      'profileImageUrl': newProfileImageUrl,
+    });
   }
 
   @override
