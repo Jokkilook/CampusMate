@@ -10,8 +10,9 @@ import 'package:campusmate/screens/community/community_screen.dart';
 import 'package:campusmate/screens/community/my_posts_screen.dart';
 import 'package:campusmate/screens/community/post_screen.dart';
 import 'package:campusmate/screens/community/post_search_screen.dart';
-import 'package:campusmate/screens/login_screen.dart';
-import 'package:campusmate/screens/main_screen.dart';
+import 'package:campusmate/screens/_main/login_screen.dart';
+import 'package:campusmate/screens/_main/main_screen.dart';
+import 'package:campusmate/screens/more/app_info_screen.dart';
 import 'package:campusmate/screens/more/my_info_screen.dart';
 import 'package:campusmate/screens/more/theme_setting_screen.dart';
 import 'package:campusmate/screens/profile/profile_revise_screen.dart';
@@ -25,7 +26,7 @@ import 'package:campusmate/screens/register/register_result.dart';
 import 'package:campusmate/screens/register/register_screen_a.dart';
 import 'package:campusmate/screens/register/register_screen_b.dart';
 import 'package:campusmate/screens/register/register_screen_c.dart';
-import 'package:campusmate/screens/splash_screen.dart';
+import 'package:campusmate/screens/_main/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
 // GoRouter configuration
@@ -277,6 +278,13 @@ final router = GoRouter(initialLocation: Screen.splash, routes: [
       return VideoPlayerScreen(url: url);
     },
   ),
+
+  //앱 정보 화면
+  GoRoute(
+    name: Screen.appInfo,
+    path: Screen.appInfo,
+    builder: (context, state) => AppInfoScreen(),
+  ),
 ]);
 
 class Screen {
@@ -308,4 +316,5 @@ class Screen {
   static String myInfo = '/my_info';
   static String themeSetting = '/theme_setting';
   static String videoPlayer = '/video_player';
+  static String appInfo = '/app_info';
 }

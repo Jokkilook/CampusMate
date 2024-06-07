@@ -54,6 +54,13 @@ class _MoreScreenState extends State<MoreScreen> {
               await AuthService().signOut(context);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text("앱 정보"),
+            onTap: () {
+              context.pushNamed(Screen.appInfo);
+            },
+          ),
         ],
       ),
     );

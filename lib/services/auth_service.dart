@@ -3,7 +3,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
-import 'package:campusmate/screens/login_screen.dart';
+import 'package:campusmate/screens/_main/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

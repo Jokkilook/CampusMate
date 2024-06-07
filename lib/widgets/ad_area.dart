@@ -53,7 +53,7 @@ class _AdAreaState extends State<AdArea> {
               borderRadius: BorderRadius.circular(10),
             ),
             alignment: Alignment.center,
-            child: AdWidget(ad: _bannerAd!))
+            child: Center(child: AdWidget(ad: _bannerAd!)))
         : Container(
             width: double.infinity,
             height: 60,

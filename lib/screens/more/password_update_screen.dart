@@ -33,6 +33,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
   Widget build(BuildContext context) {
     bool isDark =
         Theme.of(context).brightness == Brightness.dark ? true : false;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("비밀번호 변경"),
