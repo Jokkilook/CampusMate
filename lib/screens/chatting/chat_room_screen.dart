@@ -16,6 +16,7 @@ import 'package:campusmate/services/noti_service.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -185,79 +186,83 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: count,
-                          itemBuilder: (context, index) {
-                            bool isCreator = widget.groupRoomData?.creatorUid ==
-                                widget.chatRoomData.participantsUid?[index];
-                            return InkWell(
-                              onTap: () {
-                                context.pushNamed(
-                                  Screen.otherProfile,
-                                  pathParameters: {
-                                    "uid": widget
-                                        .chatRoomData.participantsUid![index],
-                                    "readOnly": "true"
-                                  },
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                width: double.infinity,
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: CachedNetworkImage(
-                                        width: 50,
-                                        height: 50,
-                                        imageUrl: roomData["participantsInfo"][
-                                            roomData["participantsUid"]
-                                                [index]][1],
-                                        placeholder: (context, url) {
-                                          return Image.asset(
-                                              "assets/images/default_image.png");
-                                        },
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    SizedBox(width: isCreator ? 10 : 20),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        isCreator
-                                            ? Icon(
-                                                Icons.star,
-                                                color: Colors.yellow[700],
-                                                size: 17,
-                                              )
-                                            : Container(),
-                                        Text(
-                                          roomData["participantsUid"][index] ==
-                                                  userUID
-                                              ? "나"
-                                              : roomData["participantsInfo"][
-                                                  roomData["participantsUid"]
-                                                      [index]][0],
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            color: isDark
-                                                ? AppColors.darkText
-                                                : AppColors.lightText,
-                                          ),
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: count,
+                            itemBuilder: (context, index) {
+                              bool isCreator = widget
+                                      .groupRoomData?.creatorUid ==
+                                  widget.chatRoomData.participantsUid?[index];
+                              return InkWell(
+                                onTap: () {
+                                  context.pushNamed(
+                                    Screen.otherProfile,
+                                    pathParameters: {
+                                      "uid": widget
+                                          .chatRoomData.participantsUid![index],
+                                      "readOnly": "true"
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  width: double.infinity,
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: CachedNetworkImage(
+                                          width: 50,
+                                          height: 50,
+                                          imageUrl: roomData["participantsInfo"]
+                                              [roomData["participantsUid"]
+                                                  [index]][1],
+                                          placeholder: (context, url) {
+                                            return Image.asset(
+                                                "assets/images/default_image.png");
+                                          },
+                                          fit: BoxFit.cover,
                                         ),
-                                      ],
-                                    )
-                                  ],
+                                      ),
+                                      SizedBox(width: isCreator ? 10 : 20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          isCreator
+                                              ? Icon(
+                                                  Icons.star,
+                                                  color: Colors.yellow[700],
+                                                  size: 17,
+                                                )
+                                              : Container(),
+                                          Text(
+                                            roomData["participantsUid"]
+                                                        [index] ==
+                                                    userUID
+                                                ? "나"
+                                                : roomData["participantsInfo"][
+                                                    roomData["participantsUid"]
+                                                        [index]][0],
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              color: isDark
+                                                  ? AppColors.darkText
+                                                  : AppColors.lightText,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                         //드로어 내용
                         IntrinsicHeight(
