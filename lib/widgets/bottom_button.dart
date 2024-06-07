@@ -1,4 +1,4 @@
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:flutter/material.dart';
 

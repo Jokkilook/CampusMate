@@ -1,4 +1,4 @@
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/services/chatting_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

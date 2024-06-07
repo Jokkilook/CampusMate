@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:io';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/profile/widgets/loading_profile_card.dart';
 import 'package:campusmate/services/auth_service.dart';
@@ -765,9 +765,6 @@ class _MBTISelectorState extends State<MBTISelector> {
 
     return Row(
       children: [
-        const Column(
-          children: [],
-        ),
         Expanded(
           flex: 1,
           child: ElevatedButton(

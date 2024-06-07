@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/widgets/ad_area.dart';
@@ -328,62 +328,60 @@ class FullProfileCard extends StatelessWidget {
                                   : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '성향',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.darkTitle
-                                          : AppColors.lightTitle,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    '${userData.mbti}',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.darkText
-                                          : AppColors.lightText,
-                                    ),
-                                  ),
-                                  Divider(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '성향',
+                                  style: TextStyle(
                                     color: isDark
-                                        ? AppColors.darkLine
-                                        : AppColors.lightLine,
+                                        ? AppColors.darkTitle
+                                        : AppColors.lightTitle,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Wrap(
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      for (var tag in userData.tags!)
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: isDark
-                                                  ? AppColors.darkTag
-                                                  : AppColors.lightTag,
-                                              borderRadius:
-                                                  BorderRadius.circular(15)),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 5),
-                                          child: Text(
-                                            tag.toString(),
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? AppColors.darkText
-                                                  : AppColors.lightText,
-                                            ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  '${userData.mbti}',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkText
+                                        : AppColors.lightText,
+                                  ),
+                                ),
+                                Divider(
+                                  color: isDark
+                                      ? AppColors.darkLine
+                                      : AppColors.lightLine,
+                                ),
+                                Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    for (var tag in userData.tags!)
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: isDark
+                                                ? AppColors.darkTag
+                                                : AppColors.lightTag,
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        child: Text(
+                                          tag.toString(),
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
                                           ),
-                                        )
-                                    ],
-                                  )
-                                ],
-                              ),
+                                        ),
+                                      )
+                                  ],
+                                )
+                              ],
                             ),
                           ),
 
@@ -397,31 +395,29 @@ class FullProfileCard extends StatelessWidget {
                                   : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 10),
-                                    child: Text(
-                                      '시간표',
-                                      style: TextStyle(
-                                          color: isDark
-                                              ? AppColors.darkTitle
-                                              : AppColors.lightTitle,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10),
+                                  child: Text(
+                                    '시간표',
+                                    style: TextStyle(
+                                        color: isDark
+                                            ? AppColors.darkTitle
+                                            : AppColors.lightTitle,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                                    child: ScheduleTable(
-                                        scheduleData: userData.schedule,
-                                        readOnly: true),
-                                  ),
-                                ],
-                              ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                  child: ScheduleTable(
+                                      scheduleData: userData.schedule,
+                                      readOnly: true),
+                                ),
+                              ],
                             ),
                           )
                         ],

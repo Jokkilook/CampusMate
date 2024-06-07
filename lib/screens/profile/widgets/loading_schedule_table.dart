@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 ///시간표 로딩 위젯<br>

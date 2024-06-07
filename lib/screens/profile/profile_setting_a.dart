@@ -1,4 +1,4 @@
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
@@ -285,6 +285,18 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   gender = true;
                                   setState(() {});
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: gender
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
+                                  minimumSize: const Size(10000, 60),
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10))),
+                                ),
                                 child: Text(
                                   "남",
                                   style: TextStyle(
@@ -298,18 +310,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: gender
-                                      ? AppColors.button
-                                      : (isDark
-                                          ? AppColors.darkUnselectedButton
-                                          : AppColors.lightUnselectedButton),
-                                  minimumSize: const Size(10000, 60),
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          bottomLeft: Radius.circular(10))),
-                                ),
                               ),
                             ),
                             Expanded(
@@ -319,6 +319,18 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   gender = false;
                                   setState(() {});
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: !gender
+                                      ? AppColors.button
+                                      : (isDark
+                                          ? AppColors.darkUnselectedButton
+                                          : AppColors.lightUnselectedButton),
+                                  minimumSize: const Size(10000, 60),
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          bottomRight: Radius.circular(10))),
+                                ),
                                 child: Text(
                                   "여",
                                   style: TextStyle(
@@ -331,18 +343,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                                   .lightUnselectedButtonText),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: !gender
-                                      ? AppColors.button
-                                      : (isDark
-                                          ? AppColors.darkUnselectedButton
-                                          : AppColors.lightUnselectedButton),
-                                  minimumSize: const Size(10000, 60),
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(10),
-                                          bottomRight: Radius.circular(10))),
                                 ),
                               ),
                             ),
@@ -422,20 +422,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   ei = true;
                                   setState(() {});
                                 },
-                                child: Text(
-                                  "E",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: ei
-                                          ? AppColors.buttonText
-                                          : (isDark
-                                              ? AppColors
-                                                  .darkUnselectedButtonText
-                                              : AppColors
-                                                  .lightUnselectedButtonText),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -450,20 +436,11 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                           topLeft: Radius.circular(10),
                                           bottomLeft: Radius.circular(10))),
                                 ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  ei = false;
-                                  setState(() {});
-                                },
                                 child: Text(
-                                  "I",
+                                  "E",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !ei
+                                      color: ei
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -473,6 +450,15 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  ei = false;
+                                  setState(() {});
+                                },
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -487,6 +473,20 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                           topRight: Radius.circular(10),
                                           bottomRight: Radius.circular(10))),
                                 ),
+                                child: Text(
+                                  "I",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: !ei
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -497,20 +497,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   ns = true;
                                   setState(() {});
                                 },
-                                child: Text(
-                                  "N",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: ns
-                                          ? AppColors.buttonText
-                                          : (isDark
-                                              ? AppColors
-                                                  .darkUnselectedButtonText
-                                              : AppColors
-                                                  .lightUnselectedButtonText),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -525,20 +511,11 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                           topLeft: Radius.circular(10),
                                           bottomLeft: Radius.circular(10))),
                                 ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  ns = false;
-                                  setState(() {});
-                                },
                                 child: Text(
-                                  "S",
+                                  "N",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !ns
+                                      color: ns
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -548,6 +525,15 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  ns = false;
+                                  setState(() {});
+                                },
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -562,6 +548,20 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                           topRight: Radius.circular(10),
                                           bottomRight: Radius.circular(10))),
                                 ),
+                                child: Text(
+                                  "S",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: !ns
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -572,20 +572,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   tf = true;
                                   setState(() {});
                                 },
-                                child: Text(
-                                  "T",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: tf
-                                          ? AppColors.buttonText
-                                          : (isDark
-                                              ? AppColors
-                                                  .darkUnselectedButtonText
-                                              : AppColors
-                                                  .lightUnselectedButtonText),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -600,20 +586,11 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                           topLeft: Radius.circular(10),
                                           bottomLeft: Radius.circular(10))),
                                 ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  tf = false;
-                                  setState(() {});
-                                },
                                 child: Text(
-                                  "F",
+                                  "T",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !tf
+                                      color: tf
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -623,6 +600,15 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  tf = false;
+                                  setState(() {});
+                                },
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -637,6 +623,20 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                           topRight: Radius.circular(10),
                                           bottomRight: Radius.circular(10))),
                                 ),
+                                child: Text(
+                                  "F",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: !tf
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -647,20 +647,6 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                   pj = true;
                                   setState(() {});
                                 },
-                                child: Text(
-                                  "P",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: pj
-                                          ? AppColors.buttonText
-                                          : (isDark
-                                              ? AppColors
-                                                  .darkUnselectedButtonText
-                                              : AppColors
-                                                  .lightUnselectedButtonText),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -675,20 +661,11 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                           topLeft: Radius.circular(10),
                                           bottomLeft: Radius.circular(10))),
                                 ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  pj = false;
-                                  setState(() {});
-                                },
                                 child: Text(
-                                  "J",
+                                  "P",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: !pj
+                                      color: pj
                                           ? AppColors.buttonText
                                           : (isDark
                                               ? AppColors
@@ -698,6 +675,15 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  pj = false;
+                                  setState(() {});
+                                },
                                 style: ElevatedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -711,6 +697,20 @@ class _ProfileSettingAState extends State<ProfileSettingA> {
                                       borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(10),
                                           bottomRight: Radius.circular(10))),
+                                ),
+                                child: Text(
+                                  "J",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: !pj
+                                          ? AppColors.buttonText
+                                          : (isDark
+                                              ? AppColors
+                                                  .darkUnselectedButtonText
+                                              : AppColors
+                                                  .lightUnselectedButtonText),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),

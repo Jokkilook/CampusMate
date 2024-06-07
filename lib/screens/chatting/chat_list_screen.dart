@@ -1,4 +1,4 @@
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -107,191 +107,183 @@ class _ChatRoomScreenState extends State<ChatListScreen> {
             Expanded(
               child: TabBarView(children: [
                 //1:1 채팅방 리스트
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream:
-                        ChattingService().getChattingRoomListStream(context),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircleLoading());
-                      } else if (snapshot.hasError) {
-                        return const Center(child: Text("오류가 발생했어요..ToT"));
-                      }
-                      if (!snapshot.hasData) {
-                        return const Text("아직 채팅방이 없어요!");
-                      }
+                StreamBuilder<QuerySnapshot>(
+                  stream: ChattingService().getChattingRoomListStream(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircleLoading());
+                    } else if (snapshot.hasError) {
+                      return const Center(child: Text("오류가 발생했어요..ToT"));
+                    }
+                    if (!snapshot.hasData) {
+                      return const Text("아직 채팅방이 없어요!");
+                    }
 
-                      if (snapshot.hasData) {
-                        var rooms = snapshot.data!.docs;
+                    if (snapshot.hasData) {
+                      var rooms = snapshot.data!.docs;
 
-                        if (rooms.isEmpty) {
-                          return const Center(
-                            child: Text("아직 채팅방이 없어요!"),
-                          );
-                        }
-
-                        //가져온 방 데이터 가장 최신 메세지가 온 순서로 정렬하기
-                        rooms.sort(
-                          (a, b) {
-                            var aa = ChatRoomData.fromJson(
-                                a.data() as Map<String, dynamic>);
-                            var bb = ChatRoomData.fromJson(
-                                b.data() as Map<String, dynamic>);
-                            var aTime = aa.lastMessageTime;
-                            var bTime = bb.lastMessageTime;
-                            if (DateTime.parse(
-                                    aTime?.toDate().toString() ?? "20000101")
-                                .isAfter(DateTime.parse(
-                                    bTime?.toDate().toString() ??
-                                        "20000101"))) {
-                              return -1;
-                            } else {
-                              return 1;
-                            }
-                          },
+                      if (rooms.isEmpty) {
+                        return const Center(
+                          child: Text("아직 채팅방이 없어요!"),
                         );
+                      }
 
-                        return ListView.builder(
-                          itemCount: rooms.length,
-                          itemBuilder: (context, index) {
-                            Map<String, List<String>> participantsInfo = {};
-                            (rooms[index]["participantsInfo"] as Map)
-                                .forEach((key, value) {
-                              participantsInfo[key] = (value as List)
-                                  .map((e) => e.toString())
-                                  .toList();
-                            });
+                      //가져온 방 데이터 가장 최신 메세지가 온 순서로 정렬하기
+                      rooms.sort(
+                        (a, b) {
+                          var aa = ChatRoomData.fromJson(
+                              a.data() as Map<String, dynamic>);
+                          var bb = ChatRoomData.fromJson(
+                              b.data() as Map<String, dynamic>);
+                          var aTime = aa.lastMessageTime;
+                          var bTime = bb.lastMessageTime;
+                          if (DateTime.parse(
+                                  aTime?.toDate().toString() ?? "20000101")
+                              .isAfter(DateTime.parse(
+                                  bTime?.toDate().toString() ?? "20000101"))) {
+                            return -1;
+                          } else {
+                            return 1;
+                          }
+                        },
+                      );
 
-                            //안읽은 메세지 수 스트림
-                            return StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection(
-                                      "schools/${userData.school}/chats/${rooms[index]["roomId"]}/messages")
-                                  .where("time",
-                                      isGreaterThan: rooms[index]["leavingTime"]
-                                              [userData.uid] ??
-                                          Timestamp.fromDate(DateTime.now()))
-                                  .snapshots(),
-                              builder: (context, messages) {
-                                //안읽은 메세지에서 내가 보낸 메세지 빼기
-                                //미디어 파일 전송 시 전송 누르고 완료 전에 화면을 나가면 내 화면에서도 안읽은 메세지로 표시되서 필터링 해줌
-                                //파이어베이스에서 not in 쿼리를 지원해주지 않는다... 비교식 where 2번 쓰는 것도 안됌
-                                var ref = messages.data?.docs ?? [];
-                                var data = List.from(ref);
-                                for (var element in ref) {
-                                  if (element.get("senderUID") ==
-                                      userData.uid) {
-                                    data.remove(element);
-                                  }
+                      return ListView.builder(
+                        itemCount: rooms.length,
+                        itemBuilder: (context, index) {
+                          Map<String, List<String>> participantsInfo = {};
+                          (rooms[index]["participantsInfo"] as Map)
+                              .forEach((key, value) {
+                            participantsInfo[key] = (value as List)
+                                .map((e) => e.toString())
+                                .toList();
+                          });
+
+                          //안읽은 메세지 수 스트림
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection(
+                                    "schools/${userData.school}/chats/${rooms[index]["roomId"]}/messages")
+                                .where("time",
+                                    isGreaterThan: rooms[index]["leavingTime"]
+                                            [userData.uid] ??
+                                        Timestamp.fromDate(DateTime.now()))
+                                .snapshots(),
+                            builder: (context, messages) {
+                              //안읽은 메세지에서 내가 보낸 메세지 빼기
+                              //미디어 파일 전송 시 전송 누르고 완료 전에 화면을 나가면 내 화면에서도 안읽은 메세지로 표시되서 필터링 해줌
+                              //파이어베이스에서 not in 쿼리를 지원해주지 않는다... 비교식 where 2번 쓰는 것도 안됌
+                              var ref = messages.data?.docs ?? [];
+                              var data = List.from(ref);
+                              for (var element in ref) {
+                                if (element.get("senderUID") == userData.uid) {
+                                  data.remove(element);
                                 }
-                                int count = data.length;
+                              }
+                              int count = data.length;
 
-                                return ChatListItem(
-                                  isDark: isDark,
-                                  unreadCount: count,
-                                  isGroup: false,
-                                  roomData: ChatRoomData.fromJson(rooms[index]
-                                      .data() as Map<String, dynamic>),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      }
-                      return const CircleLoading();
-                    },
-                  ),
+                              return ChatListItem(
+                                isDark: isDark,
+                                unreadCount: count,
+                                isGroup: false,
+                                roomData: ChatRoomData.fromJson(rooms[index]
+                                    .data() as Map<String, dynamic>),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }
+                    return const CircleLoading();
+                  },
                 ),
                 //단체 채팅방 리스트
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: ChattingService()
-                        .getChattingRoomListStream(context, isGroup: true),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircleLoading());
-                      }
-                      if (snapshot.hasError) {
-                        return Center(
-                            child: Column(
-                          children: [
-                            FilledButton(
-                                onPressed: () {
-                                  setState(() {});
-                                },
-                                child: const Icon(Icons.refresh)),
-                            const Text("오류가 발생했어요..ToT"),
-                          ],
-                        ));
-                      }
-                      if (!snapshot.hasData) {
-                        return const Text("채팅방이 없습니다.");
-                      }
-
-                      if (snapshot.hasData) {
-                        var rooms = snapshot.data!.docs;
-
-                        if (rooms.isEmpty) {
-                          return const Center(
-                            child: Text("아직 채팅방이 없어요!"),
-                          );
-                        }
-
-                        return ListView.builder(
-                          itemCount: rooms.length,
-                          itemBuilder: (context, index) {
-                            Map<String, List<String>> participantsInfo = {};
-                            (rooms[index]["participantsInfo"] as Map)
-                                .forEach((key, value) {
-                              participantsInfo[key] = (value as List)
-                                  .map((e) => e.toString())
-                                  .toList();
-                            });
-
-                            //안읽은 메세지 수 스트림
-                            return StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection(
-                                      "schools/${userData.school}/groupChats/${rooms[index]["roomId"]}/messages")
-                                  .where("time",
-                                      isGreaterThan: rooms[index]["leavingTime"]
-                                              [userData.uid] ??
-                                          Timestamp.fromDate(DateTime.now()))
-                                  .snapshots(),
-                              builder: (context, messages) {
-                                //안읽은 메세지에서 내가 보낸 메세지 빼기
-                                //미디어 파일 전송 시 전송 누르고 완료 전에 화면을 나가면 내 화면에서도 안읽은 메세지로 표시되서 필터링 해줌
-                                var ref = messages.data?.docs ?? [];
-                                var data = List.from(ref);
-                                for (var element in ref) {
-                                  if (element.get("senderUID") ==
-                                      userData.uid) {
-                                    data.remove(element);
-                                  }
-                                  if (element.get("type") ==
-                                      "MessageType.notice") {
-                                    data.remove(element);
-                                  }
-                                }
-                                int count = data.length;
-                                return ChatListItem(
-                                  isDark: isDark,
-                                  unreadCount: count,
-                                  isGroup: true,
-                                  groupRoomData: GroupChatRoomData.fromJson(
-                                      rooms[index].data()
-                                          as Map<String, dynamic>),
-                                  roomData: ChatRoomData.fromJson(rooms[index]
-                                      .data() as Map<String, dynamic>),
-                                );
+                StreamBuilder<QuerySnapshot>(
+                  stream: ChattingService()
+                      .getChattingRoomListStream(context, isGroup: true),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircleLoading());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                          child: Column(
+                        children: [
+                          FilledButton(
+                              onPressed: () {
+                                setState(() {});
                               },
-                            );
-                          },
+                              child: const Icon(Icons.refresh)),
+                          const Text("오류가 발생했어요..ToT"),
+                        ],
+                      ));
+                    }
+                    if (!snapshot.hasData) {
+                      return const Text("채팅방이 없습니다.");
+                    }
+
+                    if (snapshot.hasData) {
+                      var rooms = snapshot.data!.docs;
+
+                      if (rooms.isEmpty) {
+                        return const Center(
+                          child: Text("아직 채팅방이 없어요!"),
                         );
                       }
-                      return const CircleLoading();
-                    },
-                  ),
+
+                      return ListView.builder(
+                        itemCount: rooms.length,
+                        itemBuilder: (context, index) {
+                          Map<String, List<String>> participantsInfo = {};
+                          (rooms[index]["participantsInfo"] as Map)
+                              .forEach((key, value) {
+                            participantsInfo[key] = (value as List)
+                                .map((e) => e.toString())
+                                .toList();
+                          });
+
+                          //안읽은 메세지 수 스트림
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection(
+                                    "schools/${userData.school}/groupChats/${rooms[index]["roomId"]}/messages")
+                                .where("time",
+                                    isGreaterThan: rooms[index]["leavingTime"]
+                                            [userData.uid] ??
+                                        Timestamp.fromDate(DateTime.now()))
+                                .snapshots(),
+                            builder: (context, messages) {
+                              //안읽은 메세지에서 내가 보낸 메세지 빼기
+                              //미디어 파일 전송 시 전송 누르고 완료 전에 화면을 나가면 내 화면에서도 안읽은 메세지로 표시되서 필터링 해줌
+                              var ref = messages.data?.docs ?? [];
+                              var data = List.from(ref);
+                              for (var element in ref) {
+                                if (element.get("senderUID") == userData.uid) {
+                                  data.remove(element);
+                                }
+                                if (element.get("type") ==
+                                    "MessageType.notice") {
+                                  data.remove(element);
+                                }
+                              }
+                              int count = data.length;
+                              return ChatListItem(
+                                isDark: isDark,
+                                unreadCount: count,
+                                isGroup: true,
+                                groupRoomData: GroupChatRoomData.fromJson(
+                                    rooms[index].data()
+                                        as Map<String, dynamic>),
+                                roomData: ChatRoomData.fromJson(rooms[index]
+                                    .data() as Map<String, dynamic>),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }
+                    return const CircleLoading();
+                  },
                 ),
               ]),
             )

@@ -1,4 +1,4 @@
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';

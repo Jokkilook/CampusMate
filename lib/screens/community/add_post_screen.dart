@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/services/post_service.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:campusmate/widgets/confirm_dialog.dart';

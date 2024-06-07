@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/user_data.dart';
@@ -8,6 +8,7 @@ import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -269,15 +270,20 @@ class ChatListItem extends StatelessWidget {
                         Row(
                           children: [
                             //채팅방 이름
-                            Text(
-                              !isGroup ? name : roomData.roomName!,
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: isDark
-                                      ? AppColors.darkTitle
-                                      : AppColors.lightTitle),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.5),
+                              child: Text(
+                                !isGroup ? name : roomData.roomName!,
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: isDark
+                                        ? AppColors.darkTitle
+                                        : AppColors.lightTitle),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
                             //참여자 수
                             Row(

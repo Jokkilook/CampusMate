@@ -1,4 +1,4 @@
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
 import 'package:campusmate/router/app_router.dart';
@@ -147,15 +147,6 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
 
                                   setState(() {});
                                 },
-                                child: Text(
-                                  tag,
-                                  style: TextStyle(
-                                      color: userTag.contains(tag)
-                                          ? const Color(0xff0B351E)
-                                          : (isDark
-                                              ? AppColors.darkTitle
-                                              : AppColors.lightTitle)),
-                                ),
                                 style: OutlinedButton.styleFrom(
                                     side: BorderSide(
                                         width: 0,
@@ -168,6 +159,15 @@ class _ProfileSettingBState extends State<ProfileSettingB> {
                                     minimumSize: Size.zero,
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10)),
+                                child: Text(
+                                  tag,
+                                  style: TextStyle(
+                                      color: userTag.contains(tag)
+                                          ? const Color(0xff0B351E)
+                                          : (isDark
+                                              ? AppColors.darkTitle
+                                              : AppColors.lightTitle)),
+                                ),
                               ),
                           ],
                         ),

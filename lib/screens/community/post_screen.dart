@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:campusmate/screens/community/comment_section.dart';
 import 'package:campusmate/screens/community/widgets/comment_input_bar.dart';

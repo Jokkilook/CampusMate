@@ -1,4 +1,4 @@
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/screens/profile/widgets/loading_schedule_table.dart';
 import 'package:campusmate/widgets/ad_area.dart';
 import 'package:flutter/material.dart';

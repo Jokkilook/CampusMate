@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/chat_room_data.dart';
 import 'package:campusmate/models/group_chat_room_data.dart';
 import 'package:campusmate/models/message_data.dart';
@@ -185,82 +185,79 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: count,
-                            itemBuilder: (context, index) {
-                              bool isCreator = widget
-                                      .groupRoomData?.creatorUid ==
-                                  widget.chatRoomData.participantsUid?[index];
-                              return InkWell(
-                                onTap: () {
-                                  context.pushNamed(
-                                    Screen.otherProfile,
-                                    pathParameters: {
-                                      "uid": widget
-                                          .chatRoomData.participantsUid![index],
-                                      "readOnly": "true"
-                                    },
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  width: double.infinity,
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        child: CachedNetworkImage(
-                                          width: 50,
-                                          height: 50,
-                                          imageUrl: roomData["participantsInfo"]
-                                              [roomData["participantsUid"]
-                                                  [index]][1],
-                                          placeholder: (context, url) {
-                                            return Image.asset(
-                                                "assets/images/default_image.png");
-                                          },
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      SizedBox(width: isCreator ? 10 : 20),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          isCreator
-                                              ? Icon(
-                                                  Icons.star,
-                                                  color: Colors.yellow[700],
-                                                  size: 17,
-                                                )
-                                              : Container(),
-                                          Text(
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: count,
+                          itemBuilder: (context, index) {
+                            bool isCreator = widget.groupRoomData?.creatorUid ==
+                                widget.chatRoomData.participantsUid?[index];
+                            return InkWell(
+                              onTap: () {
+                                context.pushNamed(
+                                  Screen.otherProfile,
+                                  pathParameters: {
+                                    "uid": widget
+                                        .chatRoomData.participantsUid![index],
+                                    "readOnly": "true"
+                                  },
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: CachedNetworkImage(
+                                        width: 50,
+                                        height: 50,
+                                        imageUrl: roomData["participantsInfo"][
                                             roomData["participantsUid"]
-                                                        [index] ==
-                                                    userUID
-                                                ? "나"
-                                                : roomData["participantsInfo"][
-                                                    roomData["participantsUid"]
-                                                        [index]][0],
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              color: isDark
-                                                  ? AppColors.darkText
-                                                  : AppColors.lightText,
-                                            ),
+                                                [index]][1],
+                                        placeholder: (context, url) {
+                                          return Image.asset(
+                                              "assets/images/default_image.png");
+                                        },
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    SizedBox(width: isCreator ? 10 : 20),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        isCreator
+                                            ? Icon(
+                                                Icons.star,
+                                                color: Colors.yellow[700],
+                                                size: 17,
+                                              )
+                                            : Container(),
+                                        Text(
+                                          roomData["participantsUid"][index] ==
+                                                  userUID
+                                              ? "나"
+                                              : roomData["participantsInfo"][
+                                                  roomData["participantsUid"]
+                                                      [index]][0],
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
                                           ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
                         ),
                         //드로어 내용
                         IntrinsicHeight(

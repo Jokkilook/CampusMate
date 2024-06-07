@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:campusmate/app_colors.dart';
+import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/modules/enums.dart';
 import 'package:campusmate/router/app_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
