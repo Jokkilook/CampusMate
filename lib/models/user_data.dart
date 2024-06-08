@@ -23,6 +23,7 @@ class UserData {
   List<String>? dislikers = [];
   List<String>? banUsers = [];
   List<String>? blockers = [];
+  String? link = "";
 
   UserData({
     this.uid,

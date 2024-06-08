@@ -27,8 +27,8 @@ class _RegisterScreenAState extends State<RegisterScreenA> {
   List<String> deptList = [];
 
   late int selectedYear;
-  late String selectedSchool;
-  late String selectedDept;
+  String? selectedSchool;
+  String? selectedDept;
   bool isReady = false;
   bool isCompleted = false;
 
@@ -39,7 +39,6 @@ class _RegisterScreenAState extends State<RegisterScreenA> {
   void initState() {
     super.initState();
     selectedYear = DateTime.now().year;
-    selectedSchool = "";
     initLoading();
 
     FirebaseAuth.instance.signOut();
@@ -217,12 +216,14 @@ class _RegisterScreenAState extends State<RegisterScreenA> {
                             showSelectedItems: true,
                             showSearchBox: true,
                           ),
+                          selectedItem: selectedSchool,
                           items: schoolList,
                           onChanged: (value) {
                             //학교가 선택되면 학과 선택이 활성화됨.
                             selectedSchool = value!;
                             deptList = school.deptList[selectedSchool] ?? [];
-                            selectedSchool.isEmpty
+                            selectedDept = null;
+                            selectedSchool == ""
                                 ? isReady = false
                                 : isReady = true;
 
@@ -293,12 +294,13 @@ class _RegisterScreenAState extends State<RegisterScreenA> {
                             showSelectedItems: true,
                             showSearchBox: true,
                           ),
+                          selectedItem: selectedDept,
                           items: deptList,
                           onChanged: (value) {
                             //학과가 선택되면 다음 버튼 활성화됨.
                             selectedDept = value!;
 
-                            isReady && selectedDept.isNotEmpty
+                            isReady && selectedDept != ""
                                 ? isCompleted = true
                                 : isCompleted = false;
                             setState(() {});
@@ -320,6 +322,7 @@ class _RegisterScreenAState extends State<RegisterScreenA> {
                 newUserData.enterYear = selectedYear;
                 newUserData.school = selectedSchool;
                 newUserData.dept = selectedDept;
+                newUserData.link = school.schoolLink[selectedSchool] ?? "";
                 context.read<UserDataProvider>().userData = newUserData;
 
                 router.pushNamed(Screen.registerB);

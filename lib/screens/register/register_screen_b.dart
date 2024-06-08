@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:campusmate/Theme/app_colors.dart';
 import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/modules/otp.dart';
@@ -43,6 +42,7 @@ class RegisterScreenB extends StatefulWidget {
   }
 
   final otp = OTP();
+
   int time = 180;
 
   @override
@@ -65,6 +65,22 @@ class _RegisterScreenBState extends State<RegisterScreenB> {
     inputEmail = "";
     inputCode = "";
     setState(() {});
+  }
+
+  bool schoolEmailCheck(String email, String link) {
+    var linkElements = link.split(".");
+    linkElements.removeWhere(
+        (element) => element == "ac" || element == "kr" || element == "www");
+    var emailFirstSplit = email.split("@");
+    var emailSecondSplit = emailFirstSplit[1].split(".");
+    emailSecondSplit.removeWhere(
+        (element) => element == "ac" || element == "kr" || element == "email");
+
+    if (emailSecondSplit.contains(linkElements[0])) {
+      return true;
+    }
+
+    return false;
   }
 
   bool emailCheck(String email) {
@@ -242,6 +258,15 @@ class _RegisterScreenBState extends State<RegisterScreenB> {
                                         emailCheck(
                                             widget.emailController.value.text)
                                     ? () async {
+                                        //선택 학교의 이메일인지 확인
+                                        if (!schoolEmailCheck(
+                                            widget.emailController.value.text,
+                                            newUserData.link ?? "")) {
+                                          message = "선택 학교의 이메일이 아닙니다!";
+                                          setState(() {});
+                                          return;
+                                        }
+
                                         //이미 가입된 아이디가 있나 확인
                                         if (!(await AuthService()
                                             .checkDuplicatedEmail(
