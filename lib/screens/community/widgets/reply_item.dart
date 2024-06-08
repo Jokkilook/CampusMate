@@ -210,7 +210,7 @@ class _ReplyItemState extends State<ReplyItem> {
                     ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

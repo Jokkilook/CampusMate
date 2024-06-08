@@ -269,7 +269,7 @@ class _CommentItemState extends State<CommentItem> {
                         ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   children: [

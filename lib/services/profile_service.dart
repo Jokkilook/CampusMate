@@ -116,4 +116,60 @@ class ProfileService {
 
     return result;
   }
+
+  ///프로필 수정 시 파이어스토어 업데이트
+  Future updateCommunityProfile(UserData targetData) async {
+    //게시판 유저 정보 수정
+    String newName = targetData.name ?? "";
+    String newUrl = targetData.imageUrl ?? "";
+
+    //게시판 레퍼런스
+    var postsRef =
+        firestore.collection('schools/${targetData.school}/generalPosts');
+
+    //게시판 전체 게시글 가져오기
+    var postData = await postsRef.get();
+
+    //반환 받은 전체 게시글 순회
+    for (var post in postData.docs) {
+      //작성자UID가 수정 유저의 UID와 같으면
+      if (post["authorUid"] == targetData.uid) {
+        //해당 게시글의 작성자 닉네임, 이미지Url 변경
+        await post.reference.update({
+          'authorName': newName,
+          'profileImageUrl': newUrl,
+        });
+      }
+
+      //해당 게시글 전체 댓글 가져오기
+      var commentData = await post.reference.collection("comments").get();
+
+      //해당 게시글 댓글 순회
+      for (var comment in commentData.docs) {
+        //댓글 작성자가 수정 유저의 UID와 같으면
+        if (comment["authorUid"] == targetData.uid) {
+          //해당 댓글의 작성자 닉네임, 이미지Url 변경
+          await comment.reference.update({
+            'authorName': newName,
+            'profileImageUrl': newUrl,
+          });
+        }
+
+        //해당 댓글의 전체 답글 가져오기
+        var replyData = await comment.reference.collection("replies").get();
+
+        //해당 댓글의 답글 순회
+        for (var reply in replyData.docs) {
+          //답글 작성자가 수정 유저의 UID와 같으면
+          if (reply["authorUid"] == targetData.uid) {
+            //해당 답글의 작성자 닉네임, 이미지Url 변경
+            await reply.reference.update({
+              'authorName': newName,
+              'profileImageUrl': newUrl,
+            });
+          }
+        }
+      }
+    }
+  }
 }

@@ -173,9 +173,6 @@ class _PostScreenState extends State<PostScreen> {
               postService.updateViewCount(
                   postData: postData, userData: userData);
 
-              print("AUTHOR: ${postData.authorUid}");
-              print("CURRENT: $currentUserUid");
-
               return Scaffold(
                   body: RefreshIndicator(
                     onRefresh: () async => setState(() {}),

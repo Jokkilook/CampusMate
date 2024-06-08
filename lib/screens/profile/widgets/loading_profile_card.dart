@@ -172,17 +172,15 @@ class LoadingProfileCard extends StatelessWidget {
                                             ),
                                           ],
                                         ),
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              " ",
-                                              style: TextStyle(
-                                                color: isDark
-                                                    ? AppColors.darkText
-                                                    : AppColors.lightText,
-                                                fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                        Center(
+                                          child: Text(
+                                            " ",
+                                            style: TextStyle(
+                                              color: isDark
+                                                  ? AppColors.darkText
+                                                  : AppColors.lightText,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
@@ -206,57 +204,55 @@ class LoadingProfileCard extends StatelessWidget {
                                   : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    ' ',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.darkTitle
-                                          : AppColors.lightTitle,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ' ',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkTitle
+                                        : AppColors.lightTitle,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  const SizedBox(
-                                    height: 5,
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  ' ',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkText
+                                        : AppColors.lightText,
                                   ),
-                                  Text(
-                                    ' ',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.darkText
-                                          : AppColors.lightText,
-                                    ),
-                                  ),
-                                  Wrap(
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      for (var i = 0; i < 8; i++)
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: isDark
-                                                  ? AppColors.darkTag
-                                                  : AppColors.lightTag,
-                                              borderRadius:
-                                                  BorderRadius.circular(15)),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 5),
-                                          child: Text(
-                                            "      ",
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? AppColors.darkText
-                                                  : AppColors.lightText,
-                                            ),
+                                ),
+                                Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    for (var i = 0; i < 8; i++)
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: isDark
+                                                ? AppColors.darkTag
+                                                : AppColors.lightTag,
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        child: Text(
+                                          "      ",
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? AppColors.darkText
+                                                : AppColors.lightText,
                                           ),
-                                        )
-                                    ],
-                                  )
-                                ],
-                              ),
+                                        ),
+                                      )
+                                  ],
+                                )
+                              ],
                             ),
                           ),
 
@@ -270,28 +266,26 @@ class LoadingProfileCard extends StatelessWidget {
                                   : AppColors.lightInnerSection,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 10),
-                                    child: Text(
-                                      ' ',
-                                      style: TextStyle(
-                                          color: isDark
-                                              ? AppColors.darkTitle
-                                              : AppColors.lightTitle,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10),
+                                  child: Text(
+                                    ' ',
+                                    style: TextStyle(
+                                        color: isDark
+                                            ? AppColors.darkTitle
+                                            : AppColors.lightTitle,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  const Padding(
-                                    padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                                    child: LoadingScheduleTable(),
-                                  ),
-                                ],
-                              ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                  child: LoadingScheduleTable(),
+                                ),
+                              ],
                             ),
                           )
                         ],

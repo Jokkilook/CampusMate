@@ -5,6 +5,7 @@ import 'package:campusmate/models/user_data.dart';
 import 'package:campusmate/screens/profile/widgets/loading_profile_card.dart';
 import 'package:campusmate/services/auth_service.dart';
 import 'package:campusmate/provider/user_data_provider.dart';
+import 'package:campusmate/services/profile_service.dart';
 import 'package:campusmate/widgets/bottom_button.dart';
 import 'package:campusmate/widgets/circle_loading.dart';
 import 'package:campusmate/widgets/input_text_field.dart';
@@ -53,90 +54,6 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
   void initState() {
     super.initState();
     image = null;
-  }
-
-  // 커뮤니티 프로필 업데이트
-  Future<void> updateCommunityProfile(
-      BuildContext context, String name, String profileImageUrl) async {
-    try {
-      // 사용자 데이터 가져오기
-      final UserData userData = context.read<UserDataProvider>().userData;
-      String currentUserUid = userData.uid.toString();
-      String school = userData.school.toString();
-      String newAuthorName = name;
-      String newProfileImageUrl = profileImageUrl;
-
-      // Firestore 인스턴스 가져오기
-      final firestore = FirebaseFirestore.instance;
-
-      // 게시물 쿼리
-      var generalPostsQuery = firestore
-          .collection('schools')
-          .doc(school)
-          .collection('generalPosts');
-
-      // 모든 게시물에 대해 업데이트
-      await _updatePostsAndComments(
-          generalPostsQuery, newAuthorName, newProfileImageUrl, currentUserUid);
-
-      debugPrint('커뮤니티 프로필 업데이트 성공');
-    } catch (e) {
-      // 에러 처리
-      debugPrint('커뮤니티 프로필 업데이트 실패: $e');
-    }
-  }
-
-  Future<void> _updatePostsAndComments(
-    Query postsQuery,
-    String newAuthorName,
-    String newProfileImageUrl,
-    String currentUserUid,
-  ) async {
-    // 게시물 쿼리 실행
-    var postsSnapshot = await postsQuery.get();
-
-    // 각 게시물에 대해 업데이트
-    for (var postDoc in postsSnapshot.docs) {
-      // 게시글 작성자가 현재 사용자인 경우에만 업데이트
-      if (postDoc['authorUid'] == currentUserUid) {
-        await _updateProfile(
-            postDoc.reference, newAuthorName, newProfileImageUrl);
-      }
-
-      // 댓글 쿼리 및 업데이트
-      var commentsQuery = postDoc.reference.collection('comments');
-      var commentsSnapshot = await commentsQuery.get();
-      for (var commentDoc in commentsSnapshot.docs) {
-        // 댓글 작성자가 현재 사용자인 경우에만 업데이트
-        if (commentDoc['authorUid'] == currentUserUid) {
-          await _updateProfile(
-              commentDoc.reference, newAuthorName, newProfileImageUrl);
-        }
-
-        // 답글 쿼리 및 업데이트
-        var repliesQuery = commentDoc.reference.collection('replies');
-        var repliesSnapshot = await repliesQuery.get();
-        for (var replyDoc in repliesSnapshot.docs) {
-          // 답글 작성자가 현재 사용자인 경우에만 업데이트
-          if (replyDoc['authorUid'] == currentUserUid) {
-            await _updateProfile(
-                replyDoc.reference, newAuthorName, newProfileImageUrl);
-          }
-        }
-      }
-    }
-  }
-
-  Future<void> _updateProfile(
-    DocumentReference reference,
-    String newAuthorName,
-    String newProfileImageUrl,
-  ) async {
-    // 프로필 업데이트
-    await reference.update({
-      'authorName': newAuthorName,
-      'profileImageUrl': newProfileImageUrl,
-    });
   }
 
   @override
@@ -214,6 +131,9 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                     },
                   );
 
+                  final FirebaseFirestore firestore =
+                      FirebaseFirestore.instance;
+
                   String name = nameController.value.text;
                   widget.modifiedData.name = name;
                   widget.modifiedData.introduce = introController.value.text;
@@ -238,11 +158,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                     String imageUrl = await ref.getDownloadURL();
                     widget.modifiedData.imageUrl = imageUrl;
 
-                    // 커뮤니티 프로필 업데이트
-                    await updateCommunityProfile(context, name, imageUrl);
-
                     //채팅방 프로필 url 업데이트
-                    await FirebaseFirestore.instance
+                    await firestore
                         .collection(
                             "schools/${widget.modifiedData.school}/chats")
                         .where("participantsUid",
@@ -268,7 +185,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                               widget.modifiedData.imageUrl!
                             ];
 
-                            FirebaseFirestore.instance
+                            firestore
                                 .collection(
                                     "schools/${widget.modifiedData.school}/chats")
                                 .doc(id)
@@ -278,8 +195,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                       },
                     );
 
-                    //채팅방 프로필 url 업데이트
-                    await FirebaseFirestore.instance
+                    //그룹 채팅방 프로필 url 업데이트
+                    await firestore
                         .collection(
                             "schools/${widget.modifiedData.school}/groupChats")
                         .where("participantsUid",
@@ -305,7 +222,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                               widget.modifiedData.imageUrl!
                             ];
 
-                            FirebaseFirestore.instance
+                            firestore
                                 .collection(
                                     "schools/${widget.modifiedData.school}/groupChats")
                                 .doc(id)
@@ -320,11 +237,11 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                       widget.modifiedData;
 
                   await AuthService().setUserData(widget.modifiedData);
+                  await ProfileService()
+                      .updateCommunityProfile(widget.modifiedData);
 
                   context.pop();
                   context.pop();
-
-                  //router.goNamed(Screen.main, extra: 3);
                 },
               ),
             ),
