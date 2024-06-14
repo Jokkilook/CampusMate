@@ -117,6 +117,77 @@ class ProfileService {
     return result;
   }
 
+  Future updateChattingProfile(UserData targetData) async {
+    //1:1채팅방 프로필 url 업데이트
+    //참여자에 유저가 포함된 1:1 채팅방 데이터 로딩
+    await firestore
+        .collection("schools/${targetData.school}/chats")
+        .where("participantsUid", arrayContains: targetData.uid)
+        .get()
+        .then(
+      (value) {
+        //데이터가 존재하면
+        if (value.docs.isNotEmpty) {
+          var docs = value.docs;
+          //불러온 채팅방 데이터 순회
+          for (var doc in docs) {
+            String id = doc.id;
+            Map<String, dynamic> data = doc.data();
+            //참여자 명단 가져오기
+            Map<String, List<String>> userInfo =
+                (data["participantsInfo"] as Map<String, dynamic>)
+                    .map((key, value) {
+              return MapEntry(key, (value as List<dynamic>).cast<String>());
+            });
+
+            //
+            userInfo[targetData.uid!] = [
+              targetData.name!,
+              targetData.imageUrl!
+            ];
+
+            firestore
+                .collection("schools/${targetData.school}/chats")
+                .doc(id)
+                .update({"participantsInfo": userInfo});
+          }
+        }
+      },
+    );
+
+    //그룹 채팅방 프로필 url 업데이트
+    await firestore
+        .collection("schools/${targetData.school}/groupChats")
+        .where("participantsUid", arrayContains: targetData.uid)
+        .get()
+        .then(
+      (value) {
+        if (value.docs.isNotEmpty) {
+          var docs = value.docs;
+          for (var doc in docs) {
+            String id = doc.id;
+            Map<String, dynamic> data = doc.data();
+            Map<String, List<String>> userInfo =
+                (data["participantsInfo"] as Map<String, dynamic>)
+                    .map((key, value) {
+              return MapEntry(key, (value as List<dynamic>).cast<String>());
+            });
+
+            userInfo[targetData.uid!] = [
+              targetData.name!,
+              targetData.imageUrl!
+            ];
+
+            firestore
+                .collection("schools/${targetData.school}/groupChats")
+                .doc(id)
+                .update({"participantsInfo": userInfo});
+          }
+        }
+      },
+    );
+  }
+
   ///프로필 수정 시 파이어스토어 업데이트
   Future updateCommunityProfile(UserData targetData) async {
     //게시판 유저 정보 수정

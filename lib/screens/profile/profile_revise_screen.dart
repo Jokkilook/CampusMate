@@ -158,7 +158,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                     String imageUrl = await ref.getDownloadURL();
                     widget.modifiedData.imageUrl = imageUrl;
 
-                    //채팅방 프로필 url 업데이트
+                    //1:1채팅방 프로필 url 업데이트
                     await firestore
                         .collection(
                             "schools/${widget.modifiedData.school}/chats")
@@ -237,6 +237,8 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                       widget.modifiedData;
 
                   await AuthService().setUserData(widget.modifiedData);
+                  await ProfileService()
+                      .updateChattingProfile(widget.modifiedData);
                   await ProfileService()
                       .updateCommunityProfile(widget.modifiedData);
 
