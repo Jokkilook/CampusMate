@@ -416,6 +416,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                           Text(
                             '자기소개',
                             style: TextStyle(
+                                fontSize: 18,
                                 color: isDark
                                     ? AppColors.darkTitle
                                     : AppColors.lightTitle,
@@ -457,6 +458,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                           Text(
                             '내 정보',
                             style: TextStyle(
+                              fontSize: 18,
                               color: isDark
                                   ? AppColors.darkTitle
                                   : AppColors.lightTitle,
@@ -467,10 +469,17 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                             height: 5,
                           ),
                           Text(
-                              '나이  ${DateTime.now().year - int.parse(widget.modifiedData.birthDate!.split(".")[0])}'),
+                            '나이  ${DateTime.now().year - int.parse(widget.modifiedData.birthDate!.split(".")[0])}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
                           Text(
-                              '성별  ${widget.modifiedData.gender! ? "남" : "여"}'),
-                          Text('학과  ${widget.modifiedData.dept}'),
+                            '성별  ${widget.modifiedData.gender! ? "남" : "여"}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            '학과  ${widget.modifiedData.dept}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
                         ],
                       ),
                     ),
@@ -493,6 +502,7 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                           const Text(
                             '성향',
                             style: TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -524,7 +534,10 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                                 horizontal: 15, vertical: 10),
                             child: Text(
                               '시간표',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           Padding(
@@ -603,12 +616,14 @@ class _TagShowerState extends State<TagShower> {
               const Text(
                 '태그',
                 style: TextStyle(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 '  ${userTag.length}/8',
                 style: TextStyle(
+                  fontSize: 16,
                   color: isDark ? AppColors.darkTitle : AppColors.lightTitle,
                   fontWeight: FontWeight.bold,
                 ),
@@ -648,6 +663,7 @@ class _TagShowerState extends State<TagShower> {
                   child: Text(
                     tag,
                     style: TextStyle(
+                        fontSize: 16,
                         color: userTag.contains(tag)
                             ? const Color(0xff0B351E)
                             : (isDark

@@ -41,7 +41,7 @@ class _GroupChatRoomGenerationScreenState
                       color: isDark
                           ? AppColors.darkHeadText
                           : AppColors.lightHeadText,
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
                 TextField(
@@ -64,7 +64,7 @@ class _GroupChatRoomGenerationScreenState
                       color: isDark
                           ? AppColors.darkHeadText
                           : AppColors.lightHeadText,
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
                 TextField(
