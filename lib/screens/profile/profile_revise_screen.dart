@@ -131,14 +131,13 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                     },
                   );
 
-                  final FirebaseFirestore firestore =
-                      FirebaseFirestore.instance;
-
                   String name = nameController.value.text;
                   widget.modifiedData.name = name;
                   widget.modifiedData.introduce = introController.value.text;
                   widget.modifiedData.mbti =
                       "${EI ? "E" : "I"}${NS ? "N" : "S"}${TF ? "T" : "F"}${PJ ? "P" : "J"}";
+
+                  ProfileService profileService = ProfileService();
 
                   //이미지 변경시 이미지 변경 로직 실행
                   if (image != null) {
@@ -157,89 +156,16 @@ class ProfileReviseScreenState extends State<ProfileReviseScreen> {
                     //변경할 데이터에 변경된 url 저장
                     String imageUrl = await ref.getDownloadURL();
                     widget.modifiedData.imageUrl = imageUrl;
-
-                    //1:1채팅방 프로필 url 업데이트
-                    await firestore
-                        .collection(
-                            "schools/${widget.modifiedData.school}/chats")
-                        .where("participantsUid",
-                            arrayContains: widget.modifiedData.uid)
-                        .get()
-                        .then(
-                      (value) {
-                        if (value.docs.isNotEmpty) {
-                          var docs = value.docs;
-                          for (var doc in docs) {
-                            String id = doc.id;
-                            Map<String, dynamic> data = doc.data();
-                            Map<String, List<String>> userInfo =
-                                (data["participantsInfo"]
-                                        as Map<String, dynamic>)
-                                    .map((key, value) {
-                              return MapEntry(
-                                  key, (value as List<dynamic>).cast<String>());
-                            });
-
-                            userInfo[widget.modifiedData.uid!] = [
-                              widget.modifiedData.name!,
-                              widget.modifiedData.imageUrl!
-                            ];
-
-                            firestore
-                                .collection(
-                                    "schools/${widget.modifiedData.school}/chats")
-                                .doc(id)
-                                .update({"participantsInfo": userInfo});
-                          }
-                        }
-                      },
-                    );
-
-                    //그룹 채팅방 프로필 url 업데이트
-                    await firestore
-                        .collection(
-                            "schools/${widget.modifiedData.school}/groupChats")
-                        .where("participantsUid",
-                            arrayContains: widget.modifiedData.uid)
-                        .get()
-                        .then(
-                      (value) {
-                        if (value.docs.isNotEmpty) {
-                          var docs = value.docs;
-                          for (var doc in docs) {
-                            String id = doc.id;
-                            Map<String, dynamic> data = doc.data();
-                            Map<String, List<String>> userInfo =
-                                (data["participantsInfo"]
-                                        as Map<String, dynamic>)
-                                    .map((key, value) {
-                              return MapEntry(
-                                  key, (value as List<dynamic>).cast<String>());
-                            });
-
-                            userInfo[widget.modifiedData.uid!] = [
-                              widget.modifiedData.name!,
-                              widget.modifiedData.imageUrl!
-                            ];
-
-                            firestore
-                                .collection(
-                                    "schools/${widget.modifiedData.school}/groupChats")
-                                .doc(id)
-                                .update({"participantsInfo": userInfo});
-                          }
-                        }
-                      },
-                    );
                   }
 
                   context.read<UserDataProvider>().userData =
                       widget.modifiedData;
 
                   await AuthService().setUserData(widget.modifiedData);
-                  await ProfileService()
+
+                  await profileService
                       .updateChattingProfile(widget.modifiedData);
-                  await ProfileService()
+                  await profileService
                       .updateCommunityProfile(widget.modifiedData);
 
                   context.pop();
