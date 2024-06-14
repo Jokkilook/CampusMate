@@ -136,7 +136,10 @@ class _FilterDialogState extends State<FilterDialog> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("태그 비교"),
+                        const Text(
+                          "태그 비교",
+                          style: TextStyle(fontSize: 16),
+                        ),
                         Switch(
                           value: containTags,
                           onChanged: (value) async {
@@ -157,7 +160,10 @@ class _FilterDialogState extends State<FilterDialog> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("MBTI 비교"),
+                        const Text(
+                          "MBTI 비교",
+                          style: TextStyle(fontSize: 16),
+                        ),
                         Switch(
                           value: containMBTI,
                           onChanged: (value) {
@@ -178,7 +184,10 @@ class _FilterDialogState extends State<FilterDialog> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("시간표 비교"),
+                        const Text(
+                          "시간표 비교",
+                          style: TextStyle(fontSize: 16),
+                        ),
                         Switch(
                           value: containSchedule,
                           onChanged: (value) {
@@ -200,6 +209,7 @@ class _FilterDialogState extends State<FilterDialog> {
                         ? const Text(
                             "조건을 1개 이상 선택해야합니다.",
                             style: TextStyle(
+                                fontSize: 16,
                                 color: AppColors.alertText,
                                 fontWeight: FontWeight.bold),
                           )
@@ -215,7 +225,10 @@ class _FilterDialogState extends State<FilterDialog> {
                       }
                       Navigator.pop(context, result);
                     },
-                    child: const Text("확인"))
+                    child: const Text(
+                      "확인",
+                      style: TextStyle(fontSize: 16),
+                    ))
               ],
             ),
           ),

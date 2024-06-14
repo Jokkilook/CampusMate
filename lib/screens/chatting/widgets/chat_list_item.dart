@@ -277,7 +277,7 @@ class ChatListItem extends StatelessWidget {
                               child: Text(
                                 !isGroup ? name : roomData.roomName!,
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 16,
                                     color: isDark
                                         ? AppColors.darkTitle
                                         : AppColors.lightTitle),
@@ -319,6 +319,7 @@ class ChatListItem extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 5),
+                    //마지막 메세지
                     Text(
                       roomData.lastMessage!,
                       style: TextStyle(
