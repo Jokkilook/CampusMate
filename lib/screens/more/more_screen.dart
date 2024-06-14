@@ -32,14 +32,20 @@ class _MoreScreenState extends State<MoreScreen> {
         children: [
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text("내 정보"),
+            title: const Text(
+              "내 정보",
+              style: TextStyle(fontSize: 16),
+            ),
             onTap: () {
               context.pushNamed(Screen.myInfo);
             },
           ),
           ListTile(
             leading: const Icon(Icons.brightness_6_sharp),
-            title: const Text("앱 테마"),
+            title: const Text(
+              "앱 테마",
+              style: TextStyle(fontSize: 16),
+            ),
             onTap: () {
               context.pushNamed(Screen.themeSetting);
             },
@@ -48,7 +54,10 @@ class _MoreScreenState extends State<MoreScreen> {
             leading: const Icon(Icons.logout),
             title: const Text(
               "로그아웃",
-              style: TextStyle(color: AppColors.alertText),
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.alertText,
+              ),
             ),
             onTap: () async {
               await AuthService().signOut(context);
@@ -56,7 +65,10 @@ class _MoreScreenState extends State<MoreScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.info),
-            title: const Text("앱 정보"),
+            title: const Text(
+              "앱 정보",
+              style: TextStyle(fontSize: 16),
+            ),
             onTap: () {
               context.pushNamed(Screen.appInfo);
             },

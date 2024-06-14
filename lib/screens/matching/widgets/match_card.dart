@@ -308,6 +308,7 @@ class _MatchCardState extends State<MatchCard> {
                                     child: Text(
                                       "    ",
                                       style: TextStyle(
+                                          fontSize: 16,
                                           color: isDark
                                               ? AppColors.darkText
                                               : AppColors.lightText),
@@ -533,6 +534,7 @@ class _MatchCardState extends State<MatchCard> {
                                         child: Text(
                                           tag.toString(),
                                           style: TextStyle(
+                                              fontSize: 16,
                                               color: isDark
                                                   ? AppColors.darkText
                                                   : AppColors.lightText),

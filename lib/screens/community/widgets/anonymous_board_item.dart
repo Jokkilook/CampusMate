@@ -35,7 +35,7 @@ class AnonymousBoardItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis, // ...처리
                     maxLines: 1, // 1줄 제한
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -48,6 +48,7 @@ class AnonymousBoardItem extends StatelessWidget {
                     postData.content ?? '내용 없음',
                     maxLines: 1, // 1줄 제한
                     style: const TextStyle(
+                      fontSize: 16,
                       textBaseline: TextBaseline.alphabetic,
                       overflow: TextOverflow.ellipsis, //오버플로우 ... 처리
                     ),

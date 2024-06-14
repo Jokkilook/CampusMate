@@ -120,6 +120,7 @@ class FullProfileCard extends StatelessWidget {
                                 Text(
                                   '자기소개',
                                   style: TextStyle(
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: isDark
                                         ? AppColors.darkTitle
@@ -132,6 +133,7 @@ class FullProfileCard extends StatelessWidget {
                                 Text(
                                   '${userData.introduce}',
                                   style: TextStyle(
+                                    fontSize: 16,
                                     color: isDark
                                         ? AppColors.darkText
                                         : AppColors.lightText,
@@ -168,6 +170,7 @@ class FullProfileCard extends StatelessWidget {
                                         Text(
                                           '${userData.name}님의 정보',
                                           style: TextStyle(
+                                            fontSize: 18,
                                             color: isDark
                                                 ? AppColors.darkTitle
                                                 : AppColors.lightTitle,
@@ -180,6 +183,7 @@ class FullProfileCard extends StatelessWidget {
                                         Text(
                                           '나이  ${DateTime.now().year - int.parse(userData.birthDate!.split(".")[0])}',
                                           style: TextStyle(
+                                            fontSize: 16,
                                             color: isDark
                                                 ? AppColors.darkText
                                                 : AppColors.lightText,
@@ -188,6 +192,7 @@ class FullProfileCard extends StatelessWidget {
                                         Text(
                                           '성별  ${userData.gender! ? "남" : "여"}',
                                           style: TextStyle(
+                                            fontSize: 16,
                                             color: isDark
                                                 ? AppColors.darkText
                                                 : AppColors.lightText,
@@ -196,6 +201,7 @@ class FullProfileCard extends StatelessWidget {
                                         Text(
                                           '학과  ${userData.dept}',
                                           style: TextStyle(
+                                            fontSize: 16,
                                             color: isDark
                                                 ? AppColors.darkText
                                                 : AppColors.lightText,
@@ -221,6 +227,7 @@ class FullProfileCard extends StatelessWidget {
                                               child: Text(
                                                 '매너학점 ',
                                                 style: TextStyle(
+                                                    fontSize: 18,
                                                     color: isDark
                                                         ? AppColors.darkTitle
                                                         : AppColors.lightTitle,
@@ -334,6 +341,7 @@ class FullProfileCard extends StatelessWidget {
                                 Text(
                                   '성향',
                                   style: TextStyle(
+                                    fontSize: 18,
                                     color: isDark
                                         ? AppColors.darkTitle
                                         : AppColors.lightTitle,
@@ -346,6 +354,7 @@ class FullProfileCard extends StatelessWidget {
                                 Text(
                                   '${userData.mbti}',
                                   style: TextStyle(
+                                    fontSize: 16,
                                     color: isDark
                                         ? AppColors.darkText
                                         : AppColors.lightText,
@@ -373,6 +382,7 @@ class FullProfileCard extends StatelessWidget {
                                         child: Text(
                                           tag.toString(),
                                           style: TextStyle(
+                                            fontSize: 16,
                                             color: isDark
                                                 ? AppColors.darkText
                                                 : AppColors.lightText,
@@ -404,6 +414,7 @@ class FullProfileCard extends StatelessWidget {
                                   child: Text(
                                     '시간표',
                                     style: TextStyle(
+                                        fontSize: 18,
                                         color: isDark
                                             ? AppColors.darkTitle
                                             : AppColors.lightTitle,
