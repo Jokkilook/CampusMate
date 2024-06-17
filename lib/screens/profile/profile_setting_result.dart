@@ -55,6 +55,7 @@ class _ProfileSettingResultState extends State<ProfileSettingResult> {
                 await AuthService().registUser(userData).then((value) {
                   //가입 성공 시
                   if (value) {
+                    //로그인 후 메인화면으로 이동
                     context.goNamed(Screen.main);
                   }
                   //회원가입 실패 시
